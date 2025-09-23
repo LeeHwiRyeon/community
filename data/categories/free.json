@@ -1,0 +1,21 @@
+{
+    "id": "root",
+    "label": "자유 전체",
+    "children": [
+        {
+            "id": "talk",
+            "label": "잡담",
+            "children": []
+        },
+        {
+            "id": "humor",
+            "label": "유머",
+            "children": []
+        },
+        {
+            "id": "life",
+            "label": "일상",
+            "children": []
+        }
+    ]
+}

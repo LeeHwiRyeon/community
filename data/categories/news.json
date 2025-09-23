@@ -1,0 +1,26 @@
+{
+    "id": "root",
+    "label": "뉴스 전체",
+    "children": [
+        {
+            "id": "headline",
+            "label": "헤드라인",
+            "children": []
+        },
+        {
+            "id": "breaking",
+            "label": "속보",
+            "children": []
+        },
+        {
+            "id": "it",
+            "label": "IT/과학",
+            "children": []
+        },
+        {
+            "id": "culture",
+            "label": "문화",
+            "children": []
+        }
+    ]
+}

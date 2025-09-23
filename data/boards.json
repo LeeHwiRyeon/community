@@ -1,0 +1,27 @@
+[
+    {
+        "id": "news",
+        "title": "오늘의 뉴스",
+        "order": 1
+    },
+    {
+        "id": "free",
+        "title": "자유게시판",
+        "order": 2
+    },
+    {
+        "id": "image",
+        "title": "이미지 게시판",
+        "order": 3
+    },
+    {
+        "id": "qna",
+        "title": "Q&A",
+        "order": 4
+    },
+    {
+        "id": "game",
+        "title": "게임 게시판",
+        "order": 5
+    }
+]

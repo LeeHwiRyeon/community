@@ -1,0 +1,69 @@
+[
+    {
+        "id": "home",
+        "label": "홈",
+        "href": "home.html",
+        "children": []
+    },
+    {
+        "id": "boards",
+        "label": "게시판",
+        "children": [
+            {
+                "id": "news",
+                "label": "오늘의 뉴스",
+                "href": "board.html?board=news"
+            },
+            {
+                "id": "free",
+                "label": "자유게시판",
+                "href": "board.html?board=free"
+            },
+            {
+                "id": "image",
+                "label": "이미지",
+                "href": "board.html?board=image"
+            },
+            {
+                "id": "qna",
+                "label": "Q&A",
+                "href": "board.html?board=qna"
+            },
+            {
+                "id": "game",
+                "label": "게임",
+                "href": "board.html?board=game",
+                "children": [
+                    {
+                        "id": "action",
+                        "label": "액션"
+                    },
+                    {
+                        "id": "rpg",
+                        "label": "RPG"
+                    },
+                    {
+                        "id": "sports",
+                        "label": "스포츠"
+                    },
+                    {
+                        "id": "indie",
+                        "label": "인디"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "notifications",
+        "label": "알림",
+        "href": "notifications.html",
+        "children": []
+    },
+    {
+        "id": "search",
+        "label": "검색",
+        "href": "search.html",
+        "children": []
+    }
+]

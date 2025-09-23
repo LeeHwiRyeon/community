@@ -1,0 +1,31 @@
+{
+  "started": 1758313707977,
+  "durationMs": 577,
+  "results": [
+    {
+      "name": "boards-crud",
+      "ok": true,
+      "ms": 50
+    },
+    {
+      "name": "posts-crud-search",
+      "ok": true,
+      "ms": 61
+    },
+    {
+      "name": "view-batching",
+      "ok": true,
+      "ms": 15
+    },
+    {
+      "name": "metrics",
+      "ok": true,
+      "ms": 2
+    },
+    {
+      "name": "readonly-mode",
+      "ok": true,
+      "skipped": true
+    }
+  ]
+}

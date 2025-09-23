@@ -1,0 +1,82 @@
+{
+    "news": [
+        {
+            "id": "n1",
+            "title": "[IT] 새로운 기술 발표",
+            "author": "에디터",
+            "date": "2025-09-18T00:00:00Z",
+            "tag": "IT",
+            "category": "it",
+            "thumb": "",
+            "board": "news"
+        },
+        {
+            "id": "n2",
+            "title": "[GAME] 인기작 대형 업데이트",
+            "author": "에디터",
+            "date": "2025-09-18T00:00:00Z",
+            "tag": "GAME",
+            "category": "breaking",
+            "thumb": "",
+            "board": "news"
+        }
+    ],
+    "free": [
+        {
+            "id": "f1",
+            "title": "자유 주제 대화 모음",
+            "author": "익명1",
+            "date": "2025-09-17T00:00:00Z",
+            "tag": "잡담",
+            "category": "talk",
+            "thumb": "",
+            "board": "free"
+        }
+    ],
+    "image": [
+        {
+            "id": "img1",
+            "title": "첫 이미지 업로드",
+            "author": "포토",
+            "date": "2025-09-17T00:00:00Z",
+            "tag": "이미지",
+            "category": "photo",
+            "thumb": "https://picsum.photos/seed/1/128/96",
+            "board": "image"
+        },
+        {
+            "id": "img2",
+            "title": "두 번째 이미지",
+            "author": "포토",
+            "date": "2025-09-18T00:00:00Z",
+            "tag": "이미지",
+            "category": "art",
+            "thumb": "https://picsum.photos/seed/2/128/96",
+            "board": "image"
+        }
+    ],
+    "qna": [
+        {
+            "id": "q1",
+            "title": "이 기능 어떻게 하나요?",
+            "author": "질문자",
+            "date": "2025-09-16T00:00:00Z",
+            "tag": "질문",
+            "category": "guide",
+            "thumb": "",
+            "board": "qna"
+        }
+    ],
+    "game": [
+        {
+            "id": "g1",
+            "title": "신작 게임 토론 스레드",
+            "author": "게이머",
+            "date": "2025-09-15T00:00:00Z",
+            "tag": "게임",
+            "category": "rpg",
+            "thumb": "",
+            "board": "game"
+        }
+    ]
+}

@@ -1,0 +1,12 @@
+{
+    "notifications": "notifications.html",
+    "search": "search.html",
+    "home": "home.html",
+    "home-news": "home-news.html",
+    "home-community": "home-community.html",
+    "news": "board.html?board=news",
+    "free": "board.html?board=free",
+    "image": "board.html?board=image",
+    "qna": "board.html?board=qna",
+    "game": "board.html?board=game"
+}

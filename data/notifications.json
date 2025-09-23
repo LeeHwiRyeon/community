@@ -1,0 +1,23 @@
+[
+    {
+        "id": "nt1",
+        "type": "news",
+        "text": "오늘의 뉴스가 업데이트되었습니다.",
+        "href": "home.html?variant=news",
+        "date": "2025-09-19T08:00:00Z"
+    },
+    {
+        "id": "nt2",
+        "type": "post",
+        "text": "자유게시판에 새 글이 올라왔습니다.",
+        "href": "board.html?board=free",
+        "date": "2025-09-19T07:30:00Z"
+    },
+    {
+        "id": "nt3",
+        "type": "image",
+        "text": "이미지 게시판에 새로운 사진 2건.",
+        "href": "board.html?board=image",
+        "date": "2025-09-18T22:10:00Z"
+    }
+]

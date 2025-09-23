@@ -1,0 +1,37 @@
+{
+    "id": "root",
+    "label": "전체",
+    "children": [
+        {
+            "id": "notice",
+            "label": "공지",
+            "children": []
+        },
+        {
+            "id": "info",
+            "label": "정보",
+            "children": [
+                {
+                    "id": "guide",
+                    "label": "가이드",
+                    "children": []
+                },
+                {
+                    "id": "review",
+                    "label": "리뷰",
+                    "children": []
+                },
+                {
+                    "id": "tip",
+                    "label": "팁",
+                    "children": []
+                }
+            ]
+        },
+        {
+            "id": "free",
+            "label": "자유",
+            "children": []
+        }
+    ]
+}

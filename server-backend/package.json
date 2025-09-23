@@ -1,0 +1,38 @@
+{
+    "name": "community-backend",
+    "version": "0.1.0",
+    "type": "module",
+    "main": "src/index.js",
+    "scripts": {
+        "dev": "node --watch src/index.js",
+        "start": "node src/index.js",
+        "stop:win": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/stop-by-port.ps1 -Port 50000",
+        "restart:win": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/win-restart.ps1 -Port 50000",
+        "import:init": "node scripts/import-initial.js",
+        "mock": "ENV_ALLOW_MOCK=1 node scripts/mock-data.js",
+        "test:api": "node tests/api-random.js",
+        "test:contrast": "node scripts/contrast-audit.js",
+        "test:strict": "node tests/api-strict.js",
+        "test:strict-ro": "READONLY=1 node tests/api-strict.js",
+        "test:security": "node tests/security-strict.js",
+        "audit:security": "npm audit --omit=dev --production || exit 0",
+        "ci:backend": "npm run test:strict && npm run test:strict-ro && npm run test:security",
+        "test": "node --test",
+        "test:watch": "node --test --watch"
+    },
+    "dependencies": {
+        "cors": "^2.8.5",
+        "dotenv": "^16.4.5",
+        "express": "^4.19.2",
+        "helmet": "^7.1.0",
+        "jsonwebtoken": "^9.0.2",
+        "mysql2": "^3.9.7",
+        "redis": "^4.6.13",
+        "seedrandom": "^3.0.5",
+        "google-auth-library": "^9.14.1"
+    },
+    "devDependencies": {
+        "axe-core": "^4.9.1",
+        "puppeteer": "^23.4.1"
+    }
+}

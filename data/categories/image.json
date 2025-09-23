@@ -1,0 +1,21 @@
+{
+    "id": "root",
+    "label": "이미지 전체",
+    "children": [
+        {
+            "id": "photo",
+            "label": "사진",
+            "children": []
+        },
+        {
+            "id": "art",
+            "label": "아트",
+            "children": []
+        },
+        {
+            "id": "meme",
+            "label": "밈",
+            "children": []
+        }
+    ]
+}

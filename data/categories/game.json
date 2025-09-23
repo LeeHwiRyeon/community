@@ -1,0 +1,107 @@
+{
+    "id": "root",
+    "label": "게임 전체",
+    "children": [
+        {
+            "id": "series",
+            "label": "시리즈",
+            "children": [
+                {
+                    "id": "souls",
+                    "label": "소울라이크",
+                    "children": [
+                        {
+                            "id": "eldenring",
+                            "label": "엘든 링",
+                            "children": []
+                        },
+                        {
+                            "id": "sekiro",
+                            "label": "세키로",
+                            "children": []
+                        }
+                    ]
+                },
+                {
+                    "id": "mario",
+                    "label": "마리오",
+                    "children": [
+                        {
+                            "id": "odyssey",
+                            "label": "오디세이",
+                            "children": []
+                        },
+                        {
+                            "id": "maker",
+                            "label": "메이커",
+                            "children": []
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "platform",
+            "label": "플랫폼",
+            "children": [
+                {
+                    "id": "pc",
+                    "label": "PC",
+                    "children": []
+                },
+                {
+                    "id": "ps5",
+                    "label": "PS5",
+                    "children": []
+                },
+                {
+                    "id": "switch",
+                    "label": "Switch",
+                    "children": []
+                }
+            ]
+        },
+        {
+            "id": "type",
+            "label": "장르",
+            "children": [
+                {
+                    "id": "rpg",
+                    "label": "RPG",
+                    "children": []
+                },
+                {
+                    "id": "action",
+                    "label": "액션",
+                    "children": []
+                },
+                {
+                    "id": "sports",
+                    "label": "스포츠",
+                    "children": []
+                }
+            ]
+        },
+        {
+            "id": "resource",
+            "label": "자료실",
+            "children": [
+                {
+                    "id": "guide",
+                    "label": "가이드",
+                    "children": []
+                },
+                {
+                    "id": "review",
+                    "label": "리뷰",
+                    "children": []
+                },
+                {
+                    "id": "tip",
+                    "label": "팁",
+                    "children": []
+                }
+            ]
+        }
+    ]
+}

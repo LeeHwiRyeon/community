@@ -1,0 +1,23 @@
+{
+  "results": [
+    {
+      "name": "rate-limit",
+      "ok": true,
+      "skipped": false,
+      "ms": 3653
+    },
+    {
+      "name": "validation",
+      "ok": true,
+      "skipped": false,
+      "ms": 3635
+    },
+    {
+      "name": "readonly",
+      "ok": true,
+      "skipped": false,
+      "ms": 3493
+    }
+  ],
+  "failed": 0
+}
