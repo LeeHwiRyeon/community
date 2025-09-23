@@ -1,6 +1,54 @@
 # Community Hub
 
-백엔드(Express + MariaDB) 중심 커뮤니티 실험 프로젝트. 과거 정적 프론트는 제거되었습니다.
+백엔드(Express + MariaDB) 중심 커뮤니티 실험 프로젝트. 현대적인 React + TypeScript 프론트엔드가 포함된 풀스택 프로젝트입니다.
+
+## 🔧 시스템 요구사항
+
+### 필수 소프트웨어
+- **Node.js**: 18.0.0 이상 (권장: 20.x LTS)
+- **npm**: 8.0.0 이상 (Node.js와 함께 설치됨)
+- **Git**: 최신 버전
+
+### 운영체제 지원
+- Windows 10/11 (PowerShell 5.1+ 또는 PowerShell 7+)
+- macOS 10.15+
+- Linux (Ubuntu 20.04+, CentOS 8+)
+
+### 선택적 소프트웨어
+- **MySQL/MariaDB**: 실제 데이터베이스 사용 시 (목 데이터 모드 지원)
+- **Redis**: 캐싱 및 세션 관리 (메모리 모드 지원)
+
+## 📦 초기 설치
+
+### 1. 저장소 복제
+```bash
+git clone <repository-url>
+cd community
+```
+
+### 2. 백엔드 의존성 설치
+```bash
+cd server-backend
+npm install
+```
+
+### 3. 프론트엔드 의존성 설치
+```bash
+cd ../frontend
+npm install
+```
+
+### 4. 환경 설정 (선택사항)
+```bash
+# server-backend/.env 파일 생성
+cd ../server-backend
+copy .env.example .env    # Windows
+cp .env.example .env      # macOS/Linux
+
+# 필요한 환경변수 수정
+notepad .env             # Windows
+nano .env                # Linux
+```
 
 ## 🚀 빠른 시작 (명령체계)
 

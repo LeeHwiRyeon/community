@@ -1,31 +1,71 @@
 {
-  "started": 1758313707977,
-  "durationMs": 577,
-  "results": [
+  "passed": 0,
+  "total": 13,
+  "report": [
     {
-      "name": "boards-crud",
-      "ok": true,
-      "ms": 50
+      "name": "health",
+      "ok": false,
+      "err": "fetch failed"
     },
     {
-      "name": "posts-crud-search",
-      "ok": true,
-      "ms": 61
+      "name": "create board",
+      "ok": false,
+      "err": "fetch failed"
     },
     {
-      "name": "view-batching",
-      "ok": true,
-      "ms": 15
+      "name": "list boards",
+      "ok": false,
+      "err": "fetch failed"
+    },
+    {
+      "name": "create post 0",
+      "ok": false,
+      "err": "fetch failed"
+    },
+    {
+      "name": "create post 1",
+      "ok": false,
+      "err": "fetch failed"
+    },
+    {
+      "name": "create post 2",
+      "ok": false,
+      "err": "fetch failed"
+    },
+    {
+      "name": "list posts",
+      "ok": false,
+      "err": "fetch failed"
+    },
+    {
+      "name": "posts map",
+      "ok": false,
+      "err": "fetch failed"
+    },
+    {
+      "name": "soft delete board",
+      "ok": false,
+      "err": "fetch failed"
+    },
+    {
+      "name": "pagination multi-page",
+      "ok": false,
+      "err": "fetch failed"
+    },
+    {
+      "name": "search exact",
+      "ok": false,
+      "err": "fetch failed"
+    },
+    {
+      "name": "search approx",
+      "ok": false,
+      "err": "fetch failed"
     },
     {
       "name": "metrics",
-      "ok": true,
-      "ms": 2
-    },
-    {
-      "name": "readonly-mode",
-      "ok": true,
-      "skipped": true
+      "ok": false,
+      "err": "fetch failed"
     }
   ]
 }

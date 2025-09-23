@@ -9,7 +9,7 @@ import { fileURLToPath, pathToFileURL } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-let BASE = process.env.TEST_BASE || null; // set later if embedded
+let BASE = 'http://localhost:50000/api'; // set later if embedded
 
 function randId(prefix = 'x') { return prefix + Math.random().toString(36).slice(2, 10); }
 function randWord() { return Math.random().toString(36).slice(2, 7); }
@@ -45,18 +45,8 @@ async function waitForHealth(maxAttempts = 20) {
 let embedded = false;
 let embeddedServer = null;
 async function maybeEmbedServer() {
-    if (!BASE) BASE = 'http://localhost:' + (process.env.PORT || 50000) + '/api';
-    const healthy = await waitForHealth(5);
-    if (healthy) return;
-    console.log('[auto-embed] no healthy server detected -> bootstrap in-process');
-    const { bootstrap } = await import(pathToFileURL(path.resolve(__dirname, '../src/server.js')).href);
-    const { server } = await bootstrap({ port: 0 }); // ephemeral port
-    const port = server.address().port;
-    BASE = 'http://localhost:' + port + '/api';
-    embedded = true; embeddedServer = server;
-    const ok = await waitForHealth(60);
-    if (!ok) throw new Error('embedded server failed to become healthy');
-    console.log('[auto-embed] server healthy (embedded, port=' + port + ')');
+    // Skip embedding, use external mock server
+    return;
 }
 
 async function run() {

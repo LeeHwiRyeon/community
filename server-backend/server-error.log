@@ -216,3 +216,64 @@
     at Function.listen (C:\Users\hwi\Desktop\Projects\community\server-backend\node_modules\express\lib\application.js:635:24)
     at bootstrap (file:///C:/Users/hwi/Desktop/Projects/community/server-backend/src/server.js:323:24)
     at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+[2025-09-23T13:26:34.860Z] unhandledRejection: Error: connect ECONNREFUSED 127.0.0.1:3306
+    at Object.createConnectionPromise [as createConnection] (C:\Users\dlgnl\Desktop\Projects\community\server-backend\node_modules\mysql2\promise.js:19:31)
+    at ensureDatabase (file:///C:/Users/dlgnl/Desktop/Projects/community/server-backend/src/db.js:16:29)
+    at bootstrap (file:///C:/Users/dlgnl/Desktop/Projects/community/server-backend/src/server.js:309:11)
+    at file:///C:/Users/dlgnl/Desktop/Projects/community/server-backend/src/index.js:3:1
+    at ModuleJob.run (node:internal/modules/esm/module_job:345:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:651:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+[2025-09-23T13:44:05.012Z] unhandledRejection: Error: connect ECONNREFUSED 127.0.0.1:3306
+    at Object.createConnectionPromise [as createConnection] (C:\Users\dlgnl\Desktop\Projects\community\server-backend\node_modules\mysql2\promise.js:19:31)
+    at ensureDatabase (file:///C:/Users/dlgnl/Desktop/Projects/community/server-backend/src/db.js:16:29)
+    at bootstrap (file:///C:/Users/dlgnl/Desktop/Projects/community/server-backend/src/server.js:309:11)
+    at file:///C:/Users/dlgnl/Desktop/Projects/community/server-backend/src/index.js:3:1
+    at ModuleJob.run (node:internal/modules/esm/module_job:345:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:651:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+[2025-09-23T14:16:32.543Z] unhandledRejection: Error: connect ECONNREFUSED 127.0.0.1:3306
+    at Object.createConnectionPromise [as createConnection] (C:\Users\dlgnl\Desktop\Projects\community\server-backend\node_modules\mysql2\promise.js:19:31)
+    at ensureDatabase (file:///C:/Users/dlgnl/Desktop/Projects/community/server-backend/src/db.js:16:29)
+    at bootstrap (file:///C:/Users/dlgnl/Desktop/Projects/community/server-backend/src/server.js:309:11)
+    at file:///C:/Users/dlgnl/Desktop/Projects/community/server-backend/src/index.js:3:1
+    at ModuleJob.run (node:internal/modules/esm/module_job:345:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:651:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+[2025-09-23T14:17:05.582Z] unhandledRejection: Error: connect ECONNREFUSED 127.0.0.1:3306
+    at Object.createConnectionPromise [as createConnection] (C:\Users\dlgnl\Desktop\Projects\community\server-backend\node_modules\mysql2\promise.js:19:31)
+    at ensureDatabase (file:///C:/Users/dlgnl/Desktop/Projects/community/server-backend/src/db.js:16:29)
+    at bootstrap (file:///C:/Users/dlgnl/Desktop/Projects/community/server-backend/src/server.js:309:11)
+    at file:///C:/Users/dlgnl/Desktop/Projects/community/server-backend/src/index.js:3:1
+    at ModuleJob.run (node:internal/modules/esm/module_job:345:25)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:651:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+[2025-09-23T20:52:15.430Z] unhandledRejection: Error: connect ECONNREFUSED 127.0.0.1:3306
+    at Object.createConnectionPromise [as createConnection] (C:\Users\dlgnl\Desktop\Projects\community\server-backend\node_modules\mysql2\promise.js:19:31)
+    at ensureDatabase (file:///C:/Users/dlgnl/Desktop/Projects/community/server-backend/src/db.js:16:29)
+    at bootstrap (file:///C:/Users/dlgnl/Desktop/Projects/community/server-backend/src/server.js:309:11)
+    at file:///C:/Users/dlgnl/Desktop/Projects/community/server-backend/src/index.js:3:1
+    at ModuleJob.run (node:internal/modules/esm/module_job:345:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:651:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+[2025-09-23T20:52:16.450Z] unhandledRejection: Error: connect ECONNREFUSED 127.0.0.1:3306
+    at Object.createConnectionPromise [as createConnection] (C:\Users\dlgnl\Desktop\Projects\community\server-backend\node_modules\mysql2\promise.js:19:31)
+    at ensureDatabase (file:///C:/Users/dlgnl/Desktop/Projects/community/server-backend/src/db.js:16:29)
+    at bootstrap (file:///C:/Users/dlgnl/Desktop/Projects/community/server-backend/src/server.js:309:11)
+    at file:///C:/Users/dlgnl/Desktop/Projects/community/server-backend/src/index.js:3:1
+    at ModuleJob.run (node:internal/modules/esm/module_job:345:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:651:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+[2025-09-23T20:53:33.860Z] unhandledRejection: Error: connect ECONNREFUSED 127.0.0.1:3306
+    at Object.createConnectionPromise [as createConnection] (C:\Users\dlgnl\Desktop\Projects\community\server-backend\node_modules\mysql2\promise.js:19:31)
+    at ensureDatabase (file:///C:/Users/dlgnl/Desktop/Projects/community/server-backend/src/db.js:16:29)
+    at bootstrap (file:///C:/Users/dlgnl/Desktop/Projects/community/server-backend/src/server.js:309:11)
+    at file:///C:/Users/dlgnl/Desktop/Projects/community/server-backend/src/index.js:3:1
+    at ModuleJob.run (node:internal/modules/esm/module_job:345:25)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:651:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)

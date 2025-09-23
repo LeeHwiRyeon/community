@@ -394,8 +394,16 @@ router.get('/metrics', async (req, res, next) => {
     try {
         const start = Date.now();
         // lightweight counts (캐싱 고려 가능)
-        const [b] = await query('SELECT COUNT(*) as c FROM boards WHERE deleted=0');
-        const [p] = await query('SELECT COUNT(*) as c FROM posts WHERE deleted=0');
+        let b = { c: 0 }, p = { c: 0 };
+        try {
+            const bResult = await query('SELECT COUNT(*) as c FROM boards WHERE deleted=0');
+            const pResult = await query('SELECT COUNT(*) as c FROM posts WHERE deleted=0');
+            b = bResult[0] || { c: 0 };
+            p = pResult[0] || { c: 0 };
+        } catch (e) {
+            // Mock mode or DB error - use defaults
+            console.log('[metrics] Using default counts (mock mode or DB error)');
+        }
         const metrics = req.app.locals.runtimeMetrics || {};
         // include limited client metrics summary (does not expose raw distribution) for quick dashboard
         let clientSummary = null;

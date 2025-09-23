@@ -5,6 +5,12 @@ dotenv.config();
 let pool;
 // DB 존재하지 않을 때 생성하는 헬퍼 (최초 1회)
 export async function ensureDatabase() {
+    // 모의 데이터 모드인 경우 DB 초기화 건너뛰기
+    if (process.env.USE_MOCK_DB === '1' || process.env.ENV_ALLOW_MOCK === '1') {
+        console.log('[db] Using mock mode, skipping database initialization');
+        return;
+    }
+    
     const baseConfig = {
         host: process.env.DB_HOST,
         port: process.env.DB_PORT ? parseInt(process.env.DB_PORT, 10) : 3306,
@@ -19,6 +25,11 @@ export async function ensureDatabase() {
     } finally { await tmp.end(); }
 }
 export function getPool() {
+    // 모의 데이터 모드인 경우 null 반환
+    if (process.env.USE_MOCK_DB === '1' || process.env.ENV_ALLOW_MOCK === '1') {
+        return null;
+    }
+    
     if (!pool) {
         // NOTE: auth_gssapi_client 오류 발생 시 서버 계정 플러그인을 mysql_native_password 등으로 변경 필요.
         // 필요 시 mysql2 authPlugins 커스터마이징 가능 (여기서는 기본설정 유지).
@@ -41,8 +52,15 @@ export function getPool() {
 }
 
 export async function query(sql, params) {
+    // 모의 데이터 모드인 경우 빈 배열 반환
+    if (process.env.USE_MOCK_DB === '1' || process.env.ENV_ALLOW_MOCK === '1') {
+        console.log('[db] Mock mode: query skipped -', sql.substring(0, 50));
+        return [];
+    }
+    
     try {
         const p = getPool();
+        if (!p) return [];
         const [rows] = await p.execute(sql, params);
         return rows;
     } catch (e) {
@@ -52,6 +70,12 @@ export async function query(sql, params) {
 }
 
 export async function initSchema() {
+    // 모의 데이터 모드인 경우 스키마 초기화 건너뛰기
+    if (process.env.USE_MOCK_DB === '1' || process.env.ENV_ALLOW_MOCK === '1') {
+        console.log('[db] Mock mode: schema initialization skipped');
+        return;
+    }
+    
     // boards
     await query(`CREATE TABLE IF NOT EXISTS boards (
     id VARCHAR(64) PRIMARY KEY,
