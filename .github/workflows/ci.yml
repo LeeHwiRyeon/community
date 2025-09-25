@@ -11,16 +11,17 @@ jobs:
     runs-on: ubuntu-latest
     services:
       mariadb:
-        image: mariadb:11
+        image: mariadb:10.6
         env:
           MARIADB_ROOT_PASSWORD: root
           MARIADB_DATABASE: community
           MARIADB_USER: app
           MARIADB_PASSWORD: app
+          MARIADB_EXTRA_FLAGS: --innodb-use-native-aio=0
         ports: [ '3306:3306' ]
         options: >-
-          --health-cmd "mysqladmin ping -h 127.0.0.1 -u root -proot" 
-          --health-interval 5s --health-timeout 5s --health-retries 20
+          --health-cmd "mysqladmin ping -h 127.0.0.1 -u root -proot"
+          --health-interval 10s --health-timeout 5s --health-retries 12
     env:
       DB_HOST: 127.0.0.1
       DB_USER: app
@@ -30,6 +31,8 @@ jobs:
       NODE_ENV: test
     steps:
       - uses: actions/checkout@v4
+      - name: Install MariaDB client
+        run: sudo apt-get update && sudo apt-get install -y mariadb-client
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
