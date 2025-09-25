@@ -7,6 +7,7 @@ import {
   TrendingItem,
   CommunitySummary
 } from '../api'
+import { buildPostLink } from '../utils/routes'
 
 type SupportedPostFormat = 'article' | 'discussion' | 'broadcast' | 'gallery'
 type BroadcastPreview = Extract<PostPreview, { type: 'broadcast' }>
@@ -84,8 +85,6 @@ const toDateValue = (value?: string | null): number => {
   const timestamp = new Date(value).getTime()
   return Number.isFinite(timestamp) ? timestamp : 0
 }
-
-const buildPostLink = (boardId: string, postId: string) => `/board/${boardId}/post/${postId}`
 
 const resolveBoardLabel = (boardId: string): string => {
   if (BOARD_LABELS[boardId]) {

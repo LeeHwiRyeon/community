@@ -48,6 +48,12 @@ jobs:
       - name: Install deps
         working-directory: server-backend
         run: npm install
+      - name: Start backend server
+        working-directory: server-backend
+        run: |
+          node mock-server.js &
+          sleep 5
+          curl -f http://localhost:50000/api/health || (echo "Backend not ready" && exit 1)
       - name: Run integration tests
         working-directory: server-backend
         run: node tests/api-random.js
