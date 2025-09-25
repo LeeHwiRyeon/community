@@ -1,4 +1,4 @@
-import express from 'express';
+﻿import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
@@ -23,17 +23,21 @@ export function createApp() {
     const app = express();
     logger.info('app.create start');
 
-    // CORS 설정 - 프론트엔드 도메인 허용
+    // CORS ?ㅼ젙 - ?꾨줎?몄뿏???꾨찓???덉슜
     const corsOptions = {
         origin: [
             'http://localhost:5173', // Vite 기본 포트
-            'http://localhost:3000', // React 기본 포트
+            'http://localhost:5000', // Community 기본 포트
+            'http://localhost:5002', // 예비 포트
+            'http://localhost:3000', // CRA 기본 포트
             'http://localhost:4173', // Vite preview 포트
             'http://127.0.0.1:5173',
+            'http://127.0.0.1:5000',
+            'http://127.0.0.1:5002',
             'http://127.0.0.1:3000',
             'http://127.0.0.1:4173'
         ],
-        credentials: true, // 쿠키 허용
+        credentials: true, // 荑좏궎 ?덉슜
         optionsSuccessStatus: 200,
         methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
         allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
@@ -41,7 +45,7 @@ export function createApp() {
 
     app.use(cors(corsOptions));
 
-    // UTF-8 인코딩 설정
+    // UTF-8 ?몄퐫???ㅼ젙
     app.use(express.json({
         limit: '1mb',
         type: 'application/json',
@@ -52,7 +56,7 @@ export function createApp() {
         charset: 'utf-8'
     }));
 
-    // 응답 헤더에 UTF-8 인코딩 설정
+    // ?묐떟 ?ㅻ뜑??UTF-8 ?몄퐫???ㅼ젙
     app.use((req, res, next) => {
         res.setHeader('Content-Type', 'application/json; charset=utf-8');
         next();
@@ -135,8 +139,8 @@ export function createApp() {
         res.setHeader('Access-Control-Expose-Headers', merged);
         next();
     });
-    // (Removed) Legacy static front-end serving 제거.
-    // 이유: 프로젝트를 순수 API 백엔드로 전환. 필요 시 ENABLE_STATIC=1 + STATIC_ROOT 로 재도입 가능.
+    // (Removed) Legacy static front-end serving ?쒓굅.
+    // ?댁쑀: ?꾨줈?앺듃瑜??쒖닔 API 諛깆뿏?쒕줈 ?꾪솚. ?꾩슂 ??ENABLE_STATIC=1 + STATIC_ROOT 濡??щ룄??媛??
     if (process.env.ENABLE_STATIC === '1') {
         try {
             const staticRoot = process.env.STATIC_ROOT || path.join(__dirname, '../../public');
@@ -238,20 +242,113 @@ export function createApp() {
     });
     // Attach auth (JWT) context early for /api routes (always enabled; providers can still be empty)
     app.use(buildAuthMiddleware(query));
-    // --- Basic security pattern filter (very lightweight heuristic) ---
-    const suspicious = [/union\s+select/i, /<script/i, /drop\s+table/i, /;--/, /\/\*/];
+    // --- Enhanced WAF (Web Application Firewall) pattern filter ---
+    const suspiciousPatterns = [
+        // SQL Injection patterns
+        /union\s+select/i,
+        /select\s+.*\s+from/i,
+        /insert\s+into/i,
+        /update\s+.*\s+set/i,
+        /delete\s+from/i,
+        /drop\s+table/i,
+        /drop\s+database/i,
+        /alter\s+table/i,
+        /create\s+table/i,
+        /exec\s+.*\(/i,
+        /execute\s+.*\(/i,
+        /script\s+.*language/i,
+        /;\s*--/i,  // SQL comment injection
+        /\/\*.*\*\//i,  // SQL block comments
+        /\b(union|select|insert|update|delete|drop|alter|create|exec|execute)\b.*\b(from|into|table|database)\b/i,
+
+        // XSS patterns
+        /<script/i,
+        /javascript:/i,
+        /vbscript:/i,
+        /onload\s*=/i,
+        /onerror\s*=/i,
+        /onclick\s*=/i,
+        /onmouseover\s*=/i,
+        /onmouseout\s*=/i,
+        /onkeydown\s*=/i,
+        /onkeyup\s*=/i,
+        /onkeypress\s*=/i,
+        /<iframe/i,
+        /<object/i,
+        /<embed/i,
+        /<form/i,
+        /<input/i,
+        /<meta/i,
+        /expression\s*\(/i,
+        /vbscript\s*:/i,
+        /data\s*:\s*text\/html/i,
+
+        // Path traversal
+        /\.\.\//i,
+        /\.\\/i,
+        /%2e%2e%2f/i,  // URL encoded ../
+        /%2e%5c/i,      // URL encoded .\
+
+        // Command injection
+        /\|\s*cat/i,
+        /\|\s*ls/i,
+        /\|\s*rm/i,
+        /\|\s*wget/i,
+        /\|\s*curl/i,
+        /;\s*cat/i,
+        /;\s*ls/i,
+        /;\s*rm/i,
+        /;\s*wget/i,
+        /;\s*curl/i,
+        /`\s*.*\s*`/i,  // Backtick execution
+
+        // File inclusion
+        /include\s*\(/i,
+        /require\s*\(/i,
+        /file_get_contents/i,
+        /fopen\s*\(/i,
+
+        // PHP specific (in case of mixed environments)
+        /<\?php/i,
+        /eval\s*\(/i,
+        /assert\s*\(/i,
+        /preg_replace.*\/e/i,
+
+        // General suspicious patterns
+        /\b(admin|root|system|config|backup|dump)\b.*\b(pass|pwd|password|secret|key|token)\b/i,
+        /base64_decode/i,
+        /system\s*\(/i,
+        /shell_exec/i,
+        /passthru/i,
+        /proc_open/i,
+        /popen/i
+    ];
     app.use((req, res, next) => {
         try {
             if (req.method === 'GET' || req.path.startsWith('/api')) {
                 const blob = [req.url, JSON.stringify(req.body || {})].join(' ').slice(0, 2000);
-                if (suspicious.some(r => r.test(blob))) {
-                    const m = req.app.locals.runtimeMetrics || (req.app.locals.runtimeMetrics = {});
-                    m.secBlocked = (m.secBlocked || 0) + 1;
-                    logger.warn('sec.block', { ip: req.socket.remoteAddress, p: req.path });
-                    return res.status(400).json({ error: 'rejected' });
+
+                // Check for suspicious patterns
+                for (const pattern of suspiciousPatterns) {
+                    if (pattern.test(blob)) {
+                        const m = req.app.locals.runtimeMetrics || (req.app.locals.runtimeMetrics = {});
+                        m.secBlocked = (m.secBlocked || 0) + 1;
+                        logger.warn('sec.block', {
+                            ip: req.socket.remoteAddress,
+                            p: req.path,
+                            pattern: pattern.toString(),
+                            ua: req.headers['user-agent']?.slice(0, 100)
+                        });
+                        return res.status(400).json({
+                            error: 'request_blocked',
+                            message: 'Suspicious request pattern detected'
+                        });
+                    }
                 }
             }
-        } catch { }
+        } catch (e) {
+            logger.warn('sec.filter.error', { msg: e.message });
+        }
         next();
     });
     app.use('/api', router);
@@ -276,13 +373,67 @@ export function createApp() {
         }
     } catch { /* ignore logging failures */ }
     app.use('/api/auth', authRouter);
+
+    // API 404 handler - must be after all API routes
+    app.use('/api/*', (req, res) => {
+        res.status(404).json({ error: 'not_found', message: 'API endpoint not found' });
+    });
+
     app.use((err, req, res, next) => {
-        // Central error sanitizer: do not leak stack in production
+        // Enhanced error handling with security considerations
         const isDev = process.env.NODE_ENV !== 'production';
-        console.error('API Error', err);
-        const payload = { error: 'internal_error' };
-        if (isDev) payload.detail = err?.message;
-        res.status(500).json(payload);
+        const errorId = `err_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
+        // Log error securely - never expose stack traces in production logs
+        const logData = {
+            errorId,
+            message: err?.message || 'Unknown error',
+            stack: isDev ? err?.stack : undefined, // Only include stack in development
+            url: req?.url,
+            method: req?.method,
+            ip: req?.headers?.['x-forwarded-for']?.split(',')[0]?.trim() || req?.socket?.remoteAddress,
+            ua: req?.headers?.['user-agent']?.slice(0, 100),
+            timestamp: new Date().toISOString()
+        };
+
+        logger.error('api.error', logData);
+
+        // Determine appropriate status code and response
+        let statusCode = 500;
+        let errorType = 'internal_error';
+
+        if (err?.statusCode) {
+            statusCode = err.statusCode;
+        } else if (err?.name === 'ValidationError') {
+            statusCode = 400;
+            errorType = 'validation_error';
+        } else if (err?.name === 'UnauthorizedError' || err?.name === 'JsonWebTokenError') {
+            statusCode = 401;
+            errorType = 'authentication_error';
+        } else if (err?.name === 'ForbiddenError') {
+            statusCode = 403;
+            errorType = 'authorization_error';
+        } else if (err?.code === 'ER_DUP_ENTRY') {
+            statusCode = 409;
+            errorType = 'duplicate_entry';
+        } else if (err?.code === 'ER_NO_SUCH_TABLE') {
+            statusCode = 500;
+            errorType = 'database_error';
+        }
+
+        // Safe error response - never expose internal details
+        const payload = {
+            error: errorType,
+            message: isDev ? err?.message : 'An internal error occurred',
+            errorId: isDev ? errorId : undefined // Only show error ID in development
+        };
+
+        // Add additional context for client-side debugging in development
+        if (isDev && err?.details) {
+            payload.details = err.details;
+        }
+
+        res.status(statusCode).json(payload);
     });
     app.locals.runtimeMetrics = runtimeMetrics;
     // attach view buffer reference for route handler access if needed later
@@ -291,8 +442,8 @@ export function createApp() {
 }
 
 export async function bootstrap(options = {}) {
-    // 기본 포트 50000 고정 시작. 점유(EADDRINUSE) 시 +1씩 증가 (최대 20회 시도)
-    // 옵션으로 port 명시 시 그 값을 시도 시작점으로 사용.
+    // 湲곕낯 ?ы듃 50000 怨좎젙 ?쒖옉. ?먯쑀(EADDRINUSE) ??+1??利앷? (理쒕? 20???쒕룄)
+    // ?듭뀡?쇰줈 port 紐낆떆 ??洹?媛믪쓣 ?쒕룄 ?쒖옉?먯쑝濡??ъ슜.
     let basePort = parseInt(options.port || process.env.PORT || '50000', 10);
     if (isNaN(basePort) || basePort <= 0) basePort = 50000;
     let PORT = basePort;
@@ -340,33 +491,37 @@ export async function bootstrap(options = {}) {
     }
     try {
         const rows = await query('SELECT COUNT(*) as c FROM boards');
-        if (rows[0].c === 0) {
+        // 紐⑥쓽 紐⑤뱶?먯꽌??鍮?諛곗뿴??諛섑솚?섎?濡?湲곕낯媛?泥섎━
+        const boardCount = rows && rows.length > 0 ? rows[0].c : 0;
+        if (boardCount === 0) {
             console.log('[init] empty boards -> importing initial JSON');
             const mod = await import('../scripts/import-initial.js');
             if (mod && mod.default) await mod.default();
         }
         // Seed sample streaming events if no published events exist yet
         try {
-            const [ec] = await query("SELECT COUNT(*) as c FROM events WHERE status='published'");
-            if (!ec.c) {
+            const eventRows = await query("SELECT COUNT(*) as c FROM events WHERE status='published'");
+            // 紐⑥쓽 紐⑤뱶?먯꽌??鍮?諛곗뿴??諛섑솚?섎?濡?湲곕낯媛?泥섎━
+            const eventCount = eventRows && eventRows.length > 0 ? eventRows[0].c : 0;
+            if (eventCount === 0) {
                 const now = new Date();
                 const addMin = m => new Date(now.getTime() + m * 60000);
                 const samples = [
                     {
-                        title: '[생방송] 롤 챌린저 승급전 도전!',
-                        body: '드디어 챌린저 승급전! 같이 응원해주세요!',
+                        title: '[?앸갑?? 濡?梨뚮┛? ?밴툒???꾩쟾!',
+                        body: '?쒕뵒??梨뚮┛? ?밴툒?? 媛숈씠 ?묒썝?댁＜?몄슂!',
                         starts_at: addMin(-30), ends_at: addMin(90), location: 'Online', status: 'published',
                         meta_json: JSON.stringify({ streamUrl: 'https://sample-videos.com/video321/mp4/720/big_buck_bunny_720p_1mb.mp4', isLive: true, viewers: 2341 })
                     },
                     {
-                        title: '[방송예고] 발로란트 레디언트 도전기',
-                        body: '오늘 밤 8시! 레디언트 승급을 위한 마지막 도전!',
+                        title: '[諛⑹넚?덇퀬] 諛쒕줈????덈뵒?명듃 ?꾩쟾湲?,
+                        body: '?ㅻ뒛 諛?8?? ?덈뵒?명듃 ?밴툒???꾪븳 留덉?留??꾩쟾!',
                         starts_at: addMin(120), ends_at: addMin(240), location: 'Online', status: 'published',
                         meta_json: JSON.stringify({ isLive: false, viewers: 0 })
                     },
                     {
-                        title: '[다시보기] 원신 신규 캐릭터 뽑기',
-                        body: '신규 5성 캐릭터 뽑기 하이라이트!',
+                        title: '[?ㅼ떆蹂닿린] ?먯떊 ?좉퇋 罹먮┃??戮묎린',
+                        body: '?좉퇋 5??罹먮┃??戮묎린 ?섏씠?쇱씠??',
                         starts_at: addMin(-1440), ends_at: addMin(-1380), location: 'Online', status: 'published',
                         meta_json: JSON.stringify({ streamUrl: 'https://sample-videos.com/video321/mp4/720/big_buck_bunny_720p_1mb.mp4', isLive: false, viewers: 0 })
                     }
@@ -383,7 +538,7 @@ export async function bootstrap(options = {}) {
     let server;
     async function startListen(currentPort, remainingAttempts) {
         return new Promise((resolve, reject) => {
-            const s = app.listen(currentPort, () => {
+            const s = app.listen(currentPort, '127.0.0.1', () => {
                 PORT = currentPort;
                 process.env.PORT = String(PORT); // export for any child scripts
                 logger.event('server.listen', { port: PORT });
@@ -632,3 +787,5 @@ process.on('uncaughtException', err => logProcessError('uncaughtException', err)
 if (import.meta.url === `file://${process.argv[1]}` || process.argv[1]?.endsWith('server.js')) {
     bootstrap();
 }
+
+

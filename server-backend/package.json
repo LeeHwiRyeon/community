@@ -10,15 +10,21 @@
         "restart:win": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/win-restart.ps1 -Port 50000",
         "import:init": "node scripts/import-initial.js",
         "mock": "ENV_ALLOW_MOCK=1 node scripts/mock-data.js",
+        "test": "node --test",
+        "test:watch": "node --test --watch",
+        "test:unit": "NODE_OPTIONS=\"--experimental-vm-modules\" jest",
+        "test:unit:watch": "jest --watch",
         "test:api": "node tests/api-random.js",
         "test:contrast": "node scripts/contrast-audit.js",
         "test:strict": "node tests/api-strict.js",
         "test:strict-ro": "READONLY=1 node tests/api-strict.js",
         "test:security": "node tests/security-strict.js",
+        "test:e2e": "playwright test",
+        "test:e2e:ui": "playwright test --ui",
+        "test:e2e:headed": "playwright test --headed",
+        "test:e2e:debug": "playwright test --debug",
         "audit:security": "npm audit --omit=dev --production || exit 0",
-        "ci:backend": "npm run test:strict && npm run test:strict-ro && npm run test:security",
-        "test": "node --test",
-        "test:watch": "node --test --watch"
+        "ci:backend": "npm run test:unit && npm run test:strict && npm run test:strict-ro && npm run test:security"
     },
     "dependencies": {
         "cors": "^2.8.5",
@@ -32,7 +38,13 @@
         "google-auth-library": "^9.14.1"
     },
     "devDependencies": {
+        "@playwright/test": "^1.55.1",
+        "@types/jest": "^29.5.12",
+        "@types/supertest": "^6.0.2",
         "axe-core": "^4.9.1",
-        "puppeteer": "^23.4.1"
+        "jest": "^29.7.0",
+        "jest-environment-node": "^29.7.0",
+        "puppeteer": "^23.4.1",
+        "supertest": "^7.0.0"
     }
 }

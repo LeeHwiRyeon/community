@@ -1,0 +1,30 @@
+{
+    "id": "root",
+    "label": "Rankings",
+    "children": [
+        {
+            "id": "daily",
+            "label": "Daily",
+            "children": [
+                { "id": "top_posts", "label": "Top Posts", "children": [] },
+                { "id": "most_commented", "label": "Most Commented", "children": [] }
+            ]
+        },
+        {
+            "id": "weekly",
+            "label": "Weekly",
+            "children": [
+                { "id": "returning", "label": "Returning Visitors", "children": [] },
+                { "id": "fresh", "label": "Newcomers", "children": [] }
+            ]
+        },
+        {
+            "id": "monthly",
+            "label": "Monthly",
+            "children": [
+                { "id": "retention", "label": "Retention", "children": [] },
+                { "id": "growth", "label": "Growth", "children": [] }
+            ]
+        }
+    ]
+}

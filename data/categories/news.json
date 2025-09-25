@@ -1,26 +1,19 @@
 {
     "id": "root",
-    "label": "뉴스 전체",
+    "label": "News Overview",
     "children": [
+        { "id": "major", "label": "Top Stories", "children": [] },
+        { "id": "coverage", "label": "Field Reports", "children": [] },
+        { "id": "interview", "label": "Interviews", "children": [] },
         {
-            "id": "headline",
-            "label": "헤드라인",
-            "children": []
-        },
-        {
-            "id": "breaking",
-            "label": "속보",
-            "children": []
-        },
-        {
-            "id": "it",
-            "label": "IT/과학",
-            "children": []
-        },
-        {
-            "id": "culture",
-            "label": "문화",
-            "children": []
+            "id": "game_news",
+            "label": "Game Updates",
+            "children": [
+                { "id": "article", "label": "Features & Reviews", "children": [] },
+                { "id": "industry", "label": "Industry Trends", "children": [] },
+                { "id": "indie", "label": "Indie Highlights", "children": [] },
+                { "id": "new_releases", "label": "New Releases", "children": [] }
+            ]
         }
     ]
 }

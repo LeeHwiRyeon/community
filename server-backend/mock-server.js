@@ -1,552 +1,694 @@
-// 완전한 목업 데이터 제공을 위한 스크립트
-import express from 'express';
-import cors from 'cors';
-import { randomPosts, randomMessages, generateRandomPost, generateRandomMessage } from './random-data.js';
+import express from 'express'
+import cors from 'cors'
+import fs from 'fs'
+import path from 'path'
+import { fileURLToPath } from 'url'
+import {
+  buildMockHierarchy,
+  generatePostForBoard,
+  generateRandomMessage,
+  randomMessages
+} from './random-data.js'
 
-const app = express();
-const PORT = 50000;
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
-app.use(cors({
-    origin: ['http://localhost:5000', 'http://localhost:5173', 'http://localhost:3000'],
+const DEFAULT_PORT = Number(process.env.PORT || 50000)
+const DEFAULT_HOST = process.env.HOST || '127.0.0.1'
+
+const app = express()
+
+const allowedOrigins = [
+  'http://localhost:5000',
+  'http://localhost:5173',
+  'http://localhost:3000',
+  'http://localhost:4173',
+  'http://127.0.0.1:5000',
+  'http://127.0.0.1:5173',
+  'http://127.0.0.1:3000',
+  'http://127.0.0.1:4173'
+]
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true)
+      } else {
+        callback(null, false)
+      }
+    },
     credentials: true
-}));
-app.use(express.json());
+  })
+)
 
-// 목업 데이터
-const mockBoards = [
-    { id: 'free', title: '자유게시판', ordering: 1, deleted: 0 },
-    { id: 'news', title: '게임뉴스', ordering: 2, deleted: 0 },
-    { id: 'game', title: '게임토론', ordering: 3, deleted: 0 },
-    { id: 'image', title: '이미지', ordering: 4, deleted: 0 }
-];
+app.use(express.json())
+app.use((req, res, next) => {
+  res.setHeader('Content-Type', 'application/json; charset=utf-8')
+  next()
+})
 
-const mockPosts = [
-    {
-        id: '1',
-        board_id: 'news',
-        title: 'League of Legends 2024 World Championship Finals',
-        content: 'T1이 4년 만에 월드 챔피언십 타이틀을 차지했습니다. Faker의 완벽한 게임플레이와 팀 조화가 토너먼트 전반에 걸쳐 빛을 발했습니다.',
-        author: 'GameNews',
-        category: 'LOL',
-        date: '2024-01-15',
-        views: 12543,
-        comments_count: 89,
-        created_at: '2024-01-15T10:00:00Z',
-        updated_at: '2024-01-15T10:00:00Z'
-    },
-    {
-        id: '2',
-        board_id: 'news',
-        title: 'StarCraft II 새로운 확장팩 발표',
-        content: '블리자드가 공식적으로 StarCraft II의 새로운 확장팩을 발표했습니다. 프로토스, 테란, 저그에 이어 네 번째 종족이 도입될 것으로 예상됩니다.',
-        author: 'Editorial Team',
-        category: 'StarCraft',
-        date: '2024-01-15',
-        views: 8234,
-        comments_count: 156,
-        created_at: '2024-01-15T09:00:00Z',
-        updated_at: '2024-01-15T09:00:00Z'
-    },
-    {
-        id: '3',
-        board_id: 'news',
-        title: 'Valorant 새 맵 스크린샷 공개',
-        content: '라이엇 게임즈가 새로운 Valorant 맵의 공식 스크린샷을 공개했습니다. 이 맵은 도시와 자연 환경을 결합한 독특한 디자인이 특징입니다.',
-        author: 'News Team',
-        category: 'Valorant',
-        date: '2024-01-15',
-        views: 5678,
-        comments_count: 78,
-        created_at: '2024-01-15T08:00:00Z',
-        updated_at: '2024-01-15T08:00:00Z'
-    },
-    {
-        id: '4',
-        board_id: 'game',
-        title: 'Genshin Impact 새 캐릭터 아트워크',
-        content: 'miHoYo가 다가오는 Genshin Impact 업데이트에서 등장할 새 캐릭터의 아트워크를 공개했습니다.',
-        author: 'News Team',
-        category: 'Genshin',
-        date: '2024-01-15',
-        views: 9876,
-        comments_count: 234,
-        created_at: '2024-01-15T07:00:00Z',
-        updated_at: '2024-01-15T07:00:00Z'
-    },
-    ...randomPosts // 랜덤 생성된 100개 게시글 추가
-];
+const hierarchy = buildMockHierarchy({ postsPerBoard: 30 })
+const boardMap = hierarchy.boardMap
+const communities = hierarchy.communities
+let chatMessages = [...randomMessages]
 
 const mockUsers = [
-    {
-        id: 1,
-        display_name: 'TestUser',
-        email: 'test@example.com',
-        role: 'user',
-        status: 'active',
-        identities: [
-            { provider: 'google', provider_user_id: 'test123' }
-        ]
+  {
+    id: 1,
+    display_name: 'TestUser',
+    email: 'test@example.com',
+    role: 'user',
+    status: 'active'
+  }
+]
+
+function boardList() {
+  return Array.from(boardMap.values()).filter((board) => board.deleted !== 1)
+}
+
+function activePosts(board) {
+  return board.posts.filter((post) => post.deleted !== 1)
+}
+
+function getAllPosts() {
+  return boardList().flatMap((board) => activePosts(board))
+}
+
+function sanitizeBoard(board) {
+  return {
+    id: board.id,
+    title: board.title,
+    summary: board.summary,
+    category: board.category,
+    format: board.format,
+    preview_format: board.previewFormat,
+    community: board.communityId,
+    community_title: board.communityTitle,
+    ordering: board.ordering,
+    rank: board.rank,
+    deleted: board.deleted ?? 0
+  }
+}
+
+function summarizePost(post) {
+  return {
+    id: post.id,
+    title: post.title,
+    author: post.author ?? null,
+    views: post.views,
+    comments_count: post.comments_count ?? 0,
+    created_at: post.created_at,
+    updated_at: post.updated_at,
+    date: post.date ?? null,
+    thumb: post.thumb ?? null,
+    mediaType: post.mediaType ?? post.preview?.type ?? 'article',
+    preview: post.preview ?? null,
+    stream_url: post.stream_url ?? null,
+    category: post.category ?? null
+  }
+}
+
+function fullPost(post) {
+  return {
+    ...summarizePost(post),
+    board_id: post.board_id,
+    content: post.content ?? '',
+    deleted: post.deleted ?? 0
+  }
+}
+
+function findPostById(postId) {
+  for (const board of boardMap.values()) {
+    const match = board.posts.find((post) => post.id === postId)
+    if (match) {
+      return { board, post: match }
     }
-];
+  }
+  return null
+}
 
-const mockMessages = [
-    {
-        id: 'msg1',
-        room_id: 'test',
-        username: 'TestUser',
-        content: '안녕하세요! 테스트 메시지입니다.',
-        created_at: new Date().toISOString()
-    },
-    {
-        id: 'msg2',
-        room_id: 'test',
-        username: 'GameBot',
-        content: '게임 커뮤니티에 오신 것을 환영합니다!',
-        created_at: new Date(Date.now() - 60000).toISOString()
-    },
-    ...randomMessages // 랜덤 생성된 50개 메시지 추가
-];
+function toTitleCase(value) {
+  return value
+    .toString()
+    .split(/[-_\\s]+/)
+    .filter(Boolean)
+    .map((segment) => segment.charAt(0).toUpperCase() + segment.slice(1))
+    .join(' ')
+}
 
-// API 엔드포인트들
+function slugify(value) {
+  return value
+    .toString()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+
+}
+
+function loadMenuData() {
+  try {
+    const categoriesPath = path.resolve(__dirname, '../..', 'data', 'categories', 'game.json')
+    const raw = fs.readFileSync(categoriesPath, 'utf8')
+    const parsed = JSON.parse(raw)
+    const children = Array.isArray(parsed.children) ? parsed.children : []
+
+    return [
+      {
+        id: 'home',
+        label: 'Home',
+        href: '/',
+        children: []
+      },
+      {
+        id: 'boards',
+        label: 'Boards',
+        children: [
+          { id: 'news', label: 'News', href: '/board/news' },
+          { id: 'community', label: 'Community', href: '/board/community' },
+          { id: 'broadcast', label: 'Broadcast', href: '/board/broadcast' },
+          {
+            id: 'game',
+            label: 'Games',
+            children: children.map((entry) => ({
+              id: entry.id,
+              label: entry.label,
+              children: Array.isArray(entry.children)
+                ? entry.children.map((sub) => ({ id: sub.id, label: sub.label }))
+                : []
+            }))
+          }
+        ]
+      }
+    ]
+  } catch (error) {
+    console.warn('[mock-server] Failed to load menu data:', error.message)
+    return [
+      {
+        id: 'home',
+        label: 'Home',
+        href: '/',
+        children: []
+      },
+      {
+        id: 'boards',
+        label: 'Boards',
+        children: [
+          { id: 'news', label: 'News', href: '/board/news' },
+          { id: 'game', label: 'Games', href: '/board/game' }
+        ]
+      }
+    ]
+  }
+}
+
+function ensureCommunity(communityId, communityTitle, summary) {
+  let community = communities.find((entry) => entry.id === communityId)
+  if (!community) {
+    community = {
+      id: communityId,
+      title: communityTitle,
+      description: summary ?? `${communityTitle} community`,
+      rank: communities.length + 1,
+      totalViews: 0,
+      boards: []
+    }
+    communities.push(community)
+  }
+  return community
+}
+
+function computeCommunitySummaries() {
+  return communities.map((community) => {
+    const boards = community.boards.filter((board) => board.deleted !== 1)
+    const totalViews = boards.reduce(
+      (sum, board) => sum + activePosts(board).reduce((acc, post) => acc + post.views, 0),
+      0
+    )
+
+    return {
+      id: community.id,
+      title: community.title,
+      description: community.description,
+      rank: community.rank,
+      totalViews,
+      boards: boards.map((board) => ({
+        id: board.id,
+        title: board.title,
+        summary: board.summary,
+        category: board.category,
+        rank: board.rank,
+        ordering: board.ordering,
+        format: board.format,
+        preview_format: board.previewFormat,
+        posts: activePosts(board)
+          .slice(0, 8)
+          .map((post) => summarizePost(post))
+      }))
+    }
+  })
+}
+
 app.get('/api/health', (req, res) => {
-    res.json({
-        status: 'ok',
-        ts: Date.now(),
-        server: 'mock-server',
-        mode: 'full-mock'
-    });
-});
+  res.json({
+    status: 'ok',
+    mode: 'mock',
+    timestamp: Date.now(),
+    boards: boardList().length,
+    posts: getAllPosts().length
+  })
+})
 
 app.get('/api/boards', (req, res) => {
-    console.log('GET /api/boards called, mockBoards:', mockBoards.map(b => ({ id: b.id, deleted: b.deleted })));
-    const activeBoards = mockBoards.filter(b => b.deleted === 0);
-    console.log('GET /api/boards returning:', activeBoards.map(b => b.id));
-    res.json(activeBoards);
-});
+  const boards = boardList().map((board) => sanitizeBoard(board))
+  if (req.query.grouped === 'true') {
+    const grouped = boards.reduce((acc, board) => {
+      const category = board.category || 'general'
+      if (!acc[category]) {
+        acc[category] = []
+      }
+      acc[category].push(board)
+      return acc
+    }, {})
+    res.json(grouped)
+    return
+  }
 
-app.post('/api/boards', (req, res) => {
-    const { id, title } = req.body;
-    const newBoard = {
-        id,
-        title,
-        ordering: mockBoards.length + 1,
-        deleted: 0,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-    };
-    mockBoards.push(newBoard);
-    console.log('POST /api/boards created board:', newBoard.id);
-    res.status(201).json(newBoard);
-});
+  res.json(boards)
+})
+
+app.get('/api/board-categories', (req, res) => {
+  const categories = Array.from(
+    new Set(boardList().map((board) => board.category || 'general'))
+  ).map((id) => ({
+    id,
+    label: toTitleCase(id),
+    description: `Sample posts from the ${toTitleCase(id)} category.`
+  }))
+  res.json(categories)
+})
+
+app.get('/api/communities', (req, res) => {
+  res.json(computeCommunitySummaries())
+})
 
 app.get('/api/posts', (req, res) => {
-    const { board_id, limit = 20, offset = 0, sort = 'created_at' } = req.query;
-    let posts = mockPosts;
-    
-    if (board_id) {
-        posts = posts.filter(p => p.board_id === board_id);
-    }
-    
-    if (sort === 'views') {
-        posts = posts.sort((a, b) => b.views - a.views);
-    } else {
-        posts = posts.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-    }
-    
-    const total = posts.length;
-    const start = parseInt(offset) || 0;
-    const lim = parseInt(limit) || 20;
-    posts = posts.slice(start, start + lim + 1); // +1 to check hasMore
-    const hasMore = posts.length > lim;
-    if (hasMore) posts = posts.slice(0, lim);
-    
-    res.json({ items: posts, total, offset: start, limit: lim, hasMore });
-});
+  const boardId = req.query.board_id
+  const limit = Math.max(1, Math.min(parseInt(req.query.limit, 10) || 20, 100))
+  const offset = Math.max(0, parseInt(req.query.offset, 10) || 0)
+  const sort = req.query.sort === 'views' ? 'views' : 'date'
+  const search = typeof req.query.q === 'string' ? req.query.q.trim().toLowerCase() : ''
+
+  let posts = getAllPosts()
+  if (boardId) {
+    posts = posts.filter((post) => post.board_id === boardId)
+  }
+  if (search) {
+    posts = posts.filter(
+      (post) =>
+        post.title.toLowerCase().includes(search) ||
+        (post.content ?? '').toLowerCase().includes(search)
+    )
+  }
+  if (sort === 'views') {
+    posts = posts.sort((a, b) => b.views - a.views)
+  } else {
+    posts = posts.sort((a, b) => {
+      const aDate = a.date || a.created_at
+      const bDate = b.date || b.created_at
+      return new Date(bDate).getTime() - new Date(aDate).getTime()
+    })
+  }
+
+  const slice = posts.slice(offset, offset + limit + 1)
+  const hasMore = slice.length > limit
+  const items = (hasMore ? slice.slice(0, limit) : slice).map((post) => fullPost(post))
+
+  res.json({
+    items,
+    total: posts.length,
+    offset,
+    limit,
+    hasMore
+  })
+})
 
 app.get('/api/posts/:id', (req, res) => {
-    const post = mockPosts.find(p => p.id === req.params.id);
-    if (post) {
-        res.json(post);
-    } else {
-        res.status(404).json({ error: 'Post not found' });
-    }
-});
+  const result = findPostById(req.params.id)
+  if (!result) {
+    res.status(404).json({ error: 'post_not_found' })
+    return
+  }
+  res.json(fullPost(result.post))
+})
 
 app.get('/api/boards/:boardId/posts', (req, res) => {
-    const { limit = 20, offset = 0, sort = 'created_at', q } = req.query;
-    let posts = mockPosts.filter(p => p.board_id === req.params.boardId && p.deleted !== 1);
-    
-    // 검색 기능
-    if (q && q.trim()) {
-        const searchTerm = q.toLowerCase().trim();
-        posts = posts.filter(p => 
-            p.title.toLowerCase().includes(searchTerm) || 
-            p.content.toLowerCase().includes(searchTerm)
-        );
-    }
-    
-    if (sort === 'views') {
-        posts = posts.sort((a, b) => b.views - a.views);
-    } else {
-        posts = posts.sort((a, b) => {
-            // 실제 서버처럼 date DESC, created_at DESC로 정렬
-            const aDate = a.date || a.created_at;
-            const bDate = b.date || b.created_at;
-            if (aDate !== bDate) {
-                return new Date(bDate) - new Date(aDate);
-            }
-            return new Date(b.created_at) - new Date(a.created_at);
-        });
-    }
-    
-    const total = posts.length;
-    const start = parseInt(offset) || 0;
-    const lim = parseInt(limit) || 20;
-    posts = posts.slice(start, start + lim + 1); // +1 to check hasMore
-    const hasMore = posts.length > lim;
-    if (hasMore) posts = posts.slice(0, lim);
-    
-    res.json({ items: posts, total, offset: start, limit: lim, hasMore });
-});
+  const board = boardMap.get(req.params.boardId)
+  if (!board || board.deleted === 1) {
+    res.status(404).json({ error: 'board_not_found' })
+    return
+  }
+
+  const limit = Math.max(1, Math.min(parseInt(req.query.limit, 10) || 20, 100))
+  const offset = Math.max(0, parseInt(req.query.offset, 10) || 0)
+  const sort = req.query.sort === 'views' ? 'views' : 'date'
+  const search = typeof req.query.q === 'string' ? req.query.q.trim().toLowerCase() : ''
+
+  let posts = activePosts(board)
+  if (search) {
+    posts = posts.filter(
+      (post) =>
+        post.title.toLowerCase().includes(search) ||
+        (post.content ?? '').toLowerCase().includes(search)
+    )
+  }
+  if (sort === 'views') {
+    posts = posts.sort((a, b) => b.views - a.views)
+  } else {
+    posts = posts.sort((a, b) => {
+      const aDate = a.date || a.created_at
+      const bDate = b.date || b.created_at
+      return new Date(bDate).getTime() - new Date(aDate).getTime()
+    })
+  }
+
+  const slice = posts.slice(offset, offset + limit + 1)
+  const hasMore = slice.length > limit
+  const items = (hasMore ? slice.slice(0, limit) : slice).map((post) => fullPost(post))
+
+  res.json({
+    items,
+    total: posts.length,
+    offset,
+    limit,
+    hasMore
+  })
+})
+
+app.post('/api/boards', (req, res) => {
+  const {
+    id: rawId,
+    title,
+    summary,
+    category = 'custom',
+    communityId = 'community-custom',
+    communityTitle = 'Community Hub'
+  } = req.body || {}
+
+  if (!title || typeof title !== 'string' || !title.trim()) {
+    res.status(400).json({ error: 'title_required' })
+    return
+  }
+
+  const id = rawId && typeof rawId === 'string' && rawId.trim() ? rawId.trim() : slugify(title)
+  if (boardMap.has(id)) {
+    res.status(409).json({ error: 'board_exists' })
+    return
+  }
+
+  const ordering = boardMap.size + 1
+  const board = {
+    id,
+    title: title.trim(),
+    summary: summary ?? `${title.trim()} discussion board`,
+    communityId,
+    communityTitle,
+    communitySize: 1,
+    gameName: title.trim(),
+    ordering,
+    rank: ordering,
+    weight: 1,
+    category,
+    previewFormat: 'article',
+    format: 'article',
+    previewSeed: {},
+    seedHeadlines: [`${title.trim()} spotlight`],
+    posts: [],
+    deleted: 0
+  }
+
+  boardMap.set(board.id, board)
+  const community = ensureCommunity(communityId, communityTitle, summary)
+  community.boards.push(board)
+
+  res.status(201).json(sanitizeBoard(board))
+})
 
 app.post('/api/boards/:boardId/posts', (req, res) => {
-    const { title, content } = req.body;
-    const newPost = {
-        id: Date.now().toString(),
-        board_id: req.params.boardId,
-        title,
-        content,
-        author: 'TestUser',
-        category: 'General',
-        date: new Date().toISOString().split('T')[0],
-        views: 0,
-        comments_count: 0,
-        deleted: 0,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-    };
-    mockPosts.unshift(newPost);
-    res.status(201).json(newPost);
-});
+  const board = boardMap.get(req.params.boardId)
+  if (!board || board.deleted === 1) {
+    res.status(404).json({ error: 'board_not_found' })
+    return
+  }
+
+  const seed = generatePostForBoard(board)
+  const now = new Date()
+  const title = typeof req.body?.title === 'string' && req.body.title.trim() ? req.body.title.trim() : seed.title
+  const content = typeof req.body?.content === 'string' && req.body.content.trim() ? req.body.content.trim() : seed.content
+  const author = typeof req.body?.author === 'string' && req.body.author.trim() ? req.body.author.trim() : seed.author
+  const views = typeof req.body?.views === 'number' ? req.body.views : seed.views
+
+  const post = {
+    ...seed,
+    id: Date.now().toString(),
+    title,
+    content,
+    author,
+    views,
+    comments_count: 0,
+    created_at: now.toISOString(),
+    updated_at: now.toISOString(),
+    date: now.toISOString().slice(0, 10),
+    deleted: 0
+  }
+
+  board.posts.unshift(post)
+  res.status(201).json(fullPost(post))
+})
 
 app.patch('/api/posts/:pid', (req, res) => {
-    const { title, content } = req.body;
-    const post = mockPosts.find(p => p.id === req.params.pid);
-    if (post) {
-        if (title !== undefined) post.title = title;
-        if (content !== undefined) post.content = content;
-        post.updated_at = new Date().toISOString();
-        res.json(post);
-    } else {
-        res.status(404).json({ error: 'Post not found' });
-    }
-});
+  const result = findPostById(req.params.pid)
+  if (!result) {
+    res.status(404).json({ error: 'post_not_found' })
+    return
+  }
 
-app.post('/api/posts/:pid/view', (req, res) => {
-    const post = mockPosts.find(p => p.id === req.params.pid);
-    if (post) {
-        post.views = (post.views || 0) + 1;
-        res.json({ ok: true, buffered: true });
-    } else {
-        res.status(404).json({ error: 'Post not found' });
-    }
-});
+  const { post } = result
+  const { title, content, author, thumb, deleted, preview } = req.body || {}
+
+  if (typeof title === 'string' && title.trim()) {
+    post.title = title.trim()
+  }
+  if (typeof content === 'string' && content.trim()) {
+    post.content = content.trim()
+  }
+  if (typeof author === 'string' && author.trim()) {
+    post.author = author.trim()
+  }
+  if (typeof thumb === 'string' && thumb.trim()) {
+    post.thumb = thumb.trim()
+  }
+  if (preview && typeof preview === 'object') {
+    post.preview = preview
+  }
+  if (deleted !== undefined) {
+    post.deleted = deleted ? 1 : 0
+  }
+
+  post.updated_at = new Date().toISOString()
+  res.json(fullPost(post))
+})
 
 app.delete('/api/boards/:boardId/posts/:pid', (req, res) => {
-    const post = mockPosts.find(p => p.id === req.params.pid);
-    if (post) {
-        post.deleted = 1;
-        res.json({ ok: true });
-    } else {
-        res.status(404).json({ error: 'Post not found' });
-    }
-});
+  const board = boardMap.get(req.params.boardId)
+  if (!board) {
+    res.status(404).json({ error: 'board_not_found' })
+    return
+  }
+
+  const index = board.posts.findIndex((post) => post.id === req.params.pid)
+  if (index === -1) {
+    res.status(404).json({ error: 'post_not_found' })
+    return
+  }
+
+  board.posts.splice(index, 1)
+  res.status(204).end()
+})
 
 app.delete('/api/boards/:boardId', (req, res) => {
-    const board = mockBoards.find(b => b.id === req.params.boardId);
-    if (board) {
-        board.deleted = 1;
-        res.json({ ok: true });
-    } else {
-        res.status(404).json({ error: 'Board not found' });
-    }
-});
+  const board = boardMap.get(req.params.boardId)
+  if (!board) {
+    res.status(404).json({ error: 'board_not_found' })
+    return
+  }
+
+  board.deleted = 1
+  board.posts.forEach((post) => {
+    post.deleted = 1
+  })
+  res.status(204).end()
+})
+
+app.post('/api/posts/:pid/view', (req, res) => {
+  const result = findPostById(req.params.pid)
+  if (!result) {
+    res.status(404).json({ error: 'post_not_found' })
+    return
+  }
+
+  result.post.views += 1
+  result.post.updated_at = new Date().toISOString()
+  res.json({ ok: true, views: result.post.views })
+})
 
 app.get('/api/trending', (req, res) => {
-    const trending = mockPosts
-        .sort((a, b) => b.views - a.views)
-        .slice(0, 10)
-        .map(p => ({
-            id: p.id,
-            title: p.title,
-            views: p.views,
-            category: p.category
-        }));
-    
-    res.json({
-        source: 'mock',
-        posts: trending,
-        timestamp: Date.now()
-    });
-});
+  const limit = Math.max(1, Math.min(parseInt(req.query.limit, 10) || 10, 50))
+  const periodParam = typeof req.query.period === 'string' ? req.query.period : req.query.periodDays
+  let periodDays = 7
+  if (typeof periodParam === 'string') {
+    const match = periodParam.match(/(\d+)/)
+    if (match) {
+      periodDays = parseInt(match[1], 10)
+    }
+  }
+
+  const items = getAllPosts()
+    .sort((a, b) => b.views - a.views)
+    .slice(0, limit)
+    .map((post, index) => ({
+      id: post.id,
+      board: post.board_id,
+      title: post.title,
+      category: post.category ?? null,
+      image: post.thumb ?? null,
+      author: post.author ?? null,
+      views: post.views,
+      created_at: post.created_at,
+      updated_at: post.updated_at,
+      rank: index + 1,
+      isRising: index < 3
+    }))
+
+  res.json({ items, periodDays, limit })
+})
 
 app.get('/api/categories', (req, res) => {
-    res.json({
-        categories: ['LOL', 'StarCraft', 'Valorant', 'Genshin', 'General']
-    });
-});
+  const categories = Array.from(
+    new Set(boardList().map((board) => board.category || 'general'))
+  ).map((id) => ({
+    id,
+    label: toTitleCase(id),
+    boards: boardList()
+      .filter((board) => (board.category || 'general') === id)
+      .map((board) => sanitizeBoard(board))
+  }))
+  res.json(categories)
+})
+
+app.get('/api/menu', (req, res) => {
+  res.json(loadMenuData())
+})
 
 app.get('/api/posts-map', (req, res) => {
-    const map = {};
-    // 모든 보드에 대해 빈 배열 초기화
-    mockBoards.forEach(board => {
-        map[board.id] = [];
-    });
-    mockPosts.filter(p => p.deleted !== 1).forEach(p => {
-        if (!map[p.board_id]) map[p.board_id] = [];
-        map[p.board_id].push(p);
-    });
-    Object.values(map).forEach(arr => arr.sort((a, b) => new Date(b.date || b.created_at) - new Date(a.date || a.created_at)));
-    res.json(map);
-});
+  const map = {}
+  boardList().forEach((board) => {
+    map[board.id] = activePosts(board).map((post) => summarizePost(post))
+  })
+  res.json(map)
+})
 
-// 채팅 API
 app.get('/api/chat/:room/messages', (req, res) => {
-    const roomMessages = mockMessages.filter(m => m.room_id === req.params.room || req.params.room === 'test');
-    res.json({ messages: roomMessages });
-});
+  const room = req.params.room || 'general'
+  const limit = Math.max(1, Math.min(parseInt(req.query.limit, 10) || 50, 200))
+  const messages = chatMessages
+    .filter((message) => message.room_id === room)
+    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+    .slice(0, limit)
+  res.json({ items: messages })
+})
 
 app.post('/api/chat/:room/messages', (req, res) => {
-    const { content, author } = req.body;
-    const newMessage = {
-        id: Date.now().toString(),
-        room_id: req.params.room,
-        username: author || 'Anonymous',
-        content,
-        created_at: new Date().toISOString()
-    };
-    mockMessages.unshift(newMessage);
-    res.json({ message: newMessage });
-});
+  const room = req.params.room || 'general'
+  const message = generateRandomMessage(Date.now(), room)
+  message.content = typeof req.body?.content === 'string' && req.body.content.trim()
+    ? req.body.content.trim()
+    : message.content
+  message.username = typeof req.body?.username === 'string' && req.body.username.trim()
+    ? req.body.username.trim()
+    : message.username
 
-// 인증 API
-app.post('/api/auth/google', (req, res) => {
-    res.json({
-        access: 'mock-token-' + Date.now(),
-        user: mockUsers[0]
-    });
-});
+  chatMessages.unshift(message)
+  res.status(201).json(message)
+})
 
 app.get('/api/auth/me', (req, res) => {
-    res.json({
-        user: mockUsers[0]
-    });
-});
+  res.json({ user: mockUsers[0] })
+})
 
-// 메트릭스 API
+app.post('/api/auth/google', (req, res) => {
+  res.json({ token: 'mock-token', user: mockUsers[0] })
+})
+
 app.get('/api/metrics', (req, res) => {
-    res.json({
-        ok: true,
-        uptimeSec: Math.floor(Date.now() / 1000),
-        boards: mockBoards.length,
-        posts: mockPosts.length,
-        rlWriteBlocked: 0,
-        rlSearchBlocked: 0,
-        keepaliveFail: 0,
-        lastKeepaliveOk: null,
-        lastKeepaliveError: null,
-        dbSampleLatencyMs: 5,
-        memory: process.memoryUsage(),
-        viewBufferedAdds: 0,
-        viewFlushBatches: 0,
-        viewFlushRows: 0,
-        viewFlushFailures: 0,
-        viewForcedFlushes: 0,
-        viewBackoffRetries: 0,
-        viewFlushDropped: 0,
-        chat: {
-            posted: 0,
-            fetched: 0,
-            roomsListed: 0,
-            communitiesListed: 0,
-            clears: 0,
-            redisTrim: 0
-        },
-        clientMetric: {
-            attempts: 0,
-            accepted: 0,
-            rateLimited: 0,
-            discardNoMetrics: 0,
-            discardAllNull: 0,
-            bytes: 0,
-            exportAttempts: 0,
-            exportSuccess: 0,
-            exportFail: 0
-        },
-        clientSummary: {}
-    });
-});
+  res.json({
+    uptimeSeconds: Math.floor(process.uptime()),
+    boards: boardList().length,
+    posts: getAllPosts().length,
+    chat: {
+      rooms: new Set(chatMessages.map((message) => message.room_id)).size,
+      totalMessages: chatMessages.length
+    }
+  })
+})
 
-// Prometheus 메트릭스 API (텍스트 포맷)
 app.get('/api/metrics-prom', (req, res) => {
-    const lines = [];
-    const uptimeSec = Math.floor(Date.now() / 1000);
+  const lines = []
+  const uptime = Math.floor(process.uptime())
+  const boards = boardList().length
+  const posts = getAllPosts().length
 
-    // Uptime
-    lines.push('# HELP app_uptime_seconds Application uptime in seconds');
-    lines.push('# TYPE app_uptime_seconds gauge');
-    lines.push(`app_uptime_seconds ${uptimeSec}`);
+  lines.push('# HELP app_uptime_seconds Application uptime in seconds')
+  lines.push('# TYPE app_uptime_seconds gauge')
+  lines.push(`app_uptime_seconds ${uptime}`)
 
-    // Boards count
-    lines.push('# HELP app_boards Boards count');
-    lines.push('# TYPE app_boards gauge');
-    lines.push(`app_boards ${mockBoards.length}`);
+  lines.push('# HELP app_boards Boards count')
+  lines.push('# TYPE app_boards gauge')
+  lines.push(`app_boards ${boards}`)
 
-    // Posts count
-    lines.push('# HELP app_posts Posts count');
-    lines.push('# TYPE app_posts gauge');
-    lines.push(`app_posts ${mockPosts.length}`);
+  lines.push('# HELP app_posts Posts count')
+  lines.push('# TYPE app_posts gauge')
+  lines.push(`app_posts ${posts}`)
 
-    // Rate limiting
-    lines.push('# HELP app_rl_write_blocked Rate limited write requests');
-    lines.push('# TYPE app_rl_write_blocked counter');
-    lines.push('app_rl_write_blocked 0');
+  lines.push('# HELP app_chat_messages Chat messages stored')
+  lines.push('# TYPE app_chat_messages gauge')
+  lines.push(`app_chat_messages ${chatMessages.length}`)
 
-    lines.push('# HELP app_rl_search_blocked Rate limited search requests');
-    lines.push('# TYPE app_rl_search_blocked counter');
-    lines.push('app_rl_search_blocked 0');
-
-    // Keepalive
-    lines.push('# HELP app_keepalive_fail Keepalive failure count');
-    lines.push('# TYPE app_keepalive_fail counter');
-    lines.push('app_keepalive_fail 0');
-
-    // View buffer metrics
-    lines.push('# HELP app_view_buffered_adds Buffered view increments');
-    lines.push('# TYPE app_view_buffered_adds counter');
-    lines.push('app_view_buffered_adds 0');
-
-    lines.push('# HELP app_view_flush_batches View flush batch count');
-    lines.push('# TYPE app_view_flush_batches counter');
-    lines.push('app_view_flush_batches 0');
-
-    lines.push('# HELP app_view_flush_rows Distinct post rows flushed');
-    lines.push('# TYPE app_view_flush_rows counter');
-    lines.push('app_view_flush_rows 0');
-
-    lines.push('# HELP app_view_flush_failures View flush batch failure count');
-    lines.push('# TYPE app_view_flush_failures counter');
-    lines.push('app_view_flush_failures 0');
-
-    lines.push('# HELP app_view_forced_flushes Forced flush triggers due to total threshold');
-    lines.push('# TYPE app_view_forced_flushes counter');
-    lines.push('app_view_forced_flushes 0');
-
-    lines.push('# HELP app_view_backoff_retries Backoff retry attempts for failed flush');
-    lines.push('# TYPE app_view_backoff_retries counter');
-    lines.push('app_view_backoff_retries 0');
-
-    lines.push('# HELP app_view_flush_dropped Estimated dropped view increments');
-    lines.push('# TYPE app_view_flush_dropped counter');
-    lines.push('app_view_flush_dropped 0');
-
-    // Auth counters
-    lines.push('# HELP auth_login_success Authentication login success count');
-    lines.push('# TYPE auth_login_success counter');
-    lines.push('auth_login_success 0');
-
-    lines.push('# HELP auth_login_fail Authentication login failure count');
-    lines.push('# TYPE auth_login_fail counter');
-    lines.push('auth_login_fail 0');
-
-    lines.push('# HELP auth_refresh_success Authentication refresh success count');
-    lines.push('# TYPE auth_refresh_success counter');
-    lines.push('auth_refresh_success 0');
-
-    lines.push('# HELP auth_link_success Account linking success count');
-    lines.push('# TYPE auth_link_success counter');
-    lines.push('auth_link_success 0');
-
-    // Chat counters
-    lines.push('# HELP chat_messages_posted Chat messages posted');
-    lines.push('# TYPE chat_messages_posted counter');
-    lines.push('chat_messages_posted 0');
-
-    lines.push('# HELP chat_messages_fetched Chat message list fetches (db fallback path included)');
-    lines.push('# TYPE chat_messages_fetched counter');
-    lines.push('chat_messages_fetched 0');
-
-    lines.push('# HELP chat_rooms_listed Chat rooms listed');
-    lines.push('# TYPE chat_rooms_listed counter');
-    lines.push('chat_rooms_listed 0');
-
-    lines.push('# HELP chat_communities_listed Chat communities listed');
-    lines.push('# TYPE chat_communities_listed counter');
-    lines.push('chat_communities_listed 0');
-
-    lines.push('# HELP chat_clears Chat history clear operations');
-    lines.push('# TYPE chat_clears counter');
-    lines.push('chat_clears 0');
-
-    lines.push('# HELP chat_redis_trim Chat redis list trim operations');
-    lines.push('# TYPE chat_redis_trim counter');
-    lines.push('chat_redis_trim 0');
-
-    // Client metric counters
-    lines.push('# HELP client_metric_export_attempts Client metric export attempt count');
-    lines.push('# TYPE client_metric_export_attempts counter');
-    lines.push('client_metric_export_attempts 0');
-
-    lines.push('# HELP client_metric_export_success Client metric export success count');
-    lines.push('# TYPE client_metric_export_success counter');
-    lines.push('client_metric_export_success 0');
-
-    lines.push('# HELP client_metric_export_fail Client metric export failure count');
-    lines.push('# TYPE client_metric_export_fail counter');
-    lines.push('client_metric_export_fail 0');
-
-    lines.push('# HELP client_metric_attempts Client metric ingestion attempts');
-    lines.push('# TYPE client_metric_attempts counter');
-    lines.push('client_metric_attempts 0');
-
-    lines.push('# HELP client_metric_accepted Client metric accepted count');
-    lines.push('# TYPE client_metric_accepted counter');
-    lines.push('client_metric_accepted 0');
-
-    lines.push('# HELP client_metric_rate_limited Client metric rate limited count');
-    lines.push('# TYPE client_metric_rate_limited counter');
-    lines.push('client_metric_rate_limited 0');
-
-    lines.push('# HELP client_metric_discard_no_metrics Client metric discarded (no metrics field)');
-    lines.push('# TYPE client_metric_discard_no_metrics counter');
-    lines.push('client_metric_discard_no_metrics 0');
-
-    lines.push('# HELP client_metric_discard_all_null Client metric discarded (all values null)');
-    lines.push('# TYPE client_metric_discard_all_null counter');
-    lines.push('client_metric_discard_all_null 0');
-
-    lines.push('# HELP client_metric_bytes Client metric payload bytes cumulative');
-    lines.push('# TYPE client_metric_bytes counter');
-    lines.push('client_metric_bytes 0');
-
-    res.setHeader('Content-Type', 'text/plain; version=0.0.4');
-    res.send(lines.join('\n'));
-});
+  res.setHeader('Content-Type', 'text/plain; version=0.0.4')
+  res.send(lines.join('\n'))
+})
 
 app.get('/api/help', (req, res) => {
-    res.json({
-        endpoints: {
-            '/api/health': 'GET - 서버 상태 확인',
-            '/api/boards': 'GET - 게시판 목록',
-            '/api/posts': 'GET - 게시글 목록',
-            '/api/trending': 'GET - 인기 게시글',
-            '/api/chat/:room/messages': 'GET/POST - 채팅'
-        }
-    });
-});
+  res.json({
+    endpoints: {
+      health: 'GET /api/health',
+      boards: 'GET /api/boards',
+      posts: 'GET /api/posts',
+      trending: 'GET /api/trending',
+      communities: 'GET /api/communities',
+      menu: 'GET /api/menu',
+      chatMessages: 'GET /api/chat/:room/messages'
+    }
+  })
+})
 
-app.listen(PORT, () => {
-    console.log(`🚀 Mock Server running at http://localhost:${PORT}`);
-    console.log(`📊 API endpoints available at http://localhost:${PORT}/api/help`);
-    console.log(`🎯 All endpoints return realistic mock data`);
-});
+const server = app.listen(DEFAULT_PORT, DEFAULT_HOST, () => {
+  console.log(`Mock server listening on http://${DEFAULT_HOST}:${DEFAULT_PORT}`)
+})
+
+process.on('SIGINT', () => {
+  server.close(() => {
+    console.log('Mock server terminated')
+    process.exit(0)
+  })
+})

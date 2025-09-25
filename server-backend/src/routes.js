@@ -5,7 +5,181 @@ import { bufferViewIncrement, __flushAllViewsForTest } from './server.js';
 import express from 'express';
 import { getClientMetricBuffer } from './metrics-client-buffer.js';
 import { isRedisEnabled, zRevRange, lPush, lRange, lTrim, publish } from './redis.js';
+import { isMockDatabaseEnabled, listBoards as mockListBoards, listCategories as mockListCategories, getPostsPage as mockGetPostsPage, getAllPostsPage as mockGetAllPostsPage, getPostById as mockGetPostById, incrementViews as mockIncrementViews, getTrending as mockGetTrending, getHomeAggregate as mockGetHomeAggregate, createPost as mockCreatePost, updatePost as mockUpdatePost, deletePost as mockDeletePost, mockSearch, mockGeneratePosts, mockResetPosts, mockStatus, getMetricsSummary as mockGetMetricsSummary } from './mock-data-provider.js';
+import { SAMPLE_TITLES, SAMPLE_SNIPPETS, SAMPLE_AUTHORS, SAMPLE_CATEGORIES, SAMPLE_THUMBS, mockRandInt as randInt, mockPick as pick, mockRandomId as randomId } from './mock-samples.js';
 const router = express.Router();
+const useMockDb = isMockDatabaseEnabled();
+
+if (useMockDb) {
+    const mapBoardForResponse = (board) => ({
+        id: board.id,
+        title: board.title,
+        ordering: board.ordering ?? board.order ?? 1000,
+        deleted: board.deleted ?? 0,
+        created_at: board.created_at ?? new Date().toISOString(),
+        updated_at: board.updated_at ?? board.created_at ?? new Date().toISOString()
+    });
+
+    const mapPostForResponse = (post) => ({
+        id: post.id,
+        board: post.board_id,
+        board_id: post.board_id,
+        title: post.title,
+        content: post.content,
+        date: post.date,
+        tag: post.tag,
+        thumb: post.thumb,
+        author: post.author,
+        category: post.category,
+        deleted: post.deleted ?? 0,
+        created_at: post.created_at,
+        updated_at: post.updated_at,
+        views: post.views ?? 0
+    });
+
+    router.get('/boards', (req, res) => {
+        res.json(mockListBoards().map(mapBoardForResponse));
+    });
+
+    router.get('/categories', (req, res) => {
+        const categories = mockListCategories();
+        res.json({ categories, count: categories.length });
+    });
+
+    router.get('/boards/:id/posts', (req, res) => {
+        const boardId = req.params.id;
+        const off = Math.max(0, parseInt(req.query.offset ?? '0', 10) || 0);
+        let lim = parseInt(req.query.limit ?? '30', 10) || 30;
+        if (lim <= 0) lim = 30; if (lim > 100) lim = 100;
+        const search = (req.query.q || '').trim() || undefined;
+        const { items, total } = mockGetPostsPage({ boardId, offset: off, limit: lim, search });
+        const formatted = items.map(mapPostForResponse);
+        const hasMore = off + lim < total;
+        res.json({ items: formatted, total, offset: off, limit: lim, hasMore });
+    });
+
+    router.get('/posts', (req, res) => {
+        const pageNum = Math.max(1, parseInt(req.query.page ?? '1', 10) || 1);
+        let lim = parseInt(req.query.limit ?? '30', 10) || 30;
+        if (lim <= 0) lim = 30; if (lim > 100) lim = 100;
+        const off = (pageNum - 1) * lim;
+        const search = (req.query.q || '').trim() || undefined;
+        const { items, total } = mockGetAllPostsPage({ offset: off, limit: lim, search });
+        const formatted = items.map(mapPostForResponse);
+        const hasMore = off + lim < total;
+        const totalPages = Math.ceil(total / lim) || 1;
+        res.json({
+            posts: formatted,
+            pagination: {
+                page: pageNum,
+                limit: lim,
+                total,
+                totalPages,
+                hasMore
+            }
+        });
+    });
+
+    router.get('/posts/:pid', (req, res) => {
+        const post = mockGetPostById(req.params.pid);
+        if (!post) return res.status(404).json({ error: 'not_found' });
+        res.json(mapPostForResponse(post));
+    });
+
+    router.post('/posts/:pid/view', (req, res) => {
+        mockIncrementViews(req.params.pid, 1);
+        res.json({ ok: true, buffered: false });
+    });
+
+    router.get('/posts-map', (req, res) => {
+        const map = {};
+        mockListBoards().forEach((board) => {
+            const { items } = mockGetPostsPage({ boardId: board.id, offset: 0, limit: 1000 });
+            if (items.length) {
+                map[board.id] = items.map(mapPostForResponse);
+            }
+        });
+        res.json(map);
+    });
+
+    router.post('/boards/:id/posts', (req, res) => {
+        try {
+            const post = mockCreatePost(req.params.id, req.body || {});
+            res.status(201).json(mapPostForResponse(post));
+        } catch (e) {
+            if (e.message === 'board_not_found') return res.status(404).json({ error: 'board_not_found' });
+            return res.status(400).json({ error: 'invalid_request', message: e.message });
+        }
+    });
+
+    router.patch('/boards/:id/posts/:pid', (req, res) => {
+        const updated = mockUpdatePost(req.params.pid, req.body || {});
+        if (!updated) return res.status(404).json({ error: 'not_found' });
+        res.json(mapPostForResponse(updated));
+    });
+
+    router.delete('/boards/:id/posts/:pid', (req, res) => {
+        const ok = mockDeletePost(req.params.pid);
+        res.json({ ok });
+    });
+
+    router.get('/search', (req, res) => {
+        const q = (req.query.q || '').trim();
+        const lim = Math.max(1, Math.min(100, parseInt(req.query.limit ?? '20', 10) || 20));
+        const off = Math.max(0, parseInt(req.query.offset ?? '0', 10) || 0);
+        if (!q) return res.json({ query: q, items: [], count: 0, total: 0, offset: off, limit: lim });
+        const result = mockSearch(q, lim, off);
+        res.json({ ok: true, ...result });
+    });
+
+    router.get('/trending', (req, res) => {
+        const limit = Math.max(1, Math.min(100, parseInt(req.query.limit ?? '10', 10) || 10));
+        const period = (req.query.period || '7d').toString();
+        const days = parseInt(period, 10) || 7;
+        const payload = mockGetTrending({ limit, periodDays: days });
+        res.json({ ...payload, cache: false, ttlMs: TRENDING_TTL_MS });
+    });
+
+    router.get('/home', (req, res) => {
+        const latest = parseInt(req.query.latest ?? '20', 10) || 20;
+        const trending = parseInt(req.query.trending ?? '10', 10) || 10;
+        const aggregate = mockGetHomeAggregate({ latest, trending });
+        const boards = aggregate.boards.map(mapBoardForResponse);
+        const latestPosts = aggregate.latest.map(mapPostForResponse);
+        const trendingItems = aggregate.trending.map((item) => ({ ...item, board_id: item.board }));
+        res.json({
+            announcements: aggregate.announcements,
+            events: aggregate.events,
+            latest: latestPosts,
+            trending: trendingItems,
+            boards
+        });
+    });
+
+    router.get('/metrics', (req, res) => {
+        const summary = mockGetMetricsSummary();
+        res.json({ ok: true, counts: summary, durationMs: 0 });
+    });
+
+    router.post('/mock/generate', (req, res) => {
+        if (!allowMockOps()) return res.status(403).json({ error: 'forbidden' });
+        const result = mockGeneratePosts(req.body || {});
+        if (!result.ok) return res.status(400).json({ error: result.error || 'mock_failed' });
+        res.json({ ok: true, generated: result.generated, items: result.items });
+    });
+
+    router.post('/mock/reset', (req, res) => {
+        if (!allowMockOps()) return res.status(403).json({ error: 'forbidden' });
+        const result = mockResetPosts();
+        res.json({ ok: true, removed: result.removed });
+    });
+
+    router.get('/mock/status', (req, res) => {
+        if (!allowMockOps()) return res.status(403).json({ error: 'forbidden' });
+        const result = mockStatus();
+        res.json(result);
+    });
+}
 
 // UTF-8 응답 헤더 설정
 router.use((req, res, next) => {
@@ -782,28 +956,8 @@ router.get('/home', async (req, res, next) => {
 
 // --- Mock data utilities (guarded) ---
 function allowMockOps() {
-    return process.env.NODE_ENV === 'test' || process.env.ENV_ALLOW_MOCK === '1';
+    return useMockDb || process.env.NODE_ENV === 'test' || process.env.ENV_ALLOW_MOCK === '1';
 }
-
-function randInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
-function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
-function randomId() { return 'm_' + Math.random().toString(36).slice(2, 8) + Date.now().toString(36).slice(-4); }
-
-const SAMPLE_TITLES = [
-    '초보자를 위한 롤 가이드', '최고 효율 빌드 추천', '프로게이머 인터뷰', '패치 노트 요약', '신규 챔피언 분석',
-    '발로란트 신규 맵 공개', '원신 신규 캐릭터 소식', '배그 신맵 첫인상', '메이플 사냥터 추천', '로스트아크 레이드 공략'
-];
-const SAMPLE_SNIPPETS = [
-    '요약: 핵심만 정리했습니다.', '팁 모음: 실전에서 바로 쓰는 요령.', '체크리스트 포함.', '주의사항과 권장 설정 포함.', '데이터 기반 분석.'
-];
-const SAMPLE_AUTHORS = ['에디터팀', '게이머123', '뉴비게이머', '프로연구소', '운영자'];
-const SAMPLE_CATEGORIES = ['guide', 'news', 'image', 'talk', 'event'];
-const SAMPLE_THUMBS = [
-    'https://picsum.photos/seed/mock1/400/300',
-    'https://picsum.photos/seed/mock2/400/300',
-    'https://picsum.photos/seed/mock3/400/300',
-    ''
-];
 
 // Generate mock posts (tag='mock')
 // POST /mock/generate { count?:number, board?:string }

@@ -219,3 +219,8 @@ async function testNewFeature() {
 경량 점검만 필요한 경우 `frontend/simple-test.html` 에도 동일 방식으로 소규모 버튼을 추가할 수 있습니다.
 
 문서화 체크: 기능 추가 후 README 또는 관련 가이드(CATEGORY, CHAT, AUTH 등)에서 참조 필요 여부 검토 → 필요 시 링크/설명 보강.
+
+## 설정 및 인코딩
+- **UTF-8 인코딩**: Mock server에서 UTF-8 인코딩을 명시적으로 설정하여 다국어 텍스트(그리스어, 일본어 등)가 깨지지 않도록 함
+- **게임 카테고리**: `data/categories/game.json`에 국제 카테고리(Ελληνικά, 日本語, 한국어) 추가로 다국어 지원 테스트 가능
+- **자동 메뉴 생성**: `/api/menu` 엔드포인트에서 `data/categories/game.json`을 기반으로 네비게이션 메뉴를 자동 생성하여 관리 편의성 향상

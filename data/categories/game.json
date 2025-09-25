@@ -1,106 +1,52 @@
 {
     "id": "root",
-    "label": "게임 전체",
+    "label": "Game Communities",
     "children": [
         {
-            "id": "series",
-            "label": "시리즈",
+            "id": "league-of-legends",
+            "label": "League of Legends",
             "children": [
-                {
-                    "id": "souls",
-                    "label": "소울라이크",
-                    "children": [
-                        {
-                            "id": "eldenring",
-                            "label": "엘든 링",
-                            "children": []
-                        },
-                        {
-                            "id": "sekiro",
-                            "label": "세키로",
-                            "children": []
-                        }
-                    ]
-                },
-                {
-                    "id": "mario",
-                    "label": "마리오",
-                    "children": [
-                        {
-                            "id": "odyssey",
-                            "label": "오디세이",
-                            "children": []
-                        },
-                        {
-                            "id": "maker",
-                            "label": "메이커",
-                            "children": []
-                        }
-                    ]
-                }
+                { "id": "league-of-legends-news", "label": "Patch & Dev Watch" },
+                { "id": "league-of-legends-strategy", "label": "Champion Lab" },
+                { "id": "league-of-legends-community", "label": "Summoner Lounge" },
+                { "id": "league-of-legends-esports", "label": "Esports Central" }
             ]
         },
         {
-            "id": "platform",
-            "label": "플랫폼",
+            "id": "valorant",
+            "label": "Valorant",
             "children": [
-                {
-                    "id": "pc",
-                    "label": "PC",
-                    "children": []
-                },
-                {
-                    "id": "ps5",
-                    "label": "PS5",
-                    "children": []
-                },
-                {
-                    "id": "switch",
-                    "label": "Switch",
-                    "children": []
-                }
+                { "id": "valorant-news", "label": "Agent Briefing" },
+                { "id": "valorant-strategy", "label": "Playbook Lab" },
+                { "id": "valorant-community", "label": "Agent Lounge" },
+                { "id": "valorant-esports", "label": "VCT Watchtower" }
             ]
         },
         {
-            "id": "type",
-            "label": "장르",
+            "id": "genshin-impact",
+            "label": "Genshin Impact",
             "children": [
-                {
-                    "id": "rpg",
-                    "label": "RPG",
-                    "children": []
-                },
-                {
-                    "id": "action",
-                    "label": "액션",
-                    "children": []
-                },
-                {
-                    "id": "sports",
-                    "label": "스포츠",
-                    "children": []
-                }
+                { "id": "genshin-impact-news", "label": "Traveler Dispatch" },
+                { "id": "genshin-impact-guides", "label": "Artifact Workshop" },
+                { "id": "genshin-impact-community", "label": "Serenitea Plaza" }
             ]
         },
         {
-            "id": "resource",
-            "label": "자료실",
+            "id": "minecraft",
+            "label": "Minecraft",
             "children": [
-                {
-                    "id": "guide",
-                    "label": "가이드",
-                    "children": []
-                },
-                {
-                    "id": "review",
-                    "label": "리뷰",
-                    "children": []
-                },
-                {
-                    "id": "tip",
-                    "label": "팁",
-                    "children": []
-                }
+                { "id": "minecraft-news", "label": "Update Radar" },
+                { "id": "minecraft-builds", "label": "Builder Showcase" },
+                { "id": "minecraft-tech", "label": "Redstone Lab" }
+            ]
+        },
+        {
+            "id": "fifa-ultimate",
+            "label": "FIFA Ultimate Team",
+            "children": [
+                { "id": "fifa-ultimate-news", "label": "Pitch Notes" },
+                { "id": "fifa-ultimate-market", "label": "Transfer Market Pulse" },
+                { "id": "fifa-ultimate-tactics", "label": "Tactics Board" }
             ]
         }
     ]

@@ -1,4 +1,4 @@
-// auth/routes.js - placeholder OAuth-like flow & session issuance (in-memory)
+// auth/routes.js - OAuth flow with Redis-backed session management
 import express from 'express';
 import { getEnabledProviders, buildMockAuthRedirect } from './providers.js';
 import { query } from '../db.js';
@@ -6,19 +6,63 @@ import { issueTokens, verifyToken, rotateRefresh } from './jwt.js';
 import { OAuth2Client } from 'google-auth-library';
 import { incMetric } from '../metrics-state.js';
 import { generateCodeVerifier, codeChallengeS256, generateState, storeOAuthState, consumeOAuthState } from './pkce.js';
+import { kvSet, kvGet, kvDel, isRedisEnabled } from '../redis.js';
 
-const sessions = new Map(); // token -> { userId, provider, created, ttlMs }
+// Redis-backed session management
+const SESSION_PREFIX = 'session:';
 const SESSION_TTL_MS = parseInt(process.env.SESSION_TTL_MS || '3600000', 10); // 1h default
-let lastCleanup = 0;
-function cleanupSessions() {
-    const now = Date.now();
-    if (now - lastCleanup < 60000) return; // run at most once per minute
-    lastCleanup = now;
-    let removed = 0;
-    for (const [tok, s] of sessions.entries()) {
-        if (now - s.created > (s.ttlMs || SESSION_TTL_MS)) { sessions.delete(tok); removed++; }
+const SESSION_CLEANUP_INTERVAL = 300000; // 5 minutes
+
+// Session management functions
+async function storeSession(sessionId, sessionData) {
+    const key = SESSION_PREFIX + sessionId;
+    const ttlSec = Math.ceil(SESSION_TTL_MS / 1000);
+    await kvSet(key, {
+        ...sessionData,
+        created: Date.now(),
+        ttlMs: SESSION_TTL_MS
+    }, ttlSec);
+}
+
+async function getSession(sessionId) {
+    const key = SESSION_PREFIX + sessionId;
+    const session = await kvGet(key);
+    if (!session) return null;
+
+    // Check if session is expired
+    if (Date.now() - session.created > session.ttlMs) {
+        await kvDel(key);
+        return null;
     }
-    if (removed) console.log('[auth] cleaned expired sessions', removed);
+
+    return session;
+}
+
+async function deleteSession(sessionId) {
+    const key = SESSION_PREFIX + sessionId;
+    await kvDel(key);
+}
+
+// Periodic cleanup for memory store (when Redis is not available)
+let cleanupTimer = null;
+function startSessionCleanup() {
+    if (cleanupTimer) return;
+
+    cleanupTimer = setInterval(async () => {
+        if (isRedisEnabled()) {
+            // Redis handles TTL automatically
+            return;
+        }
+
+        // Memory store cleanup (rarely needed due to TTL in kvSet)
+        // This is just a safety net
+        try {
+            // In a real implementation, you might want to scan and clean expired keys
+            // For now, we'll rely on TTL expiration in kvGet
+        } catch (e) {
+            console.warn('[auth] session cleanup error', e.message);
+        }
+    }, SESSION_CLEANUP_INTERVAL);
 }
 const router = express.Router();
 
@@ -212,9 +256,9 @@ router.get('/callback/:provider', async (req, res) => {
             userId = newRow[0].id;
             await query('INSERT INTO user_social_identities(user_id,provider,provider_user_id,email_at_provider) VALUES(?,?,?,?)', [userId, provider, providerUserId, email || null]);
         }
-        cleanupSessions();
+        startSessionCleanup();
         const legacyToken = randomToken();
-        sessions.set(legacyToken, { userId, provider, created: Date.now(), ttlMs: SESSION_TTL_MS });
+        await storeSession(legacyToken, { userId, provider });
         const [urow] = await query('SELECT id, role, display_name FROM users WHERE id=?', [userId]);
         const jwtPair = await issueTokens({ id: urow.id, role: urow.role });
         // Optional: set refresh cookie when REFRESH_COOKIE=1
@@ -260,8 +304,7 @@ router.get('/me', async (req, res) => {
         } catch (e) { return res.status(500).json({ error: 'user_lookup_failed' }); }
     }
     // Legacy fallback
-    cleanupSessions();
-    const s = sessions.get(token);
+    const s = await getSession(token);
     if (!s) return res.status(401).json({ error: 'invalid_token' });
     try {
         const rows = await query('SELECT id, display_name, role, email FROM users WHERE id=? LIMIT 1', [s.userId]);

@@ -1,108 +1,158 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import { api } from '../services/api';
-import type { User } from '../types/api';
+import React, { createContext, useContext, useEffect, useState } from 'react'
+
+interface User {
+  id: string
+  email: string
+  isAdmin?: boolean
+}
+
+interface AuthCredentials {
+  email: string
+  password: string
+}
+
+interface AuthActionResult {
+  success: boolean
+  message?: string
+}
 
 interface AuthContextType {
-    user: User | null;
-    isLoading: boolean;
-    isAuthenticated: boolean;
-    login: (provider: string) => Promise<void>;
-    logout: () => void;
-    refreshUser: () => Promise<void>;
+  user: User | null
+  isLoggedIn: boolean
+  login: (credentials: AuthCredentials) => AuthActionResult
+  register: (credentials: AuthCredentials) => AuthActionResult
+  logout: () => void
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+interface StoredAccount {
+  id: string
+  email: string
+  password: string
+}
+
+const USER_STORAGE_KEY = 'user'
+const ACCOUNT_STORAGE_KEY = 'testAccounts'
+const MIN_PASSWORD_LENGTH = 6
+
+const sanitizeEmail = (email: string) => email.trim().toLowerCase()
+
+const parseJson = <T,>(value: string | null): T | null => {
+  if (!value) {
+    return null
+  }
+
+  try {
+    return JSON.parse(value) as T
+  } catch (error) {
+    console.error('Failed to parse JSON from storage:', error)
+    return null
+  }
+}
+
+const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export const useAuth = () => {
-    const context = useContext(AuthContext);
-    if (context === undefined) {
-        throw new Error('useAuth must be used within an AuthProvider');
-    }
-    return context;
-};
-
-interface AuthProviderProps {
-    children: React.ReactNode;
+  const context = useContext(AuthContext)
+  if (context === undefined) {
+    throw new Error('useAuth must be used within an AuthProvider')
+  }
+  return context
 }
 
-export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-    const [user, setUser] = useState<User | null>(null);
-    const [isLoading, setIsLoading] = useState(true);
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [user, setUser] = useState<User | null>(null)
+  const [accounts, setAccounts] = useState<StoredAccount[]>([])
 
-    const isAuthenticated = !!user && api.tokenManager.isAuthenticated();
+  useEffect(() => {
+    const savedUser = parseJson<User>(localStorage.getItem(USER_STORAGE_KEY))
+    if (savedUser?.email) {
+      setUser({ id: savedUser.id, email: savedUser.email, isAdmin: savedUser.isAdmin })
+    } else if (savedUser) {
+      localStorage.removeItem(USER_STORAGE_KEY)
+    }
 
-    // 앱 시작 시 사용자 정보 확인
-    useEffect(() => {
-        const checkAuth = async () => {
-            if (api.tokenManager.isAuthenticated()) {
-                try {
-                    const response = await api.auth.getMe();
-                    if (response.data) {
-                        setUser(response.data);
-                    } else {
-                        // 토큰이 유효하지 않은 경우
-                        api.tokenManager.clearTokens();
-                    }
-                } catch (error) {
-                    console.error('Auth check failed:', error);
-                    api.tokenManager.clearTokens();
-                }
-            }
-            setIsLoading(false);
-        };
+    const storedAccounts = parseJson<StoredAccount[]>(localStorage.getItem(ACCOUNT_STORAGE_KEY))
+    if (Array.isArray(storedAccounts)) {
+      setAccounts(storedAccounts.filter((account) => account.email))
+    } else if (storedAccounts) {
+      localStorage.removeItem(ACCOUNT_STORAGE_KEY)
+    }
+  }, [])
 
-        checkAuth();
-    }, []);
+  const persistUser = (account: User | null) => {
+    if (account) {
+      localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(account))
+    } else {
+      localStorage.removeItem(USER_STORAGE_KEY)
+    }
+  }
 
-    const login = async (provider: string) => {
-        try {
-            const response = await api.auth.getLoginUrl(provider);
-            if (response.data?.url) {
-                // OAuth URL로 리디렉션
-                window.location.href = response.data.url;
-            } else {
-                throw new Error('Login URL not received');
-            }
-        } catch (error) {
-            console.error('Login failed:', error);
-            throw error;
-        }
-    };
+  const persistAccounts = (nextAccounts: StoredAccount[]) => {
+    setAccounts(nextAccounts)
+    localStorage.setItem(ACCOUNT_STORAGE_KEY, JSON.stringify(nextAccounts))
+  }
 
-    const logout = () => {
-        api.auth.logout();
-        setUser(null);
-    };
+  const register = (credentials: AuthCredentials): AuthActionResult => {
+    const email = sanitizeEmail(credentials.email)
+    const password = credentials.password.trim()
 
-    const refreshUser = async () => {
-        if (!api.tokenManager.isAuthenticated()) {
-            setUser(null);
-            return;
-        }
+    if (!email || !password) {
+      return { success: false, message: 'Email and password are required.' }
+    }
 
-        try {
-            const response = await api.auth.getMe();
-            if (response.data) {
-                setUser(response.data);
-            } else {
-                setUser(null);
-                api.tokenManager.clearTokens();
-            }
-        } catch (error) {
-            console.error('User refresh failed:', error);
-            setUser(null);
-            api.tokenManager.clearTokens();
-        }
-    };
+    if (password.length < MIN_PASSWORD_LENGTH) {
+      return { success: false, message: `Password must be at least ${MIN_PASSWORD_LENGTH} characters.` }
+    }
 
-    const value: AuthContextType = {
-        user,
-        isLoading,
-        isAuthenticated,
-        login,
-        logout,
-        refreshUser,
-    };
+    if (accounts.some((account) => account.email === email)) {
+      return { success: false, message: 'An account with this email already exists.' }
+    }
 
-    return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-};
+    const newAccount: StoredAccount = {
+      id: crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(),
+      email,
+      password
+    }
+
+    persistAccounts([...accounts, newAccount])
+    return { success: true, message: 'Account created. You can now log in.' }
+  }
+
+  const login = (credentials: AuthCredentials): AuthActionResult => {
+    const email = sanitizeEmail(credentials.email)
+    const password = credentials.password.trim()
+
+    if (!email || !password) {
+      return { success: false, message: 'Email and password are required.' }
+    }
+
+    const account = accounts.find((stored) => stored.email === email)
+    if (!account) {
+      return { success: false, message: 'No account found for this email.' }
+    }
+
+    if (account.password !== password) {
+      return { success: false, message: 'Incorrect password.' }
+    }
+
+    const userData: User = { id: account.id, email: account.email }
+    setUser(userData)
+    persistUser(userData)
+    return { success: true }
+  }
+
+  const logout = () => {
+    setUser(null)
+    persistUser(null)
+  }
+
+  const value: AuthContextType = {
+    user,
+    isLoggedIn: !!user,
+    login,
+    register,
+    logout
+  }
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
+}

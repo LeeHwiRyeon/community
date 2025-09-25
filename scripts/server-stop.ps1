@@ -9,7 +9,7 @@ param(
 )
 
 $DefaultBackendPort = 50000
-$DefaultFrontendPort = 5500
+$DefaultFrontendPort = 5000
 
 # 포트 결정
 if ($All) {
