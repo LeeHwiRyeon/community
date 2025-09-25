@@ -38,7 +38,9 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
-          cache-dependency-path: server-backend/package-lock.json
+          cache-dependency-path: |
+            server-backend/package-lock.json
+            frontend/package-lock.json
       - name: Wait for DB
         run: |
           for i in {1..40}; do
@@ -48,18 +50,45 @@ jobs:
       - name: Install deps
         working-directory: server-backend
         run: npm install
+      - name: Install frontend deps
+        working-directory: frontend
+        run: npm install
+      - name: Build frontend
+        working-directory: frontend
+        run: npm run build
       - name: Start backend server
         working-directory: server-backend
         run: |
           node mock-server.js &
-          sleep 5
+          sleep 10
           curl -f http://localhost:50000/api/health || (echo "Backend not ready" && exit 1)
-      - name: Run integration tests
+      - name: Start frontend server
+        working-directory: frontend
+        run: |
+          npm run preview &
+          sleep 5
+          curl -f http://localhost:5173 || (echo "Frontend not ready" && exit 1)
+      - name: Run backend integration tests
         working-directory: server-backend
         run: node tests/api-random.js
+      - name: Run frontend tests
+        working-directory: frontend
+        run: npm test
+      - name: Run Playwright tests
+        working-directory: server-backend
+        run: npx playwright install --with-deps && npx playwright test --reporter=json
+        env:
+          API_BASE: http://localhost:50000
+          CI: true
       - name: Upload test summary
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: test-summary
           path: server-backend/test-summary.json
+      - name: Upload Playwright results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-results
+          path: server-backend/test-results/
