@@ -1,5 +1,7 @@
 // auth/routes.js - OAuth flow with Redis-backed session management
 import express from 'express';
+import jwt from 'jsonwebtoken';
+import { createPublicKey } from 'crypto';
 import { getEnabledProviders, buildMockAuthRedirect } from './providers.js';
 import { query } from '../db.js';
 import { issueTokens, verifyToken, rotateRefresh } from './jwt.js';
@@ -12,6 +14,42 @@ import { kvSet, kvGet, kvDel, isRedisEnabled } from '../redis.js';
 const SESSION_PREFIX = 'session:';
 const SESSION_TTL_MS = parseInt(process.env.SESSION_TTL_MS || '3600000', 10); // 1h default
 const SESSION_CLEANUP_INTERVAL = 300000; // 5 minutes
+
+const APPLE_KEYS_URL = 'https://appleid.apple.com/auth/keys';
+const APPLE_ISSUER = 'https://appleid.apple.com';
+let appleKeysCache = { keys: null, fetchedAt: 0 };
+
+async function loadAppleKeys() {
+    const now = Date.now();
+    if (appleKeysCache.keys && (now - appleKeysCache.fetchedAt) < 60 * 60 * 1000) {
+        return appleKeysCache.keys;
+    }
+    const resp = await fetch(APPLE_KEYS_URL);
+    if (!resp.ok) throw new Error('apple_keys_fetch_failed');
+    const data = await resp.json();
+    appleKeysCache = { keys: Array.isArray(data?.keys) ? data.keys : [], fetchedAt: now };
+    return appleKeysCache.keys;
+}
+
+function jwkToPem(jwk) {
+    const keyObject = createPublicKey({ key: jwk, format: 'jwk' });
+    return keyObject.export({ type: 'spki', format: 'pem' });
+}
+
+async function verifyAppleIdToken(idToken) {
+    const decoded = jwt.decode(idToken, { complete: true });
+    if (!decoded || typeof decoded !== 'object') throw new Error('invalid_token');
+    const header = decoded.header || {};
+    if (header.alg !== 'RS256') throw new Error('unsupported_algorithm');
+    const keys = await loadAppleKeys();
+    const match = keys.find(k => k.kid === header.kid);
+    if (!match) throw new Error('apple_key_not_found');
+    const pem = jwkToPem(match);
+    const audience = process.env.OAUTH_APPLE_CLIENT_ID || process.env.APPLE_CLIENT_ID;
+    const verifyOptions = { algorithms: ['RS256'], issuer: APPLE_ISSUER };
+    if (audience) verifyOptions.audience = audience;
+    return jwt.verify(idToken, pem, verifyOptions);
+}
 
 // Session management functions
 async function storeSession(sessionId, sessionData) {
@@ -90,6 +128,49 @@ router.post('/google', express.json(), async (req, res) => {
     try {
         const { idToken } = req.body || {};
         if (!idToken) return res.status(400).json({ error: 'idToken_required' });
+router.post('/apple', express.json(), async (req, res) => {
+    try {
+        const { idToken } = req.body || {};
+        if (!idToken) return res.status(400).json({ error: 'idToken_required' });
+        const allowTestMode = (process.env.NODE_ENV !== 'production') || process.env.ENABLE_TEST_APPLE === '1';
+        let sub = null; let email = null; let name = null;
+        if (allowTestMode && typeof idToken === 'string' && idToken.startsWith('test-apple:')) {
+            const parts = idToken.split(':');
+            sub = parts[1] || 'test_sub';
+            email = parts[2] || (sub + '@test.local');
+            name = 'apple_' + sub.slice(0, 8);
+        } else {
+            const payload = await verifyAppleIdToken(idToken);
+            sub = payload.sub;
+            email = payload.email || null;
+            name = payload.name || (payload.email ? payload.email.split('@')[0] : null);
+        }
+        if (!sub) return res.status(401).json({ error: 'invalid_token' });
+        let rows = await query('SELECT u.id,u.role,u.display_name FROM user_social_identities si JOIN users u ON u.id=si.user_id WHERE si.provider=? AND si.provider_user_id=? LIMIT 1', ['apple', sub]);
+        let userId;
+        if (!rows.length) {
+            const countRows = await query('SELECT COUNT(*) as c FROM users');
+            const isFirst = (countRows[0]?.c || 0) === 0;
+            const displayName = name || ('apple_' + sub.slice(0, 10));
+            await query('INSERT INTO users(display_name, role, email) VALUES(?,?,?)', [displayName, isFirst ? 'admin' : 'user', email || null]);
+            const newRow = await query('SELECT id,role FROM users WHERE display_name=? ORDER BY id DESC LIMIT 1', [displayName]);
+            userId = newRow[0].id;
+            await query('INSERT INTO user_social_identities(user_id,provider,provider_user_id,email_at_provider) VALUES(?,?,?,?)', [userId, 'apple', sub, email || null]);
+        } else {
+            userId = rows[0].id;
+        }
+        await query('UPDATE users SET last_login_at=NOW(), primary_provider=?, primary_provider_user_id=? WHERE id=?', ['google', sub, userId]);
+        const [u] = await query('SELECT id, role, display_name, email FROM users WHERE id=?', [userId]);
+        const jwtPair = await issueTokens({ id: u.id, role: u.role });
+        const identities = await query('SELECT provider, provider_user_id, email_at_provider FROM user_social_identities WHERE user_id=?', [userId]);
+        incMetric('authAppleLogin');
+        res.json({ provider: 'apple', userId: u.id, display_name: u.display_name, email: u.email || email || null, identities, ...jwtPair });
+    } catch (e) {
+        console.error('[auth.apple.error]', e.message);
+        res.status(500).json({ error: 'apple_auth_failed' });
+    }
+});
+
         let sub = null; let email = null; let name = null; let testMode = false;
         const allowTestMode = (process.env.NODE_ENV !== 'production') || process.env.ENABLE_TEST_GOOGLE === '1';
         if (allowTestMode && idToken.startsWith('test-google:')) {
@@ -119,6 +200,7 @@ router.post('/google', express.json(), async (req, res) => {
         } else {
             userId = rows[0].id;
         }
+        await query('UPDATE users SET last_login_at=NOW(), primary_provider=?, primary_provider_user_id=? WHERE id=?', ['apple', sub, userId]);
         const [u] = await query('SELECT id, role, display_name, email FROM users WHERE id=?', [userId]);
         const jwtPair = await issueTokens({ id: u.id, role: u.role });
         // identities 포함
@@ -130,16 +212,18 @@ router.post('/google', express.json(), async (req, res) => {
     }
 });
 
-router.get('/login/:provider', async (req, res) => {
-    const { provider } = req.params;
+async function buildAuthRedirectResponse(req, provider) {
     const enabled = getEnabledProviders();
-    if (!enabled.includes(provider)) return res.status(404).json({ error: 'provider_disabled' });
+    if (!enabled.includes(provider)) {
+        const err = new Error('provider_disabled');
+        err.statusCode = 404;
+        throw err;
+    }
     const isGoogle = provider === 'google' && process.env.OAUTH_GOOGLE_CLIENT_ID && process.env.OAUTH_GOOGLE_CLIENT_SECRET;
     const baseOrigin = process.env.PUBLIC_ORIGIN || `http://localhost:${process.env.PORT || 50000}`;
     const callbackUrl = `${baseOrigin}/api/auth/callback/${provider}`;
     const link = req.query.link === '1';
     if (isGoogle) {
-        // Real authorize URL with PKCE + state
         const verifier = generateCodeVerifier();
         const challenge = codeChallengeS256(verifier);
         const state = generateState();
@@ -153,12 +237,47 @@ router.get('/login/:provider', async (req, res) => {
             code_challenge_method: 'S256',
             state
         });
-        return res.json({ provider, authorize: `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`, state, pkce: true, link });
+        return {
+            provider,
+            authorize: `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`,
+            state,
+            pkce: true,
+            link,
+            callback: callbackUrl
+        };
     }
-    // fallback mock
     const base = process.env.OAUTH_CALLBACK_BASE_URL || baseOrigin;
     const redirect = buildMockAuthRedirect(provider, base);
-    res.json({ provider, redirect, mock: true });
+    if (!redirect) {
+        const err = new Error('redirect_unavailable');
+        err.statusCode = 400;
+        throw err;
+    }
+    return {
+        provider,
+        redirect,
+        mock: true,
+        callback: `${base}/api/auth/callback/${provider}`,
+        link: link || undefined
+    };
+}
+
+async function handleAuthRedirect(req, res, provider) {
+    try {
+        const payload = await buildAuthRedirectResponse(req, provider);
+        res.json(payload);
+    } catch (e) {
+        const status = e?.statusCode || 500;
+        res.status(status).json({ error: e?.message || 'redirect_failed' });
+    }
+}
+
+router.get('/login/:provider', async (req, res) => {
+    await handleAuthRedirect(req, res, req.params.provider);
+});
+
+router.get('/redirect/:provider', async (req, res) => {
+    await handleAuthRedirect(req, res, req.params.provider);
 });
 
 // Mock callback: exchanges ?code= for a fake user/session. Real flow would fetch provider token & profile.
@@ -256,6 +375,7 @@ router.get('/callback/:provider', async (req, res) => {
             userId = newRow[0].id;
             await query('INSERT INTO user_social_identities(user_id,provider,provider_user_id,email_at_provider) VALUES(?,?,?,?)', [userId, provider, providerUserId, email || null]);
         }
+        await query('UPDATE users SET last_login_at=NOW(), primary_provider=?, primary_provider_user_id=? WHERE id=?', [provider, providerUserId, userId]);
         startSessionCleanup();
         const legacyToken = randomToken();
         await storeSession(legacyToken, { userId, provider });

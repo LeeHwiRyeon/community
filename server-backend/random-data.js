@@ -1,4 +1,4 @@
-const authors = [
+ï»¿const authors = [
   'AuroraBytes',
   'PatchWatcher',
   'EsportsEcho',
@@ -92,7 +92,7 @@ const usernames = [
 const messageSeeds = [
   'Remember to attach your VOD timestamps when asking for feedback.',
   'Tournament lobby opens in twenty minutes ? check your audio setup now.',
-  'Pinning this week¡¯s scrim spreadsheet so everyone can adjust their availability.',
+  'Pinning this week\'s scrim spreadsheet so everyone can adjust their availability.',
   'Share your best opening routes for the new map before scrims tonight.',
   'Anyone running a fundamentals review session? Tag me if slots open.',
   'Reminder: submit highlight clips before Friday so we can edit the recap video.',
@@ -564,6 +564,255 @@ function truncate(value, length = 180) {
   return `${value.slice(0, length - 3)}...`
 }
 
+function stripImageQuery(url) {
+  if (typeof url !== 'string') {
+    return null
+  }
+  const trimmed = url.trim()
+  if (trimmed.length === 0) {
+    return null
+  }
+  const questionIndex = trimmed.indexOf('?')
+  return questionIndex >= 0 ? trimmed.slice(0, questionIndex) : trimmed
+}
+
+function normalizeImageUrl(url, width = 1280, height = 720) {
+  if (typeof url !== 'string') {
+    return null
+  }
+  if (url.length === 0) {
+    return null
+  }
+  if (url.includes('?auto=')) {
+    return url
+      .replace(/w=\d+/g, `w=${width}`)
+      .replace(/h=\d+/g, `h=${height}`)
+  }
+  return formatImage(url, width, height)
+}
+
+function createMediaRecord({
+  baseId,
+  postId,
+  mediaIndex,
+  template,
+  baseUrl,
+  width,
+  height,
+  role,
+  caption
+}) {
+  if (typeof baseUrl !== 'string' || baseUrl.length === 0) {
+    return null
+  }
+  const fullUrl = normalizeImageUrl(baseUrl, width, height)
+  const thumbUrl = normalizeImageUrl(baseUrl, Math.round(width / 2), Math.round(height / 2))
+  if (fullUrl == null) {
+    return null
+  }
+  return {
+    id: baseId + mediaIndex,
+    post_id: postId,
+    media_type: 'image',
+    file_key: `${postId}-media-${mediaIndex}`,
+    url: fullUrl,
+    thumbnail_url: thumbUrl,
+    width,
+    height,
+    dominant_color: null,
+    alt_text: `${template} image ${mediaIndex}`,
+    caption: caption ?? null,
+    metadata: { role }
+  }
+}
+
+function buildRichContentPayload({
+  postId,
+  board,
+  template,
+  format,
+  preview,
+  paragraphs,
+  thumb,
+  index,
+  streamUrl
+}) {
+  const baseMediaId = index * 100
+  const heroCandidates = []
+  const previewImages = preview && Array.isArray(preview.images) ? preview.images : []
+  if (previewImages.length > 0) {
+    heroCandidates.push(stripImageQuery(previewImages[0]))
+  }
+  heroCandidates.push(stripImageQuery(thumb))
+  heroCandidates.push(stripImageQuery(pick(heroImages)))
+
+  let heroBase = null
+  for (const candidate of heroCandidates) {
+    if (typeof candidate === 'string' && candidate.length > 0) {
+      heroBase = candidate
+      break
+    }
+  }
+
+  const heroMedia = heroBase
+    ? createMediaRecord({
+        baseId: baseMediaId,
+        postId,
+        mediaIndex: 1,
+        template,
+        baseUrl: heroBase,
+        width: format === 'gallery' ? 1440 : 1280,
+        height: format === 'gallery' ? 810 : 720,
+        role: 'hero',
+        caption: preview && typeof preview.excerpt === 'string' ? preview.excerpt : null
+      })
+    : null
+
+  const media = []
+  if (heroMedia != null) {
+    media.push(heroMedia)
+  }
+
+  let supportingPool = []
+  if (format === 'gallery' && previewImages.length > 1) {
+    supportingPool = previewImages.slice(heroMedia != null ? 1 : 0).map((item) => stripImageQuery(item))
+  } else {
+    supportingPool = pickMany(heroImages, 3).map((item) => stripImageQuery(item))
+  }
+
+  supportingPool.forEach((baseUrl) => {
+    if (typeof baseUrl === 'string' && baseUrl.length > 0) {
+      const record = createMediaRecord({
+        baseId: baseMediaId,
+        postId,
+        mediaIndex: media.length + 1,
+        template,
+        baseUrl,
+        width: format === 'gallery' ? 1080 : 960,
+        height: format === 'gallery' ? 608 : 540,
+        role: format === 'gallery' ? 'gallery' : 'support',
+        caption:
+          format === 'gallery'
+            ? pick(galleryCaptions)
+            : pick(generalParagraphs)
+      })
+      if (record != null) {
+        media.push(record)
+      }
+    }
+  })
+
+  let ordering = 10
+  const blocks = []
+  const pushBlock = (block) => {
+    const nextOrdering = block.ordering ?? ordering
+    blocks.push({ ...block, ordering: nextOrdering })
+    ordering = nextOrdering + 10
+  }
+
+  if (format === 'discussion' && preview && typeof preview.highlight === 'string' && preview.highlight.length > 0) {
+    pushBlock({
+      ordering: 5,
+      type: 'quote',
+      text_content: preview.highlight,
+      data: {
+        mood: preview.mood ?? null,
+        attribution: preview.lastReplyBy ?? null
+      },
+      metadata: { emphasis: 'lead' }
+    })
+  }
+
+  paragraphs.forEach((paragraph, paragraphIndex) => {
+    if (typeof paragraph === 'string' && paragraph.length > 0) {
+      pushBlock({
+        type: 'paragraph',
+        text_content: paragraph,
+        data: {
+          align: 'left'
+        }
+      })
+    }
+    if (paragraphIndex === 0 && heroMedia != null) {
+      pushBlock({
+        type: 'image',
+        data: {
+          url: heroMedia.url,
+          alt: heroMedia.alt_text,
+          caption: heroMedia.caption,
+          thumbnail: heroMedia.thumbnail_url
+        },
+        metadata: {
+          width: heroMedia.width,
+          height: heroMedia.height,
+          role: heroMedia.metadata?.role ?? 'hero'
+        }
+      })
+    }
+  })
+
+  if (format === 'gallery') {
+    const galleryMedia = media.filter((item) => {
+      if (heroMedia != null && item.id === heroMedia.id) {
+        return false
+      }
+      return true
+    })
+    if (galleryMedia.length > 0) {
+      pushBlock({
+        type: 'gallery',
+        data: {
+          images: galleryMedia.map((item, galleryIndex) => ({
+            url: item.url,
+            alt: item.alt_text ?? `${template} gallery ${galleryIndex + 1}`,
+            caption: item.caption ?? null,
+            thumbnail: item.thumbnail_url ?? null
+          }))
+        },
+        metadata: { layout: 'grid' }
+      })
+    }
+  }
+
+  if (format === 'broadcast' && typeof streamUrl === 'string' && streamUrl.length > 0) {
+    pushBlock({
+      type: 'embed',
+      data: {
+        url: streamUrl,
+        platform: preview && typeof preview.platform === 'string' ? preview.platform : null,
+        isLive: preview && typeof preview.isLive === 'boolean' ? preview.isLive : false,
+        title: template
+      },
+      metadata: { aspectRatio: '16:9' }
+    })
+  }
+
+  if (preview && Array.isArray(preview.tags) && preview.tags.length > 0) {
+    pushBlock({
+      type: 'list',
+      data: {
+        style: 'tag',
+        items: preview.tags.slice(0, 6)
+      },
+      metadata: { orientation: 'inline' }
+    })
+  }
+
+  const layout_settings = {
+    theme: format === 'gallery' ? 'noir' : 'clean',
+    backgroundStyle: format === 'broadcast' ? 'surface' : 'default',
+    accentColor: format === 'broadcast' ? '#8B5CF6' : '#2563EB'
+  }
+
+  return {
+    heroMedia,
+    media,
+    blocks,
+    layout_settings
+  }
+}
+
+
 function buildDatePair() {
   const daysAgo = random(0, 30)
   const base = new Date(Date.now() - daysAgo * 24 * 60 * 60 * 1000)
@@ -688,8 +937,23 @@ function makePost({ board, headline, index }) {
     thumb = preview.thumbnail
   }
 
+  const postId = `${board.id}-post-${index + 1}`
+  const streamUrl = preview.type === 'broadcast' ? preview.streamUrl ?? null : null
+  const richContent = buildRichContentPayload({
+    postId,
+    board,
+    template,
+    format: preview.type,
+    preview,
+    paragraphs,
+    thumb,
+    index,
+    streamUrl
+  })
+  const excerpt = paragraphs.length > 0 ? truncate(paragraphs[0], 200) : ''
+
   return {
-    id: `${board.id}-post-${index + 1}`,
+    id: postId,
     board_id: board.id,
     title: template,
     content,
@@ -703,13 +967,33 @@ function makePost({ board, headline, index }) {
     thumb,
     mediaType: preview.type,
     preview,
-    stream_url: preview.type === 'broadcast' ? preview.streamUrl : undefined,
+    stream_url: streamUrl ?? undefined,
+    status: 'published',
+    excerpt,
+    hero_media_id: richContent.heroMedia ? richContent.heroMedia.id ?? null : null,
+    hero_media: richContent.heroMedia ?? null,
+    media: richContent.media.length > 0 ? richContent.media : null,
+    blocks: richContent.blocks.length > 0 ? richContent.blocks : null,
+    layout_settings: richContent.layout_settings,
+    last_edited_at: updatedAt,
+    last_edited_by: null,
+    versions: [
+      {
+        id: index + 1,
+        post_id: postId,
+        version: 1,
+        status: 'published',
+        snapshot_json: null,
+        created_by: random(10, 99),
+        created_at: updatedAt
+      }
+    ],
     deleted: 0
   }
 }
 
 function buildMockHierarchy(options = {}) {
-  const postsPerBoard = options.postsPerBoard && options.postsPerBoard > 0 ? options.postsPerBoard : 24
+  const postsPerBoard = options.postsPerBoard && options.postsPerBoard > 0 ? options.postsPerBoard : 30
   let boardOrder = 1
 
   const communities = communitySeeds.map((seed, communityIndex) => {
@@ -787,3 +1071,7 @@ function generateRandomMessage(id, room = 'general') {
 const randomMessages = Array.from({ length: 50 }, (_, index) => generateRandomMessage(index + 1))
 
 export { buildMockHierarchy, generatePostForBoard, generateRandomMessage, randomMessages }
+
+
+
+

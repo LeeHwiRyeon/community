@@ -1,4 +1,4 @@
-import { query } from './db.js';
+﻿import { query } from './db.js';
 import 'seedrandom'; // deterministic seeding support for mock generator when seed provided
 import { requireAdmin, requireModOrAdmin } from './auth/jwt.js';
 import { bufferViewIncrement, __flushAllViewsForTest } from './server.js';
@@ -34,8 +34,18 @@ if (useMockDb) {
         deleted: post.deleted ?? 0,
         created_at: post.created_at,
         updated_at: post.updated_at,
-        views: post.views ?? 0
-    });
+        views: post.views ?? 0,
+        status: post.status ?? 'published',
+        excerpt: post.excerpt ?? null,
+        hero_media_id: post.hero_media_id ?? null,
+        hero_media: post.hero_media ?? null,
+        media: post.media ?? null,
+        blocks: post.blocks ?? null,
+        layout_settings: post.layout_settings ?? null,
+        last_edited_at: post.last_edited_at ?? post.updated_at ?? null,
+        last_edited_by: post.last_edited_by ?? null,
+        versions: post.versions ?? null
+    });;
 
     router.get('/boards', (req, res) => {
         res.json(mockListBoards().map(mapBoardForResponse));
@@ -181,7 +191,7 @@ if (useMockDb) {
     });
 }
 
-// UTF-8 응답 헤더 설정
+// UTF-8 ?묐떟 ?ㅻ뜑 ?ㅼ젙
 router.use((req, res, next) => {
     res.setHeader('Content-Type', 'application/json; charset=utf-8');
     next();
@@ -191,7 +201,7 @@ router.use((req, res, next) => {
 const trendingCache = new Map(); // key -> { ts, data }
 const TRENDING_TTL_MS = 30_000;
 
-// READONLY 배포 모드: ENV READONLY=1 이면 write 차단
+// READONLY 諛고룷 紐⑤뱶: ENV READONLY=1 ?대㈃ write 李⑤떒
 router.use((req, res, next) => {
     if (process.env.READONLY === '1') {
         const m = req.method.toUpperCase();
@@ -236,12 +246,12 @@ router.use((req, res, next) => {
 
 // Deprecated old helper removed: replaced by metrics-client-buffer.js
 
-// Health (verbose 옵션)
+// Health (verbose ?듭뀡)
 router.get('/health', async (req, res, next) => {
     if (!req.query.verbose) return res.json({ ok: true, ts: Date.now() });
     try {
         const started = Date.now();
-        // 간단 DB ping + 카운트
+        // 媛꾨떒 DB ping + 移댁슫??
         const [boardsCount] = await query('SELECT COUNT(*) as c FROM boards');
         const [postsCount] = await query('SELECT COUNT(*) as c FROM posts');
         const dbLatency = Date.now() - started;
@@ -270,7 +280,7 @@ router.get('/search', async (req, res, next) => {
              LIMIT ? OFFSET ?`,
             [like, like, lim, off]
         );
-        // total = 전체 매칭 수 (페이지네이션과 무관)
+        // total = ?꾩껜 留ㅼ묶 ??(?섏씠吏?ㅼ씠?섍낵 臾닿?)
         const [{ c: total }] = await query(
             `SELECT COUNT(*) as c FROM posts WHERE deleted=0 AND (title LIKE ? ESCAPE '\\' OR content LIKE ? ESCAPE '\\')`,
             [like, like]
@@ -280,9 +290,9 @@ router.get('/search', async (req, res, next) => {
     } catch (e) { next(e); }
 });
 
-// liveness (프로세스 살아있음 판단용, 최소 작업)
+// liveness (?꾨줈?몄뒪 ?댁븘?덉쓬 ?먮떒?? 理쒖냼 ?묒뾽)
 router.get('/live', (req, res) => { res.json({ ok: true }); });
-// readiness (DB 및 기본 flush 가능 여부 확인)
+// readiness (DB 諛?湲곕낯 flush 媛???щ? ?뺤씤)
 router.get('/ready', async (req, res) => {
     try {
         await query('SELECT 1');
@@ -447,7 +457,7 @@ router.get('/boards/:id/posts', async (req, res, next) => {
         let total = 0;
         if (search) {
             // FULLTEXT attempt (BOOLEAN MODE) - best effort
-            const fulltextSql = `SELECT p.id,p.board_id as board,p.title,p.content,p.date,p.tag,p.thumb,p.author,p.category,p.deleted,p.created_at,p.updated_at, IFNULL(v.views,0) as views, MATCH(p.title,p.content) AGAINST (? IN BOOLEAN MODE) AS relevance
+            const fulltextSql = `SELECT p.*, p.board_id as board, IFNULL(v.views,0) as views, MATCH(p.title,p.content) AGAINST (? IN BOOLEAN MODE) AS relevance
                 FROM posts p LEFT JOIN post_views v ON v.post_id=p.id
                 WHERE p.board_id=? AND p.deleted=0 AND MATCH(p.title,p.content) AGAINST (? IN BOOLEAN MODE)
                 ORDER BY relevance DESC, p.date DESC, p.created_at DESC
@@ -470,7 +480,7 @@ router.get('/boards/:id/posts', async (req, res, next) => {
                     const likeClauses = terms.map(() => '(p.title LIKE ? OR p.content LIKE ?)').join(' AND ');
                     const likeParams = [];
                     terms.forEach(t => { const pat = `%${t}%`; likeParams.push(pat, pat); });
-                    const likeSql = `SELECT p.id,p.board_id as board,p.title,p.content,p.date,p.tag,p.thumb,p.author,p.category,p.deleted,p.created_at,p.updated_at, IFNULL(v.views,0) as views
+                    const likeSql = `SELECT p.*, p.board_id as board, IFNULL(v.views,0) as views
                         FROM posts p LEFT JOIN post_views v ON v.post_id=p.id
                         WHERE p.board_id=? AND p.deleted=0 AND ${likeClauses}
                         ORDER BY p.date DESC, p.created_at DESC
@@ -483,7 +493,7 @@ router.get('/boards/:id/posts', async (req, res, next) => {
             }
         }
         if (!search) {
-            const baseSql = `SELECT p.id,p.board_id as board,p.title,p.content,p.date,p.tag,p.thumb,p.author,p.category,p.deleted,p.created_at,p.updated_at, IFNULL(v.views,0) as views
+            const baseSql = `SELECT p.*, p.board_id as board, IFNULL(v.views,0) as views
                 FROM posts p LEFT JOIN post_views v ON v.post_id=p.id
                 WHERE p.board_id=? AND p.deleted=0
                 ORDER BY p.date DESC, p.created_at DESC
@@ -503,10 +513,10 @@ router.post('/boards/:id/posts', async (req, res, next) => {
         const { id, title, content, date, tag, thumb, author, category } = req.body;
         if (!title) return res.status(400).json({ error: 'title required' });
         const pid = id || ('p' + Date.now().toString(36));
-        // 로그인 사용자 display_name 자동 적용 (author 미지정 시)
-        const finalAuthor = author || (req.user?.display_name ? req.user.display_name : '익명');
+        // 濡쒓렇???ъ슜??display_name ?먮룞 ?곸슜 (author 誘몄?????
+        const finalAuthor = author || (req.user?.display_name ? req.user.display_name : '?듬챸');
         await query('INSERT INTO posts(id,board_id,title,content,date,tag,thumb,author,category) VALUES(?,?,?,?,?,?,?,?,?)', [pid, board, title, content || '', date || null, tag || '', thumb || '', finalAuthor, category || '']);
-        const [row] = await query('SELECT id,board_id as board,title,content,date,tag,thumb,author,category,deleted,created_at,updated_at FROM posts WHERE id=?', [pid]);
+        const [row] = await query('SELECT id,board_id as board,title,content,date,tag,thumb,author,category,deleted,created_at,updated_at,status,excerpt,hero_media_id,layout_settings,last_edited_at,last_edited_by FROM posts WHERE id=?', [pid]);
         res.status(201).json(row);
     } catch (e) { next(e); }
 });
@@ -518,7 +528,7 @@ router.patch('/boards/:id/posts/:pid', async (req, res, next) => {
             'UPDATE posts SET title=COALESCE(?,title), content=COALESCE(?,content), date=COALESCE(?,date), tag=COALESCE(?,tag), thumb=COALESCE(?,thumb), author=COALESCE(?,author), category=COALESCE(?,category) WHERE id=?',
             [norm(title), norm(content), norm(date), norm(tag), norm(thumb), norm(author), norm(category), req.params.pid]
         );
-        const [row] = await query('SELECT id,board_id as board,title,content,date,tag,thumb,author,category,deleted,created_at,updated_at FROM posts WHERE id=?', [req.params.pid]);
+        const [row] = await query('SELECT id,board_id as board,title,content,date,tag,thumb,author,category,deleted,created_at,updated_at,status,excerpt,hero_media_id,layout_settings,last_edited_at,last_edited_by FROM posts WHERE id=?', [req.params.pid]);
         res.json(row);
     } catch (e) { next(e); }
 });
@@ -529,7 +539,7 @@ router.delete('/boards/:id/posts/:pid', async (req, res, next) => {
 // Single post detail (includes views)
 router.get('/posts/:pid', async (req, res, next) => {
     try {
-        const [row] = await query(`SELECT p.id,p.board_id as board,p.title,p.content,p.date,p.tag,p.thumb,p.author,p.category,p.deleted,p.created_at,p.updated_at, IFNULL(v.views,0) as views
+        const [row] = await query(`SELECT p.*, p.board_id as board, IFNULL(v.views,0) as views
             FROM posts p LEFT JOIN post_views v ON v.post_id=p.id WHERE p.id=? AND p.deleted=0 LIMIT 1`, [req.params.pid]);
         if (!row) return res.status(404).json({ error: 'not_found' });
         // ETag & Last-Modified support
@@ -547,7 +557,7 @@ router.get('/posts/:pid', async (req, res, next) => {
 // Posts map (all boards)
 router.get('/posts-map', async (req, res, next) => {
     try {
-        const rows = await query('SELECT p.id,p.board_id as board,p.title,p.content,p.date,p.tag,p.thumb,p.author,p.category,p.deleted, IFNULL(v.views,0) as views FROM posts p LEFT JOIN post_views v ON v.post_id=p.id WHERE p.deleted=0');
+        const rows = await query('SELECT p.*, p.board_id as board, IFNULL(v.views,0) as views FROM posts p LEFT JOIN post_views v ON v.post_id=p.id WHERE p.deleted=0');
         const map = {};
         rows.forEach(r => { if (!map[r.board]) map[r.board] = []; map[r.board].push(r); });
         Object.values(map).forEach(arr => arr.sort((a, b) => new Date(b.date || b.created_at) - new Date(a.date || a.created_at)));
@@ -567,7 +577,7 @@ router.post('/posts/:pid/view', async (req, res, next) => {
 router.get('/metrics', async (req, res, next) => {
     try {
         const start = Date.now();
-        // lightweight counts (캐싱 고려 가능)
+        // lightweight counts (罹먯떛 怨좊젮 媛??
         let b = { c: 0 }, p = { c: 0 };
         try {
             const bResult = await query('SELECT COUNT(*) as c FROM boards WHERE deleted=0');
@@ -644,8 +654,8 @@ router.get('/metrics', async (req, res, next) => {
 // Debug: force flush view buffer (test only)
 router.post('/debug/flush-views', async (req, res, next) => {
     try {
-        // 추가 보호: 운영 환경에서 NODE_ENV=test가 아니면 기본 거부.
-        // 명시적으로 ENV_ALLOW_DEBUG_FLUSH=1 설정된 경우에만 허용 (로컬 긴급 디버깅 용도)
+        // 異붽? 蹂댄샇: ?댁쁺 ?섍꼍?먯꽌 NODE_ENV=test媛 ?꾨땲硫?湲곕낯 嫄곕?.
+        // 紐낆떆?곸쑝濡?ENV_ALLOW_DEBUG_FLUSH=1 ?ㅼ젙??寃쎌슦?먮쭔 ?덉슜 (濡쒖뺄 湲닿툒 ?붾쾭源??⑸룄)
         if (process.env.NODE_ENV !== 'test' && process.env.ENV_ALLOW_DEBUG_FLUSH !== '1') {
             return res.status(403).json({ error: 'forbidden' });
         }
@@ -922,7 +932,7 @@ router.get('/home', async (req, res, next) => {
         }));
         // latest posts across boards
         const latest = await query(
-            `SELECT p.id,p.board_id as board,p.title,p.content,p.date,p.tag,p.thumb,p.author,p.category,p.deleted,p.created_at,p.updated_at, IFNULL(v.views,0) as views
+            `SELECT p.*, p.board_id as board, IFNULL(v.views,0) as views
              FROM posts p LEFT JOIN post_views v ON v.post_id=p.id
              WHERE p.deleted=0
              ORDER BY p.date DESC, p.created_at DESC
@@ -997,7 +1007,7 @@ router.post('/mock/generate', async (req, res, next) => {
             const snippet = pick(SAMPLE_SNIPPETS);
             const bodyLen = randInt(contentLengthMin, contentLengthMax);
             const filler = Math.random().toString(36).repeat(20).slice(0, bodyLen);
-            const content = snippet + '\n\n' + '본문 샘플: ' + filler;
+            const content = snippet + '\n\n' + '蹂몃Ц ?섑뵆: ' + filler;
             const dt = new Date(Date.now() - randInt(0, daysBack) * 86400000);
             const dateOnly = dt.toISOString().slice(0, 10);
             const author = Array.isArray(authorPool) && authorPool.length ? pick(authorPool) : pick(SAMPLE_AUTHORS);
@@ -1141,8 +1151,8 @@ router.get('/chat/:roomId/messages', async (req, res, next) => {
             id: r.id,
             roomId: r.room_id,
             userId: r.user_id,
-            username: r.username || '익명',
-            author: r.username || '익명',
+            username: r.username || '?듬챸',
+            author: r.username || '?듬챸',
             content: r.content,
             timestamp: r.created_at
         }));
@@ -1174,7 +1184,7 @@ router.post('/chat/:roomId/messages', async (req, res, next) => {
         }
 
         const userId = req.user?.id || null;
-        const finalUsername = author || username || req.user?.display_name || '익명';
+        const finalUsername = author || username || req.user?.display_name || '?듬챸';
         const timestamp = new Date();
 
         // Store in DB for persistence
@@ -1305,9 +1315,9 @@ router.delete('/chat/:roomId/clear', async (req, res, next) => {
         if (isRedisEnabled()) {
             try {
                 const CHAT_KEY = `chat:${roomId}:messages`;
-                // Redis DEL 명령어 구현이 필요하다면 redis.js에 추가
-                // 일단은 LTRIM으로 빈 리스트로 만들기
-                await lTrim(CHAT_KEY, 1, 0); // 범위를 잘못 설정하여 빈 리스트 생성
+                // Redis DEL 紐낅졊??援ы쁽???꾩슂?섎떎硫?redis.js??異붽?
+                // ?쇰떒? LTRIM?쇰줈 鍮?由ъ뒪?몃줈 留뚮뱾湲?
+                await lTrim(CHAT_KEY, 1, 0); // 踰붿쐞瑜??섎せ ?ㅼ젙?섏뿬 鍮?由ъ뒪???앹꽦
             } catch (e) {
                 console.warn('[chat] Redis clear failed:', e.message);
             }
@@ -1318,9 +1328,14 @@ router.delete('/chat/:roomId/clear', async (req, res, next) => {
             ok: true,
             roomId,
             deletedCount,
-            message: `${roomId} 채팅 히스토리가 초기화되었습니다.`
+            message: `${roomId} 梨꾪똿 ?덉뒪?좊━媛 珥덇린?붾릺?덉뒿?덈떎.`
         });
     } catch (e) { next(e); }
 });
 
 export default router;
+
+
+
+
+

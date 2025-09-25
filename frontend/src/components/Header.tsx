@@ -1,6 +1,6 @@
-﻿import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { useAuth } from '../contexts/AuthContext'
+import { useAuth, type SocialProvider } from '../contexts/AuthContext'
 import { gameCategories, type CategoryNode } from '../data/categories'
 
 type MegaMenuItem = {
@@ -78,15 +78,29 @@ const slugifyLabel = (label: string) =>
 const MIN_PASSWORD_LENGTH = 6
 
 const Header: React.FC = () => {
-  const { isLoggedIn, user, login, register, logout } = useAuth()
+  const { isLoggedIn, user, login, register, logout, loginWithProvider, availableProviders, localAuthEnabled } = useAuth()
   const [showLoginForm, setShowLoginForm] = useState(false)
   const [authMode, setAuthMode] = useState<'login' | 'register'>('login')
   const [authData, setAuthData] = useState<AuthFormState>({ email: '', password: '', confirmPassword: '' })
   const [authAlert, setAuthAlert] = useState<{ tone: 'error' | 'success'; message: string } | null>(null)
   const [searchValue, setSearchValue] = useState('')
   const [openMenu, setOpenMenu] = useState<string | null>(null)
+  const [providerLoading, setProviderLoading] = useState<SocialProvider | null>(null)
   const navigate = useNavigate()
   const location = useLocation()
+  const formatProviderLabel = useCallback((provider: SocialProvider) => (provider === 'apple' ? 'Apple' : 'Google'), [])
+  const resolvedUserLabel = useMemo(() => {
+    if (!user) return ''
+    if (user.email && user.email.length > 0) {
+      return user.email
+    }
+    if (user.provider && user.provider !== 'local') {
+      return `${formatProviderLabel(user.provider as SocialProvider)} user`
+    }
+    return 'Member'
+  }, [user, formatProviderLabel])
+
+  const showLocalAuthForm = localAuthEnabled
 
   const resetAuthForm = useCallback(() => {
     setAuthMode('login')
@@ -101,6 +115,7 @@ const Header: React.FC = () => {
 
   const closeAuthModal = useCallback(() => {
     setShowLoginForm(false)
+    setProviderLoading(null)
     resetAuthForm()
   }, [resetAuthForm])
 
@@ -128,6 +143,10 @@ const Header: React.FC = () => {
   const handleAuthSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     setAuthAlert(null)
+    if (!showLocalAuthForm) {
+      setAuthAlert({ tone: 'error', message: 'Email login is disabled. Please use a social login option.' })
+      return
+    }
 
     const email = authData.email.trim()
     const password = authData.password.trim()
@@ -182,6 +201,9 @@ const Header: React.FC = () => {
     targetPath === '/' ? location.pathname === '/' : location.pathname.startsWith(targetPath)
 
   const handleAuthModeSwitch = () => {
+    if (!showLocalAuthForm) {
+      return
+    }
     setAuthMode((mode) => (mode === 'login' ? 'register' : 'login'))
     setAuthData({ email: '', password: '', confirmPassword: '' })
     setAuthAlert(null)
@@ -197,6 +219,20 @@ const Header: React.FC = () => {
 
   const closeAllMenus = () => {
     setOpenMenu(null)
+  }
+
+  const handleProviderLogin = async (provider: SocialProvider) => {
+    setAuthAlert(null)
+    setProviderLoading(provider)
+    const result = await loginWithProvider(provider)
+    setProviderLoading(null)
+    if (result.success) {
+      closeAuthModal()
+      return
+    }
+    if (result.message) {
+      setAuthAlert({ tone: 'error', message: result.message })
+    }
   }
 
   const handleWrapperBlur = (event: React.FocusEvent<HTMLDivElement>, label: string) => {
@@ -287,7 +323,7 @@ const Header: React.FC = () => {
                     id={menuId}
                     className="site-header__mega"
                     role="menu"
-                    aria-label={`${item.label} ?섏쐞 硫붾돱`}
+                    aria-label={`${item.label} ?�위 메뉴`}
                   >
                     {item.mega?.map((column) => (
                       <div key={column.title} className="mega-menu__column">
@@ -327,7 +363,7 @@ const Header: React.FC = () => {
 
           {isLoggedIn ? (
             <div className="site-header__auth">
-              <span className="site-header__welcome">Logged in as {user?.email}</span>
+              <span className="site-header__welcome">Logged in as {resolvedUserLabel}</span>
               <button type="button" className="button button--ghost" onClick={logout}>
                 Log out
               </button>
@@ -355,7 +391,7 @@ const Header: React.FC = () => {
         >
           <div className="login-modal" role="document">
             <header className="login-modal__header">
-              <h2 id="login-modal-title">{authMode === 'login' ? 'Login' : 'Create Account'}</h2>
+              <h2 id="login-modal-title">{showLocalAuthForm ? (authMode === 'login' ? 'Login' : 'Create Account') : 'Sign in'}</h2>
               <button
                 type="button"
                 className="login-modal__close"
@@ -365,51 +401,90 @@ const Header: React.FC = () => {
                 X
               </button>
             </header>
-            <form className="login-modal__form" onSubmit={handleAuthSubmit}>
-              <label className="login-modal__field">
-                <span>Email</span>
-                <input
-                  type="email"
-                  value={authData.email}
-                  onChange={(event) => setAuthData({ ...authData, email: event.target.value })}
-                  required
-                />
-              </label>
-              <label className="login-modal__field">
-                <span>Password</span>
-                <input
-                  type="password"
-                  value={authData.password}
-                  onChange={(event) => setAuthData({ ...authData, password: event.target.value })}
-                  required
-                />
-              </label>
-              {authMode === 'register' && (
-                <label className="login-modal__field">
-                  <span>Confirm password</span>
-                  <input
-                    type="password"
-                    value={authData.confirmPassword}
-                    onChange={(event) => setAuthData({ ...authData, confirmPassword: event.target.value })}
-                    required
-                  />
-                </label>
-              )}
-              {authAlert && (
+            <div className="login-modal__body">
+              <div className="login-modal__providers" role="group" aria-label="Sign in options">
+                {availableProviders.map((provider) => (
+                  <button
+                    key={provider}
+                    type="button"
+                    className={`login-modal__provider-button login-modal__provider-button--${provider}`}
+                    onClick={() => handleProviderLogin(provider)}
+                    disabled={providerLoading === provider}
+                  >
+                    <span
+                      className={`login-modal__provider-icon login-modal__provider-icon--${provider}`}
+                      aria-hidden="true"
+                    >
+                      {provider === 'apple' ? '?' : 'G'}
+                    </span>
+                    {providerLoading === provider
+                      ? `Connecting to ${formatProviderLabel(provider)}...`
+                      : `Sign in with ${formatProviderLabel(provider)}`}
+                  </button>
+                ))}
+              </div>
+              {!showLocalAuthForm && authAlert && (
                 <p className={`login-modal__message login-modal__message--${authAlert.tone}`}>{authAlert.message}</p>
               )}
-              <div className="login-modal__actions">
-                <button type="submit" className="button button--primary">
-                  {authMode === 'login' ? 'Sign in' : 'Create'}
-                </button>
-                <button type="button" className="button button--ghost" onClick={closeAuthModal}>
-                  Cancel
-                </button>
-              </div>
-              <button type="button" className="login-modal__switch" onClick={handleAuthModeSwitch}>
-                {authMode === 'login' ? 'Need an account? Create one' : 'Already have an account? Log in'}
+              {showLocalAuthForm && (
+                <>
+                  <div className="login-modal__divider">
+                    <span>or continue with email</span>
+                  </div>
+                  <form className="login-modal__form" onSubmit={handleAuthSubmit}>
+                    <label className="login-modal__field">
+                      <span>Email</span>
+                      <input
+                        type="email"
+                        value={authData.email}
+                        onChange={(event) => setAuthData({ ...authData, email: event.target.value })}
+                        required
+                      />
+                    </label>
+                    <label className="login-modal__field">
+                      <span>Password</span>
+                      <input
+                        type="password"
+                        value={authData.password}
+                        onChange={(event) => setAuthData({ ...authData, password: event.target.value })}
+                        required
+                      />
+                    </label>
+                    {authMode === 'register' && (
+                      <label className="login-modal__field">
+                        <span>Confirm password</span>
+                        <input
+                          type="password"
+                          value={authData.confirmPassword}
+                          onChange={(event) => setAuthData({ ...authData, confirmPassword: event.target.value })}
+                          required
+                        />
+                      </label>
+                    )}
+                    {authAlert && (
+                      <p className={`login-modal__message login-modal__message--${authAlert.tone}`}>{authAlert.message}</p>
+                    )}
+                    <div className="login-modal__actions">
+                      <button type="submit" className="button button--primary">
+                        {authMode === 'login' ? 'Sign in' : 'Create'}
+                      </button>
+                    </div>
+                    <button
+                      type="button"
+                      className="login-modal__switch"
+                      onClick={handleAuthModeSwitch}
+                    >
+                      {authMode === 'login' ? 'Need an account? Create one' : 'Already have an account? Log in'}
+                    </button>
+                  </form>
+                </>
+              )}
+            </div>
+            <footer className="login-modal__footer">
+              <button type="button" className="button button--ghost" onClick={closeAuthModal}>
+                Close
               </button>
-            </form>
+            </footer>
           </div>
         </div>
       )}
@@ -418,4 +493,5 @@ const Header: React.FC = () => {
 }
 
 export default Header
+
 

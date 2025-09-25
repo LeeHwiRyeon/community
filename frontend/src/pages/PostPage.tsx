@@ -1,221 +1,319 @@
-import { MouseEvent, useEffect, useMemo, useState } from 'react'
+癤퓁mport { Fragment, MouseEvent, useEffect, useMemo } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { apiService, Post, PostPreview } from '../api'
+import {
+  Alert,
+  AlertIcon,
+  Badge,
+  Box,
+  Center,
+  Flex,
+  Heading,
+  Image,
+  Spinner,
+  Stack,
+  Text
+} from '@chakra-ui/react'
+import type { Post } from '../api'
+import { apiService } from '../api'
+import { usePostDetail } from '../hooks/usePostData'
 import { useAuth } from '../contexts/AuthContext'
+import {
+  PostFormat,
+  BroadcastPreview,
+  DiscussionPreview,
+  GalleryPreview,
+  asBroadcastPreview,
+  asDiscussionPreview,
+  asGalleryPreview,
+  derivePostFormat,
+  formatNumber,
+  safeDate,
+  normalizePostBlocks,
+  resolveHeroImageUrl,
+  type NormalizedBlock
+} from './post-helpers'
 
-type PostFormat = 'article' | 'broadcast' | 'gallery' | 'discussion'
-type BroadcastPreview = Extract<PostPreview, { type: 'broadcast' }>
-type DiscussionPreview = Extract<PostPreview, { type: 'discussion' }>
-type GalleryPreview = Extract<PostPreview, { type: 'gallery' }>
+const PostBroadcastPanel = ({
+  preview,
+  post,
+  onOpenStream
+}: {
+  preview: BroadcastPreview
+  post: Post
+  onOpenStream: () => void
+}) => (
+  <Stack className="post-broadcast" spacing={3}>
+    <Stack className="post-broadcast__summary" spacing={1} fontSize="sm">
+      <Text as="span">{preview.streamer ?? post.author ?? 'Live host'}</Text>
+      <Text as="span">{preview.platform}</Text>
+      {preview.scheduleLabel ? <Text as="span">{preview.scheduleLabel}</Text> : null}
+    </Stack>
+    {preview.tags && preview.tags.length > 0 ? (
+      <Flex className="post-tags" wrap="wrap" gap={2} aria-label="Broadcast tags">
+        {preview.tags.map((tag) => (
+          <Badge key={tag} colorScheme="purple">
+            #{tag}
+          </Badge>
+        ))}
+      </Flex>
+    ) : null}
+    {preview.streamUrl || post.stream_url ? (
+      <button type="button" className="post-broadcast__button" onClick={onOpenStream}>
+        Watch Stream
+      </button>
+    ) : null}
+  </Stack>
+)
 
-const SUPPORTED_POST_FORMATS = new Set<PostFormat>(['article', 'broadcast', 'gallery', 'discussion'])
+const PostGalleryPanel = ({ preview }: { preview: GalleryPreview }) => (
+  <Stack className="post-gallery__summary" spacing={1} fontSize="sm">
+    <Text as="span" className="post-gallery__label">
+      Featured Cosplayer
+    </Text>
+    {preview.featuredCosplayer ? <Text as="span" fontWeight="semibold">{preview.featuredCosplayer}</Text> : null}
+    {typeof preview.likes === 'number' ? <Text as="span">{formatNumber(preview.likes)} likes</Text> : null}
+  </Stack>
+)
 
-const formatNumber = (value?: number): string => {
-  if (typeof value !== 'number' || !Number.isFinite(value)) {
-    return '0'
-  }
+const PostGalleryGrid = ({
+  images,
+  title
+}: {
+  images: string[]
+  title: string
+}) => (
+  <section className="post-gallery" aria-label="Gallery preview">
+    <ul className="post-gallery__grid">
+      {images.map((image, index) => (
+        <li key={`${image}-${index}`} className="post-gallery__item">
+          <Image src={image} alt={`${title} gallery image ${index + 1}`} loading="lazy" />
+        </li>
+      ))}
+    </ul>
+  </section>
+)
 
-  return value.toLocaleString()
-}
+const PostDiscussionHighlight = ({ highlight }: { highlight: string }) => (
+  <blockquote className="post-quote">{highlight}</blockquote>
+)
 
-const safeDate = (value?: string | null): string => {
-  if (!value) {
-    return ''
-  }
+const PostImageBlock = ({
+  image,
+  title
+}: {
+  image: { url: string; alt?: string | null; caption?: string | null }
+  title: string
+}) => (
+  <figure className="post-inline-image">
+    <Image src={image.url} alt={image.alt ?? title} loading="lazy" />
+    {image.caption ? <figcaption>{image.caption}</figcaption> : null}
+  </figure>
+)
 
-  const parsed = new Date(value)
+const PostListBlock = ({ items }: { items: string[] }) => (
+  <ul className="post-block-list">
+    {items.map((item) => (
+      <li key={item}>{item}</li>
+    ))}
+  </ul>
+)
 
-  if (Number.isNaN(parsed.getTime())) {
-    return ''
-  }
-
-  return parsed.toLocaleDateString('ko-KR', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    weekday: 'short'
-  })
-}
-
-const splitContent = (value?: string | null): string[] => {
-  if (!value) {
-    return []
-  }
-
-  return value
-    .replace(/\r\n?/g, '\n')
-    .split(/\n{2,}/)
-    .map((paragraph) => paragraph.trim())
-    .filter((paragraph) => paragraph.length > 0)
-}
-
-const asBroadcastPreview = (preview?: PostPreview): BroadcastPreview | undefined =>
-  preview && preview.type === 'broadcast' ? (preview as BroadcastPreview) : undefined
-
-const asDiscussionPreview = (preview?: PostPreview): DiscussionPreview | undefined =>
-  preview && preview.type === 'discussion' ? (preview as DiscussionPreview) : undefined
-
-const asGalleryPreview = (preview?: PostPreview): GalleryPreview | undefined =>
-  preview && preview.type === 'gallery' ? (preview as GalleryPreview) : undefined
-
-const derivePostFormat = (post: Post): PostFormat => {
-  if (post.preview && typeof post.preview === 'object' && 'type' in post.preview) {
-    const previewType = (post.preview as PostPreview).type
-
-    if (SUPPORTED_POST_FORMATS.has(previewType as PostFormat)) {
-      return previewType as PostFormat
-    }
-  }
-
-  if (post.mediaType && SUPPORTED_POST_FORMATS.has(post.mediaType as PostFormat)) {
-    return post.mediaType as PostFormat
-  }
-
-  if (post.stream_url) {
-    return 'broadcast'
-  }
-
-  if (post.category === 'cosplay') {
-    return 'gallery'
-  }
-
-  if (post.category === 'community') {
-    return 'discussion'
-  }
-
-  return 'article'
-}
+const PostEmbedBlock = ({ label, onOpen }: { label: string; onOpen: () => void }) => (
+  <Box className="post-embed">
+    <button type="button" className="post-embed__button" onClick={onOpen}>
+      {label}
+    </button>
+  </Box>
+)
 
 export default function PostPage(): JSX.Element {
-  const { boardId, postId } = useParams<{ boardId: string; postId: string }>()
+  const { boardId, postId } = useParams<{ boardId?: string; postId?: string }>()
   const navigate = useNavigate()
   const { isLoggedIn } = useAuth()
 
-  const [post, setPost] = useState<Post | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const { data: post, isLoading, error } = usePostDetail(postId)
 
   useEffect(() => {
-    let cancelled = false
-
-    const fetchPost = async () => {
-      if (!postId) {
-        setError('게시글을 찾을 수 없습니다.')
-        setLoading(false)
-        return
-      }
-
-      try {
-        const postData = await apiService.getPost(postId)
-
-        if (!cancelled) {
-          setPost(postData)
-          setError(null)
-        }
-
-        apiService.incrementViews(postId).catch(() => undefined)
-      } catch (err) {
-        console.error('Failed to fetch post:', err)
-        if (!cancelled) {
-          setError('게시글을 불러오지 못했습니다.')
-          setPost(null)
-        }
-      } finally {
-        if (!cancelled) {
-          setLoading(false)
-        }
-      }
-    }
-
-    fetchPost()
-
-    return () => {
-      cancelled = true
+    if (typeof postId === 'string' && postId.length > 0) {
+      apiService.incrementViews(postId).catch(() => undefined)
     }
   }, [postId])
 
   const handleGoBack = () => {
-    if (boardId) {
-      navigate(`/board/${boardId}`)
-    } else {
-      navigate('/')
+    if (typeof boardId === 'string' && boardId.length > 0) {
+      navigate(/board/)
+      return
     }
+    navigate('/')
   }
 
-  if (loading) {
-    return <div className="loading">로딩 중...</div>
-  }
-
-  if (!post) {
+  if (isLoading) {
     return (
-      <div className="error">
-        <p>{error ?? '게시글을 찾을 수 없습니다.'}</p>
-        <button onClick={handleGoBack} className="go-back-btn">
-          목록으로 돌아가기
-        </button>
-      </div>
+      <Center className="post-page__loading">
+        <Spinner size="lg" thickness="4px" />
+      </Center>
     )
   }
 
-  const displayFormat = derivePostFormat(post)
+  if (error || post == null) {
+    const message = error instanceof Error ? error.message : 'Unable to load this post.'
+    return (
+      <Box className="post-page__error">
+        <Alert status="error" variant="subtle">
+          <AlertIcon />
+          {message}
+        </Alert>
+        <button type="button" onClick={handleGoBack} className="go-back-btn">
+          Return to list
+        </button>
+      </Box>
+    )
+  }
+
+  const displayFormat: PostFormat = derivePostFormat(post)
   const preview = post.preview
   const broadcastPreview = asBroadcastPreview(preview)
   const discussionPreview = asDiscussionPreview(preview)
   const galleryPreview = asGalleryPreview(preview)
 
-  const baseGalleryImages = galleryPreview?.images?.filter(Boolean) ?? []
+  const normalizedBlocks = useMemo(() => normalizePostBlocks(post), [post])
+  const heroImage = useMemo(() => resolveHeroImageUrl(post, normalizedBlocks), [post, normalizedBlocks])
 
-  let heroImage: string | null = null
-  let galleryImages: string[] = []
-
-  if (displayFormat === 'gallery') {
-    heroImage = post.thumb ?? baseGalleryImages[0] ?? null
-    const heroIndex = heroImage ? baseGalleryImages.indexOf(heroImage) : -1
-    galleryImages = heroIndex >= 0 ? baseGalleryImages.filter((_, index) => index !== heroIndex) : baseGalleryImages
-  } else if (displayFormat === 'broadcast') {
-    heroImage = broadcastPreview?.thumbnail ?? post.thumb ?? null
-  } else {
-    heroImage = post.thumb ?? null
-  }
+  const bodyBlocks = useMemo(() => {
+    if (normalizedBlocks.length === 0) {
+      return normalizedBlocks
+    }
+    if (typeof heroImage !== 'string' || heroImage.length === 0) {
+      return normalizedBlocks
+    }
+    let heroRemoved = false
+    const filtered: NormalizedBlock[] = []
+    normalizedBlocks.forEach((block) => {
+      let shouldInclude = true
+      if (heroRemoved === false && (block.type === 'image' || block.type === 'gallery')) {
+        const matchesHero = (block.images ?? []).some((image) => image.url === heroImage)
+        if (matchesHero === true) {
+          shouldInclude = false
+          heroRemoved = true
+        }
+      }
+      if (shouldInclude) {
+        filtered.push(block)
+      }
+    })
+    return filtered
+  }, [normalizedBlocks, heroImage])
 
   const streamUrl = broadcastPreview?.streamUrl ?? post.stream_url ?? null
   const viewLabel = `${formatNumber(post.views)} views`
   const commentsLabel = typeof post.comments_count === 'number' ? `${formatNumber(post.comments_count)} comments` : null
   const createdDate = safeDate(post.created_at) || safeDate(post.updated_at)
-  const paragraphs = useMemo(() => splitContent(post.content), [post.content])
 
-  const handleStreamClick = (event: MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault()
-    event.stopPropagation()
-
-    if (streamUrl && typeof window !== 'undefined') {
-      window.open(streamUrl, '_blank', 'noopener,noreferrer')
+  const openExternalUrl = (targetUrl?: string | null) => {
+    if (typeof targetUrl === 'string' && targetUrl.length > 0 && typeof window !== 'undefined') {
+      window.open(targetUrl, '_blank', 'noopener,noreferrer')
     }
   }
 
+  const handleStreamClick = (event?: MouseEvent<HTMLButtonElement>) => {
+    if (event) {
+      event.preventDefault()
+      event.stopPropagation()
+    }
+    openExternalUrl(streamUrl)
+  }
+
+  const renderBlock = (block: NormalizedBlock) => {
+    if (block.type === 'paragraph' && block.text && block.text.length > 0) {
+      return (
+        <p key={block.key} className="post-body__paragraph">
+          {block.text}
+        </p>
+      )
+    }
+
+    if (block.type === 'quote' && block.text && block.text.length > 0) {
+      return <PostDiscussionHighlight key={block.key} highlight={block.text} />
+    }
+
+    if (block.type === 'list' && Array.isArray(block.items) && block.items.length > 0) {
+      return <PostListBlock key={block.key} items={block.items} />
+    }
+
+    if ((block.type === 'image' || block.type === 'gallery') && Array.isArray(block.images) && block.images.length > 0) {
+      const imageUrls = block.images
+        .map((image) => image.url)
+        .filter((value) => typeof value === 'string' && value.length > 0)
+
+      if (block.type === 'gallery' || imageUrls.length > 1) {
+        return <PostGalleryGrid key={block.key} images={imageUrls} title={post.title} />
+      }
+
+      const image = block.images[0]
+      if (image && typeof image.url === 'string' && image.url.length > 0) {
+        return <PostImageBlock key={block.key} image={image} title={post.title} />
+      }
+    }
+
+    if (block.type === 'embed' && block.embed && typeof block.embed.url === 'string' && block.embed.url.length > 0) {
+      const label = block.embed.title ?? 'Open resource'
+      return <PostEmbedBlock key={block.key} label={label} onOpen={() => openExternalUrl(block.embed?.url)} />
+    }
+
+    if (block.text && block.text.length > 0) {
+      return (
+        <p key={block.key} className="post-body__paragraph">
+          {block.text}
+        </p>
+      )
+    }
+
+    return null
+  }
+
+  const renderedBlocks = bodyBlocks.map((block) => renderBlock(block)).filter((element) => element !== null)
+  const hasBodyContent = renderedBlocks.length > 0
+
   return (
-    <div className="post-page">
-      <div className="post-header">
-        <div className="post-navigation">
-          <button onClick={handleGoBack} className="go-back-btn">
-            ← 목록으로
+    <Box className="post-page">
+      <Stack className="post-header" spacing={4}>
+        <Flex className="post-navigation" justify="space-between">
+          <button type="button" onClick={handleGoBack} className="go-back-btn">
+            Back to list
           </button>
-        </div>
-        <h1>{post.title}</h1>
-        <div className="post-meta">
-          <span className="author">{post.author ?? 'Anonymous'}</span>
-          {createdDate ? <span className="date">{createdDate}</span> : null}
-          <span className="views">{viewLabel}</span>
-          {commentsLabel ? <span className="comments">{commentsLabel}</span> : null}
-        </div>
-      </div>
+          <Badge colorScheme="purple" textTransform="uppercase">
+            {displayFormat}
+          </Badge>
+        </Flex>
+        <Heading as="h1" size="lg">
+          {post.title}
+        </Heading>
+        <Stack className="post-meta" direction="row" spacing={4} fontSize="sm">
+          <Text as="span" className="author">
+            {post.author ?? 'Anonymous'}
+          </Text>
+          {createdDate ? (
+            <Text as="span" className="date">
+              {createdDate}
+            </Text>
+          ) : null}
+          <Text as="span" className="views">
+            {viewLabel}
+          </Text>
+          {commentsLabel ? (
+            <Text as="span" className="comments">
+              {commentsLabel}
+            </Text>
+          ) : null}
+        </Stack>
+      </Stack>
 
       {heroImage ? (
         <figure className={`post-hero post-hero--${displayFormat}`}>
-          <img src={heroImage} alt={`Preview for ${post.title}`} loading="lazy" />
+          <Image src={heroImage} alt={`${post.title} hero image`} loading="lazy" />
           {displayFormat === 'broadcast' && broadcastPreview ? (
             <figcaption>
-              <span className={`post-hero__badge${broadcastPreview.isLive ? ' is-live' : ''}`}>
+              <span className="post-hero__badge">
                 {broadcastPreview.isLive ? 'LIVE' : broadcastPreview.scheduleLabel ?? 'Scheduled'}
               </span>
             </figcaption>
@@ -223,82 +321,44 @@ export default function PostPage(): JSX.Element {
         </figure>
       ) : null}
 
-      <div className="post-content">
+      <Stack className="post-content" spacing={6}>
         {displayFormat === 'broadcast' && broadcastPreview ? (
-          <aside className="post-broadcast">
-            <div className="post-broadcast__summary">
-              <span>{broadcastPreview.streamer ?? post.author ?? 'Live host'}</span>
-              <span>{broadcastPreview.platform}</span>
-              {broadcastPreview.scheduleLabel ? <span>{broadcastPreview.scheduleLabel}</span> : null}
-            </div>
-            {broadcastPreview.tags?.length ? (
-              <div className="post-tags" aria-label="방송 태그">
-                {broadcastPreview.tags.map((tag) => (
-                  <span className="post-tag" key={tag}>
-                    #{tag}
-                  </span>
-                ))}
-              </div>
-            ) : null}
-            {streamUrl ? (
-              <button type="button" className="post-broadcast__button" onClick={handleStreamClick}>
-                방송 보기
-              </button>
-            ) : null}
-          </aside>
+          <PostBroadcastPanel preview={broadcastPreview} post={post} onOpenStream={() => handleStreamClick()} />
         ) : null}
 
-        {displayFormat === 'gallery' && galleryPreview?.featuredCosplayer ? (
-          <div className="post-gallery__summary">
-            <span className="post-gallery__label">Featured Cosplayer</span>
-            <strong>{galleryPreview.featuredCosplayer}</strong>
-            {galleryPreview.likes ? <span>{formatNumber(galleryPreview.likes)} likes</span> : null}
-          </div>
+        {displayFormat === 'gallery' && galleryPreview ? (
+          <PostGalleryPanel preview={galleryPreview} />
         ) : null}
 
-        {displayFormat === 'gallery' && galleryImages.length ? (
-          <section className="post-gallery" aria-label="이미지 갤러리">
-            <ul className="post-gallery__grid">
-              {galleryImages.map((image, index) => (
-                <li key={`${image}-${index}`} className="post-gallery__item">
-                  <img src={image} alt={`${post.title} 이미지 ${index + 1}`} loading="lazy" />
-                </li>
-              ))}
-            </ul>
-          </section>
+        {displayFormat === 'discussion' && discussionPreview?.highlight ? (
+          <PostDiscussionHighlight highlight={discussionPreview.highlight} />
         ) : null}
 
-        {discussionPreview?.highlight ? (
-          <blockquote className="post-quote">{discussionPreview.highlight}</blockquote>
-        ) : null}
+        {hasBodyContent ? renderedBlocks : <Box className="no-content">This post does not include body content yet.</Box>}
+      </Stack>
 
-        {paragraphs.length ? (
-          <div className="content">
-            {paragraphs.map((paragraph, index) => (
-              <p key={`paragraph-${index}`}>{paragraph}</p>
-            ))}
-          </div>
-        ) : (
-          <div className="no-content">게시글에 내용이 없습니다.</div>
-        )}
-      </div>
-
-      <div className="post-actions">
+      <Stack className="post-actions" direction="row" spacing={3}>
         {isLoggedIn ? (
-          <>
-            <button className="edit-btn">수정</button>
-            <button className="delete-btn">삭제</button>
-          </>
+          <Fragment>
+            <button type="button" className="edit-btn">
+              Edit
+            </button>
+            <button type="button" className="delete-btn">
+              Delete
+            </button>
+          </Fragment>
         ) : null}
-        <button onClick={handleGoBack} className="list-btn">
-          목록
+        <button type="button" onClick={handleGoBack} className="list-btn">
+          Back to list
         </button>
-      </div>
+      </Stack>
 
-      <div className="comments-section">
-        <h3>댓글</h3>
-        <div className="comments-placeholder">댓글 기능을 준비 중입니다.</div>
-      </div>
-    </div>
+      <Box className="comments-section">
+        <Heading as="h3" size="md">
+          Comments
+        </Heading>
+        <Box className="comments-placeholder">Comments will be available soon.</Box>
+      </Box>
+    </Box>
   )
 }

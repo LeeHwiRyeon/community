@@ -1,11 +1,11 @@
-import mysql from 'mysql2/promise';
+﻿import mysql from 'mysql2/promise';
 import dotenv from 'dotenv';
 dotenv.config();
 
 let pool;
-// DB 존재하지 않을 때 생성하는 헬퍼 (최초 1회)
+// DB 議댁옱?섏? ?딆쓣 ???앹꽦?섎뒗 ?ы띁 (理쒖큹 1??
 export async function ensureDatabase() {
-    // 모의 데이터 모드인 경우 DB 초기화 건너뛰기
+    // 紐⑥쓽 ?곗씠??紐⑤뱶??寃쎌슦 DB 珥덇린??嫄대꼫?곌린
     if (process.env.USE_MOCK_DB === '1' || process.env.ENV_ALLOW_MOCK === '1') {
         console.log('[db] Using mock mode, skipping database initialization');
         return;
@@ -25,14 +25,14 @@ export async function ensureDatabase() {
     } finally { await tmp.end(); }
 }
 export function getPool() {
-    // 모의 데이터 모드인 경우 null 반환
+    // 紐⑥쓽 ?곗씠??紐⑤뱶??寃쎌슦 null 諛섑솚
     if (process.env.USE_MOCK_DB === '1' || process.env.ENV_ALLOW_MOCK === '1') {
         return null;
     }
     
     if (!pool) {
-        // NOTE: auth_gssapi_client 오류 발생 시 서버 계정 플러그인을 mysql_native_password 등으로 변경 필요.
-        // 필요 시 mysql2 authPlugins 커스터마이징 가능 (여기서는 기본설정 유지).
+        // NOTE: auth_gssapi_client ?ㅻ쪟 諛쒖깮 ???쒕쾭 怨꾩젙 ?뚮윭洹몄씤??mysql_native_password ?깆쑝濡?蹂寃??꾩슂.
+        // ?꾩슂 ??mysql2 authPlugins 而ㅼ뒪?곕쭏?댁쭠 媛??(?ш린?쒕뒗 湲곕낯?ㅼ젙 ?좎?).
         pool = mysql.createPool({
             host: process.env.DB_HOST,
             port: process.env.DB_PORT ? parseInt(process.env.DB_PORT, 10) : 3306,
@@ -52,7 +52,7 @@ export function getPool() {
 }
 
 export async function query(sql, params) {
-    // 모의 데이터 모드인 경우 빈 배열 반환
+    // 紐⑥쓽 ?곗씠??紐⑤뱶??寃쎌슦 鍮?諛곗뿴 諛섑솚
     if (process.env.USE_MOCK_DB === '1' || process.env.ENV_ALLOW_MOCK === '1') {
         console.log('[db] Mock mode: query skipped -', sql.substring(0, 50));
         return [];
@@ -70,12 +70,25 @@ export async function query(sql, params) {
 }
 
 export async function initSchema() {
-    // 모의 데이터 모드인 경우 스키마 초기화 건너뛰기
+    // 紐⑥쓽 ?곗씠??紐⑤뱶??寃쎌슦 ?ㅽ궎留?珥덇린??嫄대꼫?곌린
     if (process.env.USE_MOCK_DB === '1' || process.env.ENV_ALLOW_MOCK === '1') {
         console.log('[db] Mock mode: schema initialization skipped');
         return;
     }
     
+    const ensureColumn = async (table, column, definition) => {
+        try {
+            const existing = await query(`SHOW COLUMNS FROM ${table} LIKE '${column}'`);
+            if (!existing || existing.length === 0) {
+                await query(`ALTER TABLE ${table} ADD COLUMN ${definition}`);
+                console.log(`[schema] added column ${column} to ${table}`);
+            }
+        } catch (err) {
+            const msg = err && err.message ? err.message : String(err);
+            console.warn(`[schema] column ensure failed for ${table}.${column}`, msg);
+        }
+    };
+
     // boards
     await query(`CREATE TABLE IF NOT EXISTS boards (
     id VARCHAR(64) PRIMARY KEY,
@@ -122,6 +135,48 @@ export async function initSchema() {
         }
     }
 
+    await ensureColumn('posts', 'status', "status VARCHAR(32) DEFAULT 'published'");
+    await ensureColumn('posts', 'excerpt', 'excerpt VARCHAR(600) NULL');
+    await ensureColumn('posts', 'hero_media_id', 'hero_media_id BIGINT NULL');
+    await ensureColumn('posts', 'last_edited_at', 'last_edited_at TIMESTAMP NULL');
+    await ensureColumn('posts', 'last_edited_by', 'last_edited_by BIGINT NULL');
+    await ensureColumn('posts', 'layout_settings', 'layout_settings JSON NULL');
+
+    await query(`CREATE TABLE IF NOT EXISTS post_blocks (
+            id BIGINT AUTO_INCREMENT PRIMARY KEY,
+            post_id VARCHAR(64) NOT NULL,
+            ordering INT NOT NULL,
+            type VARCHAR(32) NOT NULL,
+            content_json JSON NOT NULL,
+            text_content TEXT,
+            media_alignment VARCHAR(32),
+            width_ratio VARCHAR(32),
+            background_style VARCHAR(32),
+            metadata JSON,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            CONSTRAINT fk_post_blocks_post FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`);
+    await query('CREATE INDEX IF NOT EXISTS idx_post_blocks_post_order ON post_blocks(post_id, ordering)');
+
+    await query(`CREATE TABLE IF NOT EXISTS post_media (
+            id BIGINT AUTO_INCREMENT PRIMARY KEY,
+            post_id VARCHAR(64) NOT NULL,
+            file_key VARCHAR(255) NOT NULL,
+            media_type VARCHAR(32) DEFAULT 'image',
+            url VARCHAR(500) NOT NULL,
+            thumbnail_url VARCHAR(500),
+            width INT,
+            height INT,
+            dominant_color VARCHAR(32),
+            alt_text VARCHAR(500),
+            caption TEXT,
+            metadata JSON,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            CONSTRAINT fk_post_media_post FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`);
+    await query('CREATE INDEX IF NOT EXISTS idx_post_media_post ON post_media(post_id)');
     // --- New: users (basic) ---
     await query(`CREATE TABLE IF NOT EXISTS users (
             id BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -141,6 +196,11 @@ export async function initSchema() {
         }
     } catch (e) { console.warn('[schema] role column check failed', e.message); }
 
+    await ensureColumn('users', 'password_hash', 'password_hash VARCHAR(255) NULL');
+    await ensureColumn('users', 'primary_provider', 'primary_provider VARCHAR(32) NULL');
+    await ensureColumn('users', 'primary_provider_user_id', 'primary_provider_user_id VARCHAR(190) NULL');
+    await ensureColumn('users', 'last_login_at', 'last_login_at DATETIME NULL');
+
     // user_social_identities: maps OAuth providers to users
     await query(`CREATE TABLE IF NOT EXISTS user_social_identities (
             id BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -154,6 +214,28 @@ export async function initSchema() {
             UNIQUE KEY uq_provider_user (provider, provider_user_id)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`);
 
+    try {
+        await query('ALTER TABLE posts ADD CONSTRAINT fk_posts_last_edited_by FOREIGN KEY (last_edited_by) REFERENCES users(id) ON DELETE SET NULL');
+    } catch (err) {
+        const msg = err && err.message ? err.message : String(err);
+        if (!/Duplicate key name/.test(msg)) {
+            console.warn('[schema] fk_posts_last_edited_by ensure skipped', msg);
+        }
+    }
+
+    await query(`CREATE TABLE IF NOT EXISTS post_versions (
+            id BIGINT AUTO_INCREMENT PRIMARY KEY,
+            post_id VARCHAR(64) NOT NULL,
+            version INT NOT NULL,
+            status VARCHAR(32) DEFAULT 'draft',
+            snapshot_json JSON NOT NULL,
+            created_by BIGINT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            CONSTRAINT fk_post_versions_post FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE,
+            CONSTRAINT fk_post_versions_user FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL,
+            UNIQUE KEY uq_post_version (post_id, version)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`);
+    await query('CREATE INDEX IF NOT EXISTS idx_post_versions_post ON post_versions(post_id)');
     // announcements: time window controlled messages
     await query(`CREATE TABLE IF NOT EXISTS announcements (
             id BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -234,3 +316,9 @@ export async function initSchema() {
             INDEX idx_chat_user (user_id, created_at)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`);
 }
+
+
+
+
+
+

@@ -8,7 +8,7 @@
       "extra": {
         "status": "ok",
         "mode": "mock",
-        "timestamp": 1758787458844,
+        "timestamp": 1758788157595,
         "boards": 16,
         "posts": 480
       }
@@ -17,9 +17,9 @@
       "name": "create board",
       "ok": true,
       "extra": {
-        "id": "b_wtb3f",
-        "title": "랜덤보드 69s00",
-        "summary": "랜덤보드 69s00 discussion board",
+        "id": "b_77adj",
+        "title": "랜덤보드 78kdq",
+        "summary": "랜덤보드 78kdq discussion board",
         "category": "custom",
         "format": "article",
         "preview_format": "article",
@@ -35,15 +35,15 @@
       "ok": true
     },
     {
-      "name": "create post p_d5bakprc",
+      "name": "create post p_cyu99l1e",
       "ok": true
     },
     {
-      "name": "create post p_lhaq1wo2",
+      "name": "create post p_gsw0mohs",
       "ok": true
     },
     {
-      "name": "create post p_sadqghag",
+      "name": "create post p_xl8b17rq",
       "ok": true
     },
     {
@@ -57,17 +57,17 @@
     {
       "name": "update post",
       "ok": false,
-      "err": "PATCH /boards/b_wtb3f/posts/p_d5bakprc 404 null"
+      "err": "PATCH /boards/b_77adj/posts/p_cyu99l1e 404 null"
     },
     {
       "name": "increment view (buffered)",
       "ok": false,
-      "err": "POST /posts/p_d5bakprc/view 404 {\"error\":\"post_not_found\"}"
+      "err": "POST /posts/p_cyu99l1e/view 404 {\"error\":\"post_not_found\"}"
     },
     {
       "name": "soft delete post",
       "ok": false,
-      "err": "DELETE /boards/b_wtb3f/posts/p_sadqghag 404 {\"error\":\"post_not_found\"}"
+      "err": "DELETE /boards/b_77adj/posts/p_xl8b17rq 404 {\"error\":\"post_not_found\"}"
     },
     {
       "name": "posts map",
@@ -80,17 +80,17 @@
     {
       "name": "pagination multi-page",
       "ok": false,
-      "err": "GET /boards/b_wtb3f/posts?limit=30&offset=0 404 {\"error\":\"board_not_found\"}"
+      "err": "GET /boards/b_77adj/posts?limit=30&offset=0 404 {\"error\":\"board_not_found\"}"
     },
     {
       "name": "search exact",
       "ok": false,
-      "err": "POST /boards/b_wtb3f/posts 404 {\"error\":\"board_not_found\"}"
+      "err": "POST /boards/b_77adj/posts 404 {\"error\":\"board_not_found\"}"
     },
     {
       "name": "search approx",
       "ok": false,
-      "err": "GET /boards/b_wtb3f/posts?q=ZXQ&approx=1 404 {\"error\":\"board_not_found\"}"
+      "err": "GET /boards/b_77adj/posts?q=ZXQ&approx=1 404 {\"error\":\"board_not_found\"}"
     },
     {
       "name": "metrics",

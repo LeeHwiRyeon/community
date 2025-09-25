@@ -1,4 +1,4 @@
-﻿import express from 'express';
+import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
@@ -21,6 +21,7 @@ dotenv.config({ path: path.join(__dirname, '../.env') });
 
 export function createApp() {
     const app = express();
+    let loggedOnce = false;
     logger.info('app.create start');
 
     // CORS ?ㅼ젙 - ?꾨줎?몄뿏???꾨찓???덉슜
@@ -758,6 +759,11 @@ export async function __flushAllViewsForTest() {
     const finalRows = runtimeMetrics.viewFlushRows;
     let finalPending = 0; for (const v of viewBuffer.values()) finalPending += v.pending;
     return { batchAddedRows: afterFirst - before, fallbackFlushed, totalRows: finalRows, finalPending };
+
+}
+
+export function __stopBackgroundTimersForTest() {
+    clearInterval(viewFlushTimer);
 }
 
 async function shutdownViewBuffer() {

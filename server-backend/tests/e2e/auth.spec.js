@@ -1,52 +1,45 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '@playwright/test'
 
-test.describe('Authentication Flow', () => {
-    test('should handle login page access', async ({ page }) => {
-        // Navigate to login page (assuming it exists)
-        await page.goto('http://localhost:5000/login');
+test.describe('Auth API', () => {
+  test('lists enabled providers', async ({ request }) => {
+    const response = await request.get('/api/auth/providers')
+    expect(response.ok()).toBeTruthy()
 
-        // Check if login form elements exist
-        const loginForm = page.locator('form');
-        await expect(loginForm).toBeVisible();
-    });
+    const body = await response.json()
+    expect(Array.isArray(body.providers)).toBeTruthy()
+    const providerIds = body.providers.map((provider) => provider.provider)
+    expect(providerIds).toContain('google')
+    expect(providerIds).toContain('apple')
+  })
 
-    test('should handle authentication API', async ({ request }) => {
-        // Test login endpoint
-        const loginResponse = await request.post('/api/auth/login', {
-            data: {
-                username: 'testuser',
-                password: 'testpass'
-            }
-        });
+  test('builds provider redirect payload', async ({ request }) => {
+    const response = await request.get('/api/auth/redirect/google')
+    expect(response.ok()).toBeTruthy()
 
-        // Should return some response (may be 400 due to test data)
-        expect([400, 401, 200]).toContain(loginResponse.status());
-    });
+    const body = await response.json()
+    expect(body.provider).toBe('google')
+    expect(body.callback).toContain('/api/auth/callback/google')
 
-    test('should handle session endpoint', async ({ request }) => {
-        // Test session endpoint without authentication
-        const sessionResponse = await request.get('/api/auth/session');
+    if (body.mock) {
+      expect(body.redirect).toBeTruthy()
+    } else {
+      expect(body.authorize).toContain('https://accounts.google.com')
+      expect(body.pkce).toBeTruthy()
+    }
+  })
 
-        // Should return 401 or 404
-        expect([401, 404]).toContain(sessionResponse.status());
-    });
+  test('mock redirect flow returns tokens for apple', async ({ request }) => {
+    const redirect = await request.get('/api/auth/redirect/apple')
+    expect(redirect.ok()).toBeTruthy()
+    const redirectBody = await redirect.json()
+    expect(redirectBody.mock).toBeTruthy()
+    expect(redirectBody.callback).toContain('/api/auth/callback/apple')
 
-    test('should handle OAuth providers', async ({ request }) => {
-        // Test OAuth provider endpoints
-        const providers = ['google', 'github', 'naver', 'kakao'];
-
-        for (const provider of providers) {
-            const response = await request.get(`/api/auth/${provider}`);
-            // Should redirect or return appropriate response
-            expect([302, 400, 404]).toContain(response.status());
-        }
-    });
-
-    test('should handle logout', async ({ request }) => {
-        // Test logout endpoint
-        const logoutResponse = await request.post('/api/auth/logout');
-
-        // Should return success or redirect
-        expect([200, 302, 404]).toContain(logoutResponse.status());
-    });
-});
+    const callback = await request.get('/api/auth/callback/apple?code=mock-code')
+    expect(callback.ok()).toBeTruthy()
+    const callbackBody = await callback.json()
+    expect(callbackBody.provider).toBe('apple')
+    expect(callbackBody.access).toBeTruthy()
+    expect(callbackBody.refresh).toBeTruthy()
+  })
+})

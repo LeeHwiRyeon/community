@@ -6,7 +6,7 @@
         "dev": "vite --port 5000 --open",
         "build": "vite build",
         "preview": "vite preview",
-        "test": "ts-node --esm --experimentalSpecifierResolution=node ./tests/routes.test.ts"
+        "test": "ts-node --esm --compiler-options \"{\\\"module\\\":\\\"esnext\\\",\\\"jsx\\\":\\\"react-jsx\\\"}\" --experimentalSpecifierResolution=node ./tests/routes.test.ts && ts-node --esm --compiler-options \"{\\\"module\\\":\\\"esnext\\\",\\\"jsx\\\":\\\"react-jsx\\\"}\" --experimentalSpecifierResolution=node ./tests/post-page.test.ts"
     },
     "dependencies": {
         "@types/react": "^19.1.13",
