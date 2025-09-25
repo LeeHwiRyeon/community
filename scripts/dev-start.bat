@@ -47,11 +47,12 @@ goto parse_args
 
 :start_services
 echo ===============================
+
+REM 기존 Community 서버 프로세스들을 이름으로 종료
+echo [INFO] 기존 서버 프로세스들을 종료하는 중...
+powershell -Command "try { taskkill /FI \"WINDOWTITLE eq Community Backend\" /F 2>$null; taskkill /FI \"WINDOWTITLE eq Community Frontend\" /F 2>$null; taskkill /IM node.exe /F 2>$null; taskkill /IM npm.cmd /F 2>$null; } catch { }"
+
 echo Community Full Stack Development
-echo ===============================
-if "%START_BACKEND%"=="1" echo Backend: 포트 %BACKEND_PORT%
-if "%START_FRONTEND%"=="1" echo Frontend: 포트 %FRONTEND_PORT%
-if defined READONLY_MODE echo Mode: 읽기 전용
 echo ===============================
 
 REM 백엔드 시작
@@ -77,8 +78,5 @@ if "%START_FRONTEND%"=="1" if not defined NO_BROWSER_MODE (
 echo ===============================
 echo 개발 환경이 준비되었습니다!
 echo ===============================
-if "%START_BACKEND%"=="1" echo Backend API: http://localhost:%BACKEND_PORT%/api/health
-if "%START_FRONTEND%"=="1" echo Frontend: http://localhost:%FRONTEND_PORT%
-echo ===============================
 
-pause
+endlocal

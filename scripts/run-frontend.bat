@@ -11,10 +11,10 @@ set LOGFILE=..\logs\run-frontend-%TIMESTAMP%.log
 echo [%date% %time%] ===== Starting run-frontend.bat ===== >> %LOGFILE%
 echo [%date% %time%] Log file: %LOGFILE% >> %LOGFILE%
 
-REM 포트 5000을 사용하는 기존 프로세스들을 종료
-echo [run-frontend] Checking and killing processes on port 5000...
-echo [%date% %time%] Checking and killing processes on port 5000... >> %LOGFILE%
-powershell -Command "try { $pids = netstat -ano | findstr ':5000' | ForEach-Object { $_.Split()[-1] } | Sort-Object -Unique; foreach ($pid in $pids) { if ($pid -and $pid -ne 0) { taskkill /PID $pid /F 2>$null; echo \"[%date% %time%] Killed process $pid\" >> %LOGFILE% } } } catch { echo \"[%date% %time%] Error killing processes: $_\" >> %LOGFILE% }"
+REM 기존 프론트엔드 프로세스들을 이름으로 종료
+echo [run-frontend] Killing existing frontend processes...
+echo [%date% %time%] Killing existing frontend processes... >> %LOGFILE%
+powershell -Command "try { taskkill /FI \"WINDOWTITLE eq Community Frontend\" /F 2>$null; taskkill /IM npm.cmd /F 2>$null; echo \"[%date% %time%] Killed existing processes\" >> %LOGFILE% } catch { echo \"[%date% %time%] Error killing processes: $_\" >> %LOGFILE% }"
 
 pushd "%~dp0..\frontend"
 
@@ -39,11 +39,14 @@ IF NOT EXIST node_modules (
 
 echo [run-frontend] Starting React/Vite development server...
 echo [%date% %time%] Starting React/Vite development server... >> %LOGFILE%
+start "Community Frontend" cmd /c "cd /d %~dp0..\frontend && npm run dev"
 start http://localhost:5000
-timeout /t 3 /nobreak > nul
-npm run dev
 
+echo [run-frontend] Frontend server started in background
+echo [%date% %time%] Frontend server started in background >> %LOGFILE%
 echo [%date% %time%] ===== run-frontend.bat finished ===== >> %LOGFILE%
+
+goto :eof
 
 popd
 endlocal

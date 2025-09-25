@@ -1,4 +1,4 @@
-import logger from '../../src/logger.js';
+import logger from '../../logger.js';
 
 describe('Logger', () => {
     const originalConsole = global.console;

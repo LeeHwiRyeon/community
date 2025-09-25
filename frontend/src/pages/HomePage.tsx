@@ -1,13 +1,17 @@
 import { MouseEvent, useEffect, useMemo, useState } from 'react'
+import { Alert, AlertIcon, Box, Center, Spinner, Stack, Text } from '@chakra-ui/react'
 import { Link } from 'react-router-dom'
 import {
-  apiService,
   Post,
-  PostPreview,
-  TrendingItem,
-  CommunitySummary
+  PostPreview
 } from '../api'
 import { buildPostLink } from '../utils/routes'
+import {
+  useCommunities,
+  useCommunityBoardPosts,
+  useNewsPosts,
+  useTrendingList
+} from '../hooks/useCommunityData'
 
 type SupportedPostFormat = 'article' | 'discussion' | 'broadcast' | 'gallery'
 type BroadcastPreview = Extract<PostPreview, { type: 'broadcast' }>
@@ -86,6 +90,19 @@ const toDateValue = (value?: string | null): number => {
   return Number.isFinite(timestamp) ? timestamp : 0
 }
 
+
+const toErrorMessage = (error: unknown): string => {
+  if (!error) {
+    return ''
+  }
+
+  if (error instanceof Error) {
+    return error.message
+  }
+
+  return String(error)
+}
+
 const resolveBoardLabel = (boardId: string): string => {
   if (BOARD_LABELS[boardId]) {
     return BOARD_LABELS[boardId]
@@ -162,82 +179,26 @@ const getPostFormat = (post: Post, fallbackFormat?: string | null): string => {
 }
 
 function HomePage(): JSX.Element {
-  const [newsPosts, setNewsPosts] = useState<Post[]>([])
-  const [communities, setCommunities] = useState<CommunitySummary[]>([])
   const [selectedCommunityId, setSelectedCommunityId] = useState<string | null>(null)
-  const [boardPosts, setBoardPosts] = useState<Record<string, Post[]>>({})
-  const [communityLoading, setCommunityLoading] = useState(false)
-  const [initializing, setInitializing] = useState(true)
-  const [trendingItems, setTrendingItems] = useState<TrendingItem[]>([])
-  const [trendingLoading, setTrendingLoading] = useState(true)
+
+  const newsQuery = useNewsPosts()
+  const trendingQuery = useTrendingList(10, 7)
+  const communitiesQuery = useCommunities()
+
+  const newsPosts = newsQuery.data ?? []
+  const trendingItems = trendingQuery.data?.items ?? []
+  const communities = communitiesQuery.data ?? []
 
   useEffect(() => {
-    let isMounted = true
-
-    const load = async () => {
-      try {
-        const [news, trendingResponse, communityData] = await Promise.all([
-          apiService.getPosts(NEWS_BOARD_ID),
-          apiService.getTrending(10, 7),
-          apiService.getCommunities()
-        ])
-
-        if (!isMounted) {
-          return
-        }
-
-        setNewsPosts(sortPostsByViews(news))
-        setTrendingItems(trendingResponse.items)
-        setCommunities(communityData)
-
-        const seeded: Record<string, Post[]> = {}
-
-        communityData.forEach((community) => {
-          community.boards.forEach((board) => {
-            if (board.posts?.length) {
-              seeded[board.id] = sortPostsByViews(board.posts)
-            }
-          })
-        })
-
-        if (Object.keys(seeded).length) {
-          setBoardPosts(seeded)
-        }
-
-        if (communityData.length) {
-          setSelectedCommunityId((current) => current ?? communityData[0].id)
-        }
-      } catch (error) {
-        if (isMounted) {
-          console.error('Failed to load home content', error)
-        }
-      } finally {
-        if (isMounted) {
-          setInitializing(false)
-          setTrendingLoading(false)
-        }
-      }
-    }
-
-    load()
-
-    return () => {
-      isMounted = false
-    }
-  }, [])
-
-  useEffect(() => {
-    if (!communities.length) {
+    if (communities.length === 0) {
       return
     }
 
-    if (!selectedCommunityId) {
-      setSelectedCommunityId(communities[0].id)
-    }
+    setSelectedCommunityId((current) => current ?? communities[0].id)
   }, [communities, selectedCommunityId])
 
   const selectedCommunity = useMemo(() => {
-    if (!communities.length) {
+    if (communities.length === 0) {
       return null
     }
 
@@ -265,58 +226,32 @@ function HomePage(): JSX.Element {
     })
   }, [selectedCommunity])
 
-  useEffect(() => {
-    if (!selectedCommunity) {
-      setCommunityLoading(false)
-      return
-    }
+  const {
+    postsByBoardId,
+    isLoading: boardPostsLoading,
+    isFetching: boardPostsFetching,
+    errors: boardPostsErrors
+  } = useCommunityBoardPosts(communityBoards)
 
-    const boardsToFetch = selectedCommunity.boards.filter((board) => !(boardPosts[board.id]?.length))
-
-    if (!boardsToFetch.length) {
-      setCommunityLoading(false)
-      return
-    }
-
-    let cancelled = false
-    setCommunityLoading(true)
-
-    Promise.all(
-      boardsToFetch.map(async (board) => {
-        try {
-          const posts = await apiService.getPosts(board.id)
-          return { boardId: board.id, posts: sortPostsByViews(posts) }
-        } catch (error) {
-          console.error(`Failed to load posts for board ${board.id}`, error)
-          return { boardId: board.id, posts: [] as Post[] }
-        }
-      })
-    )
-      .then((results) => {
-        if (cancelled) {
-          return
-        }
-
-        setBoardPosts((previous) => {
-          const updated = { ...previous }
-          results.forEach(({ boardId, posts }) => {
-            if (!updated[boardId]?.length) {
-              updated[boardId] = posts
-            }
-          })
-          return updated
-        })
-      })
-      .finally(() => {
-        if (!cancelled) {
-          setCommunityLoading(false)
-        }
-      })
-
-    return () => {
-      cancelled = true
-    }
-  }, [selectedCommunity?.id])
+  const communityLoading = communitiesQuery.isFetching || boardPostsLoading || boardPostsFetching
+  const isCommunitiesLoading = communitiesQuery.isLoading && communities.length === 0
+  const communitiesErrorMessage = toErrorMessage(communitiesQuery.error)
+  const hasCommunitiesError = communitiesErrorMessage.length > 0
+  const boardPostsErrorMessage = boardPostsErrors
+    .filter((error) => Boolean(error))
+    .map((error) => toErrorMessage(error))
+    .filter((message) => message.length > 0)
+    .join(' ')
+  const hasBoardPostsError = boardPostsErrorMessage.length > 0
+  const combinedCommunityErrorMessage = [communitiesErrorMessage, boardPostsErrorMessage]
+    .filter((message) => message.length > 0)
+    .join(' ')
+  const trendingLoading = trendingQuery.isLoading
+  const trendingErrorMessage = toErrorMessage(trendingQuery.error)
+  const hasTrendingError = trendingErrorMessage.length > 0
+  const initializing =
+    (newsQuery.isLoading && newsPosts.length === 0) ||
+    (communitiesQuery.isLoading && communities.length === 0)
 
   const communityPosts = useMemo(() => {
     if (!selectedCommunity) {
@@ -324,7 +259,7 @@ function HomePage(): JSX.Element {
     }
 
     const aggregated = communityBoards.flatMap((board) => {
-      const posts = boardPosts[board.id] ?? board.posts ?? []
+      const posts = postsByBoardId[board.id] ?? board.posts ?? []
       return posts.map((post) => ({
         boardId: board.id,
         boardTitle: board.title,
@@ -338,7 +273,32 @@ function HomePage(): JSX.Element {
       const right = toDateValue(b.post.created_at ?? b.post.updated_at ?? b.post.date)
       return right - left
     })
-  }, [selectedCommunity, communityBoards, boardPosts])
+  }, [selectedCommunity, communityBoards, postsByBoardId])
+
+
+const boardSummaries = useMemo(() => {
+  if (communityBoards.length === 0) {
+    return []
+  }
+
+  return communityBoards.map((board) => {
+    const posts = postsByBoardId[board.id] ?? board.posts ?? []
+    const latestPost = posts[0]
+    const latestDateLabel = latestPost
+      ? safeDate(latestPost.created_at) || safeDate(latestPost.updated_at)
+      : ''
+
+    return {
+      id: board.id,
+      title: board.title,
+      summary: board.summary ?? '',
+      format: board.preview_format ?? board.format ?? null,
+      postCount: posts.length,
+      latestDateLabel,
+      views: posts.reduce((sum, post) => sum + (post.views ?? 0), 0)
+    }
+  })
+}, [communityBoards, postsByBoardId])
 
   const heroPost = newsPosts[0] ?? null
   const newsSubPosts = newsPosts.slice(1, 4)
@@ -567,13 +527,13 @@ function HomePage(): JSX.Element {
   const communityPostLimit = 12
 
   return (
-    <div className="home">
-      <header className="home__section-header">
+    <Box className="home">
+      <Stack as="header" className="home__section-header" spacing={3}>
         <div>
           <h1>Community Dashboard</h1>
           <p>Stay on top of live game news, broadcasts, and cosplay highlights in one view.</p>
         </div>
-      </header>
+      </Stack>
 
       <section className="home__layout">
         <div className="home__news-column">
@@ -648,6 +608,7 @@ function HomePage(): JSX.Element {
             </ul>
           ) : null}
 
+
           <section className="community-hub" aria-labelledby="community-hub-title">
             <header className="community-hub__header">
               <div>
@@ -657,80 +618,143 @@ function HomePage(): JSX.Element {
               <span className="community-hub__counter">{formatNumber(communities.length)} communities</span>
             </header>
 
-            {communities.length ? (
-              <>
-                <div className="community-hub__communities" role="tablist" aria-label="Select community">
-                  {communities.map((community) => {
-                    const isActive = (selectedCommunity?.id ?? '') === community.id
-
-                    return (
-                      <button
-                        key={community.id}
-                        type="button"
-                        className={`community-hub__community${isActive ? ' is-active' : ''}`}
-                        aria-pressed={isActive}
-                        onClick={() => setSelectedCommunityId(community.id)}
-                      >
-                        <span className="community-hub__community-title">{community.title}</span>
-                        {community.description ? (
-                          <span className="community-hub__community-description">{community.description}</span>
-                        ) : null}
-                        {typeof community.totalViews === 'number' ? (
-                          <span className="community-hub__community-meta">
-                            {formatNumber(community.totalViews)} views
-                          </span>
-                        ) : null}
-                      </button>
-                    )
-                  })}
-                </div>
-
-                {selectedCommunity ? (
-                  <div className="community-hub__posts">
-                    <header className="community-hub__posts-header">
-                      <div>
-                        <h3>{selectedCommunity.title}</h3>
-                        <p>{selectedCommunity.description ?? 'Recent posts from every board in this community.'}</p>
-                      </div>
-                      <span className="community-hub__counter">{formatNumber(communityPosts.length)} posts</span>
-                    </header>
-
-                    {communityLoading ? (
-                      <p className="community-hub__feedback">Loading posts...</p>
-                    ) : communityPosts.length ? (
-                      <ul className="community-hub__post-list">
-                        {communityPosts.slice(0, communityPostLimit).map((entry) =>
-                          renderPostCard(entry.post, {
-                            id: entry.boardId,
-                            title: entry.boardTitle,
-                            format: entry.boardFormat
-                          })
-                        )}
-                      </ul>
-                    ) : (
-                      <p className="community-hub__feedback">No posts available for this community yet.</p>
-                    )}
-                  </div>
-                ) : null}
-              </>
+            {isCommunitiesLoading ? (
+              <Center py={10}>
+                <Spinner size="lg" thickness="4px" />
+              </Center>
             ) : (
-              <p className="community-hub__feedback">No communities available.</p>
+              <>
+                {hasCommunitiesError ? (
+                  <Alert status="error" variant="subtle">
+                    <AlertIcon />
+                    {combinedCommunityErrorMessage || 'Unable to load community data. Please try again in a moment.'}
+                  </Alert>
+                ) : null}
+
+                {communities.length ? (
+                  <>
+                    <div className="community-hub__communities" role="tablist" aria-label="Select community">
+                      {communities.map((community) => {
+                        const isActive = (selectedCommunity?.id ?? '') === community.id
+
+                        return (
+                          <button
+                            key={community.id}
+                            type="button"
+                            className={`community-hub__community${isActive ? ' is-active' : ''}`}
+                            aria-pressed={isActive}
+                            onClick={() => setSelectedCommunityId(community.id)}
+                          >
+                            <span className="community-hub__community-title">{community.title}</span>
+                            {community.description ? (
+                              <span className="community-hub__community-description">{community.description}</span>
+                            ) : null}
+                            {typeof community.totalViews === 'number' ? (
+                              <span className="community-hub__community-meta">
+                                {formatNumber(community.totalViews)} views
+                              </span>
+                            ) : null}
+                          </button>
+                        )
+                      })}
+                    </div>
+
+                    {selectedCommunity ? (
+                      <div className="community-hub__posts">
+                        <header className="community-hub__posts-header">
+                          <div>
+                            <h3>{selectedCommunity.title}</h3>
+                            <p>{selectedCommunity.description ?? 'Recent posts from every board in this community.'}</p>
+                          </div>
+                          <span className="community-hub__counter">{formatNumber(communityPosts.length)} posts</span>
+                        </header>
+
+                        {boardSummaries.length ? (
+                          <Stack spacing={4} className="community-hub__board-cards">
+                            {boardSummaries.map((board) => (
+                              <Card key={board.id} variant="outline">
+                                <CardHeader>
+                                  <Stack spacing={1}>
+                                    <HStack spacing={2}>
+                                      <Text as="span" fontWeight="bold">
+                                        {board.title}
+                                      </Text>
+                                      {board.format ? (
+                                        <Badge colorScheme="purple" textTransform="capitalize">{board.format}</Badge>
+                                      ) : null}
+                                    </HStack>
+                                    <Text as="span" fontSize="sm" color="gray.500">
+                                      {board.summary || 'No description available.'}
+                                    </Text>
+                                  </Stack>
+                                </CardHeader>
+                                <CardBody>
+                                  <HStack spacing={6} fontSize="sm">
+                                    <Text as="span">Posts: {formatNumber(board.postCount)}</Text>
+                                    <Text as="span">Views: {formatNumber(board.views)}</Text>
+                                    {board.latestDateLabel ? (
+                                      <Text as="span">Latest: {board.latestDateLabel}</Text>
+                                    ) : null}
+                                  </HStack>
+                                </CardBody>
+                              </Card>
+                            ))}
+                          </Stack>
+                        ) : null}
+
+                        {hasBoardPostsError ? (
+                          <Alert status="error" variant="subtle">
+                            <AlertIcon />
+                            {boardPostsErrorMessage || 'Unable to load posts for this community.'}
+                          </Alert>
+                        ) : communityLoading ? (
+                          <Center py={8}>
+                            <Spinner size="md" thickness="3px" />
+                          </Center>
+                        ) : communityPosts.length ? (
+                          <ul className="community-hub__post-list">
+                            {communityPosts.slice(0, communityPostLimit).map((entry) =>
+                              renderPostCard(entry.post, {
+                                id: entry.boardId,
+                                title: entry.boardTitle,
+                                format: entry.boardFormat
+                              })
+                            )}
+                          </ul>
+                        ) : (
+                          <Text className="community-hub__feedback">No posts available for this community yet.</Text>
+                        )}
+                      </div>
+                    ) : null}
+                  </>
+                ) : (
+                  <Text className="community-hub__feedback">No communities available.</Text>
+                )}
+              </>
             )}
           </section>
         </div>
 
         <aside className="home__sidebar">
+
           <section className="trending" aria-labelledby="trending-title">
-            <header className="trending__header">
+            <Stack as="header" className="trending__header" spacing={3}>
               <div>
                 <h2 id="trending-title">Trending Now</h2>
                 <p>Top viewed posts from the last seven days.</p>
               </div>
               <span className="trending__count">{formatNumber(trendingCount)}</span>
-            </header>
+            </Stack>
 
             {trendingLoading ? (
-              <p className="trending__loading">Fetching live rankings...</p>
+              <Center py={6}>
+                <Spinner size="sm" thickness="3px" />
+              </Center>
+            ) : hasTrendingError ? (
+              <Alert status="error" variant="subtle">
+                <AlertIcon />
+                {trendingErrorMessage || 'Unable to load trending posts right now.'}
+              </Alert>
             ) : trendingItems.length ? (
               <ol className="trending__list">
                 {trendingItems.slice(0, 10).map((item) => (
@@ -754,7 +778,7 @@ function HomePage(): JSX.Element {
                 ))}
               </ol>
             ) : (
-              <p className="trending__loading">No trending posts found right now.</p>
+              <Text className="trending__loading">No trending posts found right now.</Text>
             )}
 
             <Link to="/board/ranking" className="trending__more">
@@ -763,8 +787,13 @@ function HomePage(): JSX.Element {
           </section>
         </aside>
       </section>
-    </div>
+    </Box>
   )
 }
 
 export default HomePage
+
+
+
+
+

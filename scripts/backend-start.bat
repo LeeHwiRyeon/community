@@ -49,6 +49,10 @@ if /I "%~1"=="--redis" (
 shift
 goto parse_args
 
+REM 기존 백엔드 프로세스들을 이름으로 종료
+echo [INFO] 기존 백엔드 프로세스들을 종료하는 중...
+powershell -Command "try { taskkill /FI \"WINDOWTITLE eq Community Backend\" /F 2>$null; taskkill /IM node.exe /F 2>$null; } catch { }"
+
 :start_server
 echo ===============================
 echo Community Backend Server
@@ -84,13 +88,7 @@ if defined READONLY set READONLY=%READONLY%
 if defined REDIS_URL set REDIS_URL=%REDIS_URL%
 
 echo [INFO] Starting backend server...
-node src/index.js
-
-if errorlevel 1 (
-    echo [ERROR] Failed to start server
-    pause
-    exit /b 1
-)
+start "Community Backend" cmd /c "cd /d %BACKEND_DIR% && set PORT=%PORT% && if defined READONLY set READONLY=%READONLY% && if defined REDIS_URL set REDIS_URL=%REDIS_URL% && node src/index.js"
 
 REM 브라우저 오픈 (옵션)
 if not defined NO_BROWSER (
@@ -98,4 +96,5 @@ if not defined NO_BROWSER (
     start http://localhost:%PORT%/api/health
 )
 
-pause
+echo [INFO] Backend server started in background
+goto :eof

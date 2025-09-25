@@ -1,4 +1,4 @@
-import { kvSet, kvGet, kvDel, isRedisEnabled } from '../../src/redis.js';
+import { kvSet, kvGet, kvDel, isRedisEnabled } from '../../redis.js';
 
 describe('Redis Utils', () => {
     beforeEach(() => {

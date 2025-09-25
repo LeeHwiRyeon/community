@@ -514,8 +514,8 @@ export async function bootstrap(options = {}) {
                         meta_json: JSON.stringify({ streamUrl: 'https://sample-videos.com/video321/mp4/720/big_buck_bunny_720p_1mb.mp4', isLive: true, viewers: 2341 })
                     },
                     {
-                        title: '[諛⑹넚?덇퀬] 諛쒕줈????덈뵒?명듃 ?꾩쟾湲?,
-                        body: '?ㅻ뒛 諛?8?? ?덈뵒?명듃 ?밴툒???꾪븳 留덉?留??꾩쟾!',
+                        title: '[라이브 방송] 게임 토론 및 Q&A 세션',
+                        body: '실시간 게임 토론 및 Q&A 세션에 참여하세요!',
                         starts_at: addMin(120), ends_at: addMin(240), location: 'Online', status: 'published',
                         meta_json: JSON.stringify({ isLive: false, viewers: 0 })
                     },

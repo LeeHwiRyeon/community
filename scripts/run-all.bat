@@ -13,10 +13,10 @@ echo Starting Community Full Stack Application...
 echo [%date% %time%] Starting Community Full Stack Application... >> %LOGFILE%
 echo.
 
-REM 포트 50000과 5000을 사용하는 기존 프로세스들을 종료
-echo [start-all] Checking and killing processes on ports 50000 and 5000...
-echo [%date% %time%] Checking and killing processes on ports 50000 and 5000... >> %LOGFILE%
-powershell -Command "try { $pids = netstat -ano | findstr ':50000\|:5000' | ForEach-Object { $_.Split()[-1] } | Sort-Object -Unique; foreach ($pid in $pids) { if ($pid -and $pid -ne 0) { taskkill /PID $pid /F 2>$null; echo \"[%date% %time%] Killed process $pid\" >> %LOGFILE% } } } catch { echo \"[%date% %time%] Error killing processes: $_\" >> %LOGFILE% }"
+REM 기존 Community 서버 프로세스들을 이름으로 종료
+echo [start-all] Killing existing Community server processes...
+echo [%date% %time%] Killing existing Community server processes... >> %LOGFILE%
+powershell -Command "try { taskkill /IM node.exe /F 2>$null; taskkill /IM npm.cmd /F 2>$null; taskkill /FI \"WINDOWTITLE eq Backend Server\" /F 2>$null; taskkill /FI \"WINDOWTITLE eq Frontend Server\" /F 2>$null; echo \"[%date% %time%] Killed existing server processes\" >> %LOGFILE% } catch { echo \"[%date% %time%] Error killing processes: $_\" >> %LOGFILE% }"
 
 echo Starting Backend Server (Port 50000)...
 echo [%date% %time%] Starting Backend Server (Port 50000)... >> %LOGFILE%
@@ -35,10 +35,6 @@ echo Backend: http://localhost:50000
 echo Frontend: http://localhost:5000
 echo [%date% %time%] Servers started - Backend: http://localhost:50000, Frontend: http://localhost:5000 >> %LOGFILE%
 echo.
-echo Press any key to exit (servers will keep running)...
-echo [%date% %time%] Waiting for user input to exit... >> %LOGFILE%
-pause > nul
-
 echo [%date% %time%] ===== run-all.bat finished ===== >> %LOGFILE%
 
 endlocal

@@ -1,71 +1,101 @@
 {
-  "passed": 0,
-  "total": 13,
+  "passed": 9,
+  "total": 16,
   "report": [
     {
       "name": "health",
-      "ok": false,
-      "err": "fetch failed"
+      "ok": true,
+      "extra": {
+        "status": "ok",
+        "mode": "mock",
+        "timestamp": 1758787458844,
+        "boards": 16,
+        "posts": 480
+      }
     },
     {
       "name": "create board",
-      "ok": false,
-      "err": "fetch failed"
+      "ok": true,
+      "extra": {
+        "id": "b_wtb3f",
+        "title": "랜덤보드 69s00",
+        "summary": "랜덤보드 69s00 discussion board",
+        "category": "custom",
+        "format": "article",
+        "preview_format": "article",
+        "community": "community-custom",
+        "community_title": "Community Hub",
+        "ordering": 17,
+        "rank": 17,
+        "deleted": 0
+      }
     },
     {
       "name": "list boards",
-      "ok": false,
-      "err": "fetch failed"
+      "ok": true
     },
     {
-      "name": "create post 0",
-      "ok": false,
-      "err": "fetch failed"
+      "name": "create post p_d5bakprc",
+      "ok": true
     },
     {
-      "name": "create post 1",
-      "ok": false,
-      "err": "fetch failed"
+      "name": "create post p_lhaq1wo2",
+      "ok": true
     },
     {
-      "name": "create post 2",
-      "ok": false,
-      "err": "fetch failed"
+      "name": "create post p_sadqghag",
+      "ok": true
     },
     {
       "name": "list posts",
+      "ok": true,
+      "extra": {
+        "count": 3,
+        "total": 3
+      }
+    },
+    {
+      "name": "update post",
       "ok": false,
-      "err": "fetch failed"
+      "err": "PATCH /boards/b_wtb3f/posts/p_d5bakprc 404 null"
+    },
+    {
+      "name": "increment view (buffered)",
+      "ok": false,
+      "err": "POST /posts/p_d5bakprc/view 404 {\"error\":\"post_not_found\"}"
+    },
+    {
+      "name": "soft delete post",
+      "ok": false,
+      "err": "DELETE /boards/b_wtb3f/posts/p_sadqghag 404 {\"error\":\"post_not_found\"}"
     },
     {
       "name": "posts map",
-      "ok": false,
-      "err": "fetch failed"
+      "ok": true
     },
     {
       "name": "soft delete board",
-      "ok": false,
-      "err": "fetch failed"
+      "ok": true
     },
     {
       "name": "pagination multi-page",
       "ok": false,
-      "err": "fetch failed"
+      "err": "GET /boards/b_wtb3f/posts?limit=30&offset=0 404 {\"error\":\"board_not_found\"}"
     },
     {
       "name": "search exact",
       "ok": false,
-      "err": "fetch failed"
+      "err": "POST /boards/b_wtb3f/posts 404 {\"error\":\"board_not_found\"}"
     },
     {
       "name": "search approx",
       "ok": false,
-      "err": "fetch failed"
+      "err": "GET /boards/b_wtb3f/posts?q=ZXQ&approx=1 404 {\"error\":\"board_not_found\"}"
     },
     {
       "name": "metrics",
       "ok": false,
-      "err": "fetch failed"
+      "err": "no uptimeSec"
     }
   ]
 }

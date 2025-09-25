@@ -15,10 +15,10 @@ echo [run-mock-backend] API will be available at: http://localhost:50000/api
 echo [run-mock-backend] Help endpoint: http://localhost:50000/api/help
 echo [%date% %time%] Starting full mock backend server... >> %LOGFILE%
 
-REM 포트 50000을 사용하는 기존 프로세스들을 종료
-echo [run-mock-backend] Checking and killing processes on port 50000...
-echo [%date% %time%] Checking and killing processes on port 50000... >> %LOGFILE%
-powershell -Command "try { $pids = netstat -ano | findstr ':50000' | ForEach-Object { $_.Split()[-1] } | Sort-Object -Unique; foreach ($pid in $pids) { if ($pid -and $pid -ne 0) { taskkill /PID $pid /F 2>$null; echo \"[%date% %time%] Killed process $pid\" >> %LOGFILE% } } } catch { echo \"[%date% %time%] Error killing processes: $_\" >> %LOGFILE% }"
+REM 기존 목업 백엔드 프로세스들을 이름으로 종료
+echo [run-mock-backend] Killing existing mock backend processes...
+echo [%date% %time%] Killing existing mock backend processes... >> %LOGFILE%
+powershell -Command "try { taskkill /FI \"WINDOWTITLE eq Mock Backend Server\" /F 2>$null; taskkill /IM node.exe /F 2>$null; echo \"[%date% %time%] Killed existing processes\" >> %LOGFILE% } catch { echo \"[%date% %time%] Error killing processes: $_\" >> %LOGFILE% }"
 
 pushd "%~dp0..\server-backend"
 
@@ -31,9 +31,13 @@ IF NOT EXIST mock-server.js (
 
 echo [run-mock-backend] Running mock server with complete test data...
 echo [%date% %time%] Running mock server with complete test data... >> %LOGFILE%
-node mock-server.js
+start "Mock Backend Server" cmd /c "cd /d %~dp0..\server-backend && node mock-server.js"
 
+echo [run-mock-backend] Mock backend server started in background
+echo [%date% %time%] Mock backend server started in background >> %LOGFILE%
 echo [%date% %time%] ===== run-mock-backend.bat finished ===== >> %LOGFILE%
+
+goto :eof
 
 popd
 endlocal

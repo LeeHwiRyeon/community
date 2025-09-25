@@ -9,6 +9,7 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     services:
       mariadb:
         image: mariadb:10.6
@@ -29,6 +30,8 @@ jobs:
       DB_NAME: community
       PORT: 50000
       NODE_ENV: test
+      CI: true
+      API_BASE: http://localhost:50000
     steps:
       - uses: actions/checkout@v4
       - name: Install MariaDB client
@@ -42,51 +45,94 @@ jobs:
             server-backend/package-lock.json
             frontend/package-lock.json
       - name: Wait for DB
+        timeout-minutes: 2
         run: |
           for i in {1..40}; do
             if mysql -h 127.0.0.1 -u app -papp -e 'SELECT 1' community; then echo 'DB ready'; break; fi
             echo 'Waiting DB...'; sleep 2;
           done
       - name: Install deps
+        timeout-minutes: 5
         working-directory: server-backend
         run: npm install
       - name: Install frontend deps
+        timeout-minutes: 5
         working-directory: frontend
         run: npm install
       - name: Build frontend
+        timeout-minutes: 5
         working-directory: frontend
         run: npm run build
       - name: Start backend server
+        timeout-minutes: 3
         working-directory: server-backend
         run: |
           node mock-server.js &
           sleep 10
           curl -f http://localhost:50000/api/health || (echo "Backend not ready" && exit 1)
+      - name: Run backend integration tests
+        timeout-minutes: 5
+        working-directory: server-backend
+        run: node tests/api-random.js
+      - name: Stop backend server
+        if: always()
+        run: pkill -f "node mock-server.js" || true
       - name: Start frontend server
+        timeout-minutes: 3
         working-directory: frontend
         run: |
           npm run preview &
           sleep 5
           curl -f http://localhost:5173 || (echo "Frontend not ready" && exit 1)
-      - name: Run backend integration tests
-        working-directory: server-backend
-        run: node tests/api-random.js
       - name: Run frontend tests
+        timeout-minutes: 3
         working-directory: frontend
         run: npm test
+      - name: Stop frontend server
+        if: always()
+        run: pkill -f "npm run preview" || true
+      - name: Start servers for Playwright
+        timeout-minutes: 3
+        run: |
+          cd server-backend && node mock-server.js &
+          sleep 10
+          curl -f http://localhost:50000/api/health || (echo "Backend not ready" && exit 1)
+          cd ../frontend && npm run preview &
+          sleep 5
+          curl -f http://localhost:5173 || (echo "Frontend not ready" && exit 1)
       - name: Run Playwright tests
+        timeout-minutes: 10
         working-directory: server-backend
         run: npx playwright install --with-deps && npx playwright test --reporter=json
         env:
           API_BASE: http://localhost:50000
           CI: true
+      - name: Cleanup all processes
+        if: always()
+        run: |
+          pkill -f "node mock-server.js" || true
+          pkill -f "npm run preview" || true
+          pkill -f "vite" || true
+      - name: Collect logs on failure
+        if: failure()
+        run: |
+          echo "=== System Info ==="
+          uname -a
+          echo "=== Running Processes ==="
+          ps aux | head -20
+          echo "=== Network Connections ==="
+          netstat -tlnp 2>/dev/null || ss -tlnp
+          echo "=== Disk Usage ==="
+          df -h
       - name: Upload test summary
+        timeout-minutes: 2
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: test-summary
           path: server-backend/test-summary.json
       - name: Upload Playwright results
+        timeout-minutes: 2
         if: always()
         uses: actions/upload-artifact@v4
         with:
