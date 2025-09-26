@@ -17,6 +17,7 @@ import type { Post } from '../api'
 import { apiService } from '../api'
 import { usePostDetail } from '../hooks/usePostData'
 import { useAuth } from '../contexts/AuthContext'
+import CommentSection from '../components/CommentSection'
 import {
   PostFormat,
   BroadcastPreview,
@@ -126,7 +127,7 @@ const PostEmbedBlock = ({ label, onOpen }: { label: string; onOpen: () => void }
   </Box>
 )
 
-export default function PostPage(): JSX.Element {
+export default function PostPage(): React.ReactElement {
   const { boardId, postId } = useParams<{ boardId?: string; postId?: string }>()
   const navigate = useNavigate()
   const { isLoggedIn } = useAuth()
@@ -141,10 +142,36 @@ export default function PostPage(): JSX.Element {
 
   const handleGoBack = () => {
     if (typeof boardId === 'string' && boardId.length > 0) {
-      navigate(/board/)
+      navigate(`/board/${boardId}`)
       return
     }
     navigate('/')
+  }
+
+  const handleEdit = () => {
+    if (boardId && postId) {
+      navigate(`/board/${boardId}/post/${postId}/edit`)
+    }
+  }
+
+  const handleDelete = async () => {
+    if (!postId || !boardId) return
+    if (!confirm('정말로 이 게시물을 삭제하시겠습니까?')) return
+
+    try {
+      const response = await fetch(`/api/boards/${boardId}/posts/${postId}`, {
+        method: 'DELETE',
+      })
+
+      if (response.ok) {
+        navigate(`/board/${boardId}`)
+      } else {
+        alert('게시물 삭제에 실패했습니다.')
+      }
+    } catch (error) {
+      console.error('Error deleting post:', error)
+      alert('오류가 발생했습니다.')
+    }
   }
 
   if (isLoading) {
@@ -290,7 +317,7 @@ export default function PostPage(): JSX.Element {
         </Heading>
         <Stack className="post-meta" direction="row" spacing={4} fontSize="sm">
           <Text as="span" className="author">
-            {post.author ?? 'Anonymous'}
+            <a href={`/profile/${post.author_id || 1}`}>{post.author ?? 'Anonymous'}</a>
           </Text>
           {createdDate ? (
             <Text as="span" className="date">
@@ -306,6 +333,14 @@ export default function PostPage(): JSX.Element {
             </Text>
           ) : null}
         </Stack>
+        <Flex className="post-actions" gap={2}>
+          <button type="button" onClick={handleEdit} className="edit-btn">
+            수정
+          </button>
+          <button type="button" onClick={handleDelete} className="delete-btn">
+            삭제
+          </button>
+        </Flex>
       </Stack>
 
       {heroImage ? (
@@ -354,10 +389,7 @@ export default function PostPage(): JSX.Element {
       </Stack>
 
       <Box className="comments-section">
-        <Heading as="h3" size="md">
-          Comments
-        </Heading>
-        <Box className="comments-placeholder">Comments will be available soon.</Box>
+        <CommentSection />
       </Box>
     </Box>
   )

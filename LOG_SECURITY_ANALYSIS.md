@@ -251,3 +251,14 @@ class SecurityLogger {
 - ✅ **자동 정리**: 오래된 로그 자동 삭제
 
 **"터질 때 로그 생성하고 죽으면 끝"**보다는 **지속적인 모니터링과 보안 강화**가 더 중요합니다!
+
+### Search Query Logging Policy
+- Keep `/api/search` requests at `logger.info` with truncated `q` (max 32 chars) to avoid storing full PII.
+- Mask email-like patterns (`/@/`) before logging to runtime logs.
+- Aggregate metrics via counts instead of raw query payloads.
+
+
+### Dashboard Requirements
+- Display daily search volume, top queries (masked), and rate-limit blocks.
+- Alert when `rlSearchBlocked` spikes above baseline.
+- Include error breakdown (429 vs 500) for `/api/search`.

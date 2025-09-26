@@ -1,5 +1,5 @@
-﻿import assert from 'node:assert/strict'
-import type { Post } from '../src/api.ts'
+﻿import { describe, it, expect } from 'vitest'
+import type { Post } from '../src/api'
 import {
   derivePostFormat,
   splitContent,
@@ -7,7 +7,7 @@ import {
   formatNumber,
   normalizePostBlocks,
   resolveHeroImageUrl
-} from '../src/pages/post-helpers.ts'
+} from '../src/pages/post-helpers'
 
 const basePost: Post = {
   id: 'test-post',
@@ -112,35 +112,54 @@ const richPost: Post = {
   ]
 }
 
-const split = splitContent(basePost.content)
-assert.equal(split.length, 2, 'content should split into two paragraphs')
-assert.equal(split[0], 'First paragraph')
-assert.equal(split[1], 'Second paragraph')
+describe('post helpers', () => {
+  it('should split content into paragraphs', () => {
+    const split = splitContent(basePost.content)
+    expect(split).toHaveLength(2)
+    expect(split[0]).toBe('First paragraph')
+    expect(split[1]).toBe('Second paragraph')
+  })
 
-const validDate = safeDate(basePost.created_at)
-assert.notEqual(validDate.length, 0, 'valid dates should render as localized strings')
+  it('should format valid dates', () => {
+    const validDate = safeDate(basePost.created_at)
+    expect(validDate).not.toBe('')
+  })
 
-const invalidDate = safeDate('invalid-date')
-assert.equal(invalidDate, '', 'invalid dates should resolve to an empty string')
+  it('should handle invalid dates', () => {
+    const invalidDate = safeDate('invalid-date')
+    expect(invalidDate).toBe('')
+  })
 
-const broadcastFormat = derivePostFormat(broadcastPost)
-assert.equal(broadcastFormat, 'broadcast', 'broadcast preview should produce broadcast format')
+  it('should derive broadcast format', () => {
+    const broadcastFormat = derivePostFormat(broadcastPost)
+    expect(broadcastFormat).toBe('broadcast')
+  })
 
-const cosplayFormat = derivePostFormat(cosplayPost)
-assert.equal(cosplayFormat, 'gallery', 'cosplay category should map to gallery format')
+  it('should derive gallery format for cosplay', () => {
+    const cosplayFormat = derivePostFormat(cosplayPost)
+    expect(cosplayFormat).toBe('gallery')
+  })
 
-const formattedNumber = formatNumber(1234567)
-assert.equal(formattedNumber.includes('1'), true, 'formatted number should include digits')
+  it('should format numbers', () => {
+    const formattedNumber = formatNumber(1234567)
+    expect(formattedNumber).toContain('1')
+  })
 
-const fallbackNumber = formatNumber(undefined)
-assert.equal(fallbackNumber, '0', 'missing numbers should default to 0')
+  it('should handle missing numbers', () => {
+    const fallbackNumber = formatNumber(undefined)
+    expect(fallbackNumber).toBe('0')
+  })
 
-const blocks = normalizePostBlocks(richPost)
-assert.equal(blocks.length >= 3, true, 'rich posts should normalize into multiple blocks')
-assert.equal(blocks[0].type, 'paragraph', 'first block should remain a paragraph')
-assert.equal(blocks[1].type === 'image' || blocks[1].type === 'gallery', true, 'image blocks should surface media')
+  it('should normalize post blocks', () => {
+    const blocks = normalizePostBlocks(richPost)
+    expect(blocks.length).toBeGreaterThanOrEqual(3)
+    expect(blocks[0].type).toBe('paragraph')
+    expect(['image', 'gallery']).toContain(blocks[1].type)
+  })
 
-const heroFromBlocks = resolveHeroImageUrl(richPost, blocks)
-assert.equal(heroFromBlocks, 'https://example.com/hero.jpg', 'hero resolver should pick hero media url')
-
-console.log('post-page.test.ts: post helper tests passed')
+  it('should resolve hero image url', () => {
+    const blocks = normalizePostBlocks(richPost)
+    const heroFromBlocks = resolveHeroImageUrl(richPost, blocks)
+    expect(heroFromBlocks).toBe('https://example.com/hero.jpg')
+  })
+})

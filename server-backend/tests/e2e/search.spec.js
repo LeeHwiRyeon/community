@@ -1,4 +1,4 @@
-process.env.USE_MOCK_DB = '1'
+﻿process.env.USE_MOCK_DB = '1'
 process.env.NODE_ENV = 'test'
 
 import { test } from 'node:test'
@@ -53,6 +53,9 @@ test('global search returns generated posts with metadata', async () => {
     assert.equal(typeof item.id, 'string')
     assert.equal(typeof item.board, 'string')
     assert(item.title.includes(KEYWORD), 'title contains seeded keyword')
+    assert.equal(typeof item.board_title, 'string')
+    assert((item.board_title ?? '').length > 0, 'board title should be populated')
+    assert(item.board_icon, 'board icon should be present')
   })
 })
 

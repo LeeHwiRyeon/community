@@ -1,11 +1,21 @@
-# Community Hub
+﻿# Community Hub
 
-Community Hub is a React + TypeScript front-end backed by an Express mock API for exploring community posts, trending topics, and nested boards. The project runs locally with the backend on port 50000 and the front-end dev server on port 5000.
+Community Hub is a React + TypeScript single-page application backed by an Express mock API. It showcases community boards, search, profile pages, live broadcast listings, and a themed cosplay shop. The frontend runs on port **5000** by default; the backend mock API listens on **50000**.
+
+## Table of Contents
+- [Prerequisites](#prerequisites)
+- [Install Dependencies](#install-dependencies)
+- [Running Locally](#running-locally)
+- [Docker Workflow](#docker-workflow)
+- [Testing](#testing)
+- [Troubleshooting](#troubleshooting)
+- [Documentation](#documentation)
 
 ## Prerequisites
-- Node.js 18 or 20 LTS
-- npm 8+
+- Node.js 18 or 20 LTS, npm 8+
 - Git
+- (optional) Docker Desktop 4.x for container workflows
+- PowerShell 7+ or a compatible Bash shell
 
 ## Install Dependencies
 ```bash
@@ -13,52 +23,70 @@ Community Hub is a React + TypeScript front-end backed by an Express mock API fo
 cd server-backend
 npm install
 
-# front-end
+# frontend
 cd ../frontend
 npm install
 ```
 
 ## Running Locally
-The repo ships with batch scripts to make startup easy:
-- `scripts/run-all.bat` ? launch backend + front-end using real data
-- `scripts/run-mock-all.bat` ? launch the mock backend plus the front-end
-- `scripts/run-backend.bat` / `scripts/run-frontend.bat` ? start each side individually
-- `scripts/run-frontend-old.bat` ? start the legacy front-end test server
-- `scripts/stop-all.bat` ? stop any dev processes started by the scripts
+> 자세한 실행 절차는 [RUNNING_GUIDE.md](./RUNNING_GUIDE.md)에서 확인할 수 있습니다.
 
-**Port Usage:**
-- Backend API: 50000
-- Front-end dev server: 5000
-- Playwright test runner: 9323 (cleaned up by stop scripts)
+### Quick start
+```powershell
+# PowerShell 통합 실행
+./scripts/dev-env.ps1 -Action start
 
-If you prefer manual commands:
+# 종료
+./scripts/dev-env.ps1 -Action stop
+```
+- Backend: <http://localhost:50000>
+- Frontend: <http://localhost:5000>
+
+### Manual start (separate terminals)
 ```bash
 # backend
 cd server-backend
 npm run dev
 
-# front-end (in a second terminal)
+# frontend
 cd frontend
-npm run dev -- --host --port 5000
+npm run dev
 ```
 
-## Mock Data
-When the backend starts with `USE_MOCK_DB=1`, community, board, and post documents are generated on the fly. Each community contains boards, each board contains posts, and posts include counts for views, comments, and recent activity.
+## Docker Workflow
+```bash
+# Development compose
+docker compose up --build
+
+# Production compose
+docker compose -f docker-compose.prod.yml --env-file .env.prod up -d
+```
+- NGINX config: `frontend/docker/nginx.conf`
+- CI/CD pipeline: `.github/workflows/deploy.yml`
 
 ## Testing
-Playwright smoke tests live under `server-backend/tests/e2e`. Run them with:
-```bash
-cd server-backend
-npx playwright test
-```
-
-**Playwright Configuration:**
-- Test runner uses port 9323 for browser automation
-- If port 9323 is in use, tests may fail - the `stop-all.bat` script will clean up this port
-- Browser binaries are downloaded automatically on first run
+| Command                     | Description                 |
+| --------------------------- | --------------------------- |
+| `npm test` (server-backend) | Node test runner unit tests |
+| `npm run test` (frontend)   | Vitest + RTL suites         |
+| `npx playwright test`       | End-to-end scenarios        |
+| `npm run lint`              | ESLint rules                |
+| `npm run typecheck`         | TypeScript type checking    |
 
 ## Troubleshooting
-- Ensure ports 5000 and 50000 are free before starting.
-- Delete the `.vite` cache if the front-end fails to pick up CSS updates.
-- Re-run `npm install` inside `frontend` if UI dependencies appear missing.
-- **Text Encoding Issues**: Mock server responses are UTF-8 encoded to prevent character corruption (e.g., Greek text displaying as ???). If encoding issues persist, verify client-side UTF-8 handling.
+| Issue                              | Action                                                                             |
+| ---------------------------------- | ---------------------------------------------------------------------------------- |
+| Port 5000/50000 already in use     | `scripts/stop-all.bat` or `./scripts/dev-env.ps1 -Action stop`                     |
+| npm install failures               | Verify Node version, run `npm cache clean --force` and retry                       |
+| Docker compose errors              | Check Docker Desktop status, run `docker system prune` if needed                   |
+| Auto-save conflict banner persists | Follow [docs/post-draft-conflict-ux.md](./docs/post-draft-conflict-ux.md) guidance |
+
+## Documentation
+- [RUNNING_GUIDE.md](./RUNNING_GUIDE.md)
+- [API_REFERENCE.md](./API_REFERENCE.md)
+- [TESTING_GUIDE.md](./TESTING_GUIDE.md)
+- [DEVELOPMENT_GUIDE.md](./DEVELOPMENT_GUIDE.md)
+- [CI_CD_GUIDE.md](./CI_CD_GUIDE.md)
+- [docs/post-draft.md](./docs/post-draft.md)
+
+새로운 기능이나 스크립트는 `FEATURES.md`와 `docs/` 폴더에 기록되어 있으니 변경 전후로 참고해 주세요.

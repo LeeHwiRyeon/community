@@ -3,9 +3,9 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 let pool;
-// DB 議댁옱?섏? ?딆쓣 ???앹꽦?섎뒗 ?ы띁 (理쒖큹 1??
+// DB 鈺곕똻???? ??놁뱽 ????밴쉐??롫뮉 ????(筌ㅼ뮇??1??
 export async function ensureDatabase() {
-    // 紐⑥쓽 ?곗씠??紐⑤뱶??寃쎌슦 DB 珥덇린??嫄대꼫?곌린
+    // 筌뤴뫁???怨쀬뵠??筌뤴뫀諭??野껋럩??DB ?λ뜃由??椰꾨?瑗?怨뚮┛
     if (process.env.USE_MOCK_DB === '1' || process.env.ENV_ALLOW_MOCK === '1') {
         console.log('[db] Using mock mode, skipping database initialization');
         return;
@@ -25,14 +25,14 @@ export async function ensureDatabase() {
     } finally { await tmp.end(); }
 }
 export function getPool() {
-    // 紐⑥쓽 ?곗씠??紐⑤뱶??寃쎌슦 null 諛섑솚
+    // 筌뤴뫁???怨쀬뵠??筌뤴뫀諭??野껋럩??null 獄쏆꼹??
     if (process.env.USE_MOCK_DB === '1' || process.env.ENV_ALLOW_MOCK === '1') {
         return null;
     }
     
     if (!pool) {
-        // NOTE: auth_gssapi_client ?ㅻ쪟 諛쒖깮 ???쒕쾭 怨꾩젙 ?뚮윭洹몄씤??mysql_native_password ?깆쑝濡?蹂寃??꾩슂.
-        // ?꾩슂 ??mysql2 authPlugins 而ㅼ뒪?곕쭏?댁쭠 媛??(?ш린?쒕뒗 湲곕낯?ㅼ젙 ?좎?).
+        // NOTE: auth_gssapi_client ??살첒 獄쏆뮇源?????뺤쒔 ?④쑴?????쑎域밸챷???mysql_native_password ?源놁몵嚥?癰궰野??袁⑹뒄.
+        // ?袁⑹뒄 ??mysql2 authPlugins ?뚣끉??怨뺤춳??곸췅 揶쎛??(??由??뺣뮉 疫꿸퀡???쇱젟 ?醫?).
         pool = mysql.createPool({
             host: process.env.DB_HOST,
             port: process.env.DB_PORT ? parseInt(process.env.DB_PORT, 10) : 3306,
@@ -52,7 +52,7 @@ export function getPool() {
 }
 
 export async function query(sql, params) {
-    // 紐⑥쓽 ?곗씠??紐⑤뱶??寃쎌슦 鍮?諛곗뿴 諛섑솚
+    // 筌뤴뫁???怨쀬뵠??筌뤴뫀諭??野껋럩????獄쏄퀣肉?獄쏆꼹??
     if (process.env.USE_MOCK_DB === '1' || process.env.ENV_ALLOW_MOCK === '1') {
         console.log('[db] Mock mode: query skipped -', sql.substring(0, 50));
         return [];
@@ -70,7 +70,7 @@ export async function query(sql, params) {
 }
 
 export async function initSchema() {
-    // 紐⑥쓽 ?곗씠??紐⑤뱶??寃쎌슦 ?ㅽ궎留?珥덇린??嫄대꼫?곌린
+    // 筌뤴뫁???怨쀬뵠??筌뤴뫀諭??野껋럩????쎄텕筌??λ뜃由??椰꾨?瑗?怨뚮┛
     if (process.env.USE_MOCK_DB === '1' || process.env.ENV_ALLOW_MOCK === '1') {
         console.log('[db] Mock mode: schema initialization skipped');
         return;
@@ -176,6 +176,27 @@ export async function initSchema() {
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
             CONSTRAINT fk_post_media_post FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`);
+    await query(`CREATE TABLE IF NOT EXISTS attachments (
+            id BIGINT AUTO_INCREMENT PRIMARY KEY,
+            file_key VARCHAR(255) NOT NULL,
+            owner_user_id BIGINT NULL,
+            status ENUM('queued','processing','ready','failed') DEFAULT 'queued',
+            mime_type VARCHAR(128) NOT NULL,
+            size_bytes BIGINT NOT NULL,
+            checksum VARCHAR(128) NULL,
+            original_name VARCHAR(255) NULL,
+            source_type ENUM('temp','draft','post') DEFAULT 'temp',
+            source_id VARCHAR(64) NULL,
+            metadata JSON NULL,
+            variants JSON NULL,
+            error_message TEXT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            CONSTRAINT fk_attachments_owner FOREIGN KEY (owner_user_id) REFERENCES users(id) ON DELETE SET NULL
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`);
+    await query('CREATE INDEX IF NOT EXISTS idx_attachments_file_key ON attachments(file_key)');
+    await query('CREATE INDEX IF NOT EXISTS idx_attachments_source ON attachments(source_type, source_id)');
+
     await query('CREATE INDEX IF NOT EXISTS idx_post_media_post ON post_media(post_id)');
     // --- New: users (basic) ---
     await query(`CREATE TABLE IF NOT EXISTS users (
@@ -200,8 +221,33 @@ export async function initSchema() {
     await ensureColumn('users', 'primary_provider', 'primary_provider VARCHAR(32) NULL');
     await ensureColumn('users', 'primary_provider_user_id', 'primary_provider_user_id VARCHAR(190) NULL');
     await ensureColumn('users', 'last_login_at', 'last_login_at DATETIME NULL');
+    await ensureColumn('users', 'rpg_level', 'rpg_level INT NOT NULL DEFAULT 1');
+    await ensureColumn('users', 'rpg_xp', 'rpg_xp INT NOT NULL DEFAULT 0');
+    await ensureColumn('users', 'last_levelup_at', 'last_levelup_at TIMESTAMP NULL');
 
     // user_social_identities: maps OAuth providers to users
+    await query(`CREATE TABLE IF NOT EXISTS user_stats (
+            user_id BIGINT PRIMARY KEY,
+            posts_count INT DEFAULT 0,
+            comments_count INT DEFAULT 0,
+            likes_received INT DEFAULT 0,
+            badges_count INT DEFAULT 0,
+            activity_score INT GENERATED ALWAYS AS (posts_count * 4 + comments_count * 2 + likes_received) STORED,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            CONSTRAINT fk_user_stats_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`);
+    await query('CREATE INDEX IF NOT EXISTS idx_user_stats_activity ON user_stats(activity_score)');
+
+    await query(`CREATE TABLE IF NOT EXISTS user_badges (
+            id BIGINT AUTO_INCREMENT PRIMARY KEY,
+            user_id BIGINT NOT NULL,
+            badge_code VARCHAR(32) NOT NULL,
+            earned_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            CONSTRAINT fk_user_badges_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+            UNIQUE KEY uq_user_badge (user_id, badge_code)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`);
+    await query('CREATE INDEX IF NOT EXISTS idx_user_badges_earned_at ON user_badges(earned_at)');
+
     await query(`CREATE TABLE IF NOT EXISTS user_social_identities (
             id BIGINT AUTO_INCREMENT PRIMARY KEY,
             user_id BIGINT NOT NULL,
@@ -288,6 +334,22 @@ export async function initSchema() {
             INDEX idx_event_hist_event (event_id)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`);
 
+    await query(`CREATE TABLE IF NOT EXISTS post_drafts (
+            id BIGINT AUTO_INCREMENT PRIMARY KEY,
+            post_id VARCHAR(64) NULL,
+            author_id BIGINT NOT NULL,
+            title TEXT,
+            content MEDIUMTEXT,
+            metadata JSON NULL,
+            status ENUM(''active'',''archived'',''conflict'') DEFAULT 'active',
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            expires_at DATETIME GENERATED ALWAYS AS (DATE_ADD(updated_at, INTERVAL 30 DAY)) STORED,
+            CONSTRAINT fk_post_drafts_author FOREIGN KEY (author_id) REFERENCES users(id) ON DELETE CASCADE
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`);
+    await query('CREATE INDEX IF NOT EXISTS idx_post_drafts_author_updated ON post_drafts(author_id, updated_at DESC)');
+    await query('CREATE INDEX IF NOT EXISTS idx_post_drafts_expires ON post_drafts(expires_at)');
+
     // --- Auth audit table ---
     await query(`CREATE TABLE IF NOT EXISTS auth_audit (
             id BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -316,6 +378,13 @@ export async function initSchema() {
             INDEX idx_chat_user (user_id, created_at)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`);
 }
+
+
+
+
+
+
+
 
 
 

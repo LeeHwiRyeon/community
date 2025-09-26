@@ -13,7 +13,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <ReduxProvider store={store}>
       <QueryClientProvider client={queryClient}>
-        <ChakraProvider>
+        <ChakraProvider resetCSS={false}>
           <App />
         </ChakraProvider>
       </QueryClientProvider>

@@ -13,6 +13,9 @@ import { getEnabledProviders, SUPPORTED_PROVIDERS } from './auth/providers.js';
 import { buildAuthMiddleware } from './auth/jwt.js';
 import helmet from 'helmet';
 import { initRedis, zIncrBy, isRedisEnabled } from './redis.js';
+import WebSocket, { WebSocketServer } from 'ws';
+import promClient from 'prom-client';
+import responseTime from 'response-time';
 
 // Ensure .env is loaded even when CWD is project root
 const __filename = fileURLToPath(import.meta.url);
@@ -23,6 +26,37 @@ export function createApp() {
     const app = express();
     let loggedOnce = false;
     logger.info('app.create start');
+
+    // Prometheus metrics setup
+    const register = new promClient.Registry();
+    promClient.collectDefaultMetrics({ register });
+
+    // Custom metrics
+    const httpRequestDuration = new promClient.Histogram({
+        name: 'http_request_duration_seconds',
+        help: 'Duration of HTTP requests in seconds',
+        labelNames: ['method', 'route', 'status_code'],
+        buckets: [0.1, 0.5, 1, 2, 5, 10]
+    });
+    register.registerMetric(httpRequestDuration);
+
+    const httpRequestsTotal = new promClient.Counter({
+        name: 'http_requests_total',
+        help: 'Total number of HTTP requests',
+        labelNames: ['method', 'route', 'status_code']
+    });
+    register.registerMetric(httpRequestsTotal);
+
+    // Response time middleware
+    app.use(responseTime((req, res, time) => {
+        const route = req.route ? req.route.path : req.path;
+        httpRequestDuration
+            .labels(req.method, route, res.statusCode.toString())
+            .observe(time / 1000); // Convert to seconds
+        httpRequestsTotal
+            .labels(req.method, route, res.statusCode.toString())
+            .inc();
+    }));
 
     // CORS ?ㅼ젙 - ?꾨줎?몄뿏???꾨찓???덉슜
     const corsOptions = {
@@ -354,6 +388,54 @@ export function createApp() {
     });
     app.use('/api', router);
     logger.info('routes.mounted');
+
+    // Health check endpoint
+    app.get('/api/health', async (req, res) => {
+        try {
+            // Database health check
+            const dbHealthy = await query('SELECT 1').then(() => true).catch(() => false);
+
+            // Redis health check
+            const redisHealthy = isRedisEnabled() ?
+                await new Promise(resolve => {
+                    initRedis().then(() => resolve(true)).catch(() => resolve(false));
+                }) : true;
+
+            const health = {
+                status: dbHealthy && redisHealthy ? 'healthy' : 'unhealthy',
+                timestamp: new Date().toISOString(),
+                uptime: process.uptime(),
+                memory: process.memoryUsage(),
+                version: process.env.npm_package_version || '1.0.0',
+                checks: {
+                    database: dbHealthy ? 'ok' : 'error',
+                    redis: redisHealthy ? 'ok' : 'error'
+                }
+            };
+
+            res.status(health.status === 'healthy' ? 200 : 503).json(health);
+        } catch (error) {
+            logger.error('health.check.error', { error: error.message });
+            res.status(503).json({
+                status: 'error',
+                timestamp: new Date().toISOString(),
+                error: error.message
+            });
+        }
+    });
+
+    // Prometheus metrics endpoint
+    app.get('/api/metrics', async (req, res) => {
+        try {
+            res.set('Content-Type', register.contentType);
+            const metrics = await register.metrics();
+            res.end(metrics);
+        } catch (error) {
+            logger.error('metrics.endpoint.error', { error: error.message });
+            res.status(500).end();
+        }
+    });
+
     // Startup provider env validation (log once)
     try {
         if (!global.__AUTH_PROVIDER_LOGGED_ONCE__) {
@@ -567,6 +649,44 @@ export async function bootstrap(options = {}) {
     logger.info('port.final', { port: boundPort, start: basePort });
     const serverRef = server;
     const srvApp = app;
+
+    // WebSocket server for real-time notifications
+    const wss = new WebSocketServer({ server });
+    const userConnections = new Map(); // userId -> Set of WebSocket connections
+
+    wss.on('connection', (ws, req) => {
+        // Extract userId from query params or auth
+        const url = new URL(req.url, 'http://localhost');
+        const userId = url.searchParams.get('userId');
+        if (userId) {
+            if (!userConnections.has(userId)) {
+                userConnections.set(userId, new Set());
+            }
+            userConnections.get(userId).add(ws);
+            ws.on('close', () => {
+                userConnections.get(userId)?.delete(ws);
+                if (userConnections.get(userId)?.size === 0) {
+                    userConnections.delete(userId);
+                }
+            });
+        }
+    });
+
+    // Function to send notification to user
+    function sendNotification(userId, notification) {
+        const connections = userConnections.get(userId);
+        if (connections) {
+            connections.forEach(ws => {
+                if (ws.readyState === WebSocket.OPEN) {
+                    ws.send(JSON.stringify(notification));
+                }
+            });
+        }
+    }
+
+    // Export for use in routes
+    srvApp.locals.wss = wss;
+    srvApp.locals.sendNotification = sendNotification;
     // Wrap original post-listen logic in immediate async block
     (async () => {
         logger.event('server.listen', { port: PORT });

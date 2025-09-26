@@ -4075,3 +4075,433 @@
 [2025-09-25 06:41:57 KST] INFO req.start {"m":"GET","p":"/api/trending","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
 [2025-09-25 06:42:47 KST] INFO req.start {"m":"GET","p":"/api/trending","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
 [2025-09-25 06:42:47 KST] INFO req.start {"m":"GET","p":"/api/trending","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-25 20:51:35 KST] INFO app.create start
+[2025-09-25 20:51:35 KST] INFO routes.mounted
+[2025-09-25 20:51:35 KST] INFO req.start {"m":"POST","p":"/api/mock/reset","ip":"::ffff:127.0.0.1","ua":"","reqBytes":2}
+[2025-09-25 20:51:35 KST] INFO req.start {"m":"POST","p":"/api/mock/generate","ip":"::ffff:127.0.0.1","ua":"","reqBytes":107}
+[2025-09-25 20:51:35 KST] INFO req.start {"m":"GET","p":"/api/search","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+[2025-09-25 20:51:35 KST] INFO req.start {"m":"POST","p":"/api/mock/reset","ip":"::ffff:127.0.0.1","ua":"","reqBytes":2}
+[2025-09-25 20:51:35 KST] INFO req.start {"m":"GET","p":"/api/search","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+[2025-09-25 20:51:35 KST] INFO req.start {"m":"POST","p":"/api/mock/reset","ip":"::ffff:127.0.0.1","ua":"","reqBytes":2}
+[2025-09-25 20:51:35 KST] INFO req.start {"m":"POST","p":"/api/mock/generate","ip":"::ffff:127.0.0.1","ua":"","reqBytes":107}
+[2025-09-25 20:51:35 KST] INFO req.start {"m":"GET","p":"/api/boards/news/posts","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+[2025-09-25 21:30:36 KST] INFO app.create start
+[2025-09-25 21:30:36 KST] INFO routes.mounted
+[2025-09-25 21:30:36 KST] INFO req.start {"m":"POST","p":"/api/mock/reset","ip":"::ffff:127.0.0.1","ua":"","reqBytes":2}
+[2025-09-25 21:30:36 KST] INFO req.start {"m":"POST","p":"/api/mock/generate","ip":"::ffff:127.0.0.1","ua":"","reqBytes":107}
+[2025-09-25 21:30:36 KST] INFO req.start {"m":"GET","p":"/api/search","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+[2025-09-25 21:30:36 KST] INFO req.start {"m":"POST","p":"/api/mock/reset","ip":"::ffff:127.0.0.1","ua":"","reqBytes":2}
+[2025-09-25 21:30:36 KST] INFO req.start {"m":"GET","p":"/api/search","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+[2025-09-25 21:30:36 KST] INFO req.start {"m":"POST","p":"/api/mock/reset","ip":"::ffff:127.0.0.1","ua":"","reqBytes":2}
+[2025-09-25 21:30:36 KST] INFO req.start {"m":"POST","p":"/api/mock/generate","ip":"::ffff:127.0.0.1","ua":"","reqBytes":107}
+[2025-09-25 21:30:36 KST] INFO req.start {"m":"GET","p":"/api/boards/news/posts","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+[2025-09-25 21:38:58 KST] INFO app.create start
+[2025-09-25 21:38:58 KST] INFO routes.mounted
+[2025-09-25 21:38:58 KST] INFO req.start {"m":"POST","p":"/api/mock/reset","ip":"::ffff:127.0.0.1","ua":"","reqBytes":2}
+[2025-09-25 21:38:58 KST] INFO req.start {"m":"POST","p":"/api/mock/generate","ip":"::ffff:127.0.0.1","ua":"","reqBytes":107}
+[2025-09-25 21:38:58 KST] INFO req.start {"m":"GET","p":"/api/search","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+[2025-09-25 21:38:58 KST] INFO req.start {"m":"POST","p":"/api/mock/reset","ip":"::ffff:127.0.0.1","ua":"","reqBytes":2}
+[2025-09-25 21:38:58 KST] INFO req.start {"m":"GET","p":"/api/search","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+[2025-09-25 21:38:58 KST] INFO req.start {"m":"POST","p":"/api/mock/reset","ip":"::ffff:127.0.0.1","ua":"","reqBytes":2}
+[2025-09-25 21:38:58 KST] INFO req.start {"m":"POST","p":"/api/mock/generate","ip":"::ffff:127.0.0.1","ua":"","reqBytes":107}
+[2025-09-25 21:38:58 KST] INFO req.start {"m":"GET","p":"/api/boards/news/posts","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+[2025-09-25 22:46:51 KST] INFO redis.init {"enabled":false}
+[2025-09-25 22:46:51 KST] INFO app.create start
+[2025-09-25 22:46:51 KST] INFO routes.mounted
+[2025-09-25 22:46:51 KST] EVT server.listen {"port":50000}
+[2025-09-25 22:46:51 KST] INFO port.final {"port":50000,"start":50000}
+[2025-09-25 22:46:51 KST] EVT server.listen {"port":50000}
+[2025-09-25 22:46:51 KST] INFO mock.cleanup.enabled {"maxAgeDays":30}
+[2025-09-25 22:46:52 KST] INFO req.start {"m":"GET","p":"/api/health","ip":"127.0.0.1","ua":"node","reqBytes":0}
+[2025-09-25 22:47:09 KST] EVT signal {"sig":"SIGINT"}
+[2025-09-25 22:47:09 KST] EVT process.exit {"code":0}
+[2025-09-25 22:47:43 KST] INFO redis.init {"enabled":false}
+[2025-09-25 22:47:43 KST] INFO app.create start
+[2025-09-25 22:47:43 KST] INFO routes.mounted
+[2025-09-25 22:47:43 KST] EVT server.listen {"port":50000}
+[2025-09-25 22:47:43 KST] INFO port.final {"port":50000,"start":50000}
+[2025-09-25 22:47:43 KST] EVT server.listen {"port":50000}
+[2025-09-25 22:47:43 KST] INFO mock.cleanup.enabled {"maxAgeDays":30}
+[2025-09-25 22:47:44 KST] INFO req.start {"m":"GET","p":"/api/health","ip":"127.0.0.1","ua":"node","reqBytes":0}
+[2025-09-25 22:48:00 KST] EVT signal {"sig":"SIGINT"}
+[2025-09-25 22:48:00 KST] EVT process.exit {"code":0}
+{"ts":"2025-09-25 22:56:52 KST","level":"info","msg":"test message","key":"value"}
+{"ts":"2025-09-25 22:56:52 KST","level":"info","msg":"json test","test":"data"}
+{"ts":"2025-09-25 22:56:52 KST","level":"error","msg":"error occurred","error":"test error"}
+{"ts":"2025-09-25 22:56:52 KST","level":"warn","msg":"warning message","code":"WARN001"}
+{"ts":"2025-09-25 22:56:53 KST","level":"info","msg":"app.create start"}
+{"ts":"2025-09-25 22:56:53 KST","level":"info","msg":"app.create start"}
+{"ts":"2025-09-25 22:56:53 KST","level":"info","msg":"app.create start"}
+{"ts":"2025-09-25 22:56:53 KST","level":"info","msg":"routes.mounted"}
+{"ts":"2025-09-25 22:56:53 KST","level":"info","msg":"routes.mounted"}
+{"ts":"2025-09-25 22:56:53 KST","level":"info","msg":"routes.mounted"}
+{"ts":"2025-09-25 22:56:53 KST","level":"info","msg":"req.start","m":"GET","p":"/api/health","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+{"ts":"2025-09-25 22:56:53 KST","level":"info","msg":"app.create start"}
+{"ts":"2025-09-25 22:56:53 KST","level":"info","msg":"routes.mounted"}
+{"ts":"2025-09-25 22:56:53 KST","level":"info","msg":"req.start","m":"GET","p":"/api/posts","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+{"ts":"2025-09-25 22:56:53 KST","level":"info","msg":"req.start","m":"GET","p":"/api/boards","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+{"ts":"2025-09-25 22:56:53 KST","level":"info","msg":"req.start","m":"GET","p":"/api/health","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+{"ts":"2025-09-25 22:56:54 KST","level":"error","msg":"api.error","errorId":"err_1758808614005_g4qr4pgf8","message":"Cannot read properties of undefined (reading 'c')","stack":"TypeError: Cannot read properties of undefined (reading 'c')\n    at C:\\Users\\hwi\\Desktop\\Projects\\community\\server-backend\\src\\routes.js:258:100\n    at processTicksAndRejections (node:internal/process/task_queues:105:5)","url":"/api/health?verbose=1","method":"GET","ip":"::ffff:127.0.0.1","timestamp":"2025-09-25T13:56:54.006Z"}
+{"ts":"2025-09-25 22:56:54 KST","level":"info","msg":"req.done","m":"GET","p":"/api/health","s":500,"ms":14,"ip":"::ffff:127.0.0.1","ua":"","reqBytes":0,"respBytes":128,"aborted":false}
+{"ts":"2025-09-25 22:56:54 KST","level":"info","msg":"req.start","m":"GET","p":"/api/posts","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+{"ts":"2025-09-25 22:56:54 KST","level":"info","msg":"req.start","m":"GET","p":"/api/health","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+{"ts":"2025-09-25 22:56:54 KST","level":"info","msg":"req.start","m":"GET","p":"/api/boards","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+{"ts":"2025-09-25 22:56:54 KST","level":"info","msg":"req.start","m":"GET","p":"/api/boards/free","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+{"ts":"2025-09-25 22:56:54 KST","level":"info","msg":"req.start","m":"GET","p":"/api/posts","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+{"ts":"2025-09-25 22:56:54 KST","level":"info","msg":"req.start","m":"GET","p":"/api/posts","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+{"ts":"2025-09-25 22:56:54 KST","level":"info","msg":"req.start","m":"GET","p":"/api/boards/nonexistent","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+{"ts":"2025-09-25 22:56:54 KST","level":"info","msg":"req.start","m":"GET","p":"/api/posts/n1","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+{"ts":"2025-09-25 22:56:54 KST","level":"info","msg":"req.start","m":"GET","p":"/api/posts/999999","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+{"ts":"2025-09-25 22:56:54 KST","level":"info","msg":"req.start","m":"POST","p":"/api/auth/login","ip":"::ffff:127.0.0.1","ua":"","reqBytes":45}
+{"ts":"2025-09-25 22:56:54 KST","level":"info","msg":"req.start","m":"POST","p":"/api/auth/login","ip":"::ffff:127.0.0.1","ua":"","reqBytes":2}
+{"ts":"2025-09-25 22:56:54 KST","level":"info","msg":"req.start","m":"GET","p":"/api/auth/session","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+[2025-09-25 23:18:33 KST] INFO app.create start
+[2025-09-25 23:18:33 KST] INFO routes.mounted
+[2025-09-25 23:18:33 KST] INFO req.start {"m":"GET","p":"/api/search","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+[2025-09-25 23:18:33 KST] INFO req.start {"m":"GET","p":"/api/auth/providers","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+[2025-09-26 00:13:28 KST] INFO app.create start
+[2025-09-26 00:13:28 KST] INFO routes.mounted
+[2025-09-26 00:13:28 KST] INFO req.start {"m":"GET","p":"/api/search","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+[2025-09-26 00:13:28 KST] INFO req.start {"m":"GET","p":"/api/auth/providers","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+[2025-09-26 00:27:46 KST] INFO app.create start
+[2025-09-26 00:27:46 KST] INFO routes.mounted
+[2025-09-26 00:27:47 KST] INFO req.start {"m":"GET","p":"/api/search","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+[2025-09-26 00:27:47 KST] INFO req.start {"m":"GET","p":"/api/auth/providers","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+[2025-09-26 06:55:00 KST] INFO redis.init {"enabled":false}
+[2025-09-26 06:55:00 KST] INFO app.create start
+[2025-09-26 06:55:00 KST] INFO routes.mounted
+[2025-09-26 06:55:00 KST] EVT server.listen {"port":50000}
+[2025-09-26 06:55:00 KST] INFO port.final {"port":50000,"start":50000}
+[2025-09-26 06:55:00 KST] EVT server.listen {"port":50000}
+[2025-09-26 06:55:00 KST] INFO mock.cleanup.enabled {"maxAgeDays":30}
+[2025-09-26 06:55:01 KST] INFO req.start {"m":"GET","p":"/api/health","ip":"127.0.0.1","ua":"node","reqBytes":0}
+[2025-09-26 06:55:16 KST] INFO req.start {"m":"GET","p":"/api/boards/news/posts","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 06:55:16 KST] INFO req.start {"m":"GET","p":"/api/trending","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 06:55:16 KST] INFO req.start {"m":"GET","p":"/api/communities","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 06:55:16 KST] INFO req.start {"m":"GET","p":"/api/auth/providers","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 06:55:27 KST] INFO req.start {"m":"GET","p":"/api/boards","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT; Windows NT 10.0; ko-KR) WindowsPowerShell/5.1.19041.6328","reqBytes":0}
+[2025-09-26 06:55:28 KST] INFO req.start {"m":"GET","p":"/api/boards","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT; Windows NT 10.0; ko-KR) WindowsPowerShell/5.1.19041.6328","reqBytes":0}
+[2025-09-26 10:16:10 KST] INFO app.create start
+[2025-09-26 10:16:10 KST] INFO routes.mounted
+[2025-09-26 10:16:10 KST] INFO req.start {"m":"GET","p":"/api/posts/drafts","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+[2025-09-26 10:16:10 KST] INFO req.start {"m":"POST","p":"/api/posts/drafts","ip":"::ffff:127.0.0.1","ua":"","reqBytes":76}
+[2025-09-26 10:16:10 KST] INFO req.start {"m":"GET","p":"/api/posts/drafts","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+[2025-09-26 10:16:10 KST] INFO req.start {"m":"GET","p":"/api/posts/drafts","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+[2025-09-26 10:45:30 KST] INFO app.create start
+[2025-09-26 10:45:30 KST] INFO routes.mounted
+[2025-09-26 10:45:30 KST] INFO req.start {"m":"GET","p":"/api/posts/drafts","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+[2025-09-26 10:45:31 KST] INFO req.start {"m":"POST","p":"/api/posts/drafts","ip":"::ffff:127.0.0.1","ua":"","reqBytes":76}
+[2025-09-26 10:45:31 KST] INFO req.start {"m":"GET","p":"/api/posts/drafts","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+[2025-09-26 10:45:31 KST] INFO req.start {"m":"GET","p":"/api/posts/drafts","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+[2025-09-26 10:51:09 KST] INFO redis.init {"enabled":false}
+[2025-09-26 10:51:09 KST] INFO app.create start
+[2025-09-26 10:51:09 KST] INFO routes.mounted
+[2025-09-26 10:51:09 KST] EVT server.listen {"port":50000}
+[2025-09-26 10:51:09 KST] INFO port.final {"port":50000,"start":50000}
+[2025-09-26 10:51:32 KST] INFO app.create start
+[2025-09-26 10:51:32 KST] INFO routes.mounted
+[2025-09-26 10:51:32 KST] INFO req.start {"m":"GET","p":"/api/posts/drafts","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+[2025-09-26 10:51:32 KST] INFO req.start {"m":"POST","p":"/api/posts/drafts","ip":"::ffff:127.0.0.1","ua":"","reqBytes":76}
+[2025-09-26 10:51:32 KST] INFO req.start {"m":"GET","p":"/api/posts/drafts","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+[2025-09-26 10:51:32 KST] INFO req.start {"m":"GET","p":"/api/posts/drafts","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+[2025-09-26 10:54:29 KST] INFO redis.init {"enabled":false}
+[2025-09-26 10:54:29 KST] INFO app.create start
+[2025-09-26 10:54:29 KST] INFO routes.mounted
+[2025-09-26 10:54:29 KST] EVT server.listen {"port":50000}
+[2025-09-26 10:54:29 KST] INFO port.final {"port":50000,"start":50000}
+[2025-09-26 10:54:29 KST] EVT server.listen {"port":50000}
+[2025-09-26 10:54:29 KST] INFO mock.cleanup.enabled {"maxAgeDays":30}
+[2025-09-26 10:54:30 KST] INFO req.start {"m":"GET","p":"/api/health","ip":"127.0.0.1","ua":"node","reqBytes":0}
+[2025-09-26 10:55:26 KST] INFO app.create start
+[2025-09-26 10:55:26 KST] INFO routes.mounted
+[2025-09-26 10:55:26 KST] INFO req.start {"m":"GET","p":"/api/posts/drafts","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+[2025-09-26 10:55:27 KST] INFO req.start {"m":"POST","p":"/api/posts/drafts","ip":"::ffff:127.0.0.1","ua":"","reqBytes":76}
+[2025-09-26 10:55:27 KST] INFO req.start {"m":"GET","p":"/api/posts/drafts","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+[2025-09-26 10:55:27 KST] INFO req.start {"m":"GET","p":"/api/posts/drafts/1","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+[2025-09-26 10:55:27 KST] INFO req.start {"m":"PUT","p":"/api/posts/drafts/1","ip":"::ffff:127.0.0.1","ua":"","reqBytes":61}
+[2025-09-26 10:55:27 KST] INFO req.start {"m":"PUT","p":"/api/posts/drafts/1","ip":"::ffff:127.0.0.1","ua":"","reqBytes":25}
+[2025-09-26 10:55:27 KST] INFO req.start {"m":"DELETE","p":"/api/posts/drafts/1","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+[2025-09-26 10:55:27 KST] INFO req.start {"m":"GET","p":"/api/posts/drafts/1","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+[2025-09-26 10:55:27 KST] INFO req.start {"m":"GET","p":"/api/posts/drafts","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+[2025-09-26 10:55:27 KST] INFO req.start {"m":"GET","p":"/api/posts/drafts","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+[2025-09-26 10:55:27 KST] INFO req.start {"m":"GET","p":"/api/posts/drafts","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+[2025-09-26 10:55:27 KST] INFO req.start {"m":"GET","p":"/api/posts/drafts","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+[2025-09-26 10:55:27 KST] INFO req.start {"m":"GET","p":"/api/posts/drafts","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+[2025-09-26 10:55:27 KST] INFO req.start {"m":"GET","p":"/api/posts/drafts","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+[2025-09-26 10:55:27 KST] INFO req.start {"m":"GET","p":"/api/posts/drafts","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+[2025-09-26 10:55:27 KST] INFO req.start {"m":"GET","p":"/api/posts/drafts","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+[2025-09-26 10:55:27 KST] INFO req.start {"m":"GET","p":"/api/posts/drafts","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+[2025-09-26 10:55:27 KST] INFO req.start {"m":"GET","p":"/api/posts/drafts","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+[2025-09-26 10:55:27 KST] INFO req.start {"m":"GET","p":"/api/posts/drafts","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+[2025-09-26 10:56:48 KST] INFO app.create start
+[2025-09-26 10:56:48 KST] INFO routes.mounted
+[2025-09-26 10:56:48 KST] INFO req.start {"m":"GET","p":"/api/posts/drafts","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+[2025-09-26 10:56:48 KST] INFO req.start {"m":"POST","p":"/api/posts/drafts","ip":"::ffff:127.0.0.1","ua":"","reqBytes":76}
+[2025-09-26 10:56:48 KST] INFO req.start {"m":"GET","p":"/api/posts/drafts","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+[2025-09-26 10:56:48 KST] INFO req.start {"m":"GET","p":"/api/posts/drafts/1","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+[2025-09-26 10:56:48 KST] INFO req.start {"m":"PUT","p":"/api/posts/drafts/1","ip":"::ffff:127.0.0.1","ua":"","reqBytes":61}
+[2025-09-26 10:56:48 KST] INFO req.start {"m":"PUT","p":"/api/posts/drafts/1","ip":"::ffff:127.0.0.1","ua":"","reqBytes":25}
+[2025-09-26 10:56:48 KST] INFO req.start {"m":"DELETE","p":"/api/posts/drafts/1","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+[2025-09-26 10:56:48 KST] INFO req.start {"m":"GET","p":"/api/posts/drafts/1","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+[2025-09-26 10:56:48 KST] INFO req.start {"m":"GET","p":"/api/posts/drafts","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+[2025-09-26 10:56:48 KST] INFO req.start {"m":"GET","p":"/api/posts/drafts","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+[2025-09-26 10:56:48 KST] INFO req.start {"m":"GET","p":"/api/posts/drafts","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+[2025-09-26 10:56:48 KST] INFO req.start {"m":"GET","p":"/api/posts/drafts","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+[2025-09-26 10:56:48 KST] INFO req.start {"m":"GET","p":"/api/posts/drafts","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+[2025-09-26 10:56:48 KST] INFO req.start {"m":"GET","p":"/api/posts/drafts","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+[2025-09-26 10:56:48 KST] INFO req.start {"m":"GET","p":"/api/posts/drafts","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+[2025-09-26 10:56:48 KST] INFO req.start {"m":"GET","p":"/api/posts/drafts","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+[2025-09-26 10:56:48 KST] INFO req.start {"m":"GET","p":"/api/posts/drafts","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+[2025-09-26 10:56:48 KST] INFO req.start {"m":"GET","p":"/api/posts/drafts","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+[2025-09-26 10:56:48 KST] INFO req.start {"m":"GET","p":"/api/posts/drafts","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+[2025-09-26 11:00:33 KST] INFO redis.init {"enabled":false}
+[2025-09-26 11:00:33 KST] INFO app.create start
+[2025-09-26 11:00:33 KST] INFO routes.mounted
+[2025-09-26 11:00:33 KST] EVT server.listen {"port":50000}
+[2025-09-26 11:00:33 KST] INFO port.final {"port":50000,"start":50000}
+[2025-09-26 11:00:33 KST] EVT server.listen {"port":50000}
+[2025-09-26 11:00:33 KST] INFO mock.cleanup.enabled {"maxAgeDays":30}
+[2025-09-26 11:00:34 KST] INFO req.start {"m":"GET","p":"/api/health","ip":"127.0.0.1","ua":"node","reqBytes":0}
+[2025-09-26 11:01:04 KST] INFO app.create start
+[2025-09-26 11:01:04 KST] INFO routes.mounted
+[2025-09-26 11:01:04 KST] INFO req.start {"m":"GET","p":"/api/posts/drafts","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+[2025-09-26 11:01:04 KST] INFO req.start {"m":"POST","p":"/api/posts/drafts","ip":"::ffff:127.0.0.1","ua":"","reqBytes":76}
+[2025-09-26 11:01:04 KST] INFO req.start {"m":"GET","p":"/api/posts/drafts","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+[2025-09-26 11:01:04 KST] INFO req.start {"m":"GET","p":"/api/posts/drafts/1","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+[2025-09-26 11:01:04 KST] INFO req.start {"m":"PUT","p":"/api/posts/drafts/1","ip":"::ffff:127.0.0.1","ua":"","reqBytes":61}
+[2025-09-26 11:01:04 KST] INFO req.start {"m":"PUT","p":"/api/posts/drafts/1","ip":"::ffff:127.0.0.1","ua":"","reqBytes":25}
+[2025-09-26 11:01:04 KST] INFO req.start {"m":"DELETE","p":"/api/posts/drafts/1","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+[2025-09-26 11:01:04 KST] INFO req.start {"m":"GET","p":"/api/posts/drafts/1","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+[2025-09-26 11:01:04 KST] INFO req.start {"m":"GET","p":"/api/posts/drafts","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+[2025-09-26 11:01:04 KST] INFO req.start {"m":"GET","p":"/api/posts/drafts","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+[2025-09-26 11:01:04 KST] INFO req.start {"m":"GET","p":"/api/posts/drafts","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+[2025-09-26 11:01:04 KST] INFO req.start {"m":"GET","p":"/api/posts/drafts","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+[2025-09-26 11:01:04 KST] INFO req.start {"m":"GET","p":"/api/posts/drafts","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+[2025-09-26 11:01:04 KST] INFO req.start {"m":"GET","p":"/api/posts/drafts","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+[2025-09-26 11:01:04 KST] INFO req.start {"m":"GET","p":"/api/posts/drafts","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+[2025-09-26 11:01:05 KST] INFO req.start {"m":"GET","p":"/api/posts/drafts","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+[2025-09-26 11:01:05 KST] INFO req.start {"m":"GET","p":"/api/posts/drafts","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+[2025-09-26 11:01:05 KST] INFO req.start {"m":"GET","p":"/api/posts/drafts","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+[2025-09-26 11:01:05 KST] INFO req.start {"m":"GET","p":"/api/posts/drafts","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+[2025-09-26 11:04:00 KST] INFO redis.init {"enabled":false}
+[2025-09-26 11:04:01 KST] INFO app.create start
+[2025-09-26 11:04:01 KST] INFO routes.mounted
+[2025-09-26 11:04:01 KST] EVT server.listen {"port":50000}
+[2025-09-26 11:04:01 KST] INFO port.final {"port":50000,"start":50000}
+[2025-09-26 11:04:01 KST] EVT server.listen {"port":50000}
+[2025-09-26 11:04:01 KST] INFO mock.cleanup.enabled {"maxAgeDays":30}
+[2025-09-26 11:04:01 KST] INFO req.start {"m":"GET","p":"/api/health","ip":"127.0.0.1","ua":"node","reqBytes":0}
+[2025-09-26 11:04:26 KST] INFO req.start {"m":"GET","p":"/api/auth/providers","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:04:26 KST] INFO req.start {"m":"GET","p":"/api/trending","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:04:26 KST] INFO req.start {"m":"GET","p":"/api/communities","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:04:26 KST] INFO req.start {"m":"GET","p":"/api/boards/news/posts","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:04:26 KST] INFO req.start {"m":"GET","p":"/api/boards/global-community-lounge/posts","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:04:26 KST] INFO req.start {"m":"GET","p":"/api/boards/global-broadcast-stage/posts","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:04:26 KST] INFO req.start {"m":"GET","p":"/api/boards/global-cosplay-gallery/posts","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:49:37 KST] INFO redis.init {"enabled":false}
+[2025-09-26 11:49:37 KST] INFO app.create start
+[2025-09-26 11:49:37 KST] INFO routes.mounted
+[2025-09-26 11:49:37 KST] EVT server.listen {"port":50000}
+[2025-09-26 11:49:37 KST] INFO port.final {"port":50000,"start":50000}
+[2025-09-26 11:49:37 KST] EVT server.listen {"port":50000}
+[2025-09-26 11:49:37 KST] INFO mock.cleanup.enabled {"maxAgeDays":30}
+[2025-09-26 11:49:38 KST] INFO req.start {"m":"GET","p":"/api/health","ip":"127.0.0.1","ua":"node","reqBytes":0}
+[2025-09-26 11:49:50 KST] INFO req.start {"m":"GET","p":"/api/boards/news/posts","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:49:50 KST] INFO req.start {"m":"GET","p":"/api/trending","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:49:50 KST] INFO req.start {"m":"GET","p":"/api/communities","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:49:50 KST] INFO req.start {"m":"GET","p":"/api/auth/providers","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:00 KST] INFO req.start {"m":"GET","p":"/api/boards/news/posts","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:00 KST] INFO req.start {"m":"GET","p":"/api/trending","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:00 KST] INFO req.start {"m":"GET","p":"/api/communities","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:00 KST] INFO req.start {"m":"GET","p":"/api/auth/providers","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:00 KST] INFO req.start {"m":"GET","p":"/api/auth/providers","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:00 KST] INFO req.start {"m":"GET","p":"/api/boards/global-community-lounge/posts","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:00 KST] INFO req.start {"m":"GET","p":"/api/boards/global-broadcast-stage/posts","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:00 KST] INFO req.start {"m":"GET","p":"/api/boards/global-cosplay-gallery/posts","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:01 KST] INFO req.start {"m":"GET","p":"/api/boards/news/posts","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:01 KST] INFO req.start {"m":"GET","p":"/api/trending","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:01 KST] INFO req.start {"m":"GET","p":"/api/communities","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:01 KST] INFO req.start {"m":"GET","p":"/api/auth/providers","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:01 KST] INFO req.start {"m":"GET","p":"/api/auth/providers","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:01 KST] INFO req.start {"m":"GET","p":"/api/boards/news/posts","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:01 KST] INFO req.start {"m":"GET","p":"/api/trending","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:01 KST] INFO req.start {"m":"GET","p":"/api/communities","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:01 KST] INFO req.start {"m":"GET","p":"/api/auth/providers","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:01 KST] INFO req.start {"m":"GET","p":"/api/auth/providers","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:01 KST] INFO req.start {"m":"GET","p":"/api/boards/news/posts","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:01 KST] INFO req.start {"m":"GET","p":"/api/trending","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:01 KST] INFO req.start {"m":"GET","p":"/api/communities","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:01 KST] INFO req.start {"m":"GET","p":"/api/auth/providers","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:01 KST] INFO req.start {"m":"GET","p":"/api/auth/providers","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:02 KST] INFO req.start {"m":"GET","p":"/api/boards/news/posts","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:02 KST] INFO req.start {"m":"GET","p":"/api/trending","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:02 KST] INFO req.start {"m":"GET","p":"/api/communities","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:02 KST] INFO req.start {"m":"GET","p":"/api/auth/providers","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:02 KST] INFO req.start {"m":"GET","p":"/api/auth/providers","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:02 KST] INFO req.start {"m":"GET","p":"/api/boards/news/posts","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:02 KST] INFO req.start {"m":"GET","p":"/api/trending","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:02 KST] INFO req.start {"m":"GET","p":"/api/communities","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:02 KST] INFO req.start {"m":"GET","p":"/api/auth/providers","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:02 KST] INFO req.start {"m":"GET","p":"/api/auth/providers","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:02 KST] INFO req.start {"m":"GET","p":"/api/boards/news/posts","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:02 KST] INFO req.start {"m":"GET","p":"/api/trending","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:02 KST] INFO req.start {"m":"GET","p":"/api/communities","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:02 KST] INFO req.start {"m":"GET","p":"/api/auth/providers","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:02 KST] INFO req.start {"m":"GET","p":"/api/boards/news/posts","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:02 KST] INFO req.start {"m":"GET","p":"/api/trending","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:02 KST] INFO req.start {"m":"GET","p":"/api/communities","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:02 KST] INFO req.start {"m":"GET","p":"/api/auth/providers","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:02 KST] INFO req.start {"m":"GET","p":"/api/auth/providers","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:03 KST] INFO req.start {"m":"GET","p":"/api/boards/news/posts","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:03 KST] INFO req.start {"m":"GET","p":"/api/trending","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:03 KST] INFO req.start {"m":"GET","p":"/api/communities","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:03 KST] INFO req.start {"m":"GET","p":"/api/auth/providers","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:03 KST] INFO req.start {"m":"GET","p":"/api/auth/providers","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:03 KST] INFO req.start {"m":"GET","p":"/api/boards/global-community-lounge/posts","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:03 KST] INFO req.start {"m":"GET","p":"/api/boards/global-broadcast-stage/posts","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:03 KST] INFO req.start {"m":"GET","p":"/api/boards/global-cosplay-gallery/posts","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:03 KST] INFO req.start {"m":"GET","p":"/api/boards/news/posts","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:03 KST] INFO req.start {"m":"GET","p":"/api/trending","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:03 KST] INFO req.start {"m":"GET","p":"/api/communities","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:03 KST] INFO req.start {"m":"GET","p":"/api/auth/providers","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:03 KST] INFO req.start {"m":"GET","p":"/api/auth/providers","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:04 KST] INFO req.start {"m":"GET","p":"/api/boards/news/posts","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:04 KST] INFO req.start {"m":"GET","p":"/api/trending","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:04 KST] INFO req.start {"m":"GET","p":"/api/communities","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:04 KST] INFO req.start {"m":"GET","p":"/api/auth/providers","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:04 KST] INFO req.start {"m":"GET","p":"/api/auth/providers","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:04 KST] INFO req.start {"m":"GET","p":"/api/boards/news/posts","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:04 KST] INFO req.start {"m":"GET","p":"/api/trending","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:04 KST] INFO req.start {"m":"GET","p":"/api/communities","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:04 KST] INFO req.start {"m":"GET","p":"/api/auth/providers","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:04 KST] INFO req.start {"m":"GET","p":"/api/auth/providers","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:05 KST] INFO req.start {"m":"GET","p":"/api/boards/news/posts","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:05 KST] INFO req.start {"m":"GET","p":"/api/trending","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:05 KST] INFO req.start {"m":"GET","p":"/api/communities","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:05 KST] INFO req.start {"m":"GET","p":"/api/auth/providers","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:05 KST] INFO req.start {"m":"GET","p":"/api/boards/global-community-lounge/posts","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:05 KST] INFO req.start {"m":"GET","p":"/api/boards/global-broadcast-stage/posts","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:05 KST] INFO req.start {"m":"GET","p":"/api/boards/global-cosplay-gallery/posts","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:05 KST] INFO req.start {"m":"GET","p":"/api/boards/news/posts","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:05 KST] INFO req.start {"m":"GET","p":"/api/trending","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:05 KST] INFO req.start {"m":"GET","p":"/api/communities","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:05 KST] INFO req.start {"m":"GET","p":"/api/auth/providers","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:05 KST] INFO req.start {"m":"GET","p":"/api/auth/providers","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:06 KST] INFO req.start {"m":"GET","p":"/api/boards/news/posts","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:06 KST] INFO req.start {"m":"GET","p":"/api/trending","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:06 KST] INFO req.start {"m":"GET","p":"/api/communities","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:06 KST] INFO req.start {"m":"GET","p":"/api/auth/providers","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:06 KST] INFO req.start {"m":"GET","p":"/api/auth/providers","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:06 KST] INFO req.start {"m":"GET","p":"/api/boards/news/posts","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:06 KST] INFO req.start {"m":"GET","p":"/api/trending","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:06 KST] INFO req.start {"m":"GET","p":"/api/communities","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:06 KST] INFO req.start {"m":"GET","p":"/api/auth/providers","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:06 KST] INFO req.start {"m":"GET","p":"/api/auth/providers","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:06 KST] INFO req.start {"m":"GET","p":"/api/boards/news/posts","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:06 KST] INFO req.start {"m":"GET","p":"/api/trending","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:06 KST] INFO req.start {"m":"GET","p":"/api/communities","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:06 KST] INFO req.start {"m":"GET","p":"/api/auth/providers","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:06 KST] INFO req.start {"m":"GET","p":"/api/auth/providers","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:06 KST] INFO req.start {"m":"GET","p":"/api/boards/global-community-lounge/posts","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:06 KST] INFO req.start {"m":"GET","p":"/api/boards/global-broadcast-stage/posts","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:06 KST] INFO req.start {"m":"GET","p":"/api/boards/global-cosplay-gallery/posts","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:10 KST] INFO req.start {"m":"GET","p":"/api/boards/news/posts","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:10 KST] INFO req.start {"m":"GET","p":"/api/trending","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:10 KST] INFO req.start {"m":"GET","p":"/api/communities","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:10 KST] INFO req.start {"m":"GET","p":"/api/auth/providers","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:10 KST] INFO req.start {"m":"GET","p":"/api/auth/providers","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:10 KST] INFO req.start {"m":"GET","p":"/api/boards/global-community-lounge/posts","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:11 KST] INFO req.start {"m":"GET","p":"/api/boards/global-broadcast-stage/posts","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:11 KST] INFO req.start {"m":"GET","p":"/api/boards/global-cosplay-gallery/posts","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:35 KST] INFO req.start {"m":"GET","p":"/api/boards/news/posts","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Code/1.104.2 Chrome/138.0.7204.235 Electron/37.3.1 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:35 KST] INFO req.start {"m":"GET","p":"/api/trending","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Code/1.104.2 Chrome/138.0.7204.235 Electron/37.3.1 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:35 KST] INFO req.start {"m":"GET","p":"/api/communities","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Code/1.104.2 Chrome/138.0.7204.235 Electron/37.3.1 Safari/537.36","reqBytes":0}
+[2025-09-26 11:50:35 KST] INFO req.start {"m":"GET","p":"/api/auth/providers","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Code/1.104.2 Chrome/138.0.7204.235 Electron/37.3.1 Safari/537.36","reqBytes":0}
+[2025-09-26 12:39:09 KST] INFO redis.init {"enabled":false}
+[2025-09-26 12:39:09 KST] INFO app.create start
+[2025-09-26 12:39:09 KST] INFO routes.mounted
+[2025-09-26 12:39:09 KST] EVT server.listen {"port":50000}
+[2025-09-26 12:39:09 KST] INFO port.final {"port":50000,"start":50000}
+[2025-09-26 12:39:09 KST] EVT server.listen {"port":50000}
+[2025-09-26 12:39:09 KST] INFO mock.cleanup.enabled {"maxAgeDays":30}
+[2025-09-26 12:39:10 KST] INFO req.start {"m":"GET","p":"/api/health","ip":"127.0.0.1","ua":"node","reqBytes":0}
+[2025-09-26 12:40:07 KST] EVT signal {"sig":"SIGINT"}
+[2025-09-26 12:40:08 KST] EVT process.exit {"code":0}
+[2025-09-26 12:41:01 KST] INFO redis.init {"enabled":false}
+[2025-09-26 12:41:01 KST] INFO app.create start
+[2025-09-26 12:41:01 KST] INFO routes.mounted
+[2025-09-26 12:41:01 KST] EVT server.listen {"port":50000}
+[2025-09-26 12:41:01 KST] INFO port.final {"port":50000,"start":50000}
+[2025-09-26 12:41:01 KST] EVT server.listen {"port":50000}
+[2025-09-26 12:41:01 KST] INFO mock.cleanup.enabled {"maxAgeDays":30}
+[2025-09-26 12:41:02 KST] INFO req.start {"m":"GET","p":"/api/health","ip":"127.0.0.1","ua":"node","reqBytes":0}
+[2025-09-26 12:41:16 KST] INFO req.start {"m":"GET","p":"/api/boards/news/posts","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 12:41:16 KST] INFO req.start {"m":"GET","p":"/api/trending","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 12:41:16 KST] INFO req.start {"m":"GET","p":"/api/communities","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 12:41:16 KST] INFO req.start {"m":"GET","p":"/api/auth/providers","ip":"127.0.0.1","ua":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36","reqBytes":0}
+[2025-09-26 12:43:44 KST] INFO redis.init {"enabled":false}
+[2025-09-26 12:43:44 KST] INFO app.create start
+[2025-09-26 12:43:44 KST] INFO routes.mounted
+[2025-09-26 12:43:44 KST] WARN port.in.use {"port":50000,"next":50001}
+[2025-09-26 12:43:44 KST] EVT server.listen {"port":50001}
+[2025-09-26 12:43:44 KST] INFO port.final {"port":50001,"start":50000}
+[2025-09-26 12:43:44 KST] EVT server.listen {"port":50001}
+[2025-09-26 12:43:44 KST] INFO mock.cleanup.enabled {"maxAgeDays":30}
+[2025-09-26 12:43:45 KST] INFO req.start {"m":"GET","p":"/api/health","ip":"127.0.0.1","ua":"node","reqBytes":0}
+[2025-09-26 13:51:05 KST] INFO app.create start
+[2025-09-26 13:51:05 KST] INFO routes.mounted
+[2025-09-26 13:51:05 KST] INFO req.start {"m":"POST","p":"/api/attachments/sign","ip":"::ffff:127.0.0.1","ua":"","reqBytes":58}
+[2025-09-26 13:51:05 KST] INFO req.start {"m":"POST","p":"/api/attachments/sign","ip":"::ffff:127.0.0.1","ua":"","reqBytes":64}
+[2025-09-26 13:51:05 KST] INFO req.start {"m":"POST","p":"/api/attachments/sign","ip":"::ffff:127.0.0.1","ua":"","reqBytes":75}
+[2025-09-26 13:51:05 KST] INFO req.start {"m":"POST","p":"/api/attachments/sign","ip":"::ffff:127.0.0.1","ua":"","reqBytes":66}
+[2025-09-26 13:51:41 KST] INFO app.create start
+[2025-09-26 13:51:41 KST] INFO routes.mounted
+[2025-09-26 13:51:41 KST] INFO req.start {"m":"POST","p":"/api/attachments/sign","ip":"::ffff:127.0.0.1","ua":"","reqBytes":58}
+[2025-09-26 13:51:41 KST] INFO req.start {"m":"POST","p":"/api/attachments/sign","ip":"::ffff:127.0.0.1","ua":"","reqBytes":64}
+[2025-09-26 13:51:41 KST] INFO req.start {"m":"POST","p":"/api/attachments/sign","ip":"::ffff:127.0.0.1","ua":"","reqBytes":75}
+[2025-09-26 13:51:41 KST] INFO req.start {"m":"POST","p":"/api/attachments/sign","ip":"::ffff:127.0.0.1","ua":"","reqBytes":66}
+[2025-09-26 13:51:41 KST] INFO req.start {"m":"POST","p":"/api/attachments/sign","ip":"::ffff:127.0.0.1","ua":"","reqBytes":58}
+[2025-09-26 13:51:41 KST] INFO req.start {"m":"POST","p":"/api/attachments/sign","ip":"::ffff:127.0.0.1","ua":"","reqBytes":60}
+[2025-09-26 14:31:12 KST] INFO app.create start
+[2025-09-26 14:31:12 KST] INFO routes.mounted
+[2025-09-26 14:31:12 KST] INFO req.start {"m":"POST","p":"/api/attachments/complete","ip":"::ffff:127.0.0.1","ua":"","reqBytes":71}
+[2025-09-26 14:31:12 KST] INFO req.start {"m":"POST","p":"/api/attachments/complete","ip":"::ffff:127.0.0.1","ua":"","reqBytes":154}
+[2025-09-26 14:31:12 KST] INFO req.start {"m":"POST","p":"/api/attachments/complete","ip":"::ffff:127.0.0.1","ua":"","reqBytes":101}
+[2025-09-26 14:34:24 KST] INFO app.create start
+[2025-09-26 14:34:24 KST] INFO routes.mounted
+[2025-09-26 14:34:24 KST] INFO req.start {"m":"POST","p":"/api/attachments/complete","ip":"::ffff:127.0.0.1","ua":"","reqBytes":71}
+[2025-09-26 14:34:24 KST] INFO req.start {"m":"POST","p":"/api/attachments/complete","ip":"::ffff:127.0.0.1","ua":"","reqBytes":154}
+[2025-09-26 14:34:24 KST] INFO req.start {"m":"GET","p":"/api/attachments/1","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+[2025-09-26 14:34:24 KST] INFO req.start {"m":"POST","p":"/api/attachments/complete","ip":"::ffff:127.0.0.1","ua":"","reqBytes":101}
+[2025-09-26 14:34:33 KST] INFO app.create start
+[2025-09-26 14:34:33 KST] INFO routes.mounted
+[2025-09-26 14:34:33 KST] INFO req.start {"m":"POST","p":"/api/attachments/sign","ip":"::ffff:127.0.0.1","ua":"","reqBytes":58}
+[2025-09-26 14:34:33 KST] INFO req.start {"m":"POST","p":"/api/attachments/sign","ip":"::ffff:127.0.0.1","ua":"","reqBytes":64}
+[2025-09-26 14:34:33 KST] INFO req.start {"m":"POST","p":"/api/attachments/sign","ip":"::ffff:127.0.0.1","ua":"","reqBytes":75}
+[2025-09-26 14:34:33 KST] INFO req.start {"m":"POST","p":"/api/attachments/sign","ip":"::ffff:127.0.0.1","ua":"","reqBytes":66}
+[2025-09-26 14:34:33 KST] INFO req.start {"m":"POST","p":"/api/attachments/sign","ip":"::ffff:127.0.0.1","ua":"","reqBytes":58}
+[2025-09-26 14:34:33 KST] INFO req.start {"m":"POST","p":"/api/attachments/sign","ip":"::ffff:127.0.0.1","ua":"","reqBytes":60}
+[2025-09-26 14:59:52 KST] INFO app.create start
+[2025-09-26 14:59:52 KST] INFO routes.mounted
+[2025-09-26 14:59:52 KST] INFO req.start {"m":"POST","p":"/api/attachments/complete","ip":"::ffff:127.0.0.1","ua":"","reqBytes":71}
+[2025-09-26 14:59:52 KST] INFO req.start {"m":"POST","p":"/api/attachments/complete","ip":"::ffff:127.0.0.1","ua":"","reqBytes":154}
+[2025-09-26 14:59:52 KST] INFO req.start {"m":"GET","p":"/api/attachments/1","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+[2025-09-26 14:59:52 KST] INFO req.start {"m":"POST","p":"/api/attachments/complete","ip":"::ffff:127.0.0.1","ua":"","reqBytes":101}
+[2025-09-26 14:59:52 KST] INFO app.create start
+[2025-09-26 14:59:52 KST] INFO routes.mounted
+[2025-09-26 14:59:52 KST] INFO req.start {"m":"POST","p":"/api/attachments/sign","ip":"::ffff:127.0.0.1","ua":"","reqBytes":58}
+[2025-09-26 14:59:52 KST] INFO req.start {"m":"POST","p":"/api/attachments/sign","ip":"::ffff:127.0.0.1","ua":"","reqBytes":64}
+[2025-09-26 14:59:52 KST] INFO req.start {"m":"POST","p":"/api/attachments/sign","ip":"::ffff:127.0.0.1","ua":"","reqBytes":75}
+[2025-09-26 14:59:52 KST] INFO req.start {"m":"POST","p":"/api/attachments/sign","ip":"::ffff:127.0.0.1","ua":"","reqBytes":66}
+[2025-09-26 14:59:52 KST] INFO req.start {"m":"POST","p":"/api/attachments/sign","ip":"::ffff:127.0.0.1","ua":"","reqBytes":58}
+[2025-09-26 14:59:52 KST] INFO req.start {"m":"POST","p":"/api/attachments/sign","ip":"::ffff:127.0.0.1","ua":"","reqBytes":60}
+[2025-09-26 14:59:52 KST] INFO app.create start
+[2025-09-26 14:59:52 KST] INFO routes.mounted
+[2025-09-26 14:59:52 KST] INFO req.start {"m":"POST","p":"/api/mock/reset","ip":"::ffff:127.0.0.1","ua":"","reqBytes":2}
+[2025-09-26 14:59:52 KST] INFO req.start {"m":"POST","p":"/api/mock/generate","ip":"::ffff:127.0.0.1","ua":"","reqBytes":107}
+[2025-09-26 14:59:52 KST] INFO req.start {"m":"GET","p":"/api/search","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+[2025-09-26 14:59:52 KST] INFO req.start {"m":"POST","p":"/api/mock/reset","ip":"::ffff:127.0.0.1","ua":"","reqBytes":2}
+[2025-09-26 14:59:52 KST] INFO req.start {"m":"GET","p":"/api/search","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}
+[2025-09-26 14:59:52 KST] INFO req.start {"m":"POST","p":"/api/mock/reset","ip":"::ffff:127.0.0.1","ua":"","reqBytes":2}
+[2025-09-26 14:59:52 KST] INFO req.start {"m":"POST","p":"/api/mock/generate","ip":"::ffff:127.0.0.1","ua":"","reqBytes":107}
+[2025-09-26 14:59:53 KST] INFO req.start {"m":"GET","p":"/api/boards/news/posts","ip":"::ffff:127.0.0.1","ua":"","reqBytes":0}

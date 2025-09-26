@@ -110,3 +110,15 @@ Start with Request ID + structured logging middleware; low risk, high diagnostic
 
 ---
 (End of Plan)
+
+
+### Search Rate-limit Metrics
+- Expose `runtimeMetrics.rlSearchBlocked` via `/api/metrics-prom`.
+- Add histogram `app_search_duration_ms` using HTTP middleware buckets.
+- Alert when blocked count > 10/min to detect abuse.
+
+
+### Search Caching Strategy
+- Evaluate CDN caching with `Cache-Control: private, max-age=30` when `q` length > 3 and user non-authenticated.
+- Provide in-memory LRU (size 100) for identical `q` within 60s, invalidated on `mock/generate`.
+- Document bypass header `X-Bypass-Cache: 1` for QA tooling.

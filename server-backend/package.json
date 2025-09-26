@@ -19,23 +19,30 @@
         "test:strict": "node tests/api-strict.js",
         "test:strict-ro": "READONLY=1 node tests/api-strict.js",
         "test:security": "node tests/security-strict.js",
+        "test:search": "node --test tests/smoke/api-smoke.test.js",
         "test:e2e": "playwright test",
         "test:e2e:ui": "playwright test --ui",
         "test:e2e:headed": "playwright test --headed",
         "test:e2e:debug": "playwright test --debug",
         "audit:security": "npm audit --omit=dev --production || exit 0",
-        "ci:backend": "npm run test:unit && npm run test:strict && npm run test:strict-ro && npm run test:security"
+        "ci:backend": "npm run test:unit && npm run test:strict && npm run test:strict-ro && npm run test:security",
+        "migrate:rpg": "node scripts/migrations/20250926_add_rpg_profile.js",
+        "migrate:rpg:down": "node scripts/migrations/20250926_add_rpg_profile.js --down"
     },
     "dependencies": {
+        "bullmq": "^5.58.9",
         "cors": "^2.8.5",
         "dotenv": "^16.4.5",
         "express": "^4.19.2",
+        "google-auth-library": "^9.14.1",
         "helmet": "^7.1.0",
         "jsonwebtoken": "^9.0.2",
         "mysql2": "^3.9.7",
+        "prom-client": "^15.1.3",
         "redis": "^4.6.13",
+        "response-time": "^2.3.4",
         "seedrandom": "^3.0.5",
-        "google-auth-library": "^9.14.1"
+        "ws": "^8.18.3"
     },
     "devDependencies": {
         "@playwright/test": "^1.55.1",

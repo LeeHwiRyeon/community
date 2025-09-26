@@ -1,5 +1,6 @@
+import { applyActivityEvent } from './services/profile/profile-progress-service.js';
 import 'seedrandom'
-﻿import fs from 'fs'
+import fs from 'fs'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import {
@@ -15,6 +16,16 @@ import {
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const dataDir = path.resolve(__dirname, '../../data')
+export const BOARD_ICON_MAP = {
+  news: '📰',
+  free: '💬',
+  image: '🖼️',
+  qna: '❓',
+  game: '🎮',
+  broadcast: '📺',
+  cosplay: '🧵'
+}
+
 
 let store = null
 
@@ -220,6 +231,10 @@ export function createPost(boardId, payload) {
     source: 'user'
   }
   data.posts.push(post)
+  if (payload.author_id) {
+    applyActivityEvent(payload.author_id, 'post.created', { boardId })
+      .catch((err) => console.warn('[mock] applyActivityEvent post.created failed', err.message))
+  }
   return { ...post }
 }
 
@@ -237,6 +252,10 @@ export function updatePost(postId, patch) {
     category: patch.category ?? target.category,
     updated_at: new Date().toISOString()
   })
+  if (patch.last_edited_by) {
+    applyActivityEvent(patch.last_edited_by, 'post.updated.major', { postId: postId })
+      .catch((err) => console.warn('[mock] applyActivityEvent post.updated.major failed', err.message))
+  }
   return { ...target }
 }
 
@@ -246,6 +265,10 @@ export function deletePost(postId) {
   if (!target) return false
   target.deleted = 1
   target.updated_at = new Date().toISOString()
+  if (target.author_id) {
+    applyActivityEvent(target.author_id, 'post.deleted', { postId })
+      .catch((err) => console.warn('[mock] applyActivityEvent post.deleted failed', err.message))
+  }
   return true
 }
 
@@ -256,6 +279,8 @@ export function mockSearch(query, limit = 20, offset = 0) {
   }
   const items = filterPosts({ search: trimmed })
   const total = items.length
+  const boards = listBoards()
+  const boardTitleMap = new Map(boards.map((board) => [board.id, board.title]))
   const slice = items.slice(offset, offset + limit).map((post) => ({
     id: post.id,
     board: post.board_id,
@@ -263,7 +288,9 @@ export function mockSearch(query, limit = 20, offset = 0) {
     author: post.author,
     category: post.category,
     created_at: post.created_at,
-    updated_at: post.updated_at
+    updated_at: post.updated_at,
+    board_title: boardTitleMap.get(post.board_id) ?? null,
+    board_icon: BOARD_ICON_MAP[post.board_id] ?? null
   }))
   return { query: trimmed, count: slice.length, items: slice, total, offset, limit }
 }

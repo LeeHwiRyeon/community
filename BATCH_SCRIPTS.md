@@ -1,126 +1,95 @@
-﻿# 諛곗튂 ?뚯씪 ?뺣━
+﻿# 배치 스크립트 관리 가이드
 
-??臾몄꽌??Community ?꾨줈?앺듃??紐⑤뱺 諛곗튂 ?뚯씪?ㅼ쓣 ?뺣━??臾몄꽌?낅땲??
+이 문서는 Community 프로젝트에서 제공하는 Windows 배치(.bat) 및 PowerShell(.ps1) 스크립트를 정리하고, 사용 시 주의사항을 안내합니다. 모든 스크립트는 저장소 루트의 `scripts/` 디렉터리에 위치합니다.
 
-## ?좑툘 以묒슂 ?덈궡
-**???댁긽 ?덈줈??諛곗튂 ?뚯씪??留뚮뱾吏 留먭퀬, 湲곗〈 諛곗튂 ?뚯씪?ㅼ쓣 ?섏젙?댁꽌 ?ъ슜?섏꽭??**
+## ⚠️ 중요 안내
+- **스크립트 수정 전 백업**: 기존 동작을 기록한 뒤 새로운 변경 사항을 적용하세요.
+- **문서 함께 갱신**: 스크립트를 수정했다면 이 가이드와 관련 문서를 즉시 업데이트합니다.
+- **명확한 커밋 기록**: 변경 목적과 영향을 커밋 메시지에 남겨 다른 개발자가 추적할 수 있게 합니다.
+- **민감 정보 금지**: 배치 스크립트에는 계정 정보나 토큰을 직접 작성하지 않습니다.
 
-## ?묒뾽 吏移??뱥
+## 기본 작업 흐름
 
-### ?욎쑝濡쒖쓽 ?묒뾽 諛⑹떇
-1. **??긽 ??臾몄꽌瑜?癒쇱? ?쎌쑝?몄슂** - ?묒뾽 ?쒖옉 ?꾩뿉 ?꾩껜 諛곗튂 ?뚯씪 援ъ“瑜??뚯븙?섏꽭??
-2. **?묒뾽???댁슜???대떦?섎뒗 ?ъ씤?몃? ?곸쑝?몄슂** - ?대뼡 諛곗튂 ?뚯씪???섏젙?좎? 紐낇솗??湲곕줉?섏꽭??
-3. **臾몄꽌 李몄“?섎씪怨?留곹겕 二쇱꽭??* - ?묒뾽 ?ㅻ챸??`[李몄“: BATCH_SCRIPTS.md#?뱀뀡?대쫫]` ?뺤떇?쇰줈 留곹겕瑜?異붽??섏꽭??
-4. **蹂寃???利됱떆 臾몄꽌 ?낅뜲?댄듃** - 諛곗튂 ?뚯씪 ?섏젙 ????臾몄꽌???④퍡 ?낅뜲?댄듃?섏꽭??
+### 1. 변경 요청 파악
+1. **관련 이슈/요구사항 확인** – 어떤 실행 흐름을 바꾸려는지 목표를 명확히 합니다.
+2. **영향도 점검** – 백엔드/프론트엔드 실행 절차, 포트, 환경 변수 변동 여부를 정리합니다.
+3. **문서/주석 업데이트 계획** – 필요한 앵커(`[#섹션명]`)를 정리해 추적 가능하게 남깁니다.
+4. **테스트 시나리오 준비** – 실행/정지/재시작 케이스를 테스트 목록으로 남깁니다.
 
-### ?덉떆 ?묒뾽 ?ъ씤??
+### 2. 변경 기록 템플릿
 ```
-?뱧 ?묒뾽: start-all.bat ?ы듃 蹂寃?
-- ????뚯씪: start-all.bat
-- 변경 내용: 프런트엔드 포트를 5000으로 통일
-- 李몄“: BATCH_SCRIPTS.md#硫붿씤-諛곗튂-?뚯씪-?섏뼱
-- 愿???뚯씪: frontend/package.json, stop-all.bat
+요약: start-all.bat 포트 검사 로직 보강
+- 대상 파일: start-all.bat
+- 변경 내용: netstat 출력 필터 개선, 중복 PID 제거
+- 참고 섹션: BATCH_SCRIPTS.md#start-allbat
+- 연관 파일: stop-all.bat, scripts/util.ps1
 ```
 
-### 二쇱쓽?ы빆
-- **???뚯씪 ?앹꽦 湲덉?**: 諛섎뱶??湲곗〈 ?뚯씪 ?섏젙
-- **臾몄꽌 ?숆린??*: 肄붾뱶 蹂寃???臾몄꽌??利됱떆 ?낅뜲?댄듃
-- **?뚯뒪????而ㅻ컠**: 蹂寃???諛섎뱶???뚯뒪?명븯怨?而ㅻ컠
-- **?ы듃 ?쇨???*: start-all.bat, stop-all.bat, package.json ?ы듃 ?쇱튂 ?뺤씤
+## 주요 스크립트 요약
 
-## 硫붿씤 諛곗튂 ?뚯씪 ?섏뼱
-
-### `start-all.bat` & `stop-all.bat`
-?????뚯씪???꾨줈?앺듃??硫붿씤 ?쒖옉/醫낅즺 ?ㅽ겕由쏀듃?낅땲??
-
-#### `start-all.bat` (硫붿씤 ?쒖옉)
-**紐⑹쟻**: 諛깆뿏?쒖? ?꾨줎?몄뿏?쒕? ?숈떆???ㅽ뻾
-**?뱀쭠**:
-- ?ы듃 異⑸룎 ?먮룞 ?뺣━
-- 諛깆뿏?? ?ㅼ젣 ?쒕쾭 (`node src/index.js`)
-- ?꾨줎?몄뿏?? React + Vite (`npm run dev`)
-- ?ы듃: 諛깆뿏??50000, ?꾨줎?몄뿏??5000
-
-**?댁슜**:
+### `start-all.bat` – 전체 개발 서버 기동
+- **역할**: 백엔드(포트 50000)와 프론트엔드(포트 5000)를 순차적으로 실행합니다.
+- **기능**:
+  - 기존 포트 점유 프로세스 종료
+  - 백엔드(Node)와 프론트엔드(Vite) 실행
+  - 실행 URL 안내 출력
+- **코드 발췌**:
 ```bat
 @echo off
 echo Starting Community Full Stack Application...
-echo.
-
-REM ?ы듃 50000怨?5000???ъ슜?섎뒗 湲곗〈 ?꾨줈?몄뒪?ㅼ쓣 醫낅즺
-echo [start-all] Checking and killing processes on ports 50000 and 5000...
-powershell -Command "try { $pids = netstat -ano | findstr ':50000\|:5000' | ForEach-Object { $_.Split()[-1] } | Sort-Object -Unique; foreach ($pid in $pids) { if ($pid -and $pid -ne 0) { taskkill /PID $pid /F 2>$null } } } catch {}"
-
-echo Starting Backend Server (Port 50000)...
-start "Backend Server" cmd /c "cd server-backend && node src/index.js"
-
+set PORTS=50000 5000
+for %%P in (%PORTS%) do (
+  powershell -Command "Get-NetTCPConnection -LocalPort %%P -ErrorAction SilentlyContinue | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force }"
+)
+start "Backend" cmd /c "cd server-backend && node src/index.js"
 timeout /t 5 /nobreak > nul
-
-echo Starting Frontend Server (Port 5000)...
-start "Frontend Server" cmd /c "cd frontend && npm run dev"
-
-echo.
-echo Servers should be starting...
-echo Backend: http://localhost:50000
-echo Frontend: http://localhost:5000
-echo.
-echo Press any key to exit (servers will keep running)...
-pause > nul
+start "Frontend" cmd /c "cd frontend && npm run dev"
 ```
 
-#### `stop-all.bat` (硫붿씤 醫낅즺)
-**紐⑹쟻**: ?ㅽ뻾 以묒씤 紐⑤뱺 ?쒕쾭 ?ы듃 ?뺣━
-**?뱀쭠**:
-- ?ы듃 50000, 5000, 9323 ?ъ슜?섎뒗 ?꾨줈?몄뒪 醫낅즺
-- Node.js ?꾨줈?몄뒪 ?뺣━
+### `stop-all.bat` – 전체 서버 중지
+- **역할**: 개발 환경에서 실행 중인 모든 Node 기반 프로세스를 종료합니다.
+- **특징**:
+  - 50000 / 5000 / 9323 포트 선점 프로세스 반복 종료
+  - 잔여 Node 프로세스 강제 종료
+  - 사용자 확인용 메시지 출력
 
-**?댁슜**:
-```bat
-@echo off
-REM ?ㅽ뻾 以묒씤 紐⑤뱺 ?쒕쾭 ?ы듃瑜??ル뒗 諛곗튂 ?뚯씪
+### `run-backend.bat` & `run-frontend.bat`
+- **용도**: 개별 서비스만 실행해야 할 때 사용합니다.
+- `run-backend.bat` → `cd server-backend && npm run dev`
+- `run-frontend.bat` → `cd frontend && npm run dev`
 
-echo [stop-all] Stopping all development servers...
+### `quick-start.bat`
+- **시나리오**: 빠르게 전체 환경을 띄운 뒤 브라우저를 자동으로 여는 용도.
+- **동작**: start-all 호출 → 5초 대기 → 기본 브라우저를 `http://localhost:5000`으로 실행.
 
-REM ?ы듃 50000 (諛깆뿏??, 5000 (?꾨줎?몄뿏??, 9323???ъ슜?섎뒗 ?꾨줈?몄뒪?ㅼ쓣 醫낅즺
-echo [stop-all] Checking and killing processes on ports 50000, 5000, 9323...
-powershell -Command "try { $pids = netstat -ano | findstr ':50000\|:5000\|:9323' | ForEach-Object { $_.Split()[-1] } | Sort-Object -Unique; foreach ($pid in $pids) { if ($pid -and $pid -ne 0) { taskkill /PID $pid /F 2>$null; Write-Host \"[stop-all] Killed process $pid\" } } } catch {}"
+### PowerShell 변형 스크립트
+- `start-all.ps1`, `start-server.ps1`, `quick-start.ps1` 등은 배치 스크립트와 동일한 기능을 PowerShell로 제공합니다.
+- PowerShell 버전을 사용할 때는 `Set-ExecutionPolicy` 설정이 필요할 수 있습니다.
 
-REM Node.js ?꾨줈?몄뒪?ㅻ룄 ?뺣━
-echo [stop-all] Killing any remaining Node.js processes...
-powershell -Command "try { Get-Process node -ErrorAction SilentlyContinue | Stop-Process -Force; Write-Host '[stop-all] Killed Node.js processes' } catch {}"
+## CI / 테스트 스크립트
 
-echo [stop-all] All servers stopped.
-pause
-```
+### `ci-run.bat`
+- **목적**: CI 환경에서 백엔드/프론트엔드 서버 및 테스트를 병렬로 실행합니다.
+- **주요 단계**:
+  1. 포트 정리 및 Node 프로세스 클린업
+  2. 백엔드 서버, 프론트엔드 서버 백그라운드 실행
+  3. `npm run ci:backend`, `npm test`를 각각 새 창으로 실행
+- **추가 작업**: 로그를 `logs/run-*.log`로 수집하려면 리다이렉션을 추가하세요.
 
-## 湲고? 諛곗튂 ?뚯씪??
+## 유지보수 체크리스트
+- 실행/종료 스크립트는 항상 쌍으로 테스트합니다.
+- 포트 번호 변경 시 README 및 환경 변수 문서를 함께 갱신합니다.
+- 스크립트에서 사용하는 경로(`cd ..`)가 변경되면 반드시 수정합니다.
+- 공통 유틸(예: `scripts/util.ps1`)을 도입했다면 각 배치 파일에서 공유하도록 정리합니다.
+- 윈도우 외 환경(macOS, Linux)은 별도 `*.sh` 스크립트를 만들어 README에 명시합니다.
 
-### 媛쒕퀎 ?ㅽ뻾 ?뚯씪??
-- `run-backend.bat`: 諛깆뿏?쒕쭔 ?ㅽ뻾 (?ы듃 50000)
-- `run-frontend.bat`: ?꾨줎?몄뿏?쒕쭔 ?ㅽ뻾 (?ы듃 5000)
-- `run-frontend-old.bat`: 援?踰꾩쟾 ?꾨줎?몄뿏???ㅽ뻾
+## 자주 묻는 질문
+- **Q. 포트가 계속 점유되어 실행되지 않아요.**
+  - `stop-all.bat` 실행 후, 작업 관리자에서 잔여 Node 프로세스를 종료하세요.
+- **Q. PowerShell 스크립트가 실행되지 않습니다.**
+  - 관리자 권한으로 PowerShell을 실행하고 `Set-ExecutionPolicy RemoteSigned`를 설정하세요.
+- **Q. 브라우저가 자동으로 열리지 않습니다.**
+  - `quick-start.bat`에서 `start "Browser"` 부분이 보안 소프트웨어에 의해 차단되지 않았는지 확인하세요.
 
-### 紐⑹뾽/?뚯뒪???뚯씪??
-- `quick-start.bat`: 紐⑹뾽 紐⑤뱶濡?鍮좊Ⅸ ?쒖옉 + 釉뚮씪?곗? ?먮룞 ?닿린
-- `run-mock-all.bat`: 紐⑹뾽 紐⑤뱶 ?꾩껜 ?ㅽ뻾
-- `run-mock-backend.bat`: 紐⑹뾽 諛깆뿏?쒕쭔 ?ㅽ뻾
-
-### PowerShell ?뚯씪??
-- `quick-start.ps1`: PowerShell 踰꾩쟾 鍮좊Ⅸ ?쒖옉
-- `start-all.ps1`: PowerShell 踰꾩쟾 ?꾩껜 ?쒖옉
-- `start-server.ps1`: PowerShell 踰꾩쟾 ?쒕쾭 ?쒖옉
-
-### ?뚯뒪???뚯씪??
-- `test-frontend.bat`: ?꾨줎?몄뿏???뚯뒪???ㅽ뻾
-- `test-new-frontend.bat`: ???꾨줎?몄뿏???뚯뒪???ㅽ뻾
-
-## ?ъ슜 沅뚯옣 ?ы빆
-
-1. **硫붿씤 ?ъ슜**: `start-all.bat` (?쒖옉) + `stop-all.bat` (醫낅즺)
-2. **鍮좊Ⅸ ?뚯뒪??*: `quick-start.bat` (紐⑹뾽 紐⑤뱶)
-3. **媛쒕퀎 ?붾쾭源?*: `run-backend.bat`, `run-frontend.bat`
-
-## ?좑툘 ?ㅼ떆 ??踰?媛뺤“
-**?덈줈??諛곗튂 ?뚯씪??留뚮뱾吏 留먭퀬, `start-all.bat`怨?`stop-all.bat` ?섏뼱瑜??섏젙?댁꽌 ?ъ슜?섏꽭??**
-
-
+---
+본 문서는 UTF-8 인코딩을 기준으로 유지합니다. 새 스크립트를 추가하거나 수정할 때는 동일한 인코딩으로 저장하고, 변경 이력을 FEATURES.md 또는 TODO 문서에 기록해 주세요.

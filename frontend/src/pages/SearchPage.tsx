@@ -47,7 +47,17 @@ const SearchPage: React.FC = () => {
         if (cancelled) {
           return
         }
-        setState({ loading: false, error: error instanceof Error ? error.message : 'Unknown error', items: [], count: 0 })
+        setState({
+          loading: false,
+          error: (() => {
+            const raw = error instanceof Error ? error.message : 'Unknown error'
+            return raw.includes('429')
+              ? 'Too many searches in a short time. Please try again soon.'
+              : raw
+          })(),
+          items: [],
+          count: 0
+        })
       })
 
     return () => {
@@ -65,33 +75,51 @@ const SearchPage: React.FC = () => {
         <header className="search-page__header">
           <h1>{title}</h1>
           {hasQuery && (
-            <p className="search-page__summary">
+            <p className="search-page__summary" role="status" aria-live="polite">
               {state.loading
                 ? 'Loading results...'
                 : hasResults
                   ? `${state.count} matching posts`
-                  : 'No matching posts yet. Try a different keyword.'}
+                  : (
+                      <>
+                        No matching posts yet. Try a different keyword or <Link to="/">browse trending boards</Link>.
+                      </>
+                    )}
             </p>
           )}
-          {!hasQuery && <p className="search-page__summary">Enter a keyword in the search bar to get started.</p>}
+          {!hasQuery && (
+            <p className="search-page__summary" role="status" aria-live="polite">
+              Enter a keyword in the search bar to get started.
+            </p>
+          )}
         </header>
 
         {state.error && <p className="search-page__error">{state.error}</p>}
 
         {hasResults && (
           <ol className="search-results" aria-live="polite">
-            {state.items.map((item) => (
-              <li key={item.id} className="search-results__item">
-                <Link to={`/board/${item.board}/post/${item.id}`} className="search-results__title">
-                  {item.title}
-                </Link>
-                <div className="search-results__meta">
-                  <span>{item.board}</span>
-                  {item.author && <span>by {item.author}</span>}
-                  <span>{new Date(item.created_at).toLocaleDateString()}</span>
-                </div>
-              </li>
-            ))}
+            {state.items.map((item) => {
+              const boardLabel = item.board_title ?? item.board
+              return (
+                <li key={item.id} className="search-results__item">
+                  <Link to={`/board/${item.board}/post/${item.id}`} className="search-results__title">
+                    {item.title}
+                  </Link>
+                  <div className="search-results__meta">
+                    <span className="search-results__board">
+                      {item.board_icon && (
+                        <span className="search-results__board-icon" aria-hidden="true">
+                          {item.board_icon}
+                        </span>
+                      )}
+                      <span className="search-results__board-label">{boardLabel}</span>
+                    </span>
+                    {item.author && <span>by {item.author}</span>}
+                    <span>{new Date(item.created_at).toLocaleDateString()}</span>
+                  </div>
+                </li>
+              )
+            })}
           </ol>
         )}
       </div>

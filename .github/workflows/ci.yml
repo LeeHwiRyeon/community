@@ -67,20 +67,33 @@ jobs:
         timeout-minutes: 3
         working-directory: server-backend
         run: |
-          node mock-server.js &
-          sleep 10
-          curl -f http://localhost:50000/api/health || (echo "Backend not ready" && exit 1)
+          # Kill any existing processes on port 50000
+          powershell -Command "Get-NetTCPConnection -LocalPort 50000 -ErrorAction SilentlyContinue | Stop-Process -Id { $_.OwningProcess } -Force -ErrorAction SilentlyContinue"
+          powershell -Command "Get-Process node -ErrorAction SilentlyContinue | Where-Object { $_.CommandLine -like '*mock-server.js*' } | Stop-Process -Force -ErrorAction SilentlyContinue"
+
+          # Start server in background using PowerShell job
+          powershell -Command "Start-Job -ScriptBlock { Set-Location '${{ github.workspace }}/server-backend'; node mock-server.js } | Out-Null"
+
+          # Wait for server to be ready
+          timeout 15 bash -c 'until curl -f http://localhost:50000/api/health; do sleep 1; done' || (echo "Backend failed to start" && exit 1)
       - name: Run backend integration tests
         timeout-minutes: 5
         working-directory: server-backend
         run: node tests/api-random.js
       - name: Stop backend server
         if: always()
-        run: pkill -f "node mock-server.js" || true
+        run: |
+          # Kill mock-server processes
+          powershell -Command "Get-Process node -ErrorAction SilentlyContinue | Where-Object { $_.CommandLine -like '*mock-server.js*' } | Stop-Process -Force -ErrorAction SilentlyContinue"
+          # Kill any remaining processes on port 50000
+          powershell -Command "Get-NetTCPConnection -LocalPort 50000 -ErrorAction SilentlyContinue | Stop-Process -Id { $_.OwningProcess } -Force -ErrorAction SilentlyContinue"
       - name: Start frontend server
         timeout-minutes: 3
         working-directory: frontend
         run: |
+          # Kill any existing processes on port 5173
+          powershell -Command "Get-NetTCPConnection -LocalPort 5173 -ErrorAction SilentlyContinue | Stop-Process -Id { $_.OwningProcess } -Force -ErrorAction SilentlyContinue"
+
           npm run preview &
           sleep 5
           curl -f http://localhost:5173 || (echo "Frontend not ready" && exit 1)
@@ -90,7 +103,11 @@ jobs:
         run: npm test
       - name: Stop frontend server
         if: always()
-        run: pkill -f "npm run preview" || true
+        run: |
+          # Kill vite preview processes
+          powershell -Command "Get-Process node -ErrorAction SilentlyContinue | Where-Object { $_.CommandLine -like '*vite*' -or $_.CommandLine -like '*preview*' } | Stop-Process -Force -ErrorAction SilentlyContinue"
+          # Kill any remaining processes on port 5173
+          powershell -Command "Get-NetTCPConnection -LocalPort 5173 -ErrorAction SilentlyContinue | Stop-Process -Id { $_.OwningProcess } -Force -ErrorAction SilentlyContinue"
       - name: Start servers for Playwright
         timeout-minutes: 3
         run: |
@@ -110,9 +127,12 @@ jobs:
       - name: Cleanup all processes
         if: always()
         run: |
-          pkill -f "node mock-server.js" || true
-          pkill -f "npm run preview" || true
-          pkill -f "vite" || true
+          # Kill all Node.js processes
+          powershell -Command "Get-Process node -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue"
+          # Kill processes on test ports
+          powershell -Command "Get-NetTCPConnection -LocalPort 50000,5173,9323 -ErrorAction SilentlyContinue | Stop-Process -Id { $_.OwningProcess } -Force -ErrorAction SilentlyContinue"
+          # Kill any remaining test processes
+          powershell -Command "Get-Process -Name 'chrome', 'firefox', 'webkit' -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue"
       - name: Collect logs on failure
         if: failure()
         run: |
@@ -138,3 +158,186 @@ jobs:
         with:
           name: playwright-results
           path: server-backend/test-results/
+
+  security:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+        cache-dependency-path: |
+          server-backend/package-lock.json
+          frontend/package-lock.json
+
+    - name: Install dependencies
+      run: |
+        cd server-backend && npm ci
+        cd ../frontend && npm ci
+
+    - name: Run npm audit
+      run: |
+        echo "=== Backend Security Audit ==="
+        cd server-backend
+        npm audit --audit-level=moderate || echo "Security vulnerabilities found"
+        echo "=== Frontend Security Audit ==="
+        cd ../frontend
+        npm audit --audit-level=moderate || echo "Security vulnerabilities found"
+
+    - name: Setup Trivy
+      uses: aquasecurity/trivy-action@master
+      with:
+        version: '0.50.1'
+
+    - name: Build backend image for scanning
+      run: |
+        cd server-backend
+        docker build -t community-backend:scan .
+
+    - name: Scan backend image
+      run: |
+        trivy image --exit-code 1 --no-progress --format table community-backend:scan
+
+    - name: Build frontend image for scanning
+      run: |
+        cd frontend
+        docker build -t community-frontend:scan .
+
+    - name: Scan frontend image
+      run: |
+        trivy image --exit-code 1 --no-progress --format table community-frontend:scan
+
+    - name: Run security tests
+      run: |
+        cd server-backend
+        npm run test:security
+
+  notify:
+    needs: [test, security]
+    runs-on: ubuntu-latest
+    if: always()
+
+    steps:
+    - name: Set notification secrets
+      run: |
+        # 시크릿을 환경 변수로 설정 (설정되지 않은 경우 빈 값)
+        echo "SLACK_WEBHOOK_URL=${{ secrets.SLACK_WEBHOOK_URL || '' }}" >> $GITHUB_ENV
+        echo "DISCORD_WEBHOOK_URL=${{ secrets.DISCORD_WEBHOOK_URL || '' }}" >> $GITHUB_ENV
+    - name: Generate CI notification payload
+      id: notification
+      run: |
+        # CI 상태에 따른 메시지 생성
+        if [ "${{ job.status }}" = "success" ]; then
+          STATUS="✅ 성공"
+          ICON=":white_check_mark:"
+        else
+          STATUS="❌ 실패"
+          ICON=":x:"
+        fi
+
+        # PR 정보 확인
+        if [ "${{ github.event_name }}" = "pull_request" ]; then
+          PR_TITLE="${{ github.event.pull_request.title }}"
+          PR_URL="${{ github.event.pull_request.html_url }}"
+          TRIGGER="PR #${{ github.event.pull_request.number }}: ${PR_TITLE}"
+          LINK="${PR_URL}"
+        else
+          TRIGGER="푸시: ${{ github.ref_name }}"
+          LINK="https://github.com/${{ github.repository }}/commit/${{ github.sha }}"
+        fi
+
+        # Slack 페이로드 생성
+        SLACK_PAYLOAD=$(cat <<EOF
+        {
+          "blocks": [
+            {
+              "type": "header",
+              "text": {
+                "type": "plain_text",
+                "text": "${ICON} CI ${STATUS}"
+              }
+            },
+            {
+              "type": "section",
+              "fields": [
+                {
+                  "type": "mrkdwn",
+                  "text": "*트리거:* ${TRIGGER}"
+                },
+                {
+                  "type": "mrkdwn",
+                  "text": "*커밋:* <https://github.com/${{ github.repository }}/commit/${{ github.sha }}|${{ github.sha }}>"
+                },
+                {
+                  "type": "mrkdwn",
+                  "text": "*작성자:* @${{ github.actor }}"
+                },
+                {
+                  "type": "mrkdwn",
+                  "text": "*시간:* $(date '+%Y-%m-%d %H:%M:%S %Z')"
+                }
+              ]
+            }
+          ]
+        }
+        EOF
+        )
+
+        # Discord 페이로드 생성
+        DISCORD_PAYLOAD=$(cat <<EOF
+        {
+          "embeds": [
+            {
+              "title": "${ICON} CI ${STATUS}",
+              "color": ${{ job.status == 'success' && '3066993' || '15158332' }},
+              "fields": [
+                {
+                  "name": "트리거",
+                  "value": "${TRIGGER}",
+                  "inline": false
+                },
+                {
+                  "name": "커밋",
+                  "value": "[${{ github.sha }}](https://github.com/${{ github.repository }}/commit/${{ github.sha }})",
+                  "inline": true
+                },
+                {
+                  "name": "작성자",
+                  "value": "@${{ github.actor }}",
+                  "inline": true
+                },
+                {
+                  "name": "시간",
+                  "value": "$(date '+%Y-%m-%d %H:%M:%S %Z')",
+                  "inline": true
+                }
+              ],
+              "footer": {
+                "text": "Community Hub CI"
+              }
+            }
+          ]
+        }
+        EOF
+        )
+
+        echo "slack_payload=${SLACK_PAYLOAD}" >> $GITHUB_OUTPUT
+        echo "discord_payload=${DISCORD_PAYLOAD}" >> $GITHUB_OUTPUT
+
+    - name: Notify Slack
+      run: |
+        curl -X POST \
+          -H 'Content-type: application/json' \
+          -d '${{ steps.notification.outputs.slack_payload }}' \
+          ${{ secrets.SLACK_WEBHOOK_URL }}
+
+    - name: Notify Discord
+      run: |
+        curl -X POST \
+          -H 'Content-type: application/json' \
+          -d '${{ steps.notification.outputs.discord_payload }}' \
+          ${{ secrets.DISCORD_WEBHOOK_URL }}

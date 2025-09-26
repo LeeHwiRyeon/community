@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo } from 'react'
-import { useParams, Link, useSearchParams } from 'react-router-dom'
+import { useParams, Link, useSearchParams, useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import type { Post, Board } from '../api'
 import { useBoardPosts, useBoardsCatalog } from '../hooks/useBoardData'
@@ -37,9 +37,16 @@ type SearchFormValues = {
   q: string
 }
 
-const BoardPage: React.FC = () => {
-  const { boardId } = useParams<{ boardId: string }>()
+interface BoardPageProps {
+  boardId?: string
+}
+
+const BoardPage: React.FC<BoardPageProps> = ({ boardId: propBoardId }) => {
+  const { boardId: paramBoardId } = useParams<{ boardId: string }>()
   const [searchParams, setSearchParams] = useSearchParams()
+  const navigate = useNavigate()
+
+  const boardId = propBoardId || paramBoardId
 
   const paramsObject = useMemo(() => {
     const entries: Record<string, string> = {}
@@ -122,21 +129,21 @@ const BoardPage: React.FC = () => {
   const queryError = (boardsQuery.error || boardPostsQuery.error) as Error | undefined
 
   if (!boardId) {
-    return <div className="error">À¯È¿ÇÏÁö ¾ÊÀº °Ô½ÃÆÇÀÔ´Ï´Ù.</div>
+    return <div className="error">ìœ íš¨í•˜ì§€ ì•Šì€ ê²Œì‹œíŒì…ë‹ˆë‹¤.</div>
   }
 
   if (isLoading) {
-    return <div className="loading">·Îµù Áß...</div>
+    return <div className="loading">ë¡œë”© ì¤‘...</div>
   }
 
   if (hasError) {
     return (
-      <div className="error">µ¥ÀÌÅÍ¸¦ ºÒ·¯¿ÀÁö ¸øÇß½À´Ï´Ù: {queryError?.message ?? 'unknown error'}</div>
+      <div className="error">ê²Œì‹œíŒ ë°ì´í„°ë¥¼ ë¶ˆëŸ¬ì˜¤ì§€ ëª»í–ˆìŠµë‹ˆë‹¤: {queryError?.message ?? "unknown error"}</div>
     )
   }
 
   if (!currentBoard) {
-    return <div className="error">°Ô½ÃÆÇÀ» Ã£À» ¼ö ¾ø½À´Ï´Ù.</div>
+    return <div className="error">ê²Œì‹œíŒì„ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤.</div>
   }
 
   return (
@@ -146,26 +153,26 @@ const BoardPage: React.FC = () => {
           <div className="board-title-section">
             <h2>{currentBoard.title}</h2>
             <p className="board-subtitle">
-              {filteredPosts.length}°³ÀÇ °Ô½Ã±ÛÀÌ ÀÖ½À´Ï´Ù.
+              {filteredPosts.length}ê°œì˜ ê²Œì‹œë¬¼ì´ ìˆìŠµë‹ˆë‹¤.
             </p>
           </div>
           <div className="board-actions">
             <form onSubmit={onSubmit} className="search-form">
               <input
                 type="text"
-                placeholder="°Ô½Ã±ÛÀ» °Ë»öÇØº¸¼¼¿ä..."
+                placeholder="ê²Œì‹œë¬¼ì„ ê²€ìƒ‰í•˜ì„¸ìš”..."
                 className="search-input"
                 {...register('q')}
               />
-              <button type="submit" className="search-btn">°Ë»ö</button>
+              <button type="submit" className="search-btn">ê²€ìƒ‰</button>
             </form>
-            <button className="write-btn">±Û ÀÛ¼º</button>
+            <button className="write-btn" onClick={() => navigate(`/board/${boardId}/create`)}>ê¸€ ì‘ì„±</button>
           </div>
         </div>
 
         {activeFilters.length > 0 && (
           <div className="active-filters">
-            <span className="active-filters__label">ÇÊÅÍ</span>
+            <span className="active-filters__label">í•„í„°</span>
             <div className="active-filters__chips">
               {activeFilters.map((filter) => (
                 <button
@@ -175,7 +182,7 @@ const BoardPage: React.FC = () => {
                   onClick={() => handleClearFilter(filter.key)}
                 >
                   {filter.label}
-                  <span aria-hidden="true">¡¿</span>
+                  <span aria-hidden="true">Ã—</span>
                 </button>
               ))}
             </div>
@@ -183,16 +190,41 @@ const BoardPage: React.FC = () => {
         )}
       </div>
 
+      {boardId === 'news' && (
+        <div className="news-features">
+          <div className="game-search">
+            <h3>ê²Œì„ ë°ì´í„°ë² ì´ìŠ¤ ê²€ìƒ‰</h3>
+            <form onSubmit={(e) => {
+              e.preventDefault()
+              const formData = new FormData(e.target as HTMLFormElement)
+              const query = formData.get('gameQuery') as string
+              if (query) {
+                // ê²Œì„ ê²€ìƒ‰ API í˜¸ì¶œ
+                console.log('Searching for game:', query)
+              }
+            }}>
+              <input
+                type="text"
+                name="gameQuery"
+                placeholder="ê²Œì„ ì´ë¦„ì„ ì…ë ¥í•˜ì„¸ìš”..."
+                className="game-search-input"
+              />
+              <button type="submit" className="game-search-btn">ê²€ìƒ‰</button>
+            </form>
+          </div>
+        </div>
+      )}
+
       <div className="posts-list">
         {filteredPosts.length === 0 ? (
-          <div className="no-posts">°Ô½Ã¹°ÀÌ ¾ø½À´Ï´Ù.</div>
+          <div className="no-posts">ê²Œì‹œë¬¼ì´ ì—†ìŠµë‹ˆë‹¤.</div>
         ) : (
           <div className="posts-table">
             <div className="posts-header">
-              <div className="col-title">Á¦¸ñ</div>
-              <div className="col-author">ÀÛ¼ºÀÚ</div>
-              <div className="col-date">ÀÛ¼ºÀÏ</div>
-              <div className="col-views">Á¶È¸¼ö</div>
+              <div className="col-title">ì œëª©</div>
+              <div className="col-author">ì‘ì„±ì</div>
+              <div className="col-date">ì‘ì„±ì¼</div>
+              <div className="col-views">ì¡°íšŒìˆ˜</div>
             </div>
             {filteredPosts.map((post) => (
               <Link
@@ -201,7 +233,7 @@ const BoardPage: React.FC = () => {
                 className="post-row"
               >
                 <div className="col-title">{post.title}</div>
-                <div className="col-author">{post.author || 'ÀÍ¸í'}</div>
+                <div className="col-author">{post.author || "ìµëª…"}</div>
                 <div className="col-date">{new Date(post.created_at).toLocaleDateString()}</div>
                 <div className="col-views">{post.views}</div>
               </Link>

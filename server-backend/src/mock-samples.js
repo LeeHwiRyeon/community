@@ -1,4 +1,4 @@
-﻿export const SAMPLE_TITLES = [
+export const SAMPLE_TITLES = [
   '초보자용 가이드',
   '최고 승률 빌드 추천',
   '프로게이머 인터뷰',

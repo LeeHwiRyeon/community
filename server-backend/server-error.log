@@ -277,3 +277,66 @@
     at ModuleJob.run (node:internal/modules/esm/module_job:345:25)
     at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:651:26)
     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+[2025-09-25T08:00:40.132Z] uncaughtException: ReferenceError: describe is not defined
+    at file:///C:/Users/hwi/Desktop/Projects/community/server-backend/tests/unit/auth.test.js:5:1
+    at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:647:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+[2025-09-25T08:00:40.132Z] uncaughtException: ReferenceError: describe is not defined
+    at file:///C:/Users/hwi/Desktop/Projects/community/server-backend/tests/unit/posts.test.js:4:1
+    at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:647:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+[2025-09-25T08:00:40.132Z] uncaughtException: ReferenceError: describe is not defined
+    at file:///C:/Users/hwi/Desktop/Projects/community/server-backend/tests/unit/health.test.js:4:1
+    at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:647:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+[2025-09-25T08:00:40.133Z] uncaughtException: ReferenceError: describe is not defined
+    at file:///C:/Users/hwi/Desktop/Projects/community/server-backend/tests/unit/boards.test.js:4:1
+    at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:647:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+[2025-09-25T12:40:35.240Z] uncaughtException: ReferenceError: describe is not defined
+    at file:///C:/Users/hwi/Desktop/Projects/community/server-backend/tests/unit/auth.test.js:5:1
+    at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:647:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+[2025-09-25T12:40:35.260Z] uncaughtException: ReferenceError: describe is not defined
+    at file:///C:/Users/hwi/Desktop/Projects/community/server-backend/tests/unit/boards.test.js:4:1
+    at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:647:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+[2025-09-25T12:40:35.285Z] uncaughtException: ReferenceError: describe is not defined
+    at file:///C:/Users/hwi/Desktop/Projects/community/server-backend/tests/unit/health.test.js:4:1
+    at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:647:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+[2025-09-25T12:40:35.304Z] uncaughtException: ReferenceError: describe is not defined
+    at file:///C:/Users/hwi/Desktop/Projects/community/server-backend/tests/unit/posts.test.js:4:1
+    at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:647:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+[2025-09-25T13:48:53.912Z] uncaughtException: ReferenceError: describe is not defined
+    at file:///C:/Users/hwi/Desktop/Projects/community/server-backend/tests/unit/auth.test.js:5:1
+    at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:647:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+[2025-09-25T13:48:53.977Z] uncaughtException: ReferenceError: describe is not defined
+    at file:///C:/Users/hwi/Desktop/Projects/community/server-backend/tests/unit/health.test.js:4:1
+    at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:647:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+[2025-09-25T13:48:53.986Z] uncaughtException: ReferenceError: describe is not defined
+    at file:///C:/Users/hwi/Desktop/Projects/community/server-backend/tests/unit/posts.test.js:4:1
+    at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:647:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+[2025-09-25T13:48:53.994Z] uncaughtException: ReferenceError: describe is not defined
+    at file:///C:/Users/hwi/Desktop/Projects/community/server-backend/tests/unit/boards.test.js:4:1
+    at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:647:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+[2025-09-26T01:51:09.594Z] unhandledRejection: TypeError: WebSocket.Server is not a constructor
+    at bootstrap (file:///C:/Users/hwi/Desktop/Projects/community/server-backend/src/server.js:573:17)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)

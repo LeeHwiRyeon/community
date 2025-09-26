@@ -1,4 +1,4 @@
-export const runtimeMetrics = {
+﻿export const runtimeMetrics = {
     startTime: Date.now(),
     keepaliveFail: 0,
     lastKeepaliveOk: null,
@@ -19,7 +19,24 @@ export const runtimeMetrics = {
     chatCommunitiesListed: 0,
     chatRoomsListed: 0,
     chatClears: 0,
-    chatRedisTrim: 0
+    chatRedisTrim: 0,
+    searchQueryCount: 0,
+    searchQueryDurationTotal: 0,
+    searchQueryPeakMs: 0,
+    searchQuerySlow: 0,
+    searchQueryFailures: 0,
+    rpgXpEvents: 0,
+    rpgXpAwardTotal: 0,
+    rpgXpAwardMax: 0,
+    rpgLevelUpCount: 0,
+    rpgBadgeUnlockCount: 0,
+    rpgLastEventAt: null,
+    attachmentsJobsCompleted: 0,
+    attachmentsJobsFailed: 0,
+    attachmentsJobsRetried: 0,
+    attachmentsCleanupRuns: 0,
+    attachmentsQueueDepth: {},
+    attachmentsQueueUpdatedAt: null
 };
 
 export function recordKeepaliveSuccess() {
@@ -36,3 +53,6 @@ export function recordKeepaliveFailure(err) {
 export function incMetric(name, delta = 1) {
     runtimeMetrics[name] = (runtimeMetrics[name] || 0) + delta;
 }
+
+
+

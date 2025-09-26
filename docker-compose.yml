@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./server-backend
+      dockerfile: Dockerfile
+    ports:
+      - "50000:50000"
+    environment:
+      - NODE_ENV=production
+      - PORT=50000
+    networks:
+      - community-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:50000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - community-network
+    restart: unless-stopped
+    environment:
+      - API_BASE=http://backend:50000
+
+  # 향후 데이터베이스 추가 시 사용
+  # database:
+  #   image: mariadb:10.6
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: root
+  #     MYSQL_DATABASE: community
+  #     MYSQL_USER: app
+  #     MYSQL_PASSWORD: app
+  #   ports:
+  #     - "3306:3306"
+  #   volumes:
+  #     - db_data:/var/lib/mysql
+  #   networks:
+  #     - community-network
+  #   restart: unless-stopped
+
+networks:
+  community-network:
+    driver: bridge
+
+# volumes:
+#   db_data:

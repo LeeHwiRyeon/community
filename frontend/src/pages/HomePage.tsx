@@ -1,4 +1,4 @@
-import { MouseEvent, useEffect, useMemo, useState } from 'react'
+import React, { MouseEvent, useEffect, useMemo, useState } from 'react'
 import { Alert, AlertIcon, Box, Center, Spinner, Stack, Text } from '@chakra-ui/react'
 import { Link } from 'react-router-dom'
 import {
@@ -178,7 +178,7 @@ const getPostFormat = (post: Post, fallbackFormat?: string | null): string => {
   return 'article'
 }
 
-function HomePage(): JSX.Element {
+function HomePage(): React.ReactElement {
   const [selectedCommunityId, setSelectedCommunityId] = useState<string | null>(null)
 
   const newsQuery = useNewsPosts()
@@ -251,7 +251,9 @@ function HomePage(): JSX.Element {
   const hasTrendingError = trendingErrorMessage.length > 0
   const initializing =
     (newsQuery.isLoading && newsPosts.length === 0) ||
-    (communitiesQuery.isLoading && communities.length === 0)
+    (communitiesQuery.isLoading && communities.length === 0) ||
+    (newsQuery.isError && newsPosts.length === 0) ||
+    (communitiesQuery.isError && communities.length === 0)
 
   const communityPosts = useMemo(() => {
     if (!selectedCommunity) {
@@ -276,29 +278,29 @@ function HomePage(): JSX.Element {
   }, [selectedCommunity, communityBoards, postsByBoardId])
 
 
-const boardSummaries = useMemo(() => {
-  if (communityBoards.length === 0) {
-    return []
-  }
-
-  return communityBoards.map((board) => {
-    const posts = postsByBoardId[board.id] ?? board.posts ?? []
-    const latestPost = posts[0]
-    const latestDateLabel = latestPost
-      ? safeDate(latestPost.created_at) || safeDate(latestPost.updated_at)
-      : ''
-
-    return {
-      id: board.id,
-      title: board.title,
-      summary: board.summary ?? '',
-      format: board.preview_format ?? board.format ?? null,
-      postCount: posts.length,
-      latestDateLabel,
-      views: posts.reduce((sum, post) => sum + (post.views ?? 0), 0)
+  const boardSummaries = useMemo(() => {
+    if (communityBoards.length === 0) {
+      return []
     }
-  })
-}, [communityBoards, postsByBoardId])
+
+    return communityBoards.map((board) => {
+      const posts = postsByBoardId[board.id] ?? board.posts ?? []
+      const latestPost = posts[0]
+      const latestDateLabel = latestPost
+        ? safeDate(latestPost.created_at) || safeDate(latestPost.updated_at)
+        : ''
+
+      return {
+        id: board.id,
+        title: board.title,
+        summary: board.summary ?? '',
+        format: board.preview_format ?? board.format ?? null,
+        postCount: posts.length,
+        latestDateLabel,
+        views: posts.reduce((sum, post) => sum + (post.views ?? 0), 0)
+      }
+    })
+  }, [communityBoards, postsByBoardId])
 
   const heroPost = newsPosts[0] ?? null
   const newsSubPosts = newsPosts.slice(1, 4)
@@ -670,36 +672,30 @@ const boardSummaries = useMemo(() => {
                         </header>
 
                         {boardSummaries.length ? (
-                          <Stack spacing={4} className="community-hub__board-cards">
+                          <div className="community-hub__board-cards">
                             {boardSummaries.map((board) => (
-                              <Card key={board.id} variant="outline">
-                                <CardHeader>
-                                  <Stack spacing={1}>
-                                    <HStack spacing={2}>
-                                      <Text as="span" fontWeight="bold">
-                                        {board.title}
-                                      </Text>
-                                      {board.format ? (
-                                        <Badge colorScheme="purple" textTransform="capitalize">{board.format}</Badge>
-                                      ) : null}
-                                    </HStack>
-                                    <Text as="span" fontSize="sm" color="gray.500">
-                                      {board.summary || 'No description available.'}
-                                    </Text>
-                                  </Stack>
-                                </CardHeader>
-                                <CardBody>
-                                  <HStack spacing={6} fontSize="sm">
-                                    <Text as="span">Posts: {formatNumber(board.postCount)}</Text>
-                                    <Text as="span">Views: {formatNumber(board.views)}</Text>
-                                    {board.latestDateLabel ? (
-                                      <Text as="span">Latest: {board.latestDateLabel}</Text>
+                              <div key={board.id} className="board-card">
+                                <div className="board-card__header">
+                                  <div className="board-card__title-section">
+                                    <span className="board-card__title">{board.title}</span>
+                                    {board.format ? (
+                                      <span className="board-card__badge">{board.format}</span>
                                     ) : null}
-                                  </HStack>
-                                </CardBody>
-                              </Card>
+                                  </div>
+                                  <span className="board-card__summary">
+                                    {board.summary || 'No description available.'}
+                                  </span>
+                                </div>
+                                <div className="board-card__body">
+                                  <span>Posts: {formatNumber(board.postCount)}</span>
+                                  <span>Views: {formatNumber(board.views)}</span>
+                                  {board.latestDateLabel ? (
+                                    <span>Latest: {board.latestDateLabel}</span>
+                                  ) : null}
+                                </div>
+                              </div>
                             ))}
-                          </Stack>
+                          </div>
                         ) : null}
 
                         {hasBoardPostsError ? (

@@ -682,11 +682,81 @@ app.get('/api/help', (req, res) => {
   })
 })
 
+app.get('/api/themes', (req, res) => {
+  const mockThemes = [
+    {
+      id: 'fantasy-dark',
+      name: '판타지 다크',
+      primaryColor: '#2D1B69',
+      secondaryColor: '#8B5CF6',
+      fontFamily: 'serif',
+      layout: 'grid'
+    },
+    {
+      id: 'cyberpunk-neon',
+      name: '사이버펑크 네온',
+      primaryColor: '#00FF41',
+      secondaryColor: '#FF0080',
+      fontFamily: 'monospace',
+      layout: 'list'
+    },
+    {
+      id: 'vintage-retro',
+      name: '빈티지 레트로',
+      primaryColor: '#FF6B35',
+      secondaryColor: '#F7931E',
+      fontFamily: 'cursive',
+      layout: 'grid'
+    },
+    {
+      id: 'minimalist-clean',
+      name: '미니멀 클린',
+      primaryColor: '#FFFFFF',
+      secondaryColor: '#000000',
+      fontFamily: 'sans-serif',
+      layout: 'list'
+    }
+  ]
+  res.json(mockThemes)
+})
+
+app.post('/api/themes/save', (req, res) => {
+  const { theme, customizations } = req.body
+  // 실제로는 DB에 저장하겠지만, 여기서는 성공 응답만 반환
+  res.json({
+    success: true,
+    message: '테마가 성공적으로 저장되었습니다.',
+    savedTheme: {
+      ...theme,
+      ...customizations,
+      savedAt: new Date().toISOString()
+    }
+  })
+})
+
 const server = app.listen(DEFAULT_PORT, DEFAULT_HOST, () => {
   console.log(`Mock server listening on http://${DEFAULT_HOST}:${DEFAULT_PORT}`)
 })
 
+// 백그라운드 실행 시 프로세스 유지
+const keepAliveInterval = setInterval(() => {
+  // Keep process alive for CI/testing - log every 30 seconds
+  const now = new Date().toISOString()
+  console.log(`[MOCK-SERVER] Still alive at ${now}`)
+}, 30000)
+
 process.on('SIGINT', () => {
+  console.log('Received SIGINT, shutting down gracefully...')
+  clearInterval(keepAliveInterval)
+  server.close(() => {
+    console.log('Mock server terminated')
+    process.exit(0)
+  })
+})
+
+process.on('SIGTERM', () => {
+  console.log('Received SIGTERM, shutting down gracefully...')
+  clearInterval(keepAliveInterval)
   server.close(() => {
     console.log('Mock server terminated')
     process.exit(0)

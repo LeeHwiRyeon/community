@@ -1,0 +1,88 @@
+version: '3.8'
+
+services:
+  backend:
+    image: ghcr.io/${GITHUB_REPOSITORY}/backend:latest
+    container_name: community-backend-prod
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - PORT=50000
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - JWT_SECRET=${JWT_SECRET}
+      - REDIS_URL=${REDIS_URL}
+      - CORS_ORIGIN=${CORS_ORIGIN}
+    ports:
+      - "50000:50000"
+    networks:
+      - community-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:50000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp
+    volumes:
+      - ./logs:/app/logs:rw
+
+  frontend:
+    image: ghcr.io/${GITHUB_REPOSITORY}/frontend:latest
+    container_name: community-frontend-prod
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    networks:
+      - community-network
+    depends_on:
+      backend:
+        condition: service_healthy
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+
+  redis:
+    image: redis:7-alpine
+    container_name: community-redis-prod
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    networks:
+      - community-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /data
+    volumes:
+      - redis-data:/data
+
+volumes:
+  redis-data:
+    driver: local
+
+networks:
+  community-network:
+    driver: bridge

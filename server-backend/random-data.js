@@ -1,4 +1,4 @@
-﻿const authors = [
+const authors = [
   'AuroraBytes',
   'PatchWatcher',
   'EsportsEcho',

@@ -1,6 +1,8 @@
+﻿import { applyAuthTestEnv } from './fixtures/auth-env.js'
 import { test, expect } from '@playwright/test'
 
 test.describe('Auth API', () => {
+  test.beforeAll(() => applyAuthTestEnv())
   test('lists enabled providers', async ({ request }) => {
     const response = await request.get('/api/auth/providers')
     expect(response.ok()).toBeTruthy()
@@ -43,3 +45,4 @@ test.describe('Auth API', () => {
     expect(callbackBody.refresh).toBeTruthy()
   })
 })
+
