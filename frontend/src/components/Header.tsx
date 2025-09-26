@@ -85,6 +85,7 @@ const Header: React.FC = () => {
   const [authAlert, setAuthAlert] = useState<{ tone: 'error' | 'success'; message: string } | null>(null)
   const [searchValue, setSearchValue] = useState('')
   const [openMenu, setOpenMenu] = useState<string | null>(null)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [providerLoading, setProviderLoading] = useState<SocialProvider | null>(null)
   const navigate = useNavigate()
   const location = useLocation()
@@ -121,6 +122,7 @@ const Header: React.FC = () => {
 
   useEffect(() => {
     setOpenMenu(null)
+    setMobileMenuOpen(false)
   }, [location.pathname])
 
   useEffect(() => {
@@ -264,6 +266,19 @@ const Header: React.FC = () => {
     closeAllMenus()
   }
 
+  const toggleMobileMenu = useCallback(() => {
+    setMobileMenuOpen(prev => !prev)
+  }, [])
+
+  const closeMobileMenu = useCallback(() => {
+    setMobileMenuOpen(false)
+  }, [])
+
+  const handleMobileNavClick = useCallback(() => {
+    closeMobileMenu()
+    closeAllMenus()
+  }, [closeMobileMenu])
+
   return (
     <header className="site-header">
       <div className="site-header__container">
@@ -323,7 +338,7 @@ const Header: React.FC = () => {
                     id={menuId}
                     className="site-header__mega"
                     role="menu"
-                    aria-label={`${item.label} ?�위 메뉴`}
+                    aria-label={`${item.label} ?�위 메뉴`}
                   >
                     {item.mega?.map((column) => (
                       <div key={column.title} className="mega-menu__column">
@@ -346,6 +361,55 @@ const Header: React.FC = () => {
             )
           })}
         </nav>
+
+        <button
+          className={`site-header__mobile-menu-toggle ${mobileMenuOpen ? 'is-open' : ''}`}
+          onClick={toggleMobileMenu}
+          aria-label="Toggle mobile menu"
+          aria-expanded={mobileMenuOpen}
+        >
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+        </button>
+
+        <div className={`site-header__mobile-menu ${mobileMenuOpen ? 'is-open' : ''}`}>
+          <nav className="site-header__mobile-nav" aria-label="Mobile navigation">
+            {NAV_ITEMS.map((item) => {
+              const isActive = isActivePath(item.path)
+              const hasMega = Boolean(item.mega && item.mega.length > 0)
+
+              return (
+                <div key={item.label}>
+                  <Link
+                    to={item.path}
+                    className={`site-header__mobile-nav-item ${isActive ? 'is-active' : ''}`}
+                    onClick={handleMobileNavClick}
+                  >
+                    {item.label}
+                  </Link>
+                  {hasMega && item.mega?.map((column) => (
+                    <div key={column.title} className="site-header__mobile-submenu">
+                      <div className="site-header__mobile-nav-item" style={{ fontWeight: '600', background: 'rgba(0, 0, 0, 0.1)' }}>
+                        {column.title}
+                      </div>
+                      {column.items.map((link) => (
+                        <Link
+                          key={link.path}
+                          to={link.path}
+                          className="site-header__mobile-nav-item"
+                          onClick={handleMobileNavClick}
+                        >
+                          {link.label}
+                        </Link>
+                      ))}
+                    </div>
+                  ))}
+                </div>
+              )
+            })}
+          </nav>
+        </div>
 
         <div className="site-header__actions">
           <form className="site-header__search" role="search" onSubmit={handleSearch}>

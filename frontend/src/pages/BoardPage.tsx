@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form'
 import type { Post, Board } from '../api'
 import { useBoardPosts, useBoardsCatalog } from '../hooks/useBoardData'
 import { gameCategories, type CategoryNode } from '../data/categories'
+import { PostCardSkeleton } from '../components/Skeleton'
 
 const filterKeys = ['platform', 'genre', 'series', 'resource'] as const
 
@@ -133,7 +134,29 @@ const BoardPage: React.FC<BoardPageProps> = ({ boardId: propBoardId }) => {
   }
 
   if (isLoading) {
-    return <div className="loading">로딩 중...</div>
+    return (
+      <div className="board-page">
+        <div className="board-header">
+          <div className="board-header-content">
+            <div className="board-title-section">
+              <div className="skeleton" style={{ height: '32px', width: '200px', marginBottom: '8px' }}></div>
+              <div className="skeleton" style={{ height: '16px', width: '150px' }}></div>
+            </div>
+            <div className="board-actions">
+              <div className="skeleton" style={{ height: '40px', width: '300px' }}></div>
+              <div className="skeleton" style={{ height: '40px', width: '100px', marginLeft: '12px' }}></div>
+            </div>
+          </div>
+        </div>
+        <div className="posts-list">
+          <div className="posts-cards">
+            {Array.from({ length: 6 }).map((_, index) => (
+              <PostCardSkeleton key={index} />
+            ))}
+          </div>
+        </div>
+      </div>
+    )
   }
 
   if (hasError) {
@@ -219,23 +242,28 @@ const BoardPage: React.FC<BoardPageProps> = ({ boardId: propBoardId }) => {
         {filteredPosts.length === 0 ? (
           <div className="no-posts">게시물이 없습니다.</div>
         ) : (
-          <div className="posts-table">
-            <div className="posts-header">
-              <div className="col-title">제목</div>
-              <div className="col-author">작성자</div>
-              <div className="col-date">작성일</div>
-              <div className="col-views">조회수</div>
-            </div>
-            {filteredPosts.map((post) => (
+          <div className="posts-cards">
+            {filteredPosts.map((post, index) => (
               <Link
                 key={post.id}
                 to={`/board/${boardId}/post/${post.id}`}
-                className="post-row"
+                className="post-card card-enter"
               >
-                <div className="col-title">{post.title}</div>
-                <div className="col-author">{post.author || "익명"}</div>
-                <div className="col-date">{new Date(post.created_at).toLocaleDateString()}</div>
-                <div className="col-views">{post.views}</div>
+                <div className="post-card__header">
+                  <h3 className="post-card__title">{post.title}</h3>
+                  <div className="post-card__meta">
+                    <span className="post-card__author">{post.author || "익명"}</span>
+                    <span className="post-card__date">{new Date(post.created_at).toLocaleDateString()}</span>
+                    <span className="post-card__views">조회 {post.views}</span>
+                  </div>
+                </div>
+                {post.content && (
+                  <div className="post-card__content">
+                    {post.content.length > 150
+                      ? `${post.content.substring(0, 150)}...`
+                      : post.content}
+                  </div>
+                )}
               </Link>
             ))}
           </div>

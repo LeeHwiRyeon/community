@@ -383,7 +383,7 @@ Provide mock login fallback for local dev (AUTH_ENABLE_ALL=1) and update Playwri
 - ~~백엔드 검색 테스트 러너 통합~~
   - ~~npm 스크립트로 검색 전용 스모크 테스트 실행 경로 추가~~
   - ~~CI 체크리스트에 검색 스모크 테스트 포함 계획 수립~~
-- 검색 성능 및 인덱스 전략 수립
+- ~~검색 성능 및 인덱스 전략 수립~~ (참고: docs/search-performance-index-plan.md)
   - ~~현재 쿼리 패턴과 슬로우 로그 수집~~
   - ~~우선순위 인덱스 후보 설계안 작성 및 검증 프로세스 합의~~
 
@@ -2360,5 +2360,6 @@ const trackProgress = (sectionId, action) => {
 ---
 
 *이 매뉴얼은 지속적으로 업데이트되며, 사용자 피드백을 적극 반영합니다. 스트리밍의 문턱을 낮추고, 더 많은 크리에이터가 자신의 이야기를 공유할 수 있도록 노력하겠습니다.*
+
 
 

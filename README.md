@@ -82,6 +82,7 @@ docker compose -f docker-compose.prod.yml --env-file .env.prod up -d
 | Auto-save conflict banner persists | Follow [docs/post-draft-conflict-ux.md](./docs/post-draft-conflict-ux.md) guidance |
 
 ## Documentation
+- [COMPLETED_FEATURES.md](./docs/COMPLETED_FEATURES.md) - 완료된 기능 문서
 - [RUNNING_GUIDE.md](./RUNNING_GUIDE.md)
 - [API_REFERENCE.md](./API_REFERENCE.md)
 - [TESTING_GUIDE.md](./TESTING_GUIDE.md)
@@ -90,3 +91,21 @@ docker compose -f docker-compose.prod.yml --env-file .env.prod up -d
 - [docs/post-draft.md](./docs/post-draft.md)
 
 새로운 기능이나 스크립트는 `FEATURES.md`와 `docs/` 폴더에 기록되어 있으니 변경 전후로 참고해 주세요.
+
+## 작업 관리 가이드 (Task Management Guide)
+
+### 📋 TODO 리스트 관리 원칙
+- **완료된 기능**: `docs/COMPLETED_FEATURES.md`에 문서화하여 추적
+- **진행 중 작업**: TODO 리스트에 실제 진행 중인 작업만 유지
+- **중복 작업 방지**: 완료된 기능은 문서 참조 후 진행
+
+### 🔍 작업 진행 순서
+1. `docs/COMPLETED_FEATURES.md`에서 유사 기능 확인
+2. TODO 리스트에서 진행할 작업 선택
+3. 기존 작업 규칙(`docs/todo-backlog.md`) 준수
+4. 완료 시 기능 문서에 기록
+
+### 📖 참고 문서
+- `docs/todo-backlog.md` - 기존 작업 규칙 및 단계별 계획
+- `docs/todo-backlog-detailed.md` - 상세 작업 명세
+- `FEATURES.md` - 전체 기능 사양 및 단계 정의

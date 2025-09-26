@@ -1,6 +1,6 @@
 import React, { MouseEvent, useEffect, useMemo, useState } from 'react'
 import { Alert, AlertIcon, Box, Center, Spinner, Stack, Text } from '@chakra-ui/react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import {
   Post,
   PostPreview
@@ -12,6 +12,7 @@ import {
   useNewsPosts,
   useTrendingList
 } from '../hooks/useCommunityData'
+import { BoardCardSkeleton } from '../components/Skeleton'
 
 type SupportedPostFormat = 'article' | 'discussion' | 'broadcast' | 'gallery'
 type BroadcastPreview = Extract<PostPreview, { type: 'broadcast' }>
@@ -180,6 +181,7 @@ const getPostFormat = (post: Post, fallbackFormat?: string | null): string => {
 
 function HomePage(): React.ReactElement {
   const [selectedCommunityId, setSelectedCommunityId] = useState<string | null>(null)
+  const navigate = useNavigate()
 
   const newsQuery = useNewsPosts()
   const trendingQuery = useTrendingList(10, 7)
@@ -522,7 +524,33 @@ function HomePage(): React.ReactElement {
   }
 
   if (initializing && !heroPost) {
-    return <div className="home__loading">Loading the latest news and community activity...</div>
+    return (
+      <Box className="home">
+        <Stack as="header" className="home__section-header" spacing={3}>
+          <div>
+            <div className="skeleton" style={{ height: '40px', width: '300px', marginBottom: '8px' }}></div>
+            <div className="skeleton" style={{ height: '20px', width: '500px' }}></div>
+          </div>
+        </Stack>
+
+        <section className="home__layout">
+          <div className="home__news-column">
+            <div className="skeleton" style={{ height: '300px', width: '100%', marginBottom: '20px' }}></div>
+            <div className="skeleton" style={{ height: '200px', width: '100%', marginBottom: '20px' }}></div>
+            <div className="skeleton" style={{ height: '150px', width: '100%' }}></div>
+          </div>
+
+          <div className="home__community-column">
+            <div className="skeleton" style={{ height: '40px', width: '200px', marginBottom: '16px' }}></div>
+            <div className="community-hub__board-cards">
+              {Array.from({ length: 6 }).map((_, index) => (
+                <BoardCardSkeleton key={index} />
+              ))}
+            </div>
+          </div>
+        </section>
+      </Box>
+    )
   }
 
   const heroMetaDate = heroPost ? safeDate(heroPost.created_at) || safeDate(heroPost.updated_at) : ''
@@ -635,28 +663,45 @@ function HomePage(): React.ReactElement {
 
                 {communities.length ? (
                   <>
-                    <div className="community-hub__communities" role="tablist" aria-label="Select community">
-                      {communities.map((community) => {
+                    <div className="community-leaderboard" role="tablist" aria-label="커뮤니티 리더보드 선택">
+                      {communities.map((community, index) => {
                         const isActive = (selectedCommunity?.id ?? '') === community.id
+                        const rank = index + 1
 
                         return (
-                          <button
+                          <div
                             key={community.id}
-                            type="button"
-                            className={`community-hub__community${isActive ? ' is-active' : ''}`}
-                            aria-pressed={isActive}
+                            className={`community-leaderboard__item${isActive ? ' is-active' : ''}`}
                             onClick={() => setSelectedCommunityId(community.id)}
+                            style={{ cursor: 'pointer' }}
                           >
-                            <span className="community-hub__community-title">{community.title}</span>
-                            {community.description ? (
-                              <span className="community-hub__community-description">{community.description}</span>
-                            ) : null}
-                            {typeof community.totalViews === 'number' ? (
-                              <span className="community-hub__community-meta">
-                                {formatNumber(community.totalViews)} views
-                              </span>
-                            ) : null}
-                          </button>
+                            <div className="community-leaderboard__rank">
+                              <span className="community-leaderboard__rank-number">#{rank}</span>
+                            </div>
+                            <div className="community-leaderboard__content">
+                              <div className="community-leaderboard__title-section">
+                                <span className="community-leaderboard__title">{community.title}</span>
+                                {community.description && (
+                                  <span className="community-leaderboard__description">{community.description}</span>
+                                )}
+                              </div>
+                              <div className="community-leaderboard__stats">
+                                {typeof community.totalViews === 'number' && (
+                                  <span className="community-leaderboard__views">
+                                    {formatNumber(community.totalViews)} 조회
+                                  </span>
+                                )}
+                                <span className="community-leaderboard__boards">
+                                  {community.boards?.length || 0} 게시판
+                                </span>
+                              </div>
+                            </div>
+                            {isActive && (
+                              <div className="community-leaderboard__indicator" aria-hidden="true">
+                                <span>선택됨</span>
+                              </div>
+                            )}
+                          </div>
                         )
                       })}
                     </div>
@@ -673,8 +718,13 @@ function HomePage(): React.ReactElement {
 
                         {boardSummaries.length ? (
                           <div className="community-hub__board-cards">
-                            {boardSummaries.map((board) => (
-                              <div key={board.id} className="board-card">
+                            {boardSummaries.map((board, index) => (
+                              <div
+                                key={board.id}
+                                className="board-card card-enter"
+                                onClick={() => navigate(`/board/${board.id}`)}
+                                style={{ cursor: 'pointer' }}
+                              >
                                 <div className="board-card__header">
                                   <div className="board-card__title-section">
                                     <span className="board-card__title">{board.title}</span>
@@ -683,14 +733,14 @@ function HomePage(): React.ReactElement {
                                     ) : null}
                                   </div>
                                   <span className="board-card__summary">
-                                    {board.summary || 'No description available.'}
+                                    {board.summary || '게시판 설명이 없습니다.'}
                                   </span>
                                 </div>
                                 <div className="board-card__body">
-                                  <span>Posts: {formatNumber(board.postCount)}</span>
-                                  <span>Views: {formatNumber(board.views)}</span>
+                                  <span>게시물: {formatNumber(board.postCount)}</span>
+                                  <span>조회수: {formatNumber(board.views)}</span>
                                   {board.latestDateLabel ? (
-                                    <span>Latest: {board.latestDateLabel}</span>
+                                    <span>최신: {board.latestDateLabel}</span>
                                   ) : null}
                                 </div>
                               </div>
