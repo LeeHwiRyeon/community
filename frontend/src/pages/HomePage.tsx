@@ -13,6 +13,7 @@ import {
   useTrendingList
 } from '../hooks/useCommunityData'
 import { BoardCardSkeleton } from '../components/Skeleton'
+import { ContentTester } from '../components/ContentTester'
 
 type SupportedPostFormat = 'article' | 'discussion' | 'broadcast' | 'gallery'
 type BroadcastPreview = Extract<PostPreview, { type: 'broadcast' }>
@@ -181,6 +182,7 @@ const getPostFormat = (post: Post, fallbackFormat?: string | null): string => {
 
 function HomePage(): React.ReactElement {
   const [selectedCommunityId, setSelectedCommunityId] = useState<string | null>(null)
+  const [showContentTester, setShowContentTester] = useState(false)
   const navigate = useNavigate()
 
   const newsQuery = useNewsPosts()
@@ -833,6 +835,22 @@ function HomePage(): React.ReactElement {
           </section>
         </aside>
       </section>
+
+      {/* 개발자용 콘텐츠 테스터 */}
+      <div className="mt-8 mb-4">
+        <button
+          onClick={() => setShowContentTester(!showContentTester)}
+          className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 text-sm"
+        >
+          {showContentTester ? '콘텐츠 테스터 숨기기' : '콘텐츠 테스터 표시'}
+        </button>
+      </div>
+
+      {showContentTester && (
+        <div className="mb-8">
+          <ContentTester />
+        </div>
+      )}
     </Box>
   )
 }
