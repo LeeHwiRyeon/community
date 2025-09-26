@@ -30,16 +30,16 @@
    - ✅ Draft monitoring requirements (queue depth alerts, S3 orphan report) → metrics documented in `docs/attachments-worker-strategy.md#8-monitoring-metrics`.
 
 3. **Step 44 – Frontend Uploader & Preview**
-   - ⬜ Backend completion API + attachments table (see `docs/attachments-uploader-plan.md#2-backend-deliverables`).
-   - ⬜ Build AttachmentUploader component with drag-and-drop, progress, retry states.
-   - ⬜ Render attachment previews and persist selection into draft metadata.
-   - ⬜ Finalize UX copy/localization + large upload QA checklist before release.
+   - ✅ ~~Backend completion API + attachments table (see `docs/attachments-uploader-plan.md#2-backend-deliverables`).~~
+   - ✅ ~~Build AttachmentUploader component with drag-and-drop, progress, retry states.~~
+   - ✅ ~~Render attachment previews and persist selection into draft metadata.~~
+   - ✅ ~~Finalize UX copy/localization + large upload QA checklist before release.~~
    - ⬜ Coordinate with Step 46 WYSIWYG integration to ensure uploader API compatibility.
 
 
 4. **Step 45 – Testing & CI**
-   - Write integration tests for upload round-trip (mock storage).
-   - Add large file manual QA checklist to `docs/attachments.md`.
+   - ✅ ~~Write integration tests for upload round-trip (mock storage).~~
+   - ✅ ~~Add large file manual QA checklist to `docs/attachments.md`.~~
    - Configure CI stage to run new tests + notify on failures.
 
 ### WYSIWYG Authoring (Steps 46-48)

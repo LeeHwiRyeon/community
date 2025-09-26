@@ -75,3 +75,19 @@
 - Queue + cleanup pipeline described in `docs/attachments-worker-strategy.md`.
 - Frontend uploader plan: see `docs/attachments-uploader-plan.md`.
 
+## Step 45 – Testing & CI Progress
+
+### Integration Tests
+- Command: `node --test server-backend/tests/e2e/attachments-signing.spec.js`
+- Command: `node --test server-backend/tests/e2e/attachments-complete.spec.js`
+- Coverage: auth guard enforcement, file key validation, completion lifecycle + lookup, invalid payload handling.
+
+### Manual QA Checklist (Large Upload Focus)
+1. Upload a 5 MB image (JPEG) and confirm the row reaches `Ready` with preview thumbnail.
+2. Upload a file above the configured limit and verify the size exceeded error surfaces in both the row and global toast.
+3. Upload an image and a video concurrently and confirm both progress bars update independently and the list respects the maximum item count.
+4. Throttle the network to simulate slow completion; ensure the status flows through Uploading → Completing → Processing before finishing.
+5. Force a network failure mid-upload (offline mode) and confirm the row moves to the error state with a Retry button and toast.
+6. Retry the failed upload and verify the progress resets and the second attempt succeeds.
+7. Remove an in-progress attachment and make sure it disappears from the list and is not persisted when the draft reloads.
+8. Reload a draft with saved attachments metadata to confirm previously uploaded items hydrate with their stored status and variants.
