@@ -106,3 +106,7 @@ GET /api/help -> {
 - 필요 시 보안 필터를 WAF 또는 전문 라이브러리(helmet, xss-filters)로 교체
 - `secBlocked` 급증 시 IP 기반 rate limit 또는 차단 구현 고려
 - 주기적 `npm run audit:security` + 변경 이력 점검
+
+
+### Mock Search Seed Helper
+Run `pwsh scripts/mock-seed-search.ps1 -Seed my-seed` to populate deterministic data for `/api/search` tests.
