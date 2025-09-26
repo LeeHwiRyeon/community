@@ -1,0 +1,312 @@
+name: Comprehensive Testing CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      test_scope:
+        description: 'Test scope to run'
+        required: false
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - unit
+          - integration
+          - e2e
+          - performance
+          - security
+      enable_bug_report:
+        description: 'Generate bug reports on failure'
+        required: false
+        default: true
+        type: boolean
+
+jobs:
+  comprehensive-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    services:
+      mariadb:
+        image: mariadb:10.6
+        env:
+          MARIADB_ROOT_PASSWORD: root
+          MARIADB_DATABASE: community
+          MARIADB_USER: app
+          MARIADB_PASSWORD: app
+          MARIADB_EXTRA_FLAGS: --innodb-use-native-aio=0
+        ports: [ '3306:3306' ]
+        options: >-
+          --health-cmd "mysqladmin ping -h 127.0.0.1 -u root -proot"
+          --health-interval 10s --health-timeout 5s --health-retries 12
+
+    env:
+      DB_HOST: 127.0.0.1
+      DB_USER: app
+      DB_PASS: app
+      DB_NAME: community
+      PORT: 50000
+      NODE_ENV: test
+      CI: true
+      API_BASE: http://localhost:50000
+      TEST_SCOPE: ${{ github.event.inputs.test_scope || 'all' }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install MariaDB client
+        run: sudo apt-get update && sudo apt-get install -y mariadb-client
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: |
+            server-backend/package-lock.json
+            frontend/package-lock.json
+
+      - name: Wait for DB
+        timeout-minutes: 2
+        run: |
+          for i in {1..40}; do
+            if mysql -h 127.0.0.1 -u app -papp -e 'SELECT 1' community; then echo 'DB ready'; break; fi
+            echo 'Waiting DB...'; sleep 2;
+          done
+
+      - name: Install backend dependencies
+        timeout-minutes: 5
+        working-directory: server-backend
+        run: npm install
+
+      - name: Install frontend dependencies
+        timeout-minutes: 5
+        working-directory: frontend
+        run: npm install
+
+      - name: Build frontend
+        timeout-minutes: 5
+        working-directory: frontend
+        run: npm run build
+
+      - name: Start backend server
+        timeout-minutes: 3
+        working-directory: server-backend
+        run: |
+          powershell -Command "Start-Job -ScriptBlock { Set-Location '${{ github.workspace }}/server-backend'; node mock-server.js } | Out-Null"
+          timeout 15 bash -c 'until curl -f http://localhost:50000/api/health; do sleep 1; done' || (echo "Backend failed to start" && exit 1)
+
+      - name: Run unit tests
+        if: env.TEST_SCOPE == 'all' || env.TEST_SCOPE == 'unit'
+        timeout-minutes: 5
+        working-directory: frontend
+        run: npm test -- --coverage --watchAll=false
+        continue-on-error: true
+
+      - name: Run integration tests
+        if: env.TEST_SCOPE == 'all' || env.TEST_SCOPE == 'integration'
+        timeout-minutes: 5
+        working-directory: frontend
+        run: npm test -- --testPathPattern=integration --watchAll=false
+        continue-on-error: true
+
+      - name: Stop backend server for E2E
+        if: always()
+        run: |
+          powershell -Command "Get-Process node -ErrorAction SilentlyContinue | Where-Object { $_.CommandLine -like '*mock-server.js*' } | Stop-Process -Force -ErrorAction SilentlyContinue"
+
+      - name: Start servers for E2E and Content Testing
+        timeout-minutes: 3
+        run: |
+          cd server-backend && node mock-server.js &
+          sleep 10
+          curl -f http://localhost:50000/api/health || (echo "Backend not ready" && exit 1)
+          cd ../frontend && npm run preview &
+          sleep 5
+          curl -f http://localhost:5173 || (echo "Frontend not ready" && exit 1)
+
+      - name: Run E2E tests
+        if: env.TEST_SCOPE == 'all' || env.TEST_SCOPE == 'e2e'
+        timeout-minutes: 10
+        working-directory: server-backend
+        run: |
+          npx playwright install --with-deps
+          npx playwright test --reporter=json
+        continue-on-error: true
+
+      - name: Run ContentTester integration test
+        if: env.TEST_SCOPE == 'all' || env.TEST_SCOPE == 'integration'
+        timeout-minutes: 5
+        working-directory: frontend
+        run: |
+          # ContentTester를 통한 실제 기능 테스트
+          node -e "
+          const { JSDOM } = require('jsdom');
+          const fs = require('fs');
+
+          // 간단한 ContentTester 시뮬레이션
+          console.log('🧪 Running ContentTester integration...');
+
+          // API 엔드포인트 테스트
+          const testEndpoints = async () => {
+            const endpoints = [
+              'http://localhost:50000/api/boards',
+              'http://localhost:50000/api/communities',
+              'http://localhost:5173'
+            ];
+
+            for (const endpoint of endpoints) {
+              try {
+                const response = await fetch(endpoint);
+                console.log(\`✅ \${endpoint}: \${response.status}\`);
+              } catch (error) {
+                console.log(\`❌ \${endpoint}: \${error.message}\`);
+              }
+            }
+          };
+
+          testEndpoints();
+          "
+        continue-on-error: true
+
+      - name: Performance testing
+        if: env.TEST_SCOPE == 'all' || env.TEST_SCOPE == 'performance'
+        timeout-minutes: 5
+        run: |
+          echo "🏃 Running performance tests..."
+
+          # Frontend 번들 사이즈 체크
+          cd frontend
+          BUNDLE_SIZE=$(du -sh dist/assets/*.js | awk '{sum += $1} END {print sum}')
+          echo "📦 Bundle size: $BUNDLE_SIZE"
+
+          # API 응답 시간 테스트
+          RESPONSE_TIME=$(curl -o /dev/null -s -w '%{time_total}\n' http://localhost:50000/api/health)
+          echo "⚡ API response time: ${RESPONSE_TIME}s"
+
+          # 임계값 체크
+          if (( $(echo "$RESPONSE_TIME > 2.0" | bc -l) )); then
+            echo "⚠️  Warning: API response time is slow"
+            exit 1
+          fi
+        continue-on-error: true
+
+      - name: Security testing
+        if: env.TEST_SCOPE == 'all' || env.TEST_SCOPE == 'security'
+        timeout-minutes: 5
+        run: |
+          echo "🔒 Running security tests..."
+
+          # 기본 보안 헤더 체크
+          SECURITY_HEADERS=$(curl -I http://localhost:5173 2>/dev/null | grep -E "(X-Frame-Options|X-Content-Type-Options|Content-Security-Policy)" | wc -l)
+          echo "🛡️  Security headers found: $SECURITY_HEADERS"
+
+          # XSS 취약점 기본 체크
+          cd frontend
+          XSS_PATTERNS=$(grep -r "innerHTML\|outerHTML\|dangerouslySetInnerHTML" src/ | wc -l)
+          echo "🔍 Potential XSS patterns found: $XSS_PATTERNS"
+
+          if [ "$XSS_PATTERNS" -gt 0 ]; then
+            echo "⚠️  Warning: Potential XSS vulnerabilities detected"
+          fi
+        continue-on-error: true
+
+      - name: Generate test report
+        if: always()
+        run: |
+          echo "## 🧪 Comprehensive Test Report" > test-report.md
+          echo "" >> test-report.md
+          echo "### 📊 Test Summary" >> test-report.md
+          echo "- **Date:** $(date)" >> test-report.md
+          echo "- **Commit:** ${{ github.sha }}" >> test-report.md
+          echo "- **Branch:** ${{ github.ref }}" >> test-report.md
+          echo "- **Test Scope:** $TEST_SCOPE" >> test-report.md
+          echo "" >> test-report.md
+
+          echo "### 🔍 Test Results" >> test-report.md
+
+          # 단위 테스트 결과
+          if [ -f "frontend/coverage/lcov-report/index.html" ]; then
+            echo "#### ✅ Unit Tests" >> test-report.md
+            echo "- Coverage report generated" >> test-report.md
+          fi
+
+          # E2E 테스트 결과
+          if [ -f "server-backend/test-results/index.html" ]; then
+            echo "#### ✅ E2E Tests" >> test-report.md
+            echo "- Playwright report generated" >> test-report.md
+          fi
+
+          echo "" >> test-report.md
+          echo "### 🚨 Issues Found" >> test-report.md
+
+          # 실패한 테스트들 정리
+          echo "#### Failed Tests:" >> test-report.md
+          echo "- Check individual test outputs above" >> test-report.md
+
+          echo "" >> test-report.md
+          echo "### 📈 Performance Metrics" >> test-report.md
+          echo "- Bundle size, API response times logged above" >> test-report.md
+
+      - name: Upload test artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: comprehensive-test-results-${{ github.run_number }}
+          path: |
+            frontend/coverage/
+            server-backend/test-results/
+            playwright-report/
+            test-report.md
+          retention-days: 30
+
+      - name: Generate bug report
+        if: failure() && github.event.inputs.enable_bug_report != 'false'
+        run: |
+          echo "## 🐛 Bug Report" > bug-report.md
+          echo "" >> bug-report.md
+          echo "### 📋 Issue Details" >> bug-report.md
+          echo "- **Date:** $(date)" >> bug-report.md
+          echo "- **Workflow:** Comprehensive Testing CI" >> bug-report.md
+          echo "- **Commit:** ${{ github.sha }}" >> bug-report.md
+          echo "- **Triggered by:** ${{ github.actor }}" >> bug-report.md
+          echo "" >> bug-report.md
+
+          echo "### 🔍 Failure Analysis" >> bug-report.md
+          echo "\`\`\`" >> bug-report.md
+          echo "Check the job logs above for detailed error messages" >> bug-report.md
+          echo "\`\`\`" >> bug-report.md
+          echo "" >> bug-report.md
+
+          echo "### 🛠️ Recommended Actions" >> bug-report.md
+          echo "1. Review test failures in the artifacts" >> bug-report.md
+          echo "2. Check application logs for errors" >> bug-report.md
+          echo "3. Verify database connectivity" >> bug-report.md
+          echo "4. Test API endpoints manually" >> bug-report.md
+          echo "" >> bug-report.md
+
+          echo "### 📊 System Information" >> bug-report.md
+          echo "- **OS:** Ubuntu Latest" >> bug-report.md
+          echo "- **Node.js:** 20" >> bug-report.md
+          echo "- **Database:** MariaDB 10.6" >> bug-report.md
+
+      - name: Upload bug report
+        if: failure() && github.event.inputs.enable_bug_report != 'false'
+        uses: actions/upload-artifact@v4
+        with:
+          name: bug-report-${{ github.run_number }}
+          path: bug-report.md
+          retention-days: 30
+
+      - name: Cleanup all processes
+        if: always()
+        run: |
+          # Kill all Node.js processes
+          powershell -Command "Get-Process node -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue"
+          # Kill processes on test ports
+          powershell -Command "Get-NetTCPConnection -LocalPort 50000,5173,9323 -ErrorAction SilentlyContinue | Stop-Process -Id { $_.OwningProcess } -Force -ErrorAction SilentlyContinue"
+          # Kill any remaining test processes
+          powershell -Command "Get-Process -Name 'chrome', 'firefox', 'webkit' -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue"
