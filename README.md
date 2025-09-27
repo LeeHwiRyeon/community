@@ -65,13 +65,23 @@ docker compose -f docker-compose.prod.yml --env-file .env.prod up -d
 - CI/CD pipeline: `.github/workflows/deploy.yml`
 
 ## Testing
-| Command                     | Description                 |
-| --------------------------- | --------------------------- |
-| `npm test` (server-backend) | Node test runner unit tests |
-| `npm run test` (frontend)   | Vitest + RTL suites         |
-| `npx playwright test`       | End-to-end scenarios        |
-| `npm run lint`              | ESLint rules                |
-| `npm run typecheck`         | TypeScript type checking    |
+| Command                     | Description                                  |
+| --------------------------- | -------------------------------------------- |
+| `npm test` (server-backend) | Node test runner unit tests                  |
+| `npm run test` (frontend)   | Vitest + RTL suites                          |
+| `npx playwright test`       | End-to-end scenarios (all browsers)          |
+| `npm run test:e2e:ci`       | E2E tests for CI (Chromium, Firefox, WebKit) |
+| `npm run test:e2e:smoke`    | Quick smoke tests (home page + navigation)   |
+| `npm run test:e2e:ui`       | Interactive E2E test runner                  |
+| `npm run lint`              | ESLint rules                                 |
+| `npm run typecheck`         | TypeScript type checking                     |
+
+### E2E Testing Details
+- **Framework**: Playwright
+- **Browsers**: Chromium, Firefox, WebKit, Mobile Chrome, Mobile Safari
+- **Test Files**: `server-backend/tests/e2e/`
+- **Coverage**: Navigation, Search, Authentication, Post interactions
+- **CI/CD**: Automated via GitHub Actions
 
 ## Troubleshooting
 | Issue                              | Action                                                                             |

@@ -24,6 +24,8 @@
         "test:e2e:ui": "playwright test --ui",
         "test:e2e:headed": "playwright test --headed",
         "test:e2e:debug": "playwright test --debug",
+        "test:e2e:ci": "playwright test --project=chromium --project=firefox --project=webkit",
+        "test:e2e:smoke": "playwright test --grep \"should load home page|should have main navigation elements\"",
         "audit:security": "npm audit --omit=dev --production || exit 0",
         "ci:backend": "npm run test:unit && npm run test:strict && npm run test:strict-ro && npm run test:security",
         "migrate:rpg": "node scripts/migrations/20250926_add_rpg_profile.js",
