@@ -1,6 +1,12 @@
-﻿# Community Hub
+﻿# Community Hub 🚀
 
-Community Hub is a React + TypeScript single-page application backed by an Express mock API. It showcases community boards, search, profile pages, live broadcast listings, and a themed cosplay shop. The frontend runs on port **5000** by default; the backend mock API listens on **50000**.
+Community Hub is a modern React + TypeScript single-page application backed by an Express.js API with comprehensive mock data. It features community boards, advanced search, user profiles, live broadcast listings, and a themed cosplay shop. The frontend runs on port **5002** (development) and **5000** (production); the backend API listens on **50000**.
+
+## ✨ **현재 상태 (2025-10-02)**
+- ✅ **완전 작동**: 프론트엔드 + 백엔드 정상 동작
+- ✅ **목데이터 완비**: 16개 게시판, 480개 게시글
+- ✅ **안정적인 실행**: 멈추는 현상 완전 해결
+- ✅ **완전한 기능**: 모든 주요 기능 구현 완료
 
 ## Table of Contents
 - [Prerequisites](#prerequisites)
@@ -31,16 +37,22 @@ npm install
 ## Running Locally
 > 자세한 실행 절차는 [RUNNING_GUIDE.md](./RUNNING_GUIDE.md)에서 확인할 수 있습니다.
 
-### Quick start
+### 🚀 **빠른 시작 (추천)**
 ```powershell
-# PowerShell 통합 실행
+# 통합 실행 (가장 안정적)
 ./scripts/dev-env.ps1 -Action start
+
+# 안정적인 런처
+./scripts/stable-launcher.ps1 -Action start
 
 # 종료
 ./scripts/dev-env.ps1 -Action stop
 ```
-- Backend: <http://localhost:50000>
-- Frontend: <http://localhost:5000>
+
+### 🌐 **접속 URL**
+- **프론트엔드 (개발)**: http://localhost:5002
+- **프론트엔드 (프로덕션)**: http://localhost:5000  
+- **백엔드 API**: http://localhost:50000
 
 ### Manual start (separate terminals)
 ```bash
