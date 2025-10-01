@@ -1,5 +1,7 @@
 {
   "projects": {
     "default": "thenewspaper-platform"
-  }
+  },
+  "targets": {},
+  "etags": {}
 }

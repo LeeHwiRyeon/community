@@ -22,10 +22,10 @@ class QuickDeploy {
     async executeCommand(command, options = {}) {
         try {
             this.log(`실행: ${command}`);
-            const result = execSync(command, { 
-                encoding: 'utf8', 
+            const result = execSync(command, {
+                encoding: 'utf8',
                 stdio: 'pipe',
-                ...options 
+                ...options
             });
             return result.trim();
         } catch (error) {
@@ -36,7 +36,7 @@ class QuickDeploy {
 
     async quickDeploy() {
         this.log('⚡ 빠른 배포 시작!');
-        
+
         try {
             // 1. 변경사항 확인 (5초)
             this.log('📋 변경사항 확인...');

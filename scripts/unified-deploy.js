@@ -23,10 +23,10 @@ class UnifiedDeploy {
     async executeCommand(command, options = {}) {
         try {
             this.log(`실행: ${command}`);
-            const result = execSync(command, { 
-                encoding: 'utf8', 
+            const result = execSync(command, {
+                encoding: 'utf8',
                 stdio: 'pipe',
-                ...options 
+                ...options
             });
             return result.trim();
         } catch (error) {
@@ -48,10 +48,10 @@ class UnifiedDeploy {
 
     async prepareDeployment() {
         this.log('📁 배포 준비...');
-        
+
         // 모든 변경사항 추가
         await this.executeCommand('git add -A');
-        
+
         // 커밋 생성
         const commitMessage = `🚀 통합 배포 - ${new Date().toLocaleString('ko-KR')}
 
@@ -99,7 +99,7 @@ class UnifiedDeploy {
 
     async generateDeploymentReport() {
         this.log('📋 배포 보고서 생성...');
-        
+
         const report = `# 🚀 통합 배포 보고서
 
 ## 📊 배포 정보
@@ -132,9 +132,9 @@ class UnifiedDeploy {
 - **GitHub Actions**: https://github.com/LeeHwiRyeon/community/actions
 
 ## 📈 배포 통계
-${this.deployments.map((deploy, index) => 
-  `${index + 1}. **${deploy.platform}**: ${deploy.status === 'success' ? '✅ 성공' : '🔄 자동'} - ${deploy.url}`
-).join('\n')}
+${this.deployments.map((deploy, index) =>
+            `${index + 1}. **${deploy.platform}**: ${deploy.status === 'success' ? '✅ 성공' : '🔄 자동'} - ${deploy.url}`
+        ).join('\n')}
 
 ## 🎯 다음 단계
 1. **웹사이트 확인**: 위 링크들로 접속하여 배포 상태 확인
@@ -154,7 +154,7 @@ ${this.deployments.map((deploy, index) =>
 
     async run() {
         this.log('🚀 통합 배포 시작!');
-        
+
         try {
             // 1. 변경사항 확인
             const hasChanges = await this.checkChanges();

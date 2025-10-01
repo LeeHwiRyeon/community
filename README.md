@@ -1,6 +1,6 @@
-﻿# 🎉 Community Platform 2.0
+﻿# 📰 TheNewsPaper Platform
 
-> **완성된 차세대 커뮤니티 플랫폼** - 게임, 코스플레이, 스트리밍, VIP 서비스가 통합된 혁신적인 플랫폼
+> **뉴스, 게임, 스트리밍, 코스프레를 위한 통합 커뮤니티 플랫폼** - 현대적이고 안정적인 서비스로 모든 커뮤니티를 연결합니다
 
 [![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)](https://github.com/community-platform/releases)
 [![Status](https://img.shields.io/badge/status-completed-success.svg)](https://github.com/community-platform)
