@@ -53,5 +53,8 @@
     "prom-client": "^15.1.3",
     "uuid": "^13.0.0",
     "ws": "^8.18.3"
-  }
+  },
+  "version": "1.0.0",
+  "name": "thenewspaper-platform",
+  "description": "뉴스, 게임, 스트리밍, 코스프레를 위한 통합 커뮤니티 플랫폼"
 }

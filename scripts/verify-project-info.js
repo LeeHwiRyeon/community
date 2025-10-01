@@ -30,7 +30,7 @@ class ProjectInfoVerifier {
             }
 
             const content = fs.readFileSync(filePath, 'utf8');
-            
+
             for (const [key, value] of Object.entries(expectedContent)) {
                 if (!content.includes(value)) {
                     this.issues.push(`${filePath}: ${key} 누락 (예상: ${value})`);
@@ -38,7 +38,7 @@ class ProjectInfoVerifier {
                     this.log(`✅ ${filePath}: ${key} 확인됨`, 'success');
                 }
             }
-            
+
             return true;
         } catch (error) {
             this.issues.push(`${filePath}: 읽기 오류 - ${error.message}`);
@@ -157,23 +157,23 @@ ${this.fixes.length > 0 ? this.fixes.map(fix => `- ✅ ${fix}`).join('\n') : '- 
 
     async run() {
         this.log('🔍 프로젝트 정보 검증 시작!');
-        
+
         try {
             // 프로젝트 정보 검증
             const isValid = this.verifyProjectInfo();
-            
+
             // 보고서 생성
             this.generateReport();
-            
+
             if (isValid) {
                 this.log('✅ 모든 검증이 통과되었습니다!', 'success');
             } else {
                 this.log(`⚠️ ${this.issues.length}개의 문제가 발견되었습니다.`, 'warning');
                 this.issues.forEach(issue => this.log(`- ${issue}`, 'error'));
             }
-            
+
             this.log('📋 보고서: PROJECT_VERIFICATION_REPORT.md', 'info');
-            
+
         } catch (error) {
             this.log(`❌ 검증 실패: ${error.message}`, 'error');
             process.exit(1);
