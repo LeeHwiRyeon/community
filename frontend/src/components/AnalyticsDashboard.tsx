@@ -1,280 +1,508 @@
-import React, { useState, useEffect } from 'react'
-import { Box, Grid, Card, CardBody, Heading, Text, VStack, HStack, Select, Stat, StatLabel, StatNumber, StatHelpText, StatArrow, Badge, Button } from '@chakra-ui/react'
+import React, { useState, useEffect } from 'react';
 import {
-    Chart as ChartJS,
-    CategoryScale,
-    LinearScale,
-    PointElement,
-    LineElement,
-    BarElement,
-    Title,
+    Box,
+    VStack,
+    HStack,
+    Text,
+    Grid,
+    GridItem,
+    Stat,
+    StatLabel,
+    StatNumber,
+    StatHelpText,
+    StatArrow,
+    Progress,
+    Badge,
+    Divider,
+    Table,
+    Thead,
+    Tbody,
+    Tr,
+    Th,
+    Td,
+    Card,
+    CardHeader,
+    CardBody,
+    Heading,
+    Button,
+    Switch,
+    FormControl,
+    FormLabel,
+    useColorModeValue,
+    Alert,
+    AlertIcon,
+    AlertTitle,
+    AlertDescription,
+    Flex,
+    Spacer,
+    IconButton,
     Tooltip,
-    Legend,
-    ArcElement,
-} from 'chart.js'
-import { Line, Bar, Doughnut } from 'react-chartjs-2'
+    Modal,
+    ModalOverlay,
+    ModalContent,
+    ModalHeader,
+    ModalBody,
+    ModalCloseButton,
+    useDisclosure
+} from '@chakra-ui/react';
+import {
+    BarChart,
+    Bar,
+    XAxis,
+    YAxis,
+    CartesianGrid,
+    Tooltip as RechartsTooltip,
+    ResponsiveContainer,
+    PieChart,
+    Pie,
+    Cell,
+    LineChart,
+    Line
+} from 'recharts';
+import {
+    DownloadIcon,
+    DeleteIcon,
+    RefreshIcon,
+    InfoIcon
+} from '@chakra-ui/icons';
+import { analyticsManager, ActionAnalytics, UsagePattern } from '../utils/analytics';
 
-ChartJS.register(
-    CategoryScale,
-    LinearScale,
-    PointElement,
-    LineElement,
-    BarElement,
-    Title,
-    Tooltip,
-    Legend,
-    ArcElement
-)
-
-// Mock analytics data
-const mockAnalytics = {
-    totalRevenue: 12500000,
-    totalOrders: 234,
-    totalVisitors: 15420,
-    conversionRate: 2.8,
-    revenueChange: 12.5,
-    ordersChange: 8.3,
-    visitorsChange: -2.1,
-    conversionChange: 5.2,
-
-    salesData: {
-        labels: ['1월', '2월', '3월', '4월', '5월', '6월'],
-        datasets: [{
-            label: '매출 (₩)',
-            data: [1800000, 2200000, 1900000, 2500000, 2800000, 3200000],
-            borderColor: 'rgb(75, 192, 192)',
-            backgroundColor: 'rgba(75, 192, 192, 0.2)',
-            tension: 0.1
-        }]
-    },
-
-    visitorsData: {
-        labels: ['월', '화', '수', '목', '금', '토', '일'],
-        datasets: [{
-            label: '방문자 수',
-            data: [2100, 2400, 2200, 2600, 2800, 3200, 2900],
-            backgroundColor: 'rgba(54, 162, 235, 0.6)',
-        }]
-    },
-
-    categoryData: {
-        labels: ['의상', '액세서리', '소품', '기타'],
-        datasets: [{
-            data: [45, 25, 20, 10],
-            backgroundColor: [
-                'rgba(255, 99, 132, 0.6)',
-                'rgba(54, 162, 235, 0.6)',
-                'rgba(255, 205, 86, 0.6)',
-                'rgba(75, 192, 192, 0.6)',
-            ],
-        }]
-    },
-
-    topProducts: [
-        { name: '코스프레 의상 A', sales: 45, revenue: 4500000 },
-        { name: '코스프레 액세서리 B', sales: 32, revenue: 1600000 },
-        { name: '코스프레 소품 C', sales: 28, revenue: 420000 },
-        { name: '코스프레 의상 D', sales: 24, revenue: 3600000 },
-        { name: '코스프레 액세서리 E', sales: 18, revenue: 270000 },
-    ]
-}
+const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8', '#82CA9D'];
 
 const AnalyticsDashboard: React.FC = () => {
-    const [timeRange, setTimeRange] = useState('7d')
-    const [analytics, setAnalytics] = useState(mockAnalytics)
+    const [analytics, setAnalytics] = useState<ActionAnalytics | null>(null);
+    const [usagePatterns, setUsagePatterns] = useState<UsagePattern | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [isEnabled, setIsEnabled] = useState(analyticsManager.isAnalyticsEnabled());
+    const { isOpen, onOpen, onClose } = useDisclosure();
+
+    const cardBg = useColorModeValue('white', 'gray.800');
+    const borderColor = useColorModeValue('gray.200', 'gray.600');
 
     useEffect(() => {
-        // TODO: 실제 API에서 데이터 가져오기
-        // fetchAnalytics(timeRange)
-    }, [timeRange])
+        loadAnalytics();
+    }, []);
 
-    const chartOptions = {
-        responsive: true,
-        plugins: {
-            legend: {
-                position: 'top' as const,
-            },
-            title: {
-                display: false,
-            },
-        },
+    const loadAnalytics = () => {
+        setIsLoading(true);
+        try {
+            const analyticsData = analyticsManager.getAnalytics();
+            const patterns = analyticsManager.getUsagePatterns();
+            setAnalytics(analyticsData);
+            setUsagePatterns(patterns);
+        } catch (error) {
+            console.error('Failed to load analytics:', error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleToggleAnalytics = () => {
+        const newState = !isEnabled;
+        setIsEnabled(newState);
+        analyticsManager.setEnabled(newState);
+    };
+
+    const handleClearData = () => {
+        analyticsManager.clearAnalytics();
+        loadAnalytics();
+    };
+
+    const handleExportData = (format: 'json' | 'csv') => {
+        const data = analyticsManager.exportData(format);
+        const blob = new Blob([data], { type: format === 'json' ? 'application/json' : 'text/csv' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `analytics_${new Date().toISOString().split('T')[0]}.${format}`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    };
+
+    if (isLoading) {
+        return (
+            <Box p={8} textAlign="center">
+                <Text>Loading analytics...</Text>
+            </Box>
+        );
     }
 
-    const doughnutOptions = {
-        responsive: true,
-        plugins: {
-            legend: {
-                position: 'right' as const,
-            },
-        },
+    if (!analytics) {
+        return (
+            <Alert status="error">
+                <AlertIcon />
+                <AlertTitle>Failed to load analytics!</AlertTitle>
+                <AlertDescription>Unable to load analytics data. Please try refreshing the page.</AlertDescription>
+            </Alert>
+        );
     }
+
+    // Prepare chart data
+    const actionTypeData = Object.entries(analytics.actionsByType).map(([type, count]) => ({
+        name: type.replace('POST_CREATE', 'Post').replace('COMMENT_ADD', 'Comment').replace('LIKE_ADD', 'Like').replace('SHARE_ACTION', 'Share').replace('FOLLOW_USER', 'Follow').replace('BOOKMARK_ADD', 'Bookmark'),
+        value: count,
+        count
+    }));
+
+    const hourlyData = Array.from({ length: 24 }, (_, i) => ({
+        hour: i,
+        actions: analytics.actionsByHour[i] || 0
+    }));
+
+    const dailyData = Object.entries(analytics.actionsByDay).map(([day, count]) => ({
+        day: day.substring(0, 3),
+        actions: count
+    }));
 
     return (
-        <Box>
+        <Box p={6}>
             <VStack spacing={6} align="stretch">
-                <HStack justify="space-between" align="center">
-                    <Heading size="lg">상점 분석 및 통계 대시보드</Heading>
-                    <HStack>
-                        <Select value={timeRange} onChange={(e) => setTimeRange(e.target.value)} w="150px">
-                            <option value="7d">지난 7일</option>
-                            <option value="30d">지난 30일</option>
-                            <option value="90d">지난 90일</option>
-                            <option value="1y">지난 1년</option>
-                        </Select>
-                        <Button colorScheme="blue">데이터 내보내기</Button>
+                {/* Header */}
+                <Flex justify="space-between" align="center">
+                    <Box>
+                        <Heading size="lg" mb={2}>Action Analytics Dashboard</Heading>
+                        <Text color="gray.600">Track usage patterns and performance metrics</Text>
+                    </Box>
+                    <HStack spacing={3}>
+                        <FormControl display="flex" alignItems="center" width="auto">
+                            <FormLabel htmlFor="analytics-toggle" mb="0" fontSize="sm">
+                                Analytics
+                            </FormLabel>
+                            <Switch
+                                id="analytics-toggle"
+                                isChecked={isEnabled}
+                                onChange={handleToggleAnalytics}
+                                colorScheme="blue"
+                            />
+                        </FormControl>
+                        <Tooltip label="Refresh data">
+                            <IconButton
+                                aria-label="Refresh analytics"
+                                icon={<RefreshIcon />}
+                                onClick={loadAnalytics}
+                                size="sm"
+                                variant="outline"
+                            />
+                        </Tooltip>
+                        <Button
+                            leftIcon={<DownloadIcon />}
+                            size="sm"
+                            variant="outline"
+                            onClick={onOpen}
+                        >
+                            Export
+                        </Button>
+                        <Tooltip label="Clear all data">
+                            <IconButton
+                                aria-label="Clear analytics data"
+                                icon={<DeleteIcon />}
+                                onClick={handleClearData}
+                                size="sm"
+                                variant="outline"
+                                colorScheme="red"
+                            />
+                        </Tooltip>
                     </HStack>
-                </HStack>
+                </Flex>
 
                 {/* Key Metrics */}
-                <Grid templateColumns="repeat(auto-fit, minmax(250px, 1fr))" gap={6}>
-                    <Card>
+                <Grid templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)', lg: 'repeat(4, 1fr)' }} gap={4}>
+                    <GridItem>
+                        <Card bg={cardBg} borderColor={borderColor}>
+                            <CardBody>
+                                <Stat>
+                                    <StatLabel>Total Actions</StatLabel>
+                                    <StatNumber>{analytics.totalActions}</StatNumber>
+                                    <StatHelpText>
+                                        <StatArrow type="increase" />
+                                        Last 7 days
+                                    </StatHelpText>
+                                </Stat>
+                            </CardBody>
+                        </Card>
+                    </GridItem>
+
+                    <GridItem>
+                        <Card bg={cardBg} borderColor={borderColor}>
+                            <CardBody>
+                                <Stat>
+                                    <StatLabel>Total Sessions</StatLabel>
+                                    <StatNumber>{analytics.totalSessions}</StatNumber>
+                                    <StatHelpText>
+                                        Average: {analytics.averageActionsPerSession} actions/session
+                                    </StatHelpText>
+                                </Stat>
+                            </CardBody>
+                        </Card>
+                    </GridItem>
+
+                    <GridItem>
+                        <Card bg={cardBg} borderColor={borderColor}>
+                            <CardBody>
+                                <Stat>
+                                    <StatLabel>Keyboard Usage</StatLabel>
+                                    <StatNumber>{analytics.keyboardShortcutUsage}%</StatNumber>
+                                    <StatHelpText>
+                                        Actions via shortcuts
+                                    </StatHelpText>
+                                </Stat>
+                            </CardBody>
+                        </Card>
+                    </GridItem>
+
+                    <GridItem>
+                        <Card bg={cardBg} borderColor={borderColor}>
+                            <CardBody>
+                                <Stat>
+                                    <StatLabel>Error Rate</StatLabel>
+                                    <StatNumber>{analytics.errorRate}%</StatNumber>
+                                    <StatHelpText>
+                                        Failed actions
+                                    </StatHelpText>
+                                </Stat>
+                            </CardBody>
+                        </Card>
+                    </GridItem>
+                </Grid>
+
+                {/* Charts Row */}
+                <Grid templateColumns={{ base: '1fr', lg: '1fr 1fr' }} gap={6}>
+                    {/* Action Types Pie Chart */}
+                    <Card bg={cardBg} borderColor={borderColor}>
+                        <CardHeader>
+                            <Heading size="md">Action Distribution</Heading>
+                        </CardHeader>
                         <CardBody>
-                            <Stat>
-                                <StatLabel>총 매출</StatLabel>
-                                <StatNumber>₩{analytics.totalRevenue.toLocaleString()}</StatNumber>
-                                <StatHelpText>
-                                    <StatArrow type={analytics.revenueChange > 0 ? 'increase' : 'decrease'} />
-                                    {Math.abs(analytics.revenueChange)}%
-                                </StatHelpText>
-                            </Stat>
+                            <Box height="300px">
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <PieChart>
+                                        <Pie
+                                            data={actionTypeData}
+                                            cx="50%"
+                                            cy="50%"
+                                            labelLine={false}
+                                            label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                                            outerRadius={80}
+                                            fill="#8884d8"
+                                            dataKey="value"
+                                        >
+                                            {actionTypeData.map((entry, index) => (
+                                                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                            ))}
+                                        </Pie>
+                                        <RechartsTooltip />
+                                    </PieChart>
+                                </ResponsiveContainer>
+                            </Box>
                         </CardBody>
                     </Card>
 
-                    <Card>
+                    {/* Hourly Usage Bar Chart */}
+                    <Card bg={cardBg} borderColor={borderColor}>
+                        <CardHeader>
+                            <Heading size="md">Hourly Usage Pattern</Heading>
+                        </CardHeader>
                         <CardBody>
-                            <Stat>
-                                <StatLabel>총 주문 수</StatLabel>
-                                <StatNumber>{analytics.totalOrders.toLocaleString()}</StatNumber>
-                                <StatHelpText>
-                                    <StatArrow type={analytics.ordersChange > 0 ? 'increase' : 'decrease'} />
-                                    {Math.abs(analytics.ordersChange)}%
-                                </StatHelpText>
-                            </Stat>
-                        </CardBody>
-                    </Card>
-
-                    <Card>
-                        <CardBody>
-                            <Stat>
-                                <StatLabel>총 방문자 수</StatLabel>
-                                <StatNumber>{analytics.totalVisitors.toLocaleString()}</StatNumber>
-                                <StatHelpText>
-                                    <StatArrow type={analytics.visitorsChange > 0 ? 'increase' : 'decrease'} />
-                                    {Math.abs(analytics.visitorsChange)}%
-                                </StatHelpText>
-                            </Stat>
-                        </CardBody>
-                    </Card>
-
-                    <Card>
-                        <CardBody>
-                            <Stat>
-                                <StatLabel>전환율</StatLabel>
-                                <StatNumber>{analytics.conversionRate}%</StatNumber>
-                                <StatHelpText>
-                                    <StatArrow type={analytics.conversionChange > 0 ? 'increase' : 'decrease'} />
-                                    {Math.abs(analytics.conversionChange)}%
-                                </StatHelpText>
-                            </Stat>
+                            <Box height="300px">
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <BarChart data={hourlyData}>
+                                        <CartesianGrid strokeDasharray="3 3" />
+                                        <XAxis dataKey="hour" />
+                                        <YAxis />
+                                        <RechartsTooltip />
+                                        <Bar dataKey="actions" fill="#8884d8" />
+                                    </BarChart>
+                                </ResponsiveContainer>
+                            </Box>
                         </CardBody>
                     </Card>
                 </Grid>
 
-                {/* Charts */}
-                <Grid templateColumns="repeat(auto-fit, minmax(400px, 1fr))" gap={6}>
-                    <Card>
+                {/* Usage Patterns and Recent Activity */}
+                <Grid templateColumns={{ base: '1fr', lg: '1fr 1fr' }} gap={6}>
+                    {/* Usage Patterns */}
+                    <Card bg={cardBg} borderColor={borderColor}>
+                        <CardHeader>
+                            <Heading size="md">Usage Patterns</Heading>
+                        </CardHeader>
                         <CardBody>
-                            <Heading size="md" mb={4}>매출 추이</Heading>
-                            <Line options={chartOptions} data={analytics.salesData} />
-                        </CardBody>
-                    </Card>
+                            {usagePatterns && (
+                                <VStack spacing={4} align="stretch">
+                                    <HStack justify="space-between">
+                                        <Text fontWeight="semibold">Time of Day:</Text>
+                                        <Badge colorScheme="blue" textTransform="capitalize">
+                                            {usagePatterns.timeOfDay}
+                                        </Badge>
+                                    </HStack>
 
-                    <Card>
-                        <CardBody>
-                            <Heading size="md" mb={4}>일일 방문자 수</Heading>
-                            <Bar options={chartOptions} data={analytics.visitorsData} />
-                        </CardBody>
-                    </Card>
-                </Grid>
+                                    <HStack justify="space-between">
+                                        <Text fontWeight="semibold">Day of Week:</Text>
+                                        <Badge colorScheme="green" textTransform="capitalize">
+                                            {usagePatterns.dayOfWeek}
+                                        </Badge>
+                                    </HStack>
 
-                <Grid templateColumns="repeat(auto-fit, minmax(300px, 1fr))" gap={6}>
-                    <Card>
-                        <CardBody>
-                            <Heading size="md" mb={4}>카테고리별 판매 비율</Heading>
-                            <Doughnut options={doughnutOptions} data={analytics.categoryData} />
-                        </CardBody>
-                    </Card>
+                                    <HStack justify="space-between">
+                                        <Text fontWeight="semibold">Usage Frequency:</Text>
+                                        <Badge
+                                            colorScheme={usagePatterns.frequency === 'high' ? 'red' : usagePatterns.frequency === 'medium' ? 'yellow' : 'gray'}
+                                            textTransform="capitalize"
+                                        >
+                                            {usagePatterns.frequency}
+                                        </Badge>
+                                    </HStack>
 
-                    <Card>
-                        <CardBody>
-                            <Heading size="md" mb={4}>인기 상품 TOP 5</Heading>
-                            <VStack align="stretch" spacing={3}>
-                                {analytics.topProducts.map((product, index) => (
-                                    <HStack key={product.name} justify="space-between" p={2} bg="gray.50" borderRadius="md">
-                                        <HStack>
-                                            <Badge colorScheme="blue" mr={2}>{index + 1}</Badge>
-                                            <VStack align="start" spacing={0}>
-                                                <Text fontWeight="bold" fontSize="sm">{product.name}</Text>
-                                                <Text fontSize="xs" color="gray.600">
-                                                    판매량: {product.sales}개 | 매출: ₩{product.revenue.toLocaleString()}
-                                                </Text>
-                                            </VStack>
+                                    <Divider />
+
+                                    <Box>
+                                        <Text fontWeight="semibold" mb={2}>Preferred Actions:</Text>
+                                        <HStack spacing={2} wrap="wrap">
+                                            {usagePatterns.preferredActions.map((action, index) => (
+                                                <Badge key={index} colorScheme="purple">
+                                                    {action.replace('POST_CREATE', 'Post').replace('COMMENT_ADD', 'Comment').replace('LIKE_ADD', 'Like').replace('SHARE_ACTION', 'Share').replace('FOLLOW_USER', 'Follow').replace('BOOKMARK_ADD', 'Bookmark')}
+                                                </Badge>
+                                            ))}
                                         </HStack>
+                                    </Box>
+
+                                    <HStack justify="space-between">
+                                        <Text fontWeight="semibold">Avg Session Length:</Text>
+                                        <Text>{Math.floor(usagePatterns.averageSessionLength / 60)}m {usagePatterns.averageSessionLength % 60}s</Text>
+                                    </HStack>
+                                </VStack>
+                            )}
+                        </CardBody>
+                    </Card>
+
+                    {/* Recent Activity */}
+                    <Card bg={cardBg} borderColor={borderColor}>
+                        <CardHeader>
+                            <Heading size="md">Recent Activity</Heading>
+                        </CardHeader>
+                        <CardBody>
+                            <VStack spacing={2} align="stretch" maxHeight="300px" overflowY="auto">
+                                {analyticsManager.getRecentActivity().map((action, index) => (
+                                    <HStack key={index} justify="space-between" p={2} bg="gray.50" borderRadius="md">
+                                        <VStack align="start" spacing={0}>
+                                            <Text fontSize="sm" fontWeight="semibold">
+                                                {action.actionType.replace('POST_CREATE', 'Post').replace('COMMENT_ADD', 'Comment').replace('LIKE_ADD', 'Like').replace('SHARE_ACTION', 'Share').replace('FOLLOW_USER', 'Follow').replace('BOOKMARK_ADD', 'Bookmark')}
+                                            </Text>
+                                            <Text fontSize="xs" color="gray.500">
+                                                {new Date(action.timestamp).toLocaleTimeString()}
+                                            </Text>
+                                        </VStack>
+                                        <Badge colorScheme="blue" fontSize="xs">
+                                            {(action as any).method || 'click'}
+                                        </Badge>
                                     </HStack>
                                 ))}
+                                {analyticsManager.getRecentActivity().length === 0 && (
+                                    <Text fontSize="sm" color="gray.500" textAlign="center" py={4}>
+                                        No recent activity
+                                    </Text>
+                                )}
                             </VStack>
                         </CardBody>
                     </Card>
                 </Grid>
 
-                {/* AI Insights */}
-                <Card>
+                {/* Detailed Statistics */}
+                <Card bg={cardBg} borderColor={borderColor}>
+                    <CardHeader>
+                        <Heading size="md">Detailed Statistics</Heading>
+                    </CardHeader>
                     <CardBody>
-                        <Heading size="md" mb={4}>AI 추천 인사이트</Heading>
-                        <VStack align="stretch" spacing={3}>
-                            <Box p={3} bg="blue.50" borderRadius="md">
-                                <Text fontWeight="bold" color="blue.700">📈 매출 증가 기회</Text>
-                                <Text fontSize="sm" color="blue.600">
-                                    액세서리 카테고리의 판매량이 15% 증가했습니다. 재고를 늘리는 것을 고려해보세요.
-                                </Text>
+                        <Grid templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)' }} gap={6}>
+                            <Box>
+                                <Text fontWeight="semibold" mb={3}>Action Types Breakdown</Text>
+                                <VStack spacing={2} align="stretch">
+                                    {Object.entries(analytics.actionsByType).map(([type, count]) => (
+                                        <HStack key={type} justify="space-between">
+                                            <Text fontSize="sm">
+                                                {type.replace('POST_CREATE', 'Post').replace('COMMENT_ADD', 'Comment').replace('LIKE_ADD', 'Like').replace('SHARE_ACTION', 'Share').replace('FOLLOW_USER', 'Follow').replace('BOOKMARK_ADD', 'Bookmark')}
+                                            </Text>
+                                            <HStack spacing={2}>
+                                                <Text fontSize="sm" fontWeight="semibold">{count}</Text>
+                                                <Progress
+                                                    value={(count / analytics.totalActions) * 100}
+                                                    size="sm"
+                                                    width="100px"
+                                                    colorScheme="blue"
+                                                />
+                                            </HStack>
+                                        </HStack>
+                                    ))}
+                                </VStack>
                             </Box>
 
-                            <Box p={3} bg="green.50" borderRadius="md">
-                                <Text fontWeight="bold" color="green.700">🎯 타겟 고객 분석</Text>
-                                <Text fontSize="sm" color="green.600">
-                                    20-30대 여성 고객의 전환율이 가장 높습니다. 이 그룹을 대상으로 한 마케팅을 강화해보세요.
-                                </Text>
-                            </Box>
+                            <Box>
+                                <Text fontWeight="semibold" mb={3}>System Information</Text>
+                                <VStack spacing={2} align="stretch">
+                                    <HStack justify="space-between">
+                                        <Text fontSize="sm">Most Used Action:</Text>
+                                        <Badge colorScheme="green">
+                                            {analytics.mostUsedAction.replace('POST_CREATE', 'Post').replace('COMMENT_ADD', 'Comment').replace('LIKE_ADD', 'Like').replace('SHARE_ACTION', 'Share').replace('FOLLOW_USER', 'Follow').replace('BOOKMARK_ADD', 'Bookmark')}
+                                        </Badge>
+                                    </HStack>
 
-                            <Box p={3} bg="orange.50" borderRadius="md">
-                                <Text fontWeight="bold" color="orange.700">⚡ 즉시 액션 제안</Text>
-                                <Text fontSize="sm" color="orange.600">
-                                    주말 방문자가 평일보다 40% 높습니다. 주말 한정 프로모션을 고려해보세요.
-                                </Text>
-                            </Box>
-                        </VStack>
-                    </CardBody>
-                </Card>
+                                    <HStack justify="space-between">
+                                        <Text fontSize="sm">Least Used Action:</Text>
+                                        <Badge colorScheme="red">
+                                            {analytics.leastUsedAction.replace('POST_CREATE', 'Post').replace('COMMENT_ADD', 'Comment').replace('LIKE_ADD', 'Like').replace('SHARE_ACTION', 'Share').replace('FOLLOW_USER', 'Follow').replace('BOOKMARK_ADD', 'Bookmark')}
+                                        </Badge>
+                                    </HStack>
 
-                {/* Google Analytics Integration Status */}
-                <Card>
-                    <CardBody>
-                        <HStack justify="space-between" align="center">
-                            <VStack align="start" spacing={1}>
-                                <Heading size="md">Google Analytics 연동</Heading>
-                                <Text fontSize="sm" color="gray.600">
-                                    실시간 데이터를 확인하고 더 자세한 분석을 위해 Google Analytics와 연동해보세요.
-                                </Text>
-                            </VStack>
-                            <Button colorScheme="red">
-                                Analytics 연동하기
-                            </Button>
-                        </HStack>
+                                    <HStack justify="space-between">
+                                        <Text fontSize="sm">Peak Usage Hour:</Text>
+                                        <Text fontSize="sm" fontWeight="semibold">{analytics.peakUsageHour}:00</Text>
+                                    </HStack>
+
+                                    <HStack justify="space-between">
+                                        <Text fontSize="sm">Sound Enabled:</Text>
+                                        <Text fontSize="sm" fontWeight="semibold">{analytics.soundEnabledUsage}%</Text>
+                                    </HStack>
+
+                                    <HStack justify="space-between">
+                                        <Text fontSize="sm">First Action:</Text>
+                                        <Text fontSize="sm" fontWeight="semibold">{analytics.firstActionTime}</Text>
+                                    </HStack>
+
+                                    <HStack justify="space-between">
+                                        <Text fontSize="sm">Last Action:</Text>
+                                        <Text fontSize="sm" fontWeight="semibold">{analytics.lastActionTime}</Text>
+                                    </HStack>
+                                </VStack>
+                            </Box>
+                        </Grid>
                     </CardBody>
                 </Card>
             </VStack>
-        </Box>
-    )
-}
 
-export default AnalyticsDashboard
+            {/* Export Modal */}
+            <Modal isOpen={isOpen} onClose={onClose}>
+                <ModalOverlay />
+                <ModalContent>
+                    <ModalHeader>Export Analytics Data</ModalHeader>
+                    <ModalCloseButton />
+                    <ModalBody pb={6}>
+                        <VStack spacing={4}>
+                            <Text>Choose export format:</Text>
+                            <HStack spacing={4}>
+                                <Button onClick={() => handleExportData('json')} colorScheme="blue">
+                                    Export as JSON
+                                </Button>
+                                <Button onClick={() => handleExportData('csv')} colorScheme="green">
+                                    Export as CSV
+                                </Button>
+                            </HStack>
+                        </VStack>
+                    </ModalBody>
+                </ModalContent>
+            </Modal>
+        </Box>
+    );
+};
+
+export default AnalyticsDashboard;

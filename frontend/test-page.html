@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The News Paper - Gaming News & Community</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .site-header {
+            background: #333;
+            color: white;
+            padding: 1rem;
+        }
+
+        .site-header__brand {
+            text-decoration: none;
+            color: white;
+        }
+
+        .site-header__nav {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .site-header__nav-item {
+            color: white;
+            text-decoration: none;
+        }
+
+        .site-header__actions {
+            margin-top: 1rem;
+        }
+
+        .site-header__search input {
+            padding: 0.5rem;
+        }
+
+        .site-header__auth button {
+            padding: 0.5rem 1rem;
+            background: #007bff;
+            color: white;
+            border: none;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="site-header">
+        <div class="site-header__container">
+            <a href="/" class="site-header__brand">
+                <span class="site-header__logo">📰</span>
+                <span class="site-header__brand-text">
+                    <strong class="site-header__title">The News Paper</strong>
+                    <span class="site-header__tagline">Gaming News & Community</span>
+                </span>
+            </a>
+
+            <nav class="site-header__nav" aria-label="Primary navigation">
+                <a href="/board/news" class="site-header__nav-item">News</a>
+                <a href="/board/free" class="site-header__nav-item">Community</a>
+                <a href="/board/game" class="site-header__nav-item">Game Hub</a>
+            </nav>
+
+            <div class="site-header__actions">
+                <form class="site-header__search" role="search">
+                    <input type="search" placeholder="Search games, news..."
+                        aria-label="Search games, news, or communities" />
+                    <button type="submit" aria-label="Submit search">🔍</button>
+                </form>
+                <div class="site-header__auth">
+                    <button type="button">Login</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <h1>Welcome to The News Paper</h1>
+        <p>Gaming News & Community Platform</p>
+    </main>
+</body>
+
+</html>

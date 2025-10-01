@@ -1,0 +1,332 @@
+apiVersion: install.istio.io/v1alpha1
+kind: IstioOperator
+metadata:
+  name: community-platform
+  namespace: istio-system
+spec:
+  values:
+    global:
+      proxy:
+        autoInject: enabled
+      defaultResources:
+        requests:
+          cpu: 100m
+          memory: 128Mi
+        limits:
+          cpu: 2000m
+          memory: 1024Mi
+    pilot:
+      autoscaleEnabled: true
+      autoscaleMin: 2
+      autoscaleMax: 10
+      resources:
+        requests:
+          cpu: 500m
+          memory: 2048Mi
+        limits:
+          cpu: 2000m
+          memory: 4096Mi
+    gateways:
+      istio-ingressgateway:
+        autoscaleEnabled: true
+        autoscaleMin: 2
+        autoscaleMax: 5
+        resources:
+          requests:
+            cpu: 1000m
+            memory: 128Mi
+          limits:
+            cpu: 2000m
+            memory: 1024Mi
+
+---
+# Gateway 설정
+apiVersion: networking.istio.io/v1beta1
+kind: Gateway
+metadata:
+  name: community-gateway
+  namespace: community-platform
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - community.example.com
+    - api.community.example.com
+    tls:
+      httpsRedirect: true
+  - port:
+      number: 443
+      name: https
+      protocol: HTTPS
+    hosts:
+    - community.example.com
+    - api.community.example.com
+    tls:
+      mode: SIMPLE
+      credentialName: community-tls-cert
+
+---
+# VirtualService 설정
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: community-vs
+  namespace: community-platform
+spec:
+  hosts:
+  - community.example.com
+  - api.community.example.com
+  gateways:
+  - community-gateway
+  http:
+  # API Gateway 라우팅
+  - match:
+    - uri:
+        prefix: /api/
+    route:
+    - destination:
+        host: api-gateway
+        port:
+          number: 8000
+    timeout: 30s
+    retries:
+      attempts: 3
+      perTryTimeout: 10s
+    fault:
+      delay:
+        percentage:
+          value: 0.1
+        fixedDelay: 5s
+  # 프론트엔드 라우팅
+  - match:
+    - uri:
+        prefix: /
+    route:
+    - destination:
+        host: frontend
+        port:
+          number: 3000
+
+---
+# DestinationRule 설정
+apiVersion: networking.istio.io/v1beta1
+kind: DestinationRule
+metadata:
+  name: auth-service-dr
+  namespace: community-platform
+spec:
+  host: auth-service
+  trafficPolicy:
+    connectionPool:
+      tcp:
+        maxConnections: 10
+      http:
+        http1MaxPendingRequests: 10
+        maxRequestsPerConnection: 2
+    circuitBreaker:
+      consecutiveErrors: 3
+      interval: 30s
+      baseEjectionTime: 30s
+      maxEjectionPercent: 50
+    outlierDetection:
+      consecutiveErrors: 3
+      interval: 30s
+      baseEjectionTime: 30s
+      maxEjectionPercent: 50
+  subsets:
+  - name: v1
+    labels:
+      version: v1
+    trafficPolicy:
+      loadBalancer:
+        simple: ROUND_ROBIN
+
+---
+# ServiceEntry (외부 서비스)
+apiVersion: networking.istio.io/v1beta1
+kind: ServiceEntry
+metadata:
+  name: external-apis
+  namespace: community-platform
+spec:
+  hosts:
+  - api.github.com
+  - api.slack.com
+  - api.discord.com
+  ports:
+  - number: 443
+    name: https
+    protocol: HTTPS
+  location: MESH_EXTERNAL
+  resolution: DNS
+
+---
+# AuthorizationPolicy (보안 정책)
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: community-authz
+  namespace: community-platform
+spec:
+  selector:
+    matchLabels:
+      app: community-platform
+  rules:
+  # 인증 서비스는 모든 요청 허용
+  - from:
+    - source:
+        principals: ["*"]
+    to:
+    - operation:
+        methods: ["GET", "POST", "PUT", "DELETE"]
+        paths: ["/api/auth/*"]
+  # 사용자 서비스는 인증된 사용자만
+  - from:
+    - source:
+        principals: ["cluster.local/ns/community-platform/sa/auth-service"]
+    to:
+    - operation:
+        methods: ["GET", "POST", "PUT", "DELETE"]
+        paths: ["/api/users/*"]
+  # 관리자 서비스는 관리자만
+  - from:
+    - source:
+        principals: ["cluster.local/ns/community-platform/sa/admin-service"]
+    to:
+    - operation:
+        methods: ["GET", "POST", "PUT", "DELETE"]
+        paths: ["/api/admin/*"]
+
+---
+# PeerAuthentication (mTLS 설정)
+apiVersion: security.istio.io/v1beta1
+kind: PeerAuthentication
+metadata:
+  name: community-mtls
+  namespace: community-platform
+spec:
+  mtls:
+    mode: STRICT
+
+---
+# RequestAuthentication (JWT 인증)
+apiVersion: security.istio.io/v1beta1
+kind: RequestAuthentication
+metadata:
+  name: community-jwt
+  namespace: community-platform
+spec:
+  selector:
+    matchLabels:
+      app: community-platform
+  jwtRules:
+  - issuer: "https://community.example.com"
+    jwksUri: "https://community.example.com/.well-known/jwks.json"
+    audiences:
+    - "community-api"
+    - "community-web"
+    - "community-mobile"
+
+---
+# EnvoyFilter (커스텀 설정)
+apiVersion: networking.istio.io/v1alpha3
+kind: EnvoyFilter
+metadata:
+  name: community-envoy-filter
+  namespace: community-platform
+spec:
+  configPatches:
+  - applyTo: HTTP_FILTER
+    match:
+      context: SIDECAR_INBOUND
+      listener:
+        filterChain:
+          filter:
+            name: "envoy.filters.network.http_connection_manager"
+    patch:
+      operation: INSERT_BEFORE
+      value:
+        name: envoy.filters.http.lua
+        typed_config:
+          "@type": type.googleapis.com/envoy.extensions.filters.http.lua.v3.Lua
+          inline_code: |
+            function envoy_on_request(request_handle)
+              local headers = request_handle:headers()
+              local request_id = headers:get("x-request-id")
+              if not request_id then
+                request_id = string.gsub(string.gsub(string.gsub(os.date("!%Y-%m-%dT%H:%M:%S"), ":", ""), "-", ""), "T", "") .. "-" .. math.random(1000, 9999)
+                headers:add("x-request-id", request_id)
+              end
+            end
+
+---
+# Telemetry 설정
+apiVersion: telemetry.istio.io/v1alpha1
+kind: Telemetry
+metadata:
+  name: community-telemetry
+  namespace: community-platform
+spec:
+  metrics:
+  - providers:
+    - name: prometheus
+    overrides:
+    - match:
+        metric: ALL_METRICS
+      tagOverrides:
+        request_protocol:
+          value: "http"
+        response_code:
+          value: "200"
+        source_app:
+          value: "community-platform"
+        destination_app:
+          value: "community-platform"
+  - providers:
+    - name: prometheus
+    overrides:
+    - match:
+        metric: REQUEST_COUNT
+      tagOverrides:
+        custom_tag:
+          value: "community-request"
+  - providers:
+    - name: prometheus
+    overrides:
+    - match:
+        metric: REQUEST_DURATION
+      tagOverrides:
+        custom_tag:
+          value: "community-duration"
+
+---
+# WasmPlugin (WebAssembly 플러그인)
+apiVersion: extensions.istio.io/v1alpha1
+kind: WasmPlugin
+metadata:
+  name: community-wasm
+  namespace: community-platform
+spec:
+  selector:
+    matchLabels:
+      app: community-platform
+  url: oci://ghcr.io/community-platform/wasm-plugins:latest
+  phase: AUTHN
+  pluginConfig:
+    config:
+      rules:
+      - match:
+          paths: ["/api/admin/*"]
+        auth:
+          type: "jwt"
+          jwks: "https://community.example.com/.well-known/jwks.json"
+      - match:
+          paths: ["/api/users/*"]
+        auth:
+          type: "jwt"
+          jwks: "https://community.example.com/.well-known/jwks.json"

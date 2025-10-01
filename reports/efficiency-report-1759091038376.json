@@ -1,0 +1,53 @@
+{
+  "timestamp": "2025-09-28T20:23:58.376Z",
+  "totalDuration": 12430,
+  "systems": [
+    {
+      "name": "TODO Generator",
+      "script": "auto-todo-generator.js",
+      "duration": 12426,
+      "exitCode": 0,
+      "output": "🚀 자동 TODO 생성기 시작...\n🐛 감지된 버그: 2개\n🔧 감지된 개선사항: 993개\n🧪 감지된 테스트 실패: 0개\n⚡ 감지된 성능 이슈: 0개\n📝 TODO 파일이 업데이트되었습니다.\n✅ 총 995개의 TODO가 생성되었습니다.\n",
+      "error": "",
+      "success": true,
+      "timestamp": "2025-09-28T20:23:58.375Z"
+    },
+    {
+      "name": "Manager System",
+      "script": "manager-centric-system.js",
+      "duration": 419,
+      "exitCode": 0,
+      "output": "🎯 관리자 중심 지능형 TODO 취합 시스템 시작...\n📊 작업 완료 후크 수집 중...\n✅ 0개의 작업 완료 후크 수집 완료\n🧠 지능형 정보 취합 중...\n✅ 지능형 정보 취합 완료\n🔍 유사 버그 감지 중...\n✅ 0개의 유사 버그 패턴 감지 완료\n🎯 목표 달성 스펙 검증 중...\n✅ 목표 진행률: 60%\n📊 관리자 대시보드 업데이트 중...\n✅ 관리자 대시보드 업데이트 완료\n🔄 자동 다음 Task 생성 중...\n✅ 2개의 다음 Task 생성 완료\n✅ 관리자 중심 시스템이 완료되었습니다.\n",
+      "error": "",
+      "success": true,
+      "timestamp": "2025-09-28T20:23:46.395Z"
+    },
+    {
+      "name": "Cursor QA Demo",
+      "script": "complete-cursor-qa-system.js",
+      "duration": 137,
+      "exitCode": 0,
+      "output": "🚀 완전한 Cursor QA 시스템 시작...\n📝 사용자 입력: 로그인 기능이 안 돼\n🌐 감지된 언어: korean\n🤖 Cursor GPT와 통신 중...\n🚀 완전한 Cursor QA 시스템 시작...\n📝 사용자 입력: Button click is not working\n🌐 감지된 언어: english\n🤖 Cursor GPT와 통신 중...\n🚀 완전한 Cursor QA 시스템 시작...\n📝 사용자 입력: 페이지가 느려\n🌐 감지된 언어: korean\n🤖 Cursor GPT와 통신 중...\n🚀 완전한 Cursor QA 시스템 시작...\n📝 사용자 입력: Error handling is missing\n🌐 감지된 언어: english\n🤖 Cursor GPT와 통신 중...\n🤖 Cursor 코드 생성 완료\n🔍 QA 계속 실행 중...\n🤖 Cursor 코드 생성 완료\n🔍 QA 계속 실행 중...\n🤖 Cursor 코드 생성 완료\n🔍 QA 계속 실행 중...\n🤖 Cursor 코드 생성 완료\n🔍 QA 계속 실행 중...\n🔍 QA 결과: 1개 이슈 발견\n📊 정적 분석 실행 중...\n🔍 QA 결과: 1개 이슈 발견\n📊 정적 분석 실행 중...\n🔍 QA 결과: 1개 이슈 발견\n📊 정적 분석 실행 중...\n🔍 QA 결과: 1개 이슈 발견\n📊 정적 분석 실행 중...\n📊 정적 분석: 4개 문제 발견\n🐛 버그 신고 생성 중...\n📊 정적 분석: 4개 문제 발견\n🐛 버그 신고 생성 중...\n📊 정적 분석: 4개 문제 발견\n🐛 버그 신고 생성 중...\n📊 정적 분석: 4개 문제 발견\n🐛 버그 신고 생성 중...\n🐛 버그 신고: 2개 생성\n📋 통합 TODO 생성 중...\n🐛 버그 신고: 2개 생성\n📋 통합 TODO 생성 중...\n🐛 버그 신고: 2개 생성\n📋 통합 TODO 생성 중...\n🐛 버그 신고: 2개 생성\n📋 통합 TODO 생성 중...\n📋 통합 TODO: 6개 생성\n📋 통합 TODO: 5개 생성\n📋 통합 TODO: 6개 생성\n📋 통합 TODO: 5개 생성\n✅ 작업 결과 통합 완료\n✅ 작업 결과 통합 완료\n✅ 작업 결과 통합 완료\n✅ 작업 결과 통합 완료\n📋 TODO 저장: work-results\\complete-todos-2025-09-28T20-23-46-104Z.md\n📋 TODO 저장: work-results\\complete-todos-2025-09-28T20-23-46-105Z.md\n📋 TODO 저장: work-results\\complete-todos-2025-09-28T20-23-46-105Z.md\n📋 TODO 저장: work-results\\complete-todos-2025-09-28T20-23-46-105Z.md\n🔍 QA 리포트 저장: work-results\\qa-report-2025-09-28T20-23-46-104Z.md\n💾 작업 결과 저장: work-results\\complete-cursor-qa-work-2025-09-28T20-23-46-104Z.json\n🔍 QA 리포트 저장: work-results\\qa-report-2025-09-28T20-23-46-105Z.md\n💾 작업 결과 저장: work-results\\complete-cursor-qa-work-2025-09-28T20-23-46-105Z.json\n🔍 QA 리포트 저장: work-results\\qa-report-2025-09-28T20-23-46-105Z.md\n💾 작업 결과 저장: work-results\\complete-cursor-qa-work-2025-09-28T20-23-46-105Z.json\n🔍 QA 리포트 저장: work-results\\qa-report-2025-09-28T20-23-46-105Z.md\n💾 작업 결과 저장: work-results\\complete-cursor-qa-work-2025-09-28T20-23-46-105Z.json\n\n✅ 데모 완료!\n",
+      "error": "",
+      "success": true,
+      "timestamp": "2025-09-28T20:23:46.139Z"
+    },
+    {
+      "name": "Test System Demo",
+      "script": "separated-test-system.js",
+      "duration": 135,
+      "exitCode": 0,
+      "output": "🚀 분리된 테스트 시스템 시작...\n📝 사용자 입력: 로그인 기능이 안 돼\n🌐 감지된 언어: korean\n🤖 Cursor GPT와 통신 중...\n🚀 분리된 테스트 시스템 시작...\n📝 사용자 입력: Button click is not working\n🌐 감지된 언어: english\n🤖 Cursor GPT와 통신 중...\n🚀 분리된 테스트 시스템 시작...\n📝 사용자 입력: 페이지가 느려\n🌐 감지된 언어: korean\n🤖 Cursor GPT와 통신 중...\n🚀 분리된 테스트 시스템 시작...\n📝 사용자 입력: Error handling is missing\n🌐 감지된 언어: english\n🤖 Cursor GPT와 통신 중...\n🤖 Cursor 코드 생성 완료\n🧪 TestCase 생성 중...\n🤖 Cursor 코드 생성 완료\n🧪 TestCase 생성 중...\n🤖 Cursor 코드 생성 완료\n🧪 TestCase 생성 중...\n🤖 Cursor 코드 생성 완료\n🧪 TestCase 생성 중...\n🧪 TestCase 생성: 4개\n🎭 시나리오 테스트 생성 중...\n🧪 TestCase 생성: 4개\n🎭 시나리오 테스트 생성 중...\n🧪 TestCase 생성: 4개\n🎭 시나리오 테스트 생성 중...\n🧪 TestCase 생성: 4개\n🎭 시나리오 테스트 생성 중...\n🎭 시나리오 테스트 생성: 4개\n🌐 E2E 테스트 생성 중...\n🎭 시나리오 테스트 생성: 4개\n🌐 E2E 테스트 생성 중...\n🎭 시나리오 테스트 생성: 4개\n🌐 E2E 테스트 생성 중...\n🎭 시나리오 테스트 생성: 4개\n🌐 E2E 테스트 생성 중...\n🌐 E2E 테스트 생성: 2개\n⚡ 성능 테스트 생성 중...\n🌐 E2E 테스트 생성: 2개\n⚡ 성능 테스트 생성 중...\n🌐 E2E 테스트 생성: 2개\n⚡ 성능 테스트 생성 중...\n🌐 E2E 테스트 생성: 2개\n⚡ 성능 테스트 생성 중...\n⚡ 성능 테스트 생성: 2개\n🔒 보안 테스트 생성 중...\n⚡ 성능 테스트 생성: 2개\n🔒 보안 테스트 생성 중...\n⚡ 성능 테스트 생성: 2개\n🔒 보안 테스트 생성 중...\n⚡ 성능 테스트 생성: 2개\n🔒 보안 테스트 생성 중...\n🔒 보안 테스트 생성: 2개\n🔍 QA 실행 중...\n🔒 보안 테스트 생성: 2개\n🔍 QA 실행 중...\n🔒 보안 테스트 생성: 2개\n🔍 QA 실행 중...\n🔒 보안 테스트 생성: 2개\n🔍 QA 실행 중...\n📊 정적 분석 실행 중...\n📊 정적 분석 실행 중...\n📊 정적 분석 실행 중...\n📊 정적 분석 실행 중...\n📋 통합 TODO 생성 중...\n📋 통합 TODO 생성 중...\n📋 통합 TODO 생성 중...\n📋 통합 TODO 생성 중...\n📋 통합 TODO: 16개 생성\n📋 통합 TODO: 16개 생성\n📋 통합 TODO: 16개 생성\n📋 통합 TODO: 16개 생성\n✅ 작업 결과 통합 완료\n✅ 작업 결과 통합 완료\n✅ 작업 결과 통합 완료\n✅ 작업 결과 통합 완료\n📋 TODO 저장: work-results\\separated-test-todos-2025-09-28T20-23-46-124Z.md\n📋 TODO 저장: work-results\\separated-test-todos-2025-09-28T20-23-46-126Z.md\n📋 TODO 저장: work-results\\separated-test-todos-2025-09-28T20-23-46-126Z.md\n📋 TODO 저장: work-results\\separated-test-todos-2025-09-28T20-23-46-126Z.md\n🧪 테스트 파일들 저장 완료\n💾 작업 결과 저장: work-results\\separated-test-work-2025-09-28T20-23-46-124Z.json\n🧪 테스트 파일들 저장 완료\n💾 작업 결과 저장: work-results\\separated-test-work-2025-09-28T20-23-46-126Z.json\n🧪 테스트 파일들 저장 완료\n💾 작업 결과 저장: work-results\\separated-test-work-2025-09-28T20-23-46-126Z.json\n🧪 테스트 파일들 저장 완료\n💾 작업 결과 저장: work-results\\separated-test-work-2025-09-28T20-23-46-126Z.json\n\n✅ 데모 완료!\n",
+      "error": "",
+      "success": true,
+      "timestamp": "2025-09-28T20:23:46.162Z"
+    }
+  ],
+  "efficiencyScore": 68,
+  "summary": {
+    "total": 4,
+    "successful": 4,
+    "failed": 0,
+    "successRate": "100.0%"
+  }
+}

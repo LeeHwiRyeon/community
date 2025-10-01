@@ -13,6 +13,11 @@ import { listDraftsForAuthor, getDraftById, createDraftForAuthor, updateDraftFor
 import { getAttachmentConfig, isAttachmentSigningEnabled, validateAttachmentRequest } from './services/attachments/upload-signing-service.js';
 import { createAttachmentRecord, getAttachmentById, enqueueAttachmentProcessing } from './services/attachments/attachments-service.js';
 import { SAMPLE_TITLES, SAMPLE_SNIPPETS, SAMPLE_AUTHORS, SAMPLE_CATEGORIES, SAMPLE_THUMBS, mockRandInt as randInt, mockPick as pick, mockRandomId as randomId } from './mock-samples.js';
+import translationRouter from './routes/translation.js';
+import notificationsRouter from './routes/notifications.js';
+import translateRouter from './routes/translate.js';
+import todosRouter from './routes/todos.js';
+import uploadRouter from './routes/upload.js';
 const router = express.Router();
 const useMockDb = isMockDatabaseEnabled();
 
@@ -2398,6 +2403,25 @@ router.post('/api/themes/save', (req, res) => {
     console.log('Theme saved:', { primaryColor, secondaryColor, fontFamily, layout });
     res.json({ success: true, message: '테마가 저장되었습니다.' });
 });
+
+// Translation routes
+router.use('/translate', translationRouter);
+
+// Notifications routes
+router.use('/notifications', notificationsRouter);
+
+// Translate API routes
+router.use('/translate', translateRouter);
+
+// Todos routes
+router.use('/todos', todosRouter);
+
+// Upload routes
+router.use('/upload', uploadRouter);
+
+// Mock data routes
+import mockDataRouter from './routes/mockData.js';
+router.use('/mock', mockDataRouter);
 
 export default router;
 

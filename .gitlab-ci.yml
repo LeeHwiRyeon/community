@@ -1,0 +1,244 @@
+# Community Platform GitLab CI/CD Pipeline
+# Version: 2.0.0
+
+stages:
+  - quality
+  - test
+  - security
+  - build
+  - deploy
+  - notify
+
+variables:
+  DOCKER_DRIVER: overlay2
+  DOCKER_TLS_CERTDIR: "/certs"
+  REGISTRY: $CI_REGISTRY
+  IMAGE_NAME: $CI_REGISTRY_IMAGE
+
+# =============================================================================
+# CODE QUALITY & TESTING
+# =============================================================================
+
+code_quality:
+  stage: quality
+  image: node:18-alpine
+  script:
+    - npm ci
+    - cd frontend && npm ci
+    - cd ../server-backend && npm ci
+    - npm run lint
+    - cd frontend && npm run lint
+    - cd ../server-backend && npm run lint
+    - npm run format:check
+    - cd frontend && npm run format:check
+    - cd ../server-backend && npm run format:check
+    - npm run type-check
+    - cd frontend && npm run type-check
+    - cd ../server-backend && npm run type-check
+  artifacts:
+    reports:
+      junit: coverage/junit.xml
+    paths:
+      - coverage/
+    expire_in: 1 week
+
+unit_tests:
+  stage: test
+  image: node:18-alpine
+  parallel:
+    matrix:
+      - SERVICE: [frontend, server-backend, microservices]
+  script:
+    - |
+      if [ "$SERVICE" = "frontend" ]; then
+        cd frontend && npm ci && npm run test:unit
+      elif [ "$SERVICE" = "server-backend" ]; then
+        cd server-backend && npm ci && npm run test:unit
+      else
+        npm ci && npm run test:unit
+      fi
+  artifacts:
+    reports:
+      junit: coverage/junit.xml
+    paths:
+      - coverage/
+    expire_in: 1 week
+
+integration_tests:
+  stage: test
+  image: node:18-alpine
+  services:
+    - postgres:15
+    - redis:7
+    - mongo:7.0
+  variables:
+    POSTGRES_DB: community_test
+    POSTGRES_USER: postgres
+    POSTGRES_PASSWORD: postgres
+    MONGODB_DATABASE: community_test
+    MONGODB_USERNAME: admin
+    MONGODB_PASSWORD: password
+  script:
+    - npm ci
+    - npm run migrate:up
+    - npm run test:integration
+  artifacts:
+    reports:
+      junit: coverage/junit.xml
+    paths:
+      - coverage/
+    expire_in: 1 week
+
+e2e_tests:
+  stage: test
+  image: mcr.microsoft.com/playwright:v1.40.0-focal
+  script:
+    - npm ci
+    - cd frontend && npm ci
+    - npm run build
+    - cd frontend && npm run build
+    - npm run start &
+    - cd frontend && npm run start &
+    - sleep 30
+    - npm run test:e2e
+  artifacts:
+    when: always
+    paths:
+      - playwright-report/
+    expire_in: 1 week
+
+# =============================================================================
+# SECURITY SCANNING
+# =============================================================================
+
+security_scan:
+  stage: security
+  image: aquasec/trivy:latest
+  script:
+    - trivy fs --format gitlab --output trivy-report.json .
+  artifacts:
+    reports:
+      container_scanning: trivy-report.json
+    expire_in: 1 week
+
+dependency_scan:
+  stage: security
+  image: node:18-alpine
+  script:
+    - npm audit --audit-level moderate
+    - cd frontend && npm audit --audit-level moderate
+    - cd ../server-backend && npm audit --audit-level moderate
+  artifacts:
+    reports:
+      dependency_scanning: dependency-scan-report.json
+    expire_in: 1 week
+
+# =============================================================================
+# DOCKER IMAGE BUILDING
+# =============================================================================
+
+build_frontend:
+  stage: build
+  image: docker:latest
+  services:
+    - docker:dind
+  script:
+    - docker build -t $REGISTRY/$IMAGE_NAME/frontend:$CI_COMMIT_SHA -f frontend/Dockerfile frontend/
+    - docker push $REGISTRY/$IMAGE_NAME/frontend:$CI_COMMIT_SHA
+  only:
+    - main
+    - develop
+
+build_api_gateway:
+  stage: build
+  image: docker:latest
+  services:
+    - docker:dind
+  script:
+    - docker build -t $REGISTRY/$IMAGE_NAME/api-gateway:$CI_COMMIT_SHA -f microservices/api-gateway/Dockerfile microservices/api-gateway/
+    - docker push $REGISTRY/$IMAGE_NAME/api-gateway:$CI_COMMIT_SHA
+  only:
+    - main
+    - develop
+
+build_microservices:
+  stage: build
+  image: docker:latest
+  services:
+    - docker:dind
+  parallel:
+    matrix:
+      - SERVICE: [auth-service, user-service, content-service, notification-service, analytics-service, search-service, file-service, chat-service, admin-service]
+  script:
+    - docker build -t $REGISTRY/$IMAGE_NAME/$SERVICE:$CI_COMMIT_SHA -f microservices/services/$SERVICE/Dockerfile microservices/services/$SERVICE/
+    - docker push $REGISTRY/$IMAGE_NAME/$SERVICE:$CI_COMMIT_SHA
+  only:
+    - main
+    - develop
+
+# =============================================================================
+# DEPLOYMENT
+# =============================================================================
+
+deploy_staging:
+  stage: deploy
+  image: bitnami/kubectl:latest
+  environment:
+    name: staging
+    url: https://staging.community.example.com
+  script:
+    - kubectl apply -f microservices/k8s/namespace.yaml
+    - kubectl apply -f microservices/k8s/configmap.yaml
+    - kubectl apply -f microservices/k8s/secrets.yaml
+    - kubectl apply -f microservices/k8s/databases.yaml
+    - kubectl apply -f microservices/k8s/services.yaml
+    - kubectl apply -f microservices/k8s/deployments.yaml
+    - kubectl apply -f microservices/k8s/ingress.yaml
+    - kubectl apply -f microservices/k8s/monitoring.yaml
+    - kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=community-platform --namespace=community-platform --timeout=600s
+  only:
+    - develop
+
+deploy_production:
+  stage: deploy
+  image: bitnami/kubectl:latest
+  environment:
+    name: production
+    url: https://community.example.com
+  script:
+    - ./production/scripts/deploy.sh
+    - ./production/scripts/validate.sh
+    - ./production/scripts/backup.sh
+  when: manual
+  only:
+    - main
+
+# =============================================================================
+# NOTIFICATION
+# =============================================================================
+
+notify_success:
+  stage: notify
+  image: curlimages/curl:latest
+  script:
+    - |
+      curl -X POST -H 'Content-type: application/json' \
+        --data "{\"text\":\"Community Platform deployment successful! 🎉\"}" \
+        $SLACK_WEBHOOK_URL
+  when: on_success
+  only:
+    - main
+    - develop
+
+notify_failure:
+  stage: notify
+  image: curlimages/curl:latest
+  script:
+    - |
+      curl -X POST -H 'Content-type: application/json' \
+        --data "{\"text\":\"Community Platform deployment failed! ❌\"}" \
+        $SLACK_WEBHOOK_URL
+  when: on_failure
+  only:
+    - main
+    - develop

@@ -1,343 +1,401 @@
-name: CI
+# CI 파이프라인 - 코드 품질 검사 및 테스트
+name: CI Pipeline
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, develop ]
   pull_request:
-    branches: [ main ]
+    branches: [ main, develop ]
+
+env:
+  NODE_VERSION: '18'
+  BACKEND_PORT: 50000
+  FRONTEND_PORT: 3000
 
 jobs:
-  test:
+  # 코드 품질 검사
+  code-quality:
+    name: 코드 품질 검사
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    
+    steps:
+    - name: 코드 체크아웃
+      uses: actions/checkout@v4
+      
+    - name: Node.js 설정
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+        
+    - name: 백엔드 의존성 설치
+      run: |
+        cd server-backend
+        npm ci
+        
+    - name: 프론트엔드 의존성 설치
+      run: |
+        cd frontend
+        npm ci
+        
+    - name: 백엔드 린팅
+      run: |
+        cd server-backend
+        npm run lint
+        
+    - name: 프론트엔드 린팅
+      run: |
+        cd frontend
+        npm run lint
+        
+    - name: 코드 포맷팅 검사
+      run: |
+        cd server-backend
+        npm run format:check
+        cd ../frontend
+        npm run format:check
+        
+    - name: TypeScript 타입 검사
+      run: |
+        cd frontend
+        npm run type-check
+
+  # 백엔드 테스트
+  backend-tests:
+    name: 백엔드 테스트
+    runs-on: ubuntu-latest
+    
     services:
       mariadb:
         image: mariadb:10.6
         env:
-          MARIADB_ROOT_PASSWORD: root
-          MARIADB_DATABASE: community
-          MARIADB_USER: app
-          MARIADB_PASSWORD: app
-          MARIADB_EXTRA_FLAGS: --innodb-use-native-aio=0
-        ports: [ '3306:3306' ]
-        options: >-
-          --health-cmd "mysqladmin ping -h 127.0.0.1 -u root -proot"
-          --health-interval 10s --health-timeout 5s --health-retries 12
-    env:
-      DB_HOST: 127.0.0.1
-      DB_USER: app
-      DB_PASS: app
-      DB_NAME: community
-      PORT: 50000
-      NODE_ENV: test
-      CI: true
-      API_BASE: http://localhost:50000
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: community_test
+          MYSQL_USER: test_user
+          MYSQL_PASSWORD: test_password
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+        
+      redis:
+        image: redis:6-alpine
+        ports:
+          - 6379:6379
+        options: --health-cmd="redis-cli ping" --health-interval=10s --health-timeout=5s --health-retries=3
+    
     steps:
-      - uses: actions/checkout@v4
-      - name: Install MariaDB client
-        run: sudo apt-get update && sudo apt-get install -y mariadb-client
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-          cache-dependency-path: |
-            server-backend/package-lock.json
-            frontend/package-lock.json
-      - name: Wait for DB
-        timeout-minutes: 2
-        run: |
-          for i in {1..40}; do
-            if mysql -h 127.0.0.1 -u app -papp -e 'SELECT 1' community; then echo 'DB ready'; break; fi
-            echo 'Waiting DB...'; sleep 2;
-          done
-      - name: Install deps
-        timeout-minutes: 5
-        working-directory: server-backend
-        run: npm install
-      - name: Install frontend deps
-        timeout-minutes: 5
-        working-directory: frontend
-        run: npm install
-      - name: Build frontend
-        timeout-minutes: 5
-        working-directory: frontend
-        run: npm run build
-      - name: Start backend server
-        timeout-minutes: 3
-        working-directory: server-backend
-        run: |
-          # Kill any existing processes on port 50000
-          powershell -Command "Get-NetTCPConnection -LocalPort 50000 -ErrorAction SilentlyContinue | Stop-Process -Id { $_.OwningProcess } -Force -ErrorAction SilentlyContinue"
-          powershell -Command "Get-Process node -ErrorAction SilentlyContinue | Where-Object { $_.CommandLine -like '*mock-server.js*' } | Stop-Process -Force -ErrorAction SilentlyContinue"
-
-          # Start server in background using PowerShell job
-          powershell -Command "Start-Job -ScriptBlock { Set-Location '${{ github.workspace }}/server-backend'; node mock-server.js } | Out-Null"
-
-          # Wait for server to be ready
-          timeout 15 bash -c 'until curl -f http://localhost:50000/api/health; do sleep 1; done' || (echo "Backend failed to start" && exit 1)
-      - name: Run backend integration tests
-        timeout-minutes: 5
-        working-directory: server-backend
-        run: node tests/api-random.js
-      - name: Stop backend server
-        if: always()
-        run: |
-          # Kill mock-server processes
-          powershell -Command "Get-Process node -ErrorAction SilentlyContinue | Where-Object { $_.CommandLine -like '*mock-server.js*' } | Stop-Process -Force -ErrorAction SilentlyContinue"
-          # Kill any remaining processes on port 50000
-          powershell -Command "Get-NetTCPConnection -LocalPort 50000 -ErrorAction SilentlyContinue | Stop-Process -Id { $_.OwningProcess } -Force -ErrorAction SilentlyContinue"
-      - name: Start frontend server
-        timeout-minutes: 3
-        working-directory: frontend
-        run: |
-          # Kill any existing processes on port 5173
-          powershell -Command "Get-NetTCPConnection -LocalPort 5173 -ErrorAction SilentlyContinue | Stop-Process -Id { $_.OwningProcess } -Force -ErrorAction SilentlyContinue"
-
-          npm run preview &
-          sleep 5
-          curl -f http://localhost:5173 || (echo "Frontend not ready" && exit 1)
-      - name: Run frontend tests
-        timeout-minutes: 3
-        working-directory: frontend
-        run: npm test
-      - name: Stop frontend server
-        if: always()
-        run: |
-          # Kill vite preview processes
-          powershell -Command "Get-Process node -ErrorAction SilentlyContinue | Where-Object { $_.CommandLine -like '*vite*' -or $_.CommandLine -like '*preview*' } | Stop-Process -Force -ErrorAction SilentlyContinue"
-          # Kill any remaining processes on port 5173
-          powershell -Command "Get-NetTCPConnection -LocalPort 5173 -ErrorAction SilentlyContinue | Stop-Process -Id { $_.OwningProcess } -Force -ErrorAction SilentlyContinue"
-      - name: Start servers for Playwright
-        timeout-minutes: 3
-        run: |
-          cd server-backend && node mock-server.js &
-          sleep 10
-          curl -f http://localhost:50000/api/health || (echo "Backend not ready" && exit 1)
-          cd ../frontend && npm run preview &
-          sleep 5
-          curl -f http://localhost:5173 || (echo "Frontend not ready" && exit 1)
-      - name: Run Playwright tests
-        timeout-minutes: 10
-        working-directory: server-backend
-        run: npx playwright install --with-deps && npx playwright test --reporter=json
-        env:
-          API_BASE: http://localhost:50000
-          CI: true
-      - name: Cleanup all processes
-        if: always()
-        run: |
-          # Kill all Node.js processes
-          powershell -Command "Get-Process node -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue"
-          # Kill processes on test ports
-          powershell -Command "Get-NetTCPConnection -LocalPort 50000,5173,9323 -ErrorAction SilentlyContinue | Stop-Process -Id { $_.OwningProcess } -Force -ErrorAction SilentlyContinue"
-          # Kill any remaining test processes
-          powershell -Command "Get-Process -Name 'chrome', 'firefox', 'webkit' -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue"
-      - name: Collect logs on failure
-        if: failure()
-        run: |
-          echo "=== System Info ==="
-          uname -a
-          echo "=== Running Processes ==="
-          ps aux | head -20
-          echo "=== Network Connections ==="
-          netstat -tlnp 2>/dev/null || ss -tlnp
-          echo "=== Disk Usage ==="
-          df -h
-      - name: Upload test summary
-        timeout-minutes: 2
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-summary
-          path: server-backend/test-summary.json
-      - name: Upload Playwright results
-        timeout-minutes: 2
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: playwright-results
-          path: server-backend/test-results/
-
-  security:
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-
-    steps:
-    - uses: actions/checkout@v4
-    - name: Setup Node
+    - name: 코드 체크아웃
+      uses: actions/checkout@v4
+      
+    - name: Node.js 설정
       uses: actions/setup-node@v4
       with:
-        node-version: '20'
+        node-version: ${{ env.NODE_VERSION }}
         cache: 'npm'
-        cache-dependency-path: |
-          server-backend/package-lock.json
-          frontend/package-lock.json
-
-    - name: Install dependencies
+        
+    - name: 백엔드 의존성 설치
       run: |
-        cd server-backend && npm ci
-        cd ../frontend && npm ci
-
-    - name: Run npm audit
-      run: |
-        echo "=== Backend Security Audit ==="
         cd server-backend
-        npm audit --audit-level=moderate || echo "Security vulnerabilities found"
-        echo "=== Frontend Security Audit ==="
-        cd ../frontend
-        npm audit --audit-level=moderate || echo "Security vulnerabilities found"
-
-    - name: Setup Trivy
-      uses: aquasecurity/trivy-action@master
+        npm ci
+        
+    - name: 환경 변수 설정
+      run: |
+        cd server-backend
+        cp .env.example .env.test
+        echo "NODE_ENV=test" >> .env.test
+        echo "DATABASE_HOST=localhost" >> .env.test
+        echo "DATABASE_PORT=3306" >> .env.test
+        echo "DATABASE_NAME=community_test" >> .env.test
+        echo "DATABASE_USER=test_user" >> .env.test
+        echo "DATABASE_PASSWORD=test_password" >> .env.test
+        echo "REDIS_HOST=localhost" >> .env.test
+        echo "REDIS_PORT=6379" >> .env.test
+        echo "JWT_SECRET=test_jwt_secret" >> .env.test
+        
+    - name: 데이터베이스 마이그레이션
+      run: |
+        cd server-backend
+        npm run migrate:test
+        
+    - name: 백엔드 단위 테스트
+      run: |
+        cd server-backend
+        npm run test:unit
+        
+    - name: 백엔드 통합 테스트
+      run: |
+        cd server-backend
+        npm run test:integration
+        
+    - name: 테스트 커버리지 생성
+      run: |
+        cd server-backend
+        npm run test:coverage
+        
+    - name: 커버리지 업로드
+      uses: codecov/codecov-action@v3
       with:
-        version: '0.50.1'
+        file: ./server-backend/coverage/lcov.info
+        flags: backend
+        name: backend-coverage
 
-    - name: Build backend image for scanning
-      run: |
-        cd server-backend
-        docker build -t community-backend:scan .
-
-    - name: Scan backend image
-      run: |
-        trivy image --exit-code 1 --no-progress --format table community-backend:scan
-
-    - name: Build frontend image for scanning
+  # 프론트엔드 테스트
+  frontend-tests:
+    name: 프론트엔드 테스트
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 코드 체크아웃
+      uses: actions/checkout@v4
+      
+    - name: Node.js 설정
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+        
+    - name: 프론트엔드 의존성 설치
       run: |
         cd frontend
-        docker build -t community-frontend:scan .
-
-    - name: Scan frontend image
+        npm ci
+        
+    - name: 프론트엔드 단위 테스트
       run: |
-        trivy image --exit-code 1 --no-progress --format table community-frontend:scan
+        cd frontend
+        npm run test:unit
+        
+    - name: 프론트엔드 E2E 테스트
+      run: |
+        cd frontend
+        npm run test:e2e
+        
+    - name: 테스트 커버리지 생성
+      run: |
+        cd frontend
+        npm run test:coverage
+        
+    - name: 커버리지 업로드
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./frontend/coverage/lcov.info
+        flags: frontend
+        name: frontend-coverage
 
-    - name: Run security tests
+  # 보안 검사
+  security-scan:
+    name: 보안 검사
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 코드 체크아웃
+      uses: actions/checkout@v4
+      
+    - name: Node.js 설정
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+        
+    - name: 백엔드 의존성 설치
       run: |
         cd server-backend
-        npm run test:security
+        npm ci
+        
+    - name: 프론트엔드 의존성 설치
+      run: |
+        cd frontend
+        npm ci
+        
+    - name: NPM 보안 감사
+      run: |
+        cd server-backend
+        npm audit --audit-level=moderate
+        cd ../frontend
+        npm audit --audit-level=moderate
+        
+    - name: 코드 보안 스캔
+      run: |
+        node scripts/security-audit.js
+        
+    - name: 의존성 취약점 스캔
+      uses: actions/dependency-review-action@v3
+      if: github.event_name == 'pull_request'
 
-  notify:
-    needs: [test, security]
+  # 빌드 테스트
+  build-test:
+    name: 빌드 테스트
     runs-on: ubuntu-latest
-    if: always()
-
+    
     steps:
-    - name: Set notification secrets
+    - name: 코드 체크아웃
+      uses: actions/checkout@v4
+      
+    - name: Node.js 설정
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+        
+    - name: 백엔드 의존성 설치
       run: |
-        # 시크릿을 환경 변수로 설정 (설정되지 않은 경우 빈 값)
-        echo "SLACK_WEBHOOK_URL=${{ secrets.SLACK_WEBHOOK_URL || '' }}" >> $GITHUB_ENV
-        echo "DISCORD_WEBHOOK_URL=${{ secrets.DISCORD_WEBHOOK_URL || '' }}" >> $GITHUB_ENV
-    - name: Generate CI notification payload
-      id: notification
+        cd server-backend
+        npm ci
+        
+    - name: 프론트엔드 의존성 설치
       run: |
-        # CI 상태에 따른 메시지 생성
-        if [ "${{ job.status }}" = "success" ]; then
-          STATUS="✅ 성공"
-          ICON=":white_check_mark:"
-        else
-          STATUS="❌ 실패"
-          ICON=":x:"
-        fi
-
-        # PR 정보 확인
-        if [ "${{ github.event_name }}" = "pull_request" ]; then
-          PR_TITLE="${{ github.event.pull_request.title }}"
-          PR_URL="${{ github.event.pull_request.html_url }}"
-          TRIGGER="PR #${{ github.event.pull_request.number }}: ${PR_TITLE}"
-          LINK="${PR_URL}"
-        else
-          TRIGGER="푸시: ${{ github.ref_name }}"
-          LINK="https://github.com/${{ github.repository }}/commit/${{ github.sha }}"
-        fi
-
-        # Slack 페이로드 생성
-        SLACK_PAYLOAD=$(cat <<EOF
-        {
-          "blocks": [
-            {
-              "type": "header",
-              "text": {
-                "type": "plain_text",
-                "text": "${ICON} CI ${STATUS}"
-              }
-            },
-            {
-              "type": "section",
-              "fields": [
-                {
-                  "type": "mrkdwn",
-                  "text": "*트리거:* ${TRIGGER}"
-                },
-                {
-                  "type": "mrkdwn",
-                  "text": "*커밋:* <https://github.com/${{ github.repository }}/commit/${{ github.sha }}|${{ github.sha }}>"
-                },
-                {
-                  "type": "mrkdwn",
-                  "text": "*작성자:* @${{ github.actor }}"
-                },
-                {
-                  "type": "mrkdwn",
-                  "text": "*시간:* $(date '+%Y-%m-%d %H:%M:%S %Z')"
-                }
-              ]
-            }
-          ]
-        }
-        EOF
-        )
-
-        # Discord 페이로드 생성
-        DISCORD_PAYLOAD=$(cat <<EOF
-        {
-          "embeds": [
-            {
-              "title": "${ICON} CI ${STATUS}",
-              "color": ${{ job.status == 'success' && '3066993' || '15158332' }},
-              "fields": [
-                {
-                  "name": "트리거",
-                  "value": "${TRIGGER}",
-                  "inline": false
-                },
-                {
-                  "name": "커밋",
-                  "value": "[${{ github.sha }}](https://github.com/${{ github.repository }}/commit/${{ github.sha }})",
-                  "inline": true
-                },
-                {
-                  "name": "작성자",
-                  "value": "@${{ github.actor }}",
-                  "inline": true
-                },
-                {
-                  "name": "시간",
-                  "value": "$(date '+%Y-%m-%d %H:%M:%S %Z')",
-                  "inline": true
-                }
-              ],
-              "footer": {
-                "text": "Community Hub CI"
-              }
-            }
-          ]
-        }
-        EOF
-        )
-
-        echo "slack_payload=${SLACK_PAYLOAD}" >> $GITHUB_OUTPUT
-        echo "discord_payload=${DISCORD_PAYLOAD}" >> $GITHUB_OUTPUT
-
-    - name: Notify Slack
+        cd frontend
+        npm ci
+        
+    - name: 백엔드 빌드
       run: |
-        curl -X POST \
-          -H 'Content-type: application/json' \
-          -d '${{ steps.notification.outputs.slack_payload }}' \
-          ${{ secrets.SLACK_WEBHOOK_URL }}
-
-    - name: Notify Discord
+        cd server-backend
+        npm run build
+        
+    - name: 프론트엔드 빌드
       run: |
-        curl -X POST \
-          -H 'Content-type: application/json' \
-          -d '${{ steps.notification.outputs.discord_payload }}' \
-          ${{ secrets.DISCORD_WEBHOOK_URL }}
+        cd frontend
+        npm run build
+        
+    - name: 빌드 아티팩트 업로드
+      uses: actions/upload-artifact@v3
+      with:
+        name: build-artifacts
+        path: |
+          server-backend/dist/
+          frontend/build/
+        retention-days: 7
+
+  # 통합 테스트
+  integration-tests:
+    name: 통합 테스트
+    runs-on: ubuntu-latest
+    needs: [code-quality, backend-tests, frontend-tests, security-scan, build-test]
+    
+    services:
+      mariadb:
+        image: mariadb:10.6
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: community_test
+          MYSQL_USER: test_user
+          MYSQL_PASSWORD: test_password
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+        
+      redis:
+        image: redis:6-alpine
+        ports:
+          - 6379:6379
+        options: --health-cmd="redis-cli ping" --health-interval=10s --health-timeout=5s --health-retries=3
+    
+    steps:
+    - name: 코드 체크아웃
+      uses: actions/checkout@v4
+      
+    - name: Node.js 설정
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+        
+    - name: 빌드 아티팩트 다운로드
+      uses: actions/download-artifact@v3
+      with:
+        name: build-artifacts
+        
+    - name: 백엔드 의존성 설치
+      run: |
+        cd server-backend
+        npm ci --production
+        
+    - name: 환경 변수 설정
+      run: |
+        cd server-backend
+        cp .env.example .env
+        echo "NODE_ENV=test" >> .env
+        echo "DATABASE_HOST=localhost" >> .env
+        echo "DATABASE_PORT=3306" >> .env
+        echo "DATABASE_NAME=community_test" >> .env
+        echo "DATABASE_USER=test_user" >> .env
+        echo "DATABASE_PASSWORD=test_password" >> .env
+        echo "REDIS_HOST=localhost" >> .env
+        echo "REDIS_PORT=6379" >> .env
+        echo "JWT_SECRET=test_jwt_secret" >> .env
+        
+    - name: 데이터베이스 마이그레이션
+      run: |
+        cd server-backend
+        npm run migrate:test
+        
+    - name: 백엔드 서버 시작
+      run: |
+        cd server-backend
+        npm start &
+        sleep 10
+        
+    - name: 백엔드 헬스 체크
+      run: |
+        curl -f http://localhost:${{ env.BACKEND_PORT }}/api/health || exit 1
+        
+    - name: API 테스트
+      run: |
+        cd server-backend
+        npm run test:api
+        
+    - name: 백엔드 서버 중지
+      run: |
+        pkill -f "node.*server.js" || true
+
+  # 성능 테스트
+  performance-tests:
+    name: 성능 테스트
+    runs-on: ubuntu-latest
+    needs: [integration-tests]
+    
+    steps:
+    - name: 코드 체크아웃
+      uses: actions/checkout@v4
+      
+    - name: Node.js 설정
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+        
+    - name: 백엔드 의존성 설치
+      run: |
+        cd server-backend
+        npm ci
+        
+    - name: 성능 테스트 실행
+      run: |
+        node scripts/performance-test.js
+        
+    - name: 성능 테스트 결과 업로드
+      uses: actions/upload-artifact@v3
+      with:
+        name: performance-results
+        path: reports/performance-*.json
+        retention-days: 30
+
+  # CI 결과 요약
+  ci-summary:
+    name: CI 결과 요약
+    runs-on: ubuntu-latest
+    needs: [code-quality, backend-tests, frontend-tests, security-scan, build-test, integration-tests, performance-tests]
+    if: always()
+    
+    steps:
+    - name: CI 결과 요약
+      run: |
+        echo "## CI 파이프라인 결과" >> $GITHUB_STEP_SUMMARY
+        echo "| 작업 | 상태 |" >> $GITHUB_STEP_SUMMARY
+        echo "|------|------|" >> $GITHUB_STEP_SUMMARY
+        echo "| 코드 품질 검사 | ${{ needs.code-quality.result }} |" >> $GITHUB_STEP_SUMMARY
+        echo "| 백엔드 테스트 | ${{ needs.backend-tests.result }} |" >> $GITHUB_STEP_SUMMARY
+        echo "| 프론트엔드 테스트 | ${{ needs.frontend-tests.result }} |" >> $GITHUB_STEP_SUMMARY
+        echo "| 보안 검사 | ${{ needs.security-scan.result }} |" >> $GITHUB_STEP_SUMMARY
+        echo "| 빌드 테스트 | ${{ needs.build-test.result }} |" >> $GITHUB_STEP_SUMMARY
+        echo "| 통합 테스트 | ${{ needs.integration-tests.result }} |" >> $GITHUB_STEP_SUMMARY
+        echo "| 성능 테스트 | ${{ needs.performance-tests.result }} |" >> $GITHUB_STEP_SUMMARY

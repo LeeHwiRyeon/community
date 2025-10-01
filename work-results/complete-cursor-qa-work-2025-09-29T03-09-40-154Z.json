@@ -1,0 +1,192 @@
+{
+  "timestamp": "2025-09-29T03:09:40.152Z",
+  "userInput": "Button click is not working",
+  "language": "english",
+  "cursorPrompt": "Please analyze and fix the following issue: \"Button click is not working\"\n\nRequirements:\n1. Identify the root cause of the problem\n2. Provide a complete solution with code\n3. Include proper error handling\n4. Add comprehensive test cases\n5. Ensure the solution is scalable and maintainable\n6. Consider edge cases and potential bugs\n\nPlease provide:\n- Problem analysis\n- Solution approach\n- Code implementation\n- Test cases\n- Documentation updates",
+  "generatedCode": "// Generated code\nexport const handleUserRequest = async (input) => {\n  try {\n    // Main implementation\n    const result = await processInput(input)\n    \n    // Error handling\n    if (!result.success) {\n      throw new Error(result.error)\n    }\n    \n    return {\n      success: true,\n      data: result.data,\n      timestamp: new Date().toISOString()\n    }\n  } catch (error) {\n    console.error('Error processing request:', error)\n    return {\n      success: false,\n      error: error.message,\n      timestamp: new Date().toISOString()\n    }\n  }\n}\n\n// Helper functions\nconst processInput = async (input) => {\n  // Process input logic\n  return { success: true, data: input }\n}",
+  "analysis": "Code analysis for: Button click is not working",
+  "solution": "Solution approach for the reported issue",
+  "tests": "// Test cases\ndescribe('handleUserRequest', () => {\n  it('should handle valid input successfully', async () => {\n    const result = await handleUserRequest('test input')\n    expect(result.success).toBe(true)\n    expect(result.data).toBe('test input')\n  })\n  \n  it('should handle invalid input with error', async () => {\n    const result = await handleUserRequest(null)\n    expect(result.success).toBe(false)\n    expect(result.error).toBeDefined()\n  })\n  \n  it('should include timestamp in response', async () => {\n    const result = await handleUserRequest('test')\n    expect(result.timestamp).toBeDefined()\n  })\n})",
+  "documentation": "## handleUserRequest\n\n### Description\nProcesses user input and returns a structured response.\n\n### Parameters\n- input: string - The user input to process\n\n### Returns\n- Promise<{success: boolean, data?: any, error?: string, timestamp: string}>\n\n### Usage\n```typescript\nconst result = await handleUserRequest('user input')\nif (result.success) {\n  console.log('Success:', result.data)\n} else {\n  console.error('Error:', result.error)\n}\n```",
+  "qaResults": [
+    {
+      "type": "code_duplication",
+      "severity": "low",
+      "message": "Found 10 duplicate lines",
+      "suggestion": "Extract common code into reusable functions",
+      "line": 10,
+      "category": "refactor"
+    }
+  ],
+  "staticAnalysis": [
+    {
+      "type": "complexity",
+      "severity": "high",
+      "message": "Cyclomatic complexity: 680",
+      "suggestion": "Refactor complex functions into smaller ones",
+      "metrics": {
+        "lines": 31,
+        "cyclomaticComplexity": 680,
+        "maxDepth": 3
+      },
+      "category": "static"
+    },
+    {
+      "type": "dependencies",
+      "severity": "low",
+      "message": "Found 0 unused imports",
+      "suggestion": "All imports are used",
+      "metrics": {
+        "totalImports": 0,
+        "unusedImports": 0,
+        "importRatio": null
+      },
+      "category": "static"
+    },
+    {
+      "type": "test_coverage",
+      "severity": "high",
+      "message": "Test coverage: 0.0%",
+      "suggestion": "Add more test cases to improve coverage",
+      "metrics": {
+        "functions": 2,
+        "tests": 0,
+        "coverage": 0
+      },
+      "category": "static"
+    },
+    {
+      "type": "metrics",
+      "severity": "low",
+      "message": "Code metrics analysis",
+      "suggestion": "Monitor code metrics for quality",
+      "metrics": {
+        "totalLines": 31,
+        "nonEmptyLines": 28,
+        "commentLines": 5,
+        "commentRatio": 0.17857142857142858,
+        "averageLineLength": 22.785714285714285
+      },
+      "category": "static"
+    }
+  ],
+  "bugReports": [
+    {
+      "id": "BUG-1759115380151-0",
+      "title": "Cyclomatic complexity: 680",
+      "description": "Refactor complex functions into smaller ones",
+      "severity": "high",
+      "category": "static",
+      "source": "static",
+      "metrics": {
+        "lines": 31,
+        "cyclomaticComplexity": 680,
+        "maxDepth": 3
+      },
+      "status": "open",
+      "createdAt": "2025-09-29T03:09:40.151Z"
+    },
+    {
+      "id": "BUG-1759115380151-2",
+      "title": "Test coverage: 0.0%",
+      "description": "Add more test cases to improve coverage",
+      "severity": "high",
+      "category": "static",
+      "source": "static",
+      "metrics": {
+        "functions": 2,
+        "tests": 0,
+        "coverage": 0
+      },
+      "status": "open",
+      "createdAt": "2025-09-29T03:09:40.151Z"
+    }
+  ],
+  "generatedTodos": [
+    {
+      "id": "STATIC-1759115380152-0",
+      "title": "Improve complexity",
+      "description": "Refactor complex functions into smaller ones",
+      "priority": "high",
+      "category": "static",
+      "estimatedHours": 4,
+      "source": "static",
+      "metrics": {
+        "lines": 31,
+        "cyclomaticComplexity": 680,
+        "maxDepth": 3
+      }
+    },
+    {
+      "id": "STATIC-1759115380152-2",
+      "title": "Improve test_coverage",
+      "description": "Add more test cases to improve coverage",
+      "priority": "high",
+      "category": "static",
+      "estimatedHours": 4,
+      "source": "static",
+      "metrics": {
+        "functions": 2,
+        "tests": 0,
+        "coverage": 0
+      }
+    },
+    {
+      "id": "BUG-1759115380152-0",
+      "title": "Fix bug: Cyclomatic complexity: 680",
+      "description": "Refactor complex functions into smaller ones",
+      "priority": "high",
+      "category": "static",
+      "estimatedHours": 4,
+      "source": "bug",
+      "bugId": "BUG-1759115380151-0"
+    },
+    {
+      "id": "BUG-1759115380152-1",
+      "title": "Fix bug: Test coverage: 0.0%",
+      "description": "Add more test cases to improve coverage",
+      "priority": "high",
+      "category": "static",
+      "estimatedHours": 4,
+      "source": "bug",
+      "bugId": "BUG-1759115380151-2"
+    },
+    {
+      "id": "QA-1759115380152-0",
+      "title": "Fix code_duplication issue",
+      "description": "Extract common code into reusable functions",
+      "priority": "medium",
+      "category": "refactor",
+      "estimatedHours": 1,
+      "source": "qa",
+      "line": 10
+    }
+  ],
+  "summary": {
+    "totalTodos": 5,
+    "highPriorityTodos": 4,
+    "estimatedHours": 17,
+    "qaIssues": 1,
+    "staticIssues": 4,
+    "bugReports": 2,
+    "categories": [
+      "static",
+      "refactor"
+    ],
+    "sources": [
+      "static",
+      "bug",
+      "qa"
+    ],
+    "nextSteps": [
+      "Review generated code",
+      "Fix QA issues",
+      "Address static analysis findings",
+      "Resolve bug reports",
+      "Implement suggested solution",
+      "Run comprehensive tests",
+      "Update documentation",
+      "Deploy changes"
+    ]
+  }
+}

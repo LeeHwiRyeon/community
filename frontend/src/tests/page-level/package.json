@@ -1,0 +1,24 @@
+{
+    "name": "page-level-tests",
+    "version": "1.0.0",
+    "description": "Page-level test suite for action generator features",
+    "scripts": {
+        "test": "ts-node runTests.ts",
+        "test:headless": "ts-node runTests.ts --headless",
+        "test:headed": "ts-node runTests.ts --headed",
+        "test:suite": "ts-node runTests.ts --suite",
+        "test:verbose": "ts-node runTests.ts --verbose",
+        "test:quiet": "ts-node runTests.ts --quiet",
+        "test:export": "ts-node runTests.ts --export html",
+        "test:parallel": "ts-node runTests.ts --parallel",
+        "test:ci": "ts-node runTests.ts --headless --quiet --timeout 60000"
+    },
+    "dependencies": {
+        "playwright": "^1.40.0",
+        "ts-node": "^10.9.0",
+        "typescript": "^5.0.0"
+    },
+    "devDependencies": {
+        "@types/node": "^20.0.0"
+    }
+}

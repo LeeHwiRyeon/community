@@ -1,0 +1,112 @@
+{
+  "version": "1.0.0",
+  "nextId": 9,
+  "totalTasks": 8,
+  "lastUpdated": "2025-09-29T18:30:22.133Z",
+  "entries": [
+    [
+      "TASK_1759169759826_1",
+      {
+        "id": "TASK_1759169759826_1",
+        "offset": 0,
+        "size": 525,
+        "status": "pending",
+        "priority": "urgent",
+        "category": "testing",
+        "createdAt": "2025-09-29T18:15:59.826Z",
+        "lastModified": "2025-09-29T18:15:59.830Z"
+      }
+    ],
+    [
+      "TASK_1759169789991_2",
+      {
+        "id": "TASK_1759169789991_2",
+        "offset": 525,
+        "size": 481,
+        "status": "pending",
+        "priority": "urgent",
+        "category": "testing",
+        "createdAt": "2025-09-29T18:16:29.991Z",
+        "lastModified": "2025-09-29T18:16:29.994Z"
+      }
+    ],
+    [
+      "TASK_1759170383680_3",
+      {
+        "id": "TASK_1759170383680_3",
+        "offset": 1006,
+        "size": 489,
+        "status": "pending",
+        "priority": "high",
+        "category": "testing",
+        "createdAt": "2025-09-29T18:26:23.680Z",
+        "lastModified": "2025-09-29T18:26:23.681Z"
+      }
+    ],
+    [
+      "TASK_1759170383686_4",
+      {
+        "id": "TASK_1759170383686_4",
+        "offset": 1495,
+        "size": 481,
+        "status": "pending",
+        "priority": "medium",
+        "category": "testing",
+        "createdAt": "2025-09-29T18:26:23.686Z",
+        "lastModified": "2025-09-29T18:26:23.687Z"
+      }
+    ],
+    [
+      "TASK_1759170383691_5",
+      {
+        "id": "TASK_1759170383691_5",
+        "offset": 1976,
+        "size": 489,
+        "status": "pending",
+        "priority": "urgent",
+        "category": "testing",
+        "createdAt": "2025-09-29T18:26:23.691Z",
+        "lastModified": "2025-09-29T18:26:23.692Z"
+      }
+    ],
+    [
+      "TASK_1759170622120_6",
+      {
+        "id": "TASK_1759170622120_6",
+        "offset": 2465,
+        "size": 489,
+        "status": "pending",
+        "priority": "high",
+        "category": "testing",
+        "createdAt": "2025-09-29T18:30:22.121Z",
+        "lastModified": "2025-09-29T18:30:22.122Z"
+      }
+    ],
+    [
+      "TASK_1759170622125_7",
+      {
+        "id": "TASK_1759170622125_7",
+        "offset": 2954,
+        "size": 481,
+        "status": "pending",
+        "priority": "medium",
+        "category": "testing",
+        "createdAt": "2025-09-29T18:30:22.126Z",
+        "lastModified": "2025-09-29T18:30:22.126Z"
+      }
+    ],
+    [
+      "TASK_1759170622131_8",
+      {
+        "id": "TASK_1759170622131_8",
+        "offset": 3435,
+        "size": 489,
+        "status": "pending",
+        "priority": "urgent",
+        "category": "testing",
+        "createdAt": "2025-09-29T18:30:22.131Z",
+        "lastModified": "2025-09-29T18:30:22.133Z"
+      }
+    ]
+  ]
+}

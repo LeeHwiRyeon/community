@@ -1,0 +1,21 @@
+collector:
+  otlp:
+    grpc:
+      endpoint: 0.0.0.0:4317
+    http:
+      endpoint: 0.0.0.0:4318
+
+query:
+  base-path: /jaeger
+
+storage:
+  type: elasticsearch
+  elasticsearch:
+    server-urls: http://elasticsearch:9200
+    index-prefix: jaeger
+    username: ""
+    password: ""
+
+agent:
+  collector:
+    host-port: jaeger-collector:14250

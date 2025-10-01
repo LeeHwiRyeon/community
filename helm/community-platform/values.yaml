@@ -1,0 +1,475 @@
+# Community Platform Helm Chart Values
+# Default values for community-platform
+
+# =============================================================================
+# GLOBAL CONFIGURATION
+# =============================================================================
+
+global:
+  imageRegistry: ""
+  imagePullSecrets: []
+  storageClass: ""
+
+# =============================================================================
+# IMAGE CONFIGURATION
+# =============================================================================
+
+image:
+  registry: registry.example.com
+  repository: community-platform
+  tag: latest
+  pullPolicy: IfNotPresent
+
+# =============================================================================
+# INGRESS CONFIGURATION
+# =============================================================================
+
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+  hosts:
+    - host: community.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+    - host: api.community.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: community-tls
+      hosts:
+        - community.example.com
+        - api.community.example.com
+
+# =============================================================================
+# API GATEWAY CONFIGURATION
+# =============================================================================
+
+apiGateway:
+  enabled: true
+  replicaCount: 3
+  image:
+    repository: community-platform/api-gateway
+    tag: ""
+    pullPolicy: IfNotPresent
+  service:
+    type: LoadBalancer
+    port: 8000
+    adminPort: 8001
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+    requests:
+      cpu: 500m
+      memory: 512Mi
+  autoscaling:
+    enabled: true
+    minReplicas: 3
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 70
+    targetMemoryUtilizationPercentage: 80
+
+# =============================================================================
+# MICROSERVICES CONFIGURATION
+# =============================================================================
+
+microservices:
+  authService:
+    enabled: true
+    replicaCount: 2
+    image:
+      repository: community-platform/auth-service
+      tag: ""
+    resources:
+      limits:
+        cpu: 500m
+        memory: 512Mi
+      requests:
+        cpu: 250m
+        memory: 256Mi
+    autoscaling:
+      enabled: true
+      minReplicas: 2
+      maxReplicas: 5
+
+  userService:
+    enabled: true
+    replicaCount: 2
+    image:
+      repository: community-platform/user-service
+      tag: ""
+    resources:
+      limits:
+        cpu: 500m
+        memory: 512Mi
+      requests:
+        cpu: 250m
+        memory: 256Mi
+    autoscaling:
+      enabled: true
+      minReplicas: 2
+      maxReplicas: 5
+
+  contentService:
+    enabled: true
+    replicaCount: 3
+    image:
+      repository: community-platform/content-service
+      tag: ""
+    resources:
+      limits:
+        cpu: 1000m
+        memory: 1Gi
+      requests:
+        cpu: 500m
+        memory: 512Mi
+    autoscaling:
+      enabled: true
+      minReplicas: 3
+      maxReplicas: 10
+
+  notificationService:
+    enabled: true
+    replicaCount: 2
+    image:
+      repository: community-platform/notification-service
+      tag: ""
+    resources:
+      limits:
+        cpu: 500m
+        memory: 512Mi
+      requests:
+        cpu: 250m
+        memory: 256Mi
+    autoscaling:
+      enabled: true
+      minReplicas: 2
+      maxReplicas: 5
+
+  analyticsService:
+    enabled: true
+    replicaCount: 2
+    image:
+      repository: community-platform/analytics-service
+      tag: ""
+    resources:
+      limits:
+        cpu: 1000m
+        memory: 1Gi
+      requests:
+        cpu: 500m
+        memory: 512Mi
+    autoscaling:
+      enabled: true
+      minReplicas: 2
+      maxReplicas: 5
+
+  searchService:
+    enabled: true
+    replicaCount: 2
+    image:
+      repository: community-platform/search-service
+      tag: ""
+    resources:
+      limits:
+        cpu: 1000m
+        memory: 1Gi
+      requests:
+        cpu: 500m
+        memory: 512Mi
+    autoscaling:
+      enabled: true
+      minReplicas: 2
+      maxReplicas: 5
+
+  fileService:
+    enabled: true
+    replicaCount: 2
+    image:
+      repository: community-platform/file-service
+      tag: ""
+    resources:
+      limits:
+        cpu: 500m
+        memory: 512Mi
+      requests:
+        cpu: 250m
+        memory: 256Mi
+    autoscaling:
+      enabled: true
+      minReplicas: 2
+      maxReplicas: 5
+
+  chatService:
+    enabled: true
+    replicaCount: 2
+    image:
+      repository: community-platform/chat-service
+      tag: ""
+    resources:
+      limits:
+        cpu: 500m
+        memory: 512Mi
+      requests:
+        cpu: 250m
+        memory: 256Mi
+    autoscaling:
+      enabled: true
+      minReplicas: 2
+      maxReplicas: 5
+
+  adminService:
+    enabled: true
+    replicaCount: 1
+    image:
+      repository: community-platform/admin-service
+      tag: ""
+    resources:
+      limits:
+        cpu: 500m
+        memory: 512Mi
+      requests:
+        cpu: 250m
+        memory: 256Mi
+
+# =============================================================================
+# FRONTEND CONFIGURATION
+# =============================================================================
+
+frontend:
+  enabled: true
+  replicaCount: 3
+  image:
+    repository: community-platform/frontend
+    tag: ""
+    pullPolicy: IfNotPresent
+  service:
+    type: LoadBalancer
+    port: 3000
+  resources:
+    limits:
+      cpu: 200m
+      memory: 256Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+  autoscaling:
+    enabled: true
+    minReplicas: 3
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 70
+    targetMemoryUtilizationPercentage: 80
+
+# =============================================================================
+# DATABASE CONFIGURATION
+# =============================================================================
+
+postgresql:
+  enabled: true
+  auth:
+    postgresPassword: "postgres"
+    username: "community_user"
+    password: "community_password"
+    database: "community_production"
+  primary:
+    persistence:
+      enabled: true
+      size: 20Gi
+      storageClass: ""
+    resources:
+      limits:
+        cpu: 1000m
+        memory: 2Gi
+      requests:
+        cpu: 500m
+        memory: 1Gi
+
+mongodb:
+  enabled: true
+  auth:
+    enabled: true
+    rootUsername: "admin"
+    rootPassword: "admin_password"
+    username: "community_user"
+    password: "community_password"
+    database: "community_users"
+  primary:
+    persistence:
+      enabled: true
+      size: 20Gi
+      storageClass: ""
+    resources:
+      limits:
+        cpu: 1000m
+        memory: 2Gi
+      requests:
+        cpu: 500m
+        memory: 1Gi
+
+redis:
+  enabled: true
+  auth:
+    enabled: true
+    password: "redis_password"
+  master:
+    persistence:
+      enabled: true
+      size: 10Gi
+      storageClass: ""
+    resources:
+      limits:
+        cpu: 500m
+        memory: 1Gi
+      requests:
+        cpu: 250m
+        memory: 512Mi
+
+elasticsearch:
+  enabled: true
+  master:
+    replicaCount: 1
+    persistence:
+      enabled: true
+      size: 30Gi
+      storageClass: ""
+    resources:
+      limits:
+        cpu: 1000m
+        memory: 2Gi
+      requests:
+        cpu: 500m
+        memory: 1Gi
+  data:
+    replicaCount: 1
+    persistence:
+      enabled: true
+      size: 30Gi
+      storageClass: ""
+    resources:
+      limits:
+        cpu: 1000m
+        memory: 2Gi
+      requests:
+        cpu: 500m
+        memory: 1Gi
+
+# =============================================================================
+# MONITORING CONFIGURATION
+# =============================================================================
+
+prometheus:
+  enabled: true
+  server:
+    persistentVolume:
+      enabled: true
+      size: 20Gi
+      storageClass: ""
+    resources:
+      limits:
+        cpu: 1000m
+        memory: 2Gi
+      requests:
+        cpu: 500m
+        memory: 1Gi
+  alertmanager:
+    persistentVolume:
+      enabled: true
+      size: 2Gi
+      storageClass: ""
+    resources:
+      limits:
+        cpu: 200m
+        memory: 256Mi
+      requests:
+        cpu: 100m
+        memory: 128Mi
+
+grafana:
+  enabled: true
+  adminPassword: "admin"
+  persistence:
+    enabled: true
+    size: 10Gi
+    storageClass: ""
+  resources:
+    limits:
+      cpu: 500m
+      memory: 1Gi
+    requests:
+      cpu: 100m
+      memory: 256Mi
+
+jaeger:
+  enabled: true
+  strategy: allInOne
+  persistence:
+    enabled: true
+    size: 10Gi
+    storageClass: ""
+  resources:
+    limits:
+      cpu: 500m
+      memory: 1Gi
+    requests:
+      cpu: 100m
+      memory: 256Mi
+
+# =============================================================================
+# SECURITY CONFIGURATION
+# =============================================================================
+
+security:
+  podSecurityPolicy:
+    enabled: true
+  networkPolicy:
+    enabled: true
+  rbac:
+    enabled: true
+
+# =============================================================================
+# BACKUP CONFIGURATION
+# =============================================================================
+
+backup:
+  enabled: true
+  schedule: "0 2 * * *"
+  retention: "30d"
+  s3:
+    bucket: "community-backups-prod"
+    region: "us-west-2"
+    prefix: "backups"
+
+# =============================================================================
+# FEATURE FLAGS
+# =============================================================================
+
+features:
+  darkMode: true
+  realTimeChat: true
+  videoCalls: true
+  aiRecommendations: true
+  gamification: true
+  mobileApp: true
+  analyticsDashboard: true
+  advancedSearch: true
+
+# =============================================================================
+# ENVIRONMENT VARIABLES
+# =============================================================================
+
+env:
+  NODE_ENV: "production"
+  LOG_LEVEL: "info"
+  LOG_FORMAT: "json"
+  CORS_ORIGIN: "https://community.example.com,https://admin.community.example.com"
+  JWT_SECRET: "your-super-secret-jwt-key-change-in-production"
+  JWT_EXPIRES_IN: "24h"
+  RATE_LIMIT_WINDOW_MS: 900000
+  RATE_LIMIT_MAX_REQUESTS: 100

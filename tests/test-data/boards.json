@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "name": "자유게시판",
+    "description": "자유롭게 이야기를 나누는 공간입니다.",
+    "category": "general",
+    "isActive": true,
+    "postCount": 0
+  },
+  {
+    "id": 2,
+    "name": "공지사항",
+    "description": "중요한 공지사항을 확인하세요.",
+    "category": "notice",
+    "isActive": true,
+    "postCount": 0
+  },
+  {
+    "id": 3,
+    "name": "질문과답변",
+    "description": "궁금한 것을 질문하고 답변을 받아보세요.",
+    "category": "qna",
+    "isActive": true,
+    "postCount": 0
+  }
+]

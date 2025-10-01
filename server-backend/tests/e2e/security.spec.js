@@ -49,7 +49,7 @@ test.describe('Security Tests', () => {
             const response = await request.post('/api/auth/login', {
                 data: {
                     username: payload,
-                    password: 'test'
+                    password: process.env.TEST_PASSWORD || 'test'
                 }
             });
             // Should be blocked

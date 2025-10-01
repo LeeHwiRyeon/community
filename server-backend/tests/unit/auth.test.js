@@ -44,7 +44,7 @@ describe('Authentication API', () => {
                 .post('/api/auth/login')
                 .send({
                     username: 'testuser',
-                    password: 'testpass'
+                    password: process.env.TEST_PASSWORD || 'testpass'
                 })
                 .expect(400); // Will fail due to mock data, but structure should be correct
 

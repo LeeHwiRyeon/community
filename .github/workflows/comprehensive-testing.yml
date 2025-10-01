@@ -113,6 +113,15 @@ jobs:
         run: npm test -- --testPathPattern=integration --watchAll=false
         continue-on-error: true
 
+      - name: Generate Vitest HTML report
+        if: env.TEST_SCOPE == 'all' || env.TEST_SCOPE == 'unit' || env.TEST_SCOPE == 'integration'
+        timeout-minutes: 3
+        working-directory: frontend
+        run: |
+          echo "📊 Generating Vitest HTML test report..."
+          npx vitest run --reporter=html --outputFile=test-report.html --coverage
+        continue-on-error: true
+
       - name: Stop backend server for E2E
         if: always()
         run: |
@@ -258,6 +267,8 @@ jobs:
           name: comprehensive-test-results-${{ github.run_number }}
           path: |
             frontend/coverage/
+            frontend/test-report.html
+            frontend/test-results.json
             server-backend/test-results/
             playwright-report/
             test-report.md

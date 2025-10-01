@@ -1,3 +1,0 @@
-[2025-09-19 20:30:57.10] Session start in C:\Users\hwi\Desktop\Projects\community\
-[2025-09-19 20:30:57.10] ENV PORT=4000 DB_HOST=localhost DB_USER=root DB_NAME=community VIEW_FLUSH_INTERVAL_MS=1500
-[2025-09-19 20:31:09.97] Start local server and open http://localhost:8000/

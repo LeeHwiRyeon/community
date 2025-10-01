@@ -20,7 +20,7 @@ class AutoDeployTest {
         const timestamp = new Date().toISOString();
         const logMessage = `[${timestamp}] [${type.toUpperCase()}] ${message}`;
         console.log(logMessage);
-        
+
         // 로그 파일에 기록
         fs.appendFileSync(this.logFile, logMessage + '\n');
     }
@@ -28,10 +28,10 @@ class AutoDeployTest {
     async executeCommand(command, options = {}) {
         try {
             this.log(`실행 중: ${command}`);
-            const result = execSync(command, { 
-                encoding: 'utf8', 
+            const result = execSync(command, {
+                encoding: 'utf8',
                 stdio: 'pipe',
-                ...options 
+                ...options
             });
             this.log(`성공: ${command}`, 'success');
             return result.trim();
@@ -43,7 +43,7 @@ class AutoDeployTest {
 
     async checkGitStatus() {
         this.log('🔍 Git 상태 확인...');
-        
+
         try {
             const status = await this.executeCommand('git status --porcelain');
             if (status) {
@@ -61,16 +61,16 @@ class AutoDeployTest {
 
     async addTestChanges() {
         this.log('📝 테스트 변경사항 추가...');
-        
+
         try {
             // 테스트용 파일 수정
             const testContent = `<!-- 자동 배포 테스트 - ${new Date().toISOString()} -->`;
             fs.appendFileSync(this.testFile, testContent);
-            
+
             // Git에 추가
             await this.executeCommand(`git add ${this.testFile}`);
             this.log('테스트 파일 Git에 추가 완료', 'success');
-            
+
             return true;
         } catch (error) {
             this.log(`테스트 변경사항 추가 실패: ${error.message}`, 'error');
@@ -80,7 +80,7 @@ class AutoDeployTest {
 
     async commitTestChanges() {
         this.log('💾 테스트 커밋 생성...');
-        
+
         try {
             const commitMessage = `🧪 자동 배포 테스트 - ${new Date().toLocaleString('ko-KR')}
 
@@ -92,7 +92,7 @@ class AutoDeployTest {
 
             await this.executeCommand(`git commit -m "${commitMessage}"`);
             this.log('테스트 커밋 생성 완료', 'success');
-            
+
             return true;
         } catch (error) {
             this.log(`테스트 커밋 생성 실패: ${error.message}`, 'error');
@@ -102,11 +102,11 @@ class AutoDeployTest {
 
     async pushToGitHub() {
         this.log('🚀 GitHub에 푸시...');
-        
+
         try {
             await this.executeCommand('git push origin main');
             this.log('GitHub 푸시 완료', 'success');
-            
+
             return true;
         } catch (error) {
             this.log(`GitHub 푸시 실패: ${error.message}`, 'error');
@@ -116,12 +116,12 @@ class AutoDeployTest {
 
     async checkGitHubActions() {
         this.log('🔍 GitHub Actions 상태 확인...');
-        
+
         try {
             // GitHub Actions API로 상태 확인 (간단한 방법)
             this.log('GitHub Actions 워크플로우 실행 중...', 'info');
             this.log('Actions 탭에서 실행 상태를 확인하세요: https://github.com/LeeHwiRyeon/community/actions', 'info');
-            
+
             return true;
         } catch (error) {
             this.log(`GitHub Actions 확인 실패: ${error.message}`, 'error');
@@ -131,12 +131,12 @@ class AutoDeployTest {
 
     async testFirebaseDeploy() {
         this.log('🔥 Firebase 배포 테스트...');
-        
+
         try {
             // Firebase 배포 상태 확인
             await this.executeCommand('firebase hosting:channel:list');
             this.log('Firebase 호스팅 채널 확인 완료', 'success');
-            
+
             return true;
         } catch (error) {
             this.log(`Firebase 배포 테스트 실패: ${error.message}`, 'error');
@@ -146,7 +146,7 @@ class AutoDeployTest {
 
     async generateTestReport() {
         this.log('📋 테스트 보고서 생성...');
-        
+
         const report = `# 🧪 자동 배포 테스트 보고서
 
 ## 📊 테스트 정보
@@ -193,43 +193,43 @@ class AutoDeployTest {
 
     async run() {
         this.log('🧪 자동 배포 테스트 시작!');
-        
+
         try {
             // 1. Git 상태 확인
             const gitStatus = await this.checkGitStatus();
-            
+
             // 2. 테스트 변경사항 추가
             const addChanges = await this.addTestChanges();
             if (!addChanges) {
                 throw new Error('테스트 변경사항 추가 실패');
             }
-            
+
             // 3. 테스트 커밋 생성
             const commitChanges = await this.commitTestChanges();
             if (!commitChanges) {
                 throw new Error('테스트 커밋 생성 실패');
             }
-            
+
             // 4. GitHub에 푸시
             const pushToGitHub = await this.pushToGitHub();
             if (!pushToGitHub) {
                 throw new Error('GitHub 푸시 실패');
             }
-            
+
             // 5. GitHub Actions 확인
             await this.checkGitHubActions();
-            
+
             // 6. Firebase 배포 테스트
             await this.testFirebaseDeploy();
-            
+
             // 7. 테스트 보고서 생성
             await this.generateTestReport();
-            
+
             this.log('✅ 자동 배포 테스트 완료!', 'success');
             this.log('📋 보고서: AUTO_DEPLOY_TEST_REPORT.md', 'info');
             this.log('🔗 GitHub Actions: https://github.com/LeeHwiRyeon/community/actions', 'info');
             this.log('🌐 웹사이트: https://thenewspaper-platform.web.app', 'info');
-            
+
         } catch (error) {
             this.log(`❌ 자동 배포 테스트 실패: ${error.message}`, 'error');
             process.exit(1);

@@ -1,458 +1,882 @@
-# 커뮤니티 플랫폼 테스트 가이드
+# 커뮤니티 허브 테스트 가이드
 
-## 🚀 빠른 테스트 (기본 기능 확인)
+커뮤니티 허브 플랫폼의 품질을 보장하기 위한 포괄적인 테스트 전략과 실행 방법을 안내합니다.
 
-### 1. 서버 상태 확인
-```powershell
-Invoke-WebRequest -Uri "http://localhost:50000/api/health" -UseBasicParsing
+## 목차
+
+1. [테스트 개요](#테스트-개요)
+2. [프론트엔드 테스트](#프론트엔드-테스트)
+3. [백엔드 테스트](#백엔드-테스트)
+4. [종단간 테스트](#종단간-테스트)
+5. [성능 테스트](#성능-테스트)
+6. [보안 테스트](#보안-테스트)
+7. [CI/CD 통합](#cicd-통합)
+8. [문제 해결](#문제-해결)
+
+## 테스트 개요
+
+### 테스트 철학
+
+- **테스트 주도 개발 (TDD)**: 기능 구현 전에 테스트를 먼저 작성
+- **높은 커버리지**: 85% 이상의 코드 커버리지 목표
+- **사용자 중심**: 실제 사용자 시나리오를 중심으로 테스트 설계
+- **성능 우선**: 모든 변경사항이 성능에 미치는 영향 검증
+- **보안 강화**: 보안 취약점을 사전에 발견하고 방지
+
+### 테스트 피라미드
+
+```
+    /\
+   /  \
+  / E2E \     ← 적고 포괄적인 사용자 여정 테스트
+ /______\
+/        \
+/통합 테스트\ ← API 및 컴포넌트 통합 테스트
+/____________\
+/              \
+/   단위 테스트   \ ← 많고 빠르고 격리된 테스트
+/________________\
 ```
 
-### 2. Help 엔드포인트 (모든 API 목록)
-```powershell
-Invoke-WebRequest -Uri "http://localhost:50000/api/help" -UseBasicParsing | ConvertFrom-Json | ConvertTo-Json -Depth 3
-```
-
-### 3. Redis 최적화된 Trending 확인
-```powershell
-$response = Invoke-WebRequest -Uri "http://localhost:50000/api/trending" -UseBasicParsing
-$json = $response.Content | ConvertFrom-Json
-Write-Host "소스: $($json.source)" -ForegroundColor Green
-Write-Host "포스트 수: $($json.items.Count)" -ForegroundColor Green
-```
-
-## 📊 성능 테스트
-
-### Redis vs Memory Cache 성능 비교
-```powershell
-# 첫 요청 (Redis에서 조회)
-Measure-Command { Invoke-WebRequest -Uri "http://localhost:50000/api/trending" -UseBasicParsing }
-
-# 두 번째 요청 (메모리 캐시에서 조회)
-Measure-Command { Invoke-WebRequest -Uri "http://localhost:50000/api/trending" -UseBasicParsing }
-```
-
-### 연속 성능 테스트
-```powershell
-1..10 | ForEach-Object {
-    $start = Get-Date
-    $r = Invoke-WebRequest -Uri "http://localhost:50000/api/trending" -UseBasicParsing
-    $elapsed = ((Get-Date) - $start).TotalMilliseconds
-    $json = $r.Content | ConvertFrom-Json
-    Write-Host "시도 $_`: ${elapsed:F1}ms, 소스: $($json.source)"
-}
-```
-
-## 💬 채팅 기능 테스트
-
-### 채팅방 목록 조회
-```powershell
-Invoke-WebRequest -Uri "http://localhost:50000/api/chat/rooms" -UseBasicParsing | ConvertFrom-Json
-```
-
-### 메시지 조회
-```powershell
-Invoke-WebRequest -Uri "http://localhost:50000/api/chat/test/messages" -UseBasicParsing | ConvertFrom-Json
-```
-
-### 메시지 전송
-```powershell
-$message = @{
-    content = "테스트 메시지 $(Get-Date -Format 'HH:mm:ss')"
-    author = "테스터"
-} | ConvertTo-Json
-
-Invoke-WebRequest -Uri "http://localhost:50000/api/chat/test/messages" -Method POST -Body $message -ContentType "application/json" -UseBasicParsing
-```
-
-## 🔍 Redis 상태 확인
-
-### Redis 서버 연결 테스트
-```powershell
-& "C:\Program Files\Memurai\memurai-cli.exe" ping
-```
-
-### 저장된 데이터 확인
-```powershell
-# 모든 키 확인
-& "C:\Program Files\Memurai\memurai-cli.exe" keys "*"
-
-# 트렌딩 포스트 수 확인
-& "C:\Program Files\Memurai\memurai-cli.exe" zcard "trending:posts"
-
-# 상위 5개 랭킹 확인
-& "C:\Program Files\Memurai\memurai-cli.exe" zrevrange "trending:posts" 0 4 WITHSCORES
-```
-
-## 🛡️ 보안 테스트
-
-### CORS 헤더 확인
-```powershell
-$response = Invoke-WebRequest -Uri "http://localhost:50000/api/health" -UseBasicParsing
-$response.Headers
-```
-
-### CSP 헤더 확인
-```powershell
-$response = Invoke-WebRequest -Uri "http://localhost:50000/api/trending" -UseBasicParsing
-$response.Headers["Content-Security-Policy"]
-```
-
-## 📝 로깅 확인
-
-### JSON 로그 모드 테스트
-```powershell
-# 환경 변수 설정 후 서버 재시작
-$env:LOG_JSON = "1"
-$env:REDIS_URL = "redis://localhost:6379"
-node src/index.js
-```
-
-### 로그 필드 확인
-서버 로그에서 다음 필드들이 포함되는지 확인:
-- `m`: HTTP 메서드
-- `p`: 경로  
-- `ip`: 클라이언트 IP
-- `ua`: User-Agent
-- `reqBytes`: 요청 바이트
-- `respBytes`: 응답 바이트
-- `ms`: 응답시간
-
-## 🧪 고급 테스트
-
-### 부하 테스트 (간단)
-```powershell
-1..100 | ForEach-Object -Parallel {
-    Invoke-WebRequest -Uri "http://localhost:50000/api/trending" -UseBasicParsing
-} -ThrottleLimit 10
-```
-
-### 메모리 캐시 TTL 테스트
-```powershell
-# 첫 요청
-Invoke-WebRequest -Uri "http://localhost:50000/api/trending" -UseBasicParsing
-
-# 30초 후 요청 (캐시 만료 확인)
-Start-Sleep 31
-Invoke-WebRequest -Uri "http://localhost:50000/api/trending" -UseBasicParsing
-```
-
-## 🚨 오류 시나리오 테스트
-
-### Redis 서버 중단 시 Fallback 테스트
-```powershell
-# Redis 서비스 중단
-Stop-Service -Name "Memurai"
-
-# API 호출 (DB fallback 동작 확인)
-Invoke-WebRequest -Uri "http://localhost:50000/api/trending" -UseBasicParsing
-
-# Redis 서비스 재시작
-Start-Service -Name "Memurai"
-```
-
-## 📊 성능 지표 확인
-
-### 메트릭스 엔드포인트
-```powershell
-Invoke-WebRequest -Uri "http://localhost:50000/api/metrics" -UseBasicParsing | ConvertFrom-Json
-```
-
-## 🎯 자동 테스트 스크립트 실행
-
-프로젝트에 이미 준비된 테스트 스크립트들:
-```powershell
-# 기본 성능 테스트
-powershell -ExecutionPolicy Bypass -File simple-test.ps1
-
-# Redis 성능 테스트  
-powershell -ExecutionPolicy Bypass -File redis-performance-test.ps1
-
-# 채팅 기능 테스트
-powershell -ExecutionPolicy Bypass -File chat-test.ps1
-```
-
-## 📱 브라우저 테스트
-
-브라우저에서 직접 확인:
-- `http://localhost:50000/api/help` - API 문서
-- `http://localhost:50000/api/trending` - 인기글 랭킹
-- `http://localhost:50000/api/health` - 서버 상태
-- `http://localhost:50000/api/metrics` - 성능 지표
-
----
-
-**💡 팁: 가장 빠른 테스트는 `http://localhost:50000/api/help`를 브라우저에서 열어보는 것입니다!**
-
----
-
-## ♻️ 수동 테스트 페이지 갱신 절차 (frontend/test-frontend.html)
-
-새 기능(엔드포인트/행동) 추가 시 아래 순서를 따라 테스트 HTML을 갱신합니다.
-
-1. 어떤 동작을 검증할지 정의 (요청 메서드/URL/필수 body/query)
-2. `frontend/test-frontend.html` 내 관련 섹션(게시글/채팅/보안 등) 선택 또는 새로운 "test-card" 블록 추가
-3. 버튼(`<button onclick="...">`) 추가 + 결과 출력용 `<div id="XXXResult" class="result"></div>` 준비
-4. JS 하단에 공용 `makeRequest(...)` 재사용하여 async 함수 구현
-5. 성공/실패 메시지는 `showResult(elementId, message, type)` 패턴 사용 (type: success|error|info)
-6. 커뮤니티 의존 기능은 현재 선택값(`currentCommunity` 또는 드롭다운 value) 반영
-7. 필요한 경우 반복/성능 측정 시 `performance.now()` 이용해 소요(ms) 포함
-8. 저장 후 브라우저에서 새로고침(F5) → 기능 수동 확인
-9. 자동화 가능/중요 경로라면 `server-backend/tests/auto/*.test.js` 로도 스모크 추가
-
-예시 스니펫:
-```html
-<button onclick="testNewFeature()">신규 기능 테스트</button>
-<div id="newFeatureResult" class="result"></div>
-```
-```javascript
-async function testNewFeature() {
-    showLoading('newFeatureResult');
-    const res = await makeRequest(`${API_BASE}/new/endpoint`, { method: 'POST', body: JSON.stringify({ foo: 'bar' }) });
-    if (res.success) {
-        showResult('newFeatureResult', `✅ 성공: id=${res.data.id}`, 'success');
-    } else {
-        showResult('newFeatureResult', `❌ 실패: ${res.error}`, 'error');
-    }
-}
-```
-
-경량 점검만 필요한 경우 `frontend/simple-test.html` 에도 동일 방식으로 소규모 버튼을 추가할 수 있습니다.
-
-문서화 체크: 기능 추가 후 README 또는 관련 가이드(CATEGORY, CHAT, AUTH 등)에서 참조 필요 여부 검토 → 필요 시 링크/설명 보강.
-
-## 설정 및 인코딩
-- **UTF-8 인코딩**: Mock server에서 UTF-8 인코딩을 명시적으로 설정하여 다국어 텍스트(그리스어, 일본어 등)가 깨지지 않도록 함
-- **게임 카테고리**: `data/categories/game.json`에 국제 카테고리(Ελληνικά, 日本語, 한국어) 추가로 다국어 지원 테스트 가능
-- **자동 메뉴 생성**: `/api/menu` 엔드포인트에서 `data/categories/game.json`을 기반으로 네비게이션 메뉴를 자동 생성하여 관리 편의성 향상
-
----
-
-## 스트리머 온보딩 매뉴얼 테스트 케이스
-
-### 테스트 개요
-스트리머 온보딩 매뉴얼의 각 단계별 기능을 검증하는 테스트 케이스입니다. 초보자 사용자를 대상으로 한 완전한 워크플로우 테스트를 포함합니다.
-
-### TC-STR-001: OBS 설정 가이드 검증
-**목적:** OBS 설치부터 스트리밍 설정까지의 전체 프로세스 검증
-
-**사전 조건:**
-- Windows/macOS/Linux 환경
-- 인터넷 연결
-- OBS 미설치 상태
-
-**테스트 단계:**
-1. OBS 공식 사이트 접속 및 다운로드
-2. 설치 마법사 실행 및 완료
-3. OBS 실행 및 기본 인터페이스 확인
-4. 씬 생성 및 소스 추가
-5. 오디오/비디오 설정 구성
-6. 인코딩 설정 적용
-7. 스트리밍 키 입력 및 테스트 스트리밍
-
-**예상 결과:**
-- OBS 정상 설치 및 실행
-- 모든 설정 옵션 접근 가능
-- 테스트 스트리밍 성공 (녹화 또는 플랫폼 연결)
-
-**실패 케이스:**
-- 설치 실패: 네트워크 문제 또는 권한 부족
-- 설정 오류: 잘못된 해상도/비트레이트로 인한 품질 저하
-
-### TC-STR-002: 플랫폼 계정 연동 테스트
-**목적:** Twitch/YouTube/AfreecaTV 계정 연동 프로세스 검증
-
-**사전 조건:**
-- 각 플랫폼 계정 보유
-- 스트림키 접근 권한
-
-**테스트 단계:**
-1. Twitch 계정 생성 및 이메일 인증
-2. 채널 프로필/배너 설정
-3. 스트림키 확인 및 복사
-4. YouTube 라이브 권한 활성화
-5. AfreecaTV BJ 인증 진행
-6. 각 플랫폼별 권장 설정 적용
-
-**예상 결과:**
-- 모든 플랫폼 계정 정상 연동
-- 스트림키 안전하게 저장
-- 채널 설정 완료 상태
-
-### TC-STR-003: 첫 방송 준비 체크리스트 검증
-**목적:** 방송 준비 단계별 체크리스트 기능 테스트
-
-**사전 조건:**
-- OBS 설치 완료
-- 플랫폼 계정 연동 완료
-
-**테스트 단계:**
-1. 장비 점검 (컴퓨터 사양, 인터넷 속도)
-2. 마이크/웹캠 테스트
-3. 조명 및 배경 설정
-4. 콘텐츠 기획 (주제 선정)
-5. 방송 제목/설명 작성
-6. 썸네일 디자인
-
-**예상 결과:**
-- 모든 체크리스트 항목 완료
-- 네트워크 속도 5Mbps 이상
-- 오디오/비디오 품질 양호
-
-### TC-STR-004: 커뮤니티 구축 전략 테스트
-**목적:** Discord 서버 및 소셜 미디어 연동 검증
-
-**사전 조건:**
-- Discord 계정
-- 소셜 미디어 계정 (Twitter/Instagram)
-
-**테스트 단계:**
-1. Discord 서버 생성 및 설정
-2. 채널 구조 설계 (공지/일반/팬아트)
-3. 역할 및 권한 설정
-4. 초대 링크 생성 및 배포
-5. 소셜 미디어 연동
-6. 커뮤니티 규칙 작성
-
-**예상 결과:**
-- Discord 서버 정상 운영
-- 채널 권한 체계 작동
-- 소셜 미디어 연동 성공
-
-### TC-STR-005: 수익화 설정 테스트
-**목적:** Twitch/YouTube/AfreecaTV 수익화 기능 검증
-
-**사전 조건:**
-- 플랫폼 파트너십 자격
-- 계좌 정보 준비
-
-**테스트 단계:**
-1. Twitch Cheer/Subscribe 설정
-2. YouTube 수퍼챗 활성화
-3. AfreecaTV 별풍선 설정
-4. Patreon 연동
-5. 수익금 출금 설정
-6. 세금 신고 준비
-
-**예상 결과:**
-- 모든 수익화 옵션 정상 설정
-- 테스트 기부/구독 성공
-- 출금 프로세스 이해
-
-### TC-STR-006: 고급 기능 활용 테스트
-**목적:** 채팅봇, 스트림 덱, 녹화 편집 등 고급 기능 검증
-
-**사전 조건:**
-- 기본 방송 설정 완료
-- 추가 도구 설치 (Stream Deck 등)
-
-**테스트 단계:**
-1. StreamElements 채팅봇 설정
-2. 스트림 덱 버튼 구성
-3. OBS 고급 소스 활용
-4. 녹화 및 편집 워크플로우
-5. VOD 관리
-6. 협업 방송 설정
-
-**예상 결과:**
-- 고급 기능 정상 작동
-- 자동화 프로세스 효율성 확인
-- 콘텐츠 품질 향상
-
-### TC-STR-007: 문제 해결 가이드 검증
-**목적:** 일반적인 방송 문제 해결 능력 테스트
-
-**사전 조건:**
-- 방송 환경 구축 완료
-
-**테스트 단계:**
-1. 네트워크 문제 시뮬레이션 및 해결
-2. 오디오 에코 제거 테스트
-3. 비디오 랙 현상 해결
-4. 플랫폼 연결 실패 대응
-5. 긴급 상황 (인터넷 끊김) 대처
-
-**예상 결과:**
-- 모든 문제 유형에 대한 해결책 적용 가능
-- 백업 계획 작동
-- 문제 해결 시간 최소화
-
-### TC-STR-008: 매뉴얼 웹사이트 UX 테스트
-**목적:** 대화형 매뉴얼 웹사이트 사용자 경험 검증
-
-**사전 조건:**
-- 매뉴얼 웹사이트 배포 완료
-
-**테스트 단계:**
-1. 단계별 진행 바 확인
-2. 체크리스트 상호작용 테스트
-3. 비디오 임베드 재생
-4. 검색 기능 테스트
-5. 모바일 반응형 확인
-6. 접근성 준수 검증
-
-**예상 결과:**
-- 직관적인 사용자 인터페이스
-- 모든 기능 정상 작동
-- 모바일/데스크톱 호환성 양호
-
-### TC-STR-009: 베타 테스터 피드백 수집
-**목적:** 실제 사용자 피드백 기반 개선 검증
-
-**사전 조건:**
-- 베타 테스터 모집 완료
-
-**테스트 단계:**
-1. 테스터 대상 사용성 테스트
-2. 피드백 설문조사 실시
-3. A/B 테스트 (텍스트 vs 비디오)
-4. 완료율 및 만족도 측정
-5. 피드백 기반 개선 적용
-
-**예상 결과:**
-- 사용자 피드백 체계적 수집
-- 개선 포인트 식별
-- 만족도 점수 향상
-
-### TC-STR-010: 종합 워크플로우 테스트
-**목적:** 초보자부터 첫 방송까지 완전한 여정 테스트
-
-**사전 조건:**
-- 모든 매뉴얼 구성 요소 준비 완료
-
-**테스트 단계:**
-1. 완전 초보자 시뮬레이션
-2. 매뉴얼 따라 단계별 진행
-3. 각 단계별 시간 측정
-4. 장애물 발생 및 해결
-5. 최종 방송 성공
-
-**예상 결과:**
-- 80% 이상 완료율 달성
-- 평균 소요 시간 45분 이내
-- 사용자 만족도 높음
-
-### 테스트 자동화 제안
-```javascript
-// 스트리머 매뉴얼 테스트 자동화 예시
-const { test, expect } = require('@playwright/test');
-
-test('스트리머 매뉴얼 워크플로우', async ({ page }) => {
-  // OBS 다운로드 페이지 접근
-  await page.goto('https://obsproject.com');
-  await expect(page.locator('text=Download')).toBeVisible();
-  
-  // 플랫폼 가이드 확인
-  await page.goto('/manual/platform-setup');
-  await expect(page.locator('text=Twitch 계정 생성')).toBeVisible();
-  
-  // 체크리스트 상호작용
-  await page.check('#equipment-check');
-  await expect(page.locator('.progress-bar')).toHaveAttribute('style', /width: \d+%/);
+## 프론트엔드 테스트
+
+### 단위 테스트 (Vitest)
+
+#### 컴포넌트 테스트 예제
+
+```typescript
+import { render, screen, fireEvent } from '@testing-library/react';
+import { PostCard } from './PostCard';
+
+describe('PostCard 컴포넌트', () => {
+  const mockPost = {
+    id: 1,
+    title: '테스트 게시물',
+    content: '테스트 내용',
+    author: { id: 1, username: 'testuser' },
+    views: 100,
+    createdAt: '2024-01-01T00:00:00Z'
+  };
+
+  it('게시물 제목과 내용을 올바르게 표시한다', () => {
+    render(<PostCard post={mockPost} />);
+    
+    expect(screen.getByText('테스트 게시물')).toBeInTheDocument();
+    expect(screen.getByText('테스트 내용')).toBeInTheDocument();
+  });
+
+  it('투표 버튼 클릭 시 콜백 함수를 호출한다', () => {
+    const mockOnVote = jest.fn();
+    render(<PostCard post={mockPost} onVote={mockOnVote} />);
+    
+    fireEvent.click(screen.getByText('추천'));
+    expect(mockOnVote).toHaveBeenCalledWith(1, 'up');
+  });
+
+  it('조회수를 정확히 표시한다', () => {
+    render(<PostCard post={mockPost} />);
+    expect(screen.getByText('100 조회')).toBeInTheDocument();
+  });
 });
 ```
 
-### 성능 및 안정성 테스트
-- **페이지 로딩 시간:** 매뉴얼 페이지 3초 이내 로딩
-- **비디오 재생:** 버퍼링 없이 원활한 재생
-- **모바일 호환성:** 터치 인터페이스 정상 작동
-- **접근성:** 스크린 리더 지원, 키보드 내비게이션
+#### 커스텀 훅 테스트
+
+```typescript
+import { renderHook, act } from '@testing-library/react';
+import { usePosts } from './usePosts';
+
+describe('usePosts 훅', () => {
+  it('초기 로딩 상태가 올바르다', async () => {
+    const { result } = renderHook(() => usePosts(1));
+    
+    expect(result.current.loading).toBe(true);
+    
+    await act(async () => {
+      await new Promise(resolve => setTimeout(resolve, 0));
+    });
+    
+    expect(result.current.loading).toBe(false);
+    expect(result.current.posts).toHaveLength(0);
+  });
+
+  it('API 오류를 적절히 처리한다', async () => {
+    jest.spyOn(apiService, 'getPosts').mockRejectedValue(new Error('API 오류'));
+    
+    const { result } = renderHook(() => usePosts(1));
+    
+    await act(async () => {
+      await new Promise(resolve => setTimeout(resolve, 0));
+    });
+    
+    expect(result.current.error).toBe('API 오류');
+    expect(result.current.loading).toBe(false);
+  });
+});
+```
+
+#### 테스트 유틸리티 설정
+
+```typescript
+// test-utils.tsx
+import { render, RenderOptions } from '@testing-library/react';
+import { ChakraProvider } from '@chakra-ui/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { Provider as ReduxProvider } from 'react-redux';
+import { store } from '../store';
+
+const AllTheProviders = ({ children }: { children: React.ReactNode }) => {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: { retry: false },
+      mutations: { retry: false }
+    }
+  });
+
+  return (
+    <ReduxProvider store={store}>
+      <QueryClientProvider client={queryClient}>
+        <ChakraProvider>
+          {children}
+        </ChakraProvider>
+      </QueryClientProvider>
+    </ReduxProvider>
+  );
+};
+
+const customRender = (ui: React.ReactElement, options?: RenderOptions) =>
+  render(ui, { wrapper: AllTheProviders, ...options });
+
+export * from '@testing-library/react';
+export { customRender as render };
+```
+
+### 통합 테스트
+
+#### API 통합 테스트
+
+```typescript
+import { apiService } from '../api';
+
+describe('API 통합 테스트', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('게시물 목록을 성공적으로 가져온다', async () => {
+    const mockPosts = [
+      { id: 1, title: '게시물 1', content: '내용 1' },
+      { id: 2, title: '게시물 2', content: '내용 2' }
+    ];
+
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: true,
+      json: () => Promise.resolve({ success: true, data: mockPosts })
+    });
+
+    const result = await apiService.getPosts(1);
+    
+    expect(result.success).toBe(true);
+    expect(result.data).toEqual(mockPosts);
+  });
+
+  it('API 오류를 적절히 처리한다', async () => {
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: false,
+      status: 500,
+      json: () => Promise.resolve({ success: false, error: '서버 오류' })
+    });
+
+    await expect(apiService.getPosts(1)).rejects.toThrow('서버 오류');
+  });
+});
+```
+
+## 백엔드 테스트
+
+### 단위 테스트 (Jest)
+
+#### 서비스 테스트
+
+```javascript
+// services/posts/post-service.test.js
+import { PostService } from './post-service.js';
+import { query } from '../../db.js';
+
+jest.mock('../../db.js');
+
+describe('PostService', () => {
+  let postService;
+
+  beforeEach(() => {
+    postService = new PostService();
+    jest.clearAllMocks();
+  });
+
+  describe('getPosts', () => {
+    it('올바른 쿼리로 게시물을 조회한다', async () => {
+      const mockPosts = [
+        { id: 1, title: '게시물 1', content: '내용 1' },
+        { id: 2, title: '게시물 2', content: '내용 2' }
+      ];
+
+      query.mockResolvedValue(mockPosts);
+
+      const result = await postService.getPosts({ boardId: 1, page: 1, limit: 20 });
+
+      expect(query).toHaveBeenCalledWith(
+        expect.stringContaining('SELECT'),
+        [1, 20, 0]
+      );
+      expect(result).toEqual(mockPosts);
+    });
+
+    it('데이터베이스 오류를 처리한다', async () => {
+      query.mockRejectedValue(new Error('데이터베이스 연결 실패'));
+
+      await expect(postService.getPosts({})).rejects.toThrow('데이터베이스 연결 실패');
+    });
+  });
+
+  describe('createPost', () => {
+    it('새 게시물을 성공적으로 생성한다', async () => {
+      const postData = {
+        title: '새 게시물',
+        content: '새 내용',
+        boardId: 1
+      };
+
+      query.mockResolvedValue({ insertId: 123 });
+
+      const result = await postService.createPost(postData, 1);
+
+      expect(query).toHaveBeenCalledWith(
+        'INSERT INTO posts (title, content, board_id, author_id) VALUES (?, ?, ?, ?)',
+        ['새 게시물', '새 내용', 1, 1]
+      );
+      expect(result.id).toBe(123);
+    });
+  });
+});
+```
+
+#### API 라우트 테스트
+
+```javascript
+// routes/posts.test.js
+import request from 'supertest';
+import express from 'express';
+import postsRouter from './posts.js';
+
+const app = express();
+app.use('/api/posts', postsRouter);
+
+describe('POST /api/posts', () => {
+  it('새 게시물을 생성한다', async () => {
+    const postData = {
+      title: '테스트 게시물',
+      content: '테스트 내용',
+      boardId: 1
+    };
+
+    const response = await request(app)
+      .post('/api/posts')
+      .set('Authorization', 'Bearer valid-token')
+      .send(postData)
+      .expect(201);
+
+    expect(response.body.success).toBe(true);
+    expect(response.body.data.title).toBe('테스트 게시물');
+  });
+
+  it('인증되지 않은 요청에 401을 반환한다', async () => {
+    const response = await request(app)
+      .post('/api/posts')
+      .send({ title: '테스트' })
+      .expect(401);
+
+    expect(response.body.success).toBe(false);
+    expect(response.body.error.code).toBe('UNAUTHORIZED');
+  });
+
+  it('필수 필드 검증을 수행한다', async () => {
+    const response = await request(app)
+      .post('/api/posts')
+      .set('Authorization', 'Bearer valid-token')
+      .send({})
+      .expect(400);
+
+    expect(response.body.success).toBe(false);
+    expect(response.body.error.code).toBe('VALIDATION_ERROR');
+  });
+});
+```
+
+### 데이터베이스 테스트
+
+#### 스키마 검증
+
+```javascript
+// tests/database/schema.test.js
+import { query } from '../../src/db.js';
+
+describe('데이터베이스 스키마', () => {
+  it('필수 테이블들이 존재한다', async () => {
+    const tables = await query(`
+      SELECT table_name 
+      FROM information_schema.tables 
+      WHERE table_schema = DATABASE()
+    `);
+
+    const tableNames = tables.map(row => row.table_name);
+    
+    expect(tableNames).toContain('users');
+    expect(tableNames).toContain('posts');
+    expect(tableNames).toContain('comments');
+    expect(tableNames).toContain('boards');
+  });
+
+  it('외래 키 제약조건이 올바르게 설정되어 있다', async () => {
+    const constraints = await query(`
+      SELECT 
+        CONSTRAINT_NAME,
+        TABLE_NAME,
+        COLUMN_NAME,
+        REFERENCED_TABLE_NAME,
+        REFERENCED_COLUMN_NAME
+      FROM information_schema.KEY_COLUMN_USAGE
+      WHERE REFERENCED_TABLE_NAME IS NOT NULL
+      AND TABLE_SCHEMA = DATABASE()
+    `);
+
+    const postAuthorConstraint = constraints.find(
+      c => c.TABLE_NAME === 'posts' && c.COLUMN_NAME === 'author_id'
+    );
+
+    expect(postAuthorConstraint).toBeDefined();
+    expect(postAuthorConstraint.REFERENCED_TABLE_NAME).toBe('users');
+  });
+});
+```
+
+## 종단간 테스트
+
+### Playwright 설정
+
+#### 기본 구성
+
+```javascript
+// playwright.config.js
+import { defineConfig, devices } from '@playwright/test';
+
+export default defineConfig({
+  testDir: './tests/e2e',
+  fullyParallel: true,
+  forbidOnly: !!process.env.CI,
+  retries: process.env.CI ? 2 : 0,
+  workers: process.env.CI ? 1 : undefined,
+  reporter: 'html',
+  use: {
+    baseURL: 'http://localhost:5000',
+    trace: 'on-first-retry',
+  },
+  projects: [
+    {
+      name: 'chromium',
+      use: { ...devices['Desktop Chrome'] },
+    },
+    {
+      name: 'firefox',
+      use: { ...devices['Desktop Firefox'] },
+    },
+    {
+      name: 'webkit',
+      use: { ...devices['Desktop Safari'] },
+    },
+    {
+      name: 'Mobile Chrome',
+      use: { ...devices['Pixel 5'] },
+    },
+  ],
+  webServer: {
+    command: 'npm run dev',
+    url: 'http://localhost:5000',
+    reuseExistingServer: !process.env.CI,
+  },
+});
+```
+
+#### 사용자 워크플로우 테스트
+
+```javascript
+// tests/e2e/user-workflow.spec.js
+import { test, expect } from '@playwright/test';
+
+test.describe('사용자 워크플로우', () => {
+  test('사용자가 게시물을 생성하고 확인할 수 있다', async ({ page }) => {
+    // 로그인
+    await page.goto('/login');
+    await page.fill('[data-testid="email"]', 'test@example.com');
+    await page.fill('[data-testid="password"]', 'password');
+    await page.click('[data-testid="login-button"]');
+
+    // 게시판으로 이동
+    await page.goto('/board/1');
+    
+    // 게시물 생성
+    await page.click('[data-testid="create-post-button"]');
+    await page.fill('[data-testid="post-title"]', '테스트 게시물');
+    await page.fill('[data-testid="post-content"]', '테스트 내용');
+    await page.click('[data-testid="submit-post"]');
+
+    // 게시물이 표시되는지 확인
+    await expect(page.locator('[data-testid="post-title"]')).toContainText('테스트 게시물');
+  });
+
+  test('사용자가 게시물에 투표할 수 있다', async ({ page }) => {
+    await page.goto('/board/1');
+    
+    const voteButton = page.locator('[data-testid="vote-up-button"]').first();
+    await voteButton.click();
+    
+    await expect(voteButton).toHaveClass(/voted/);
+  });
+
+  test('사용자가 게시물을 검색할 수 있다', async ({ page }) => {
+    await page.goto('/');
+    
+    await page.fill('[data-testid="search-input"]', '테스트 쿼리');
+    await page.click('[data-testid="search-button"]');
+    
+    await expect(page).toHaveURL(/search\?q=test%20query/);
+    await expect(page.locator('[data-testid="search-results"]')).toBeVisible();
+  });
+});
+```
+
+### 페이지 객체 모델
+
+```javascript
+// tests/e2e/pages/LoginPage.js
+export class LoginPage {
+  constructor(page) {
+    this.page = page;
+    this.emailInput = page.locator('[data-testid="email"]');
+    this.passwordInput = page.locator('[data-testid="password"]');
+    this.loginButton = page.locator('[data-testid="login-button"]');
+    this.errorMessage = page.locator('[data-testid="error-message"]');
+  }
+
+  async login(email, password) {
+    await this.emailInput.fill(email);
+    await this.passwordInput.fill(password);
+    await this.loginButton.click();
+  }
+
+  async getErrorMessage() {
+    return await this.errorMessage.textContent();
+  }
+}
+
+// tests/e2e/pages/BoardPage.js
+export class BoardPage {
+  constructor(page) {
+    this.page = page;
+    this.createPostButton = page.locator('[data-testid="create-post-button"]');
+    this.postList = page.locator('[data-testid="post-list"]');
+    this.postItems = page.locator('[data-testid="post-item"]');
+  }
+
+  async createPost(title, content) {
+    await this.createPostButton.click();
+    await this.page.fill('[data-testid="post-title"]', title);
+    await this.page.fill('[data-testid="post-content"]', content);
+    await this.page.click('[data-testid="submit-post"]');
+  }
+
+  async getPostCount() {
+    return await this.postItems.count();
+  }
+}
+```
+
+## 성능 테스트
+
+### 부하 테스트 (Artillery)
+
+```yaml
+# artillery-config.yml
+config:
+  target: 'http://localhost:50000'
+  phases:
+    - duration: 60
+      arrivalRate: 10
+    - duration: 120
+      arrivalRate: 20
+    - duration: 60
+      arrivalRate: 10
+
+scenarios:
+  - name: "API 부하 테스트"
+    weight: 100
+    flow:
+      - get:
+          url: "/api/health"
+      - get:
+          url: "/api/posts"
+      - post:
+          url: "/api/posts"
+          json:
+            title: "부하 테스트 게시물"
+            content: "이것은 부하 테스트 게시물입니다"
+```
+
+### 프론트엔드 성능 테스트
+
+```javascript
+// tests/performance/frontend-performance.test.js
+import { test, expect } from '@playwright/test';
+
+test.describe('성능 테스트', () => {
+  test('홈페이지가 2초 내에 로드된다', async ({ page }) => {
+    const startTime = Date.now();
+    await page.goto('/');
+    await page.waitForLoadState('networkidle');
+    const loadTime = Date.now() - startTime;
+    
+    expect(loadTime).toBeLessThan(2000);
+  });
+
+  test('대용량 게시물 목록이 효율적으로 렌더링된다', async ({ page }) => {
+    await page.goto('/board/1');
+    
+    const startTime = Date.now();
+    await page.waitForSelector('[data-testid="post-item"]');
+    const renderTime = Date.now() - startTime;
+    
+    expect(renderTime).toBeLessThan(1000);
+  });
+
+  test('메모리 사용량이 적절한 수준을 유지한다', async ({ page }) => {
+    await page.goto('/');
+    
+    const metrics = await page.evaluate(() => {
+      return {
+        usedJSHeapSize: performance.memory.usedJSHeapSize,
+        totalJSHeapSize: performance.memory.totalJSHeapSize
+      };
+    });
+    
+    expect(metrics.usedJSHeapSize).toBeLessThan(50 * 1024 * 1024);
+  });
+});
+```
+
+## 보안 테스트
+
+### 인증 보안 테스트
+
+```javascript
+// tests/security/auth.test.js
+import request from 'supertest';
+import app from '../src/app.js';
+
+describe('인증 보안', () => {
+  it('무차별 대입 공격을 방지한다', async () => {
+    const attempts = 5;
+    
+    for (let i = 0; i < attempts; i++) {
+      await request(app)
+        .post('/api/auth/login')
+        .send({ email: 'test@example.com', password: 'wrongpassword' })
+        .expect(401);
+    }
+    
+    // 5번 시도 후 속도 제한
+    await request(app)
+      .post('/api/auth/login')
+      .send({ email: 'test@example.com', password: 'wrongpassword' })
+      .expect(429);
+  });
+
+  it('JWT 토큰을 올바르게 검증한다', async () => {
+    const invalidToken = 'invalid.jwt.token';
+    
+    await request(app)
+      .get('/api/posts')
+      .set('Authorization', `Bearer ${invalidToken}`)
+      .expect(401);
+  });
+
+  it('SQL 인젝션을 방지한다', async () => {
+    const maliciousInput = "'; DROP TABLE posts; --";
+    
+    await request(app)
+      .post('/api/posts')
+      .set('Authorization', 'Bearer valid-token')
+      .send({ title: maliciousInput, content: 'test' })
+      .expect(400);
+  });
+});
+```
+
+### 입력 검증 테스트
+
+```javascript
+// tests/security/input-validation.test.js
+describe('입력 검증', () => {
+  it('HTML 입력을 안전하게 정화한다', async () => {
+    const maliciousInput = '<script>alert("xss")</script>';
+    
+    const response = await request(app)
+      .post('/api/posts')
+      .set('Authorization', 'Bearer valid-token')
+      .send({ title: '테스트', content: maliciousInput });
+    
+    expect(response.body.data.content).not.toContain('<script>');
+  });
+
+  it('파일 업로드를 안전하게 검증한다', async () => {
+    const maliciousFile = Buffer.from('악성 콘텐츠');
+    
+    await request(app)
+      .post('/api/attachments/upload')
+      .set('Authorization', 'Bearer valid-token')
+      .attach('file', maliciousFile, 'malicious.exe')
+      .expect(400);
+  });
+});
+```
+
+## CI/CD 통합
+
+### GitHub Actions 워크플로우
+
+```yaml
+# .github/workflows/test.yml
+name: 테스트 스위트
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: password
+          MYSQL_DATABASE: community_hub_test
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+      redis:
+        image: redis:6
+        ports:
+          - 6379:6379
+        options: --health-cmd="redis-cli ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Node.js 설정
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - name: 의존성 설치
+        run: |
+          cd server-backend
+          npm ci
+          cd ../frontend
+          npm ci
+      
+      - name: 백엔드 테스트 실행
+        run: |
+          cd server-backend
+          npm test
+        env:
+          DB_HOST: localhost
+          DB_USER: root
+          DB_PASSWORD: password
+          DB_NAME: community_hub_test
+          REDIS_HOST: localhost
+      
+      - name: 프론트엔드 테스트 실행
+        run: |
+          cd frontend
+          npm test
+      
+      - name: E2E 테스트 실행
+        run: |
+          cd frontend
+          npm run test:e2e:ci
+      
+      - name: 테스트 결과 업로드
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: test-results
+          path: |
+            frontend/test-results/
+            server-backend/coverage/
+```
+
+### 테스트 커버리지 설정
+
+```javascript
+// vitest.config.js
+import { defineConfig } from 'vitest/config';
+
+export default defineConfig({
+  test: {
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'json', 'html'],
+      exclude: [
+        'node_modules/',
+        'tests/',
+        '**/*.test.{js,ts,jsx,tsx}',
+        '**/*.spec.{js,ts,jsx,tsx}'
+      ],
+      thresholds: {
+        global: {
+          branches: 80,
+          functions: 80,
+          lines: 80,
+          statements: 80
+        }
+      }
+    }
+  }
+});
+```
+
+## 문제 해결
+
+### 일반적인 테스트 문제
+
+#### 프론트엔드 테스트 문제
+
+```javascript
+// 문제: 테스트 시간 초과
+// 해결책: 타임아웃 증가
+test.setTimeout(10000);
+
+// 문제: 모킹이 작동하지 않음
+// 해결책: 테스트 간 모킹 초기화
+beforeEach(() => {
+  jest.clearAllMocks();
+});
+
+// 문제: 컴포넌트가 렌더링되지 않음
+// 해결책: 모든 프로바이더가 래핑되었는지 확인
+const renderWithProviders = (ui) => {
+  return render(ui, { wrapper: AllTheProviders });
+};
+```
+
+#### 백엔드 테스트 문제
+
+```javascript
+// 문제: 데이터베이스 연결 오류
+// 해결책: 테스트 데이터베이스 설정 확인
+beforeAll(async () => {
+  await ensureDatabase();
+  await initSchema();
+});
+
+// 문제: 테스트 간 간섭
+// 해결책: 각 테스트 후 정리
+afterEach(async () => {
+  await cleanupTestData();
+});
+
+// 문제: 비동기 작업 미완료
+// 해결책: 적절한 async/await 사용
+it('비동기 작업을 처리한다', async () => {
+  const result = await someAsyncFunction();
+  expect(result).toBeDefined();
+});
+```
+
+### 디버깅 방법
+
+#### 프론트엔드 디버깅
+
+```javascript
+// DOM 상태 확인
+import { screen } from '@testing-library/react';
+
+test('디버그 테스트', () => {
+  render(<Component />);
+  screen.debug(); // 현재 DOM 출력
+});
+
+// 사용 가능한 역할 확인
+import { logRoles } from '@testing-library/react';
+
+test('역할 디버그', () => {
+  const { container } = render(<Component />);
+  logRoles(container);
+});
+```
+
+#### 백엔드 디버깅
+
+```javascript
+// 데이터베이스 쿼리 디버깅
+test('쿼리 디버그', async () => {
+  const result = await db.query('SELECT * FROM users');
+  console.log('쿼리 결과:', result);
+  expect(result).toBeDefined();
+});
+
+// API 응답 디버깅
+import request from 'supertest';
+
+test('API 응답 디버그', async () => {
+  const response = await request(app)
+    .get('/api/posts')
+    .expect(200);
+  
+  console.log('응답 본문:', response.body);
+});
+```
+
+## 모범 사례
+
+### 테스트 구성
+- 관련 테스트를 `describe` 블록으로 그룹화
+- 명확하고 설명적인 테스트 이름 사용
+- 테스트를 독립적이고 격리된 상태로 유지
+- 적절한 설정 및 정리 함수 활용
+
+### 테스트 데이터
+- 프로덕션과 유사한 현실적인 테스트 데이터 사용
+- 공통 테스트 데이터 설정을 위한 헬퍼 함수 생성
+- 각 테스트 후 데이터 정리
+- 복잡한 객체 생성을 위한 팩토리 패턴 활용
+
+### 성능
+- 단위 테스트를 빠르게 유지 (100ms 미만)
+- 외부 의존성에 대해 모킹 사용
+- 가능한 경우 병렬 테스트 실행
+- 테스트 실행 시간 모니터링
+
+### 유지보수
+- 요구사항 변경 시 테스트 업데이트
+- 오래된 테스트 제거
+- 중복을 줄이기 위한 테스트 리팩토링
+- 복잡한 테스트 시나리오 문서화
+
+---
+
+이 테스트 가이드는 커뮤니티 허브 플랫폼의 품질과 신뢰성을 보장하기 위한 포괄적인 프레임워크를 제공합니다. 정기적인 테스트를 통해 문제를 조기에 발견하고 높은 수준의 코드 품질을 유지할 수 있습니다.

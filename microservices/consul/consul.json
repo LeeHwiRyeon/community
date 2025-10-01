@@ -1,0 +1,60 @@
+{
+    "datacenter": "community-dc",
+    "data_dir": "/consul/data",
+    "log_level": "INFO",
+    "node_name": "consul-server",
+    "server": true,
+    "bootstrap_expect": 1,
+    "ui_config": {
+        "enabled": true
+    },
+    "client_addr": "0.0.0.0",
+    "bind_addr": "0.0.0.0",
+    "retry_join": [
+        "consul-server"
+    ],
+    "ports": {
+        "grpc": 8502
+    },
+    "connect": {
+        "enabled": true
+    },
+    "services": [
+        {
+            "name": "community-backend",
+            "port": 5000,
+            "check": {
+                "http": "http://community-backend:5000/api/health-check",
+                "interval": "10s",
+                "timeout": "3s"
+            }
+        },
+        {
+            "name": "community-frontend",
+            "port": 3000,
+            "check": {
+                "http": "http://community-frontend:3000/health",
+                "interval": "10s",
+                "timeout": "3s"
+            }
+        },
+        {
+            "name": "community-chat",
+            "port": 5001,
+            "check": {
+                "http": "http://community-chat:5001/health",
+                "interval": "10s",
+                "timeout": "3s"
+            }
+        },
+        {
+            "name": "community-notification",
+            "port": 5002,
+            "check": {
+                "http": "http://community-notification:5002/health",
+                "interval": "10s",
+                "timeout": "3s"
+            }
+        }
+    ]
+}

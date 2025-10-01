@@ -14,6 +14,10 @@ import {
 } from '../hooks/useCommunityData'
 import { BoardCardSkeleton } from '../components/Skeleton'
 import { ContentTester } from '../components/ContentTester'
+import CommunityButtonList from '../components/CommunityButtonList'
+import CommunityFilter from '../components/CommunityFilter'
+import VirtualizedBoardList from '../components/VirtualizedBoardList'
+import VirtualizedPostList from '../components/VirtualizedPostList'
 
 type SupportedPostFormat = 'article' | 'discussion' | 'broadcast' | 'gallery'
 type BroadcastPreview = Extract<PostPreview, { type: 'broadcast' }>
@@ -183,6 +187,7 @@ const getPostFormat = (post: Post, fallbackFormat?: string | null): string => {
 function HomePage(): React.ReactElement {
   const [selectedCommunityId, setSelectedCommunityId] = useState<string | null>(null)
   const [showContentTester, setShowContentTester] = useState(false)
+  const [filteredPosts, setFilteredPosts] = useState<Post[]>([])
   const navigate = useNavigate()
 
   const newsQuery = useNewsPosts()
@@ -206,6 +211,10 @@ function HomePage(): React.ReactElement {
       return null
     }
 
+    if (selectedCommunityId === 'all') {
+      return null // "All" means no specific community selected
+    }
+
     if (selectedCommunityId) {
       const match = communities.find((community) => community.id === selectedCommunityId)
 
@@ -218,6 +227,21 @@ function HomePage(): React.ReactElement {
   }, [communities, selectedCommunityId])
 
   const communityBoards = useMemo(() => {
+    if (selectedCommunityId === 'all') {
+      // When "All" is selected, return all boards from all communities
+      return communities.flatMap(community =>
+        community.boards?.map(board => ({
+          ...board,
+          communityId: community.id,
+          communityTitle: community.title
+        })) || []
+      ).sort((a, b) => {
+        const orderA = typeof a.ordering === 'number' ? a.ordering : typeof a.rank === 'number' ? a.rank : 0
+        const orderB = typeof b.ordering === 'number' ? b.ordering : typeof b.rank === 'number' ? b.rank : 0
+        return orderA - orderB
+      })
+    }
+
     if (!selectedCommunity) {
       return []
     }
@@ -228,7 +252,7 @@ function HomePage(): React.ReactElement {
 
       return orderA - orderB
     })
-  }, [selectedCommunity])
+  }, [selectedCommunity, selectedCommunityId, communities])
 
   const {
     postsByBoardId,
@@ -260,6 +284,27 @@ function HomePage(): React.ReactElement {
     (communitiesQuery.isError && communities.length === 0)
 
   const communityPosts = useMemo(() => {
+    if (selectedCommunityId === 'all') {
+      // When "All" is selected, show posts from all communities
+      const aggregated = communityBoards.flatMap((board) => {
+        const posts = postsByBoardId[board.id] ?? board.posts ?? []
+        return posts.map((post) => ({
+          boardId: board.id,
+          boardTitle: board.title,
+          boardFormat: board.preview_format ?? board.format ?? null,
+          communityId: (board as any).communityId,
+          communityTitle: (board as any).communityTitle,
+          post
+        }))
+      })
+
+      return aggregated.sort((a, b) => {
+        const left = toDateValue(a.post.created_at ?? a.post.updated_at ?? a.post.date)
+        const right = toDateValue(b.post.created_at ?? b.post.updated_at ?? b.post.date)
+        return right - left
+      })
+    }
+
     if (!selectedCommunity) {
       return []
     }
@@ -279,7 +324,19 @@ function HomePage(): React.ReactElement {
       const right = toDateValue(b.post.created_at ?? b.post.updated_at ?? b.post.date)
       return right - left
     })
-  }, [selectedCommunity, communityBoards, postsByBoardId])
+  }, [selectedCommunity, selectedCommunityId, communityBoards, postsByBoardId])
+
+  // 필터링된 게시글 처리
+  const allPosts = useMemo(() => {
+    return communityBoards.flatMap((board) => {
+      const posts = postsByBoardId[board.id] ?? board.posts ?? []
+      return posts
+    })
+  }, [communityBoards, postsByBoardId])
+
+  const handleFilteredPostsChange = (posts: Post[]) => {
+    setFilteredPosts(posts)
+  }
 
 
   const boardSummaries = useMemo(() => {
@@ -301,7 +358,9 @@ function HomePage(): React.ReactElement {
         format: board.preview_format ?? board.format ?? null,
         postCount: posts.length,
         latestDateLabel,
-        views: posts.reduce((sum, post) => sum + (post.views ?? 0), 0)
+        views: posts.reduce((sum, post) => sum + (post.views ?? 0), 0),
+        communityId: (board as any).communityId,
+        communityTitle: (board as any).communityTitle
       }
     })
   }, [communityBoards, postsByBoardId])
@@ -556,7 +615,7 @@ function HomePage(): React.ReactElement {
   }
 
   const heroMetaDate = heroPost ? safeDate(heroPost.created_at) || safeDate(heroPost.updated_at) : ''
-  const communityPostLimit = 12
+  const communityPostLimit = 10
 
   return (
     <Box className="home">
@@ -665,89 +724,92 @@ function HomePage(): React.ReactElement {
 
                 {communities.length ? (
                   <>
-                    <div className="community-leaderboard" role="tablist" aria-label="커뮤니티 리더보드 선택">
-                      {communities.map((community, index) => {
-                        const isActive = (selectedCommunity?.id ?? '') === community.id
-                        const rank = index + 1
+                    <div className="community-layout">
+                      {/* 왼쪽: 커뮤니티 버튼 리스트 */}
+                      <div className="community-main">
+                        <CommunityButtonList
+                          communities={communities}
+                          selectedCommunityId={selectedCommunityId}
+                          onCommunitySelect={setSelectedCommunityId}
+                          isLoading={isCommunitiesLoading}
+                        />
+                      </div>
 
-                        return (
-                          <div
-                            key={community.id}
-                            className={`community-leaderboard__item${isActive ? ' is-active' : ''}`}
-                            onClick={() => setSelectedCommunityId(community.id)}
-                            style={{ cursor: 'pointer' }}
-                          >
-                            <div className="community-leaderboard__rank">
-                              <span className="community-leaderboard__rank-number">#{rank}</span>
-                            </div>
-                            <div className="community-leaderboard__content">
-                              <div className="community-leaderboard__title-section">
-                                <span className="community-leaderboard__title">{community.title}</span>
-                                {community.description && (
-                                  <span className="community-leaderboard__description">{community.description}</span>
-                                )}
-                              </div>
-                              <div className="community-leaderboard__stats">
-                                {typeof community.totalViews === 'number' && (
-                                  <span className="community-leaderboard__views">
-                                    {formatNumber(community.totalViews)} 조회
-                                  </span>
-                                )}
-                                <span className="community-leaderboard__boards">
-                                  {community.boards?.length || 0} 게시판
-                                </span>
-                              </div>
-                            </div>
-                            {isActive && (
-                              <div className="community-leaderboard__indicator" aria-hidden="true">
-                                <span>선택됨</span>
-                              </div>
-                            )}
-                          </div>
-                        )
-                      })}
+                      {/* 오른쪽: 커뮤니티 필터 */}
+                      <div className="community-sidebar">
+                        <CommunityFilter
+                          communities={communities}
+                          selectedCommunityId={selectedCommunityId}
+                          onCommunitySelect={setSelectedCommunityId}
+                          posts={allPosts}
+                          onFilteredPostsChange={handleFilteredPostsChange}
+                        />
+                      </div>
                     </div>
 
-                    {selectedCommunity ? (
+                    {(selectedCommunity || selectedCommunityId === 'all') ? (
                       <div className="community-hub__posts">
                         <header className="community-hub__posts-header">
                           <div>
-                            <h3>{selectedCommunity.title}</h3>
-                            <p>{selectedCommunity.description ?? 'Recent posts from every board in this community.'}</p>
+                            <h3>
+                              {selectedCommunityId === 'all'
+                                ? 'All Communities'
+                                : selectedCommunity?.title
+                              }
+                            </h3>
+                            <p>
+                              {selectedCommunityId === 'all'
+                                ? 'Recent posts from all communities in order.'
+                                : selectedCommunity?.description ?? 'Recent posts from every board in this community.'
+                              }
+                            </p>
                           </div>
                           <span className="community-hub__counter">{formatNumber(communityPosts.length)} posts</span>
                         </header>
 
                         {boardSummaries.length ? (
-                          <div className="community-hub__board-cards">
-                            {boardSummaries.map((board, index) => (
-                              <div
-                                key={board.id}
-                                className="board-card card-enter"
-                                onClick={() => navigate(`/board/${board.id}`)}
-                                style={{ cursor: 'pointer' }}
-                              >
-                                <div className="board-card__header">
-                                  <div className="board-card__title-section">
-                                    <span className="board-card__title">{board.title}</span>
-                                    {board.format ? (
-                                      <span className="board-card__badge">{board.format}</span>
+                          selectedCommunityId === 'all' ? (
+                            <VirtualizedBoardList
+                              boardSummaries={boardSummaries}
+                              selectedCommunityId={selectedCommunityId}
+                              onBoardClick={(boardId) => navigate(`/board/${boardId}`)}
+                              height={400}
+                              itemHeight={120}
+                            />
+                          ) : (
+                            <div className="community-hub__board-cards">
+                              {boardSummaries.map((board, index) => (
+                                <div
+                                  key={board.id}
+                                  className="board-card card-enter"
+                                  onClick={() => navigate(`/board/${board.id}`)}
+                                  style={{ cursor: 'pointer' }}
+                                >
+                                  <div className="board-card__header">
+                                    <div className="board-card__title-section">
+                                      <span className="board-card__title">{board.title}</span>
+                                      {board.format ? (
+                                        <span className="board-card__badge">{board.format}</span>
+                                      ) : null}
+                                      {selectedCommunityId === 'all' && board.communityTitle && (
+                                        <span className="board-card__community-badge">{board.communityTitle}</span>
+                                      )}
+                                    </div>
+                                    <span className="board-card__summary">
+                                      {board.summary || '게시판 설명이 없습니다.'}
+                                    </span>
+                                  </div>
+                                  <div className="board-card__body">
+                                    <span>게시물: {formatNumber(board.postCount)}</span>
+                                    <span>조회수: {formatNumber(board.views)}</span>
+                                    {board.latestDateLabel ? (
+                                      <span>최신: {board.latestDateLabel}</span>
                                     ) : null}
                                   </div>
-                                  <span className="board-card__summary">
-                                    {board.summary || '게시판 설명이 없습니다.'}
-                                  </span>
                                 </div>
-                                <div className="board-card__body">
-                                  <span>게시물: {formatNumber(board.postCount)}</span>
-                                  <span>조회수: {formatNumber(board.views)}</span>
-                                  {board.latestDateLabel ? (
-                                    <span>최신: {board.latestDateLabel}</span>
-                                  ) : null}
-                                </div>
-                              </div>
-                            ))}
-                          </div>
+                              ))}
+                            </div>
+                          )
                         ) : null}
 
                         {hasBoardPostsError ? (
@@ -759,16 +821,37 @@ function HomePage(): React.ReactElement {
                           <Center py={8}>
                             <Spinner size="md" thickness="3px" />
                           </Center>
-                        ) : communityPosts.length ? (
-                          <ul className="community-hub__post-list">
-                            {communityPosts.slice(0, communityPostLimit).map((entry) =>
-                              renderPostCard(entry.post, {
-                                id: entry.boardId,
-                                title: entry.boardTitle,
-                                format: entry.boardFormat
-                              })
-                            )}
-                          </ul>
+                        ) : (filteredPosts.length > 0 ? filteredPosts : communityPosts).length ? (
+                          selectedCommunityId === 'all' ? (
+                            <VirtualizedPostList
+                              posts={(filteredPosts.length > 0 ? filteredPosts : communityPosts).slice(0, communityPostLimit).map(post => {
+                                const boardInfo = communityBoards.find(board => board.id === post.board_id)
+                                return {
+                                  boardId: post.board_id,
+                                  boardTitle: boardInfo?.title || 'Unknown Board',
+                                  boardFormat: boardInfo?.preview_format ?? boardInfo?.format ?? null,
+                                  communityId: (boardInfo as any)?.communityId,
+                                  communityTitle: (boardInfo as any)?.communityTitle,
+                                  post
+                                }
+                              })}
+                              onPostClick={(postId, boardId) => navigate(`/board/${boardId}/post/${postId}`)}
+                              height={600}
+                              itemHeight={150}
+                            />
+                          ) : (
+                            <ul className="community-hub__post-list">
+                              {(filteredPosts.length > 0 ? filteredPosts : communityPosts).slice(0, communityPostLimit).map((post, index) => {
+                                // 필터링된 게시글의 경우 board 정보를 찾아서 전달
+                                const boardInfo = communityBoards.find(board => board.id === post.board_id)
+                                return renderPostCard(post, {
+                                  id: post.board_id,
+                                  title: boardInfo?.title || 'Unknown Board',
+                                  format: boardInfo?.preview_format ?? boardInfo?.format ?? null
+                                })
+                              })}
+                            </ul>
+                          )
                         ) : (
                           <Text className="community-hub__feedback">No posts available for this community yet.</Text>
                         )}

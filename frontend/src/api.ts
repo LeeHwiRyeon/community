@@ -1,4 +1,4 @@
-﻿export const API_BASE = 'http://localhost:50000/api'
+﻿export const API_BASE = 'http://localhost:3001/api'
 
 const REQUEST_TIMEOUT_MS = 1500
 
@@ -960,21 +960,21 @@ class ApiService {
 
     try {
 
-      const boards = await this.request<Array<Board & { ordering?: number }>>('/boards')
+      const response = await this.request<{ success: boolean; data: Board[] }>('/boards')
 
-      if (!Array.isArray(boards) || boards.length === 0) {
+      if (response && response.success && Array.isArray(response.data)) {
 
-        return FALLBACK_BOARDS
+        return response.data.map((board, idx) => ({
+
+          ...board,
+
+          order: typeof board.order === 'number' ? board.order : idx + 1
+
+        }))
 
       }
 
-      return boards.map((board, idx) => ({
-
-        ...board,
-
-        order: typeof board.order === 'number' ? board.order : board.ordering ?? idx + 1
-
-      }))
+      return FALLBACK_BOARDS
 
     } catch (error) {
 
@@ -992,15 +992,8 @@ class ApiService {
 
     try {
 
-      const communities = await this.request<CommunitySummary[]>('/communities')
-
-      if (!Array.isArray(communities) || communities.length === 0) {
-
-        return FALLBACK_COMMUNITIES
-
-      }
-
-      return communities
+      const response = await this.request<{ success: boolean, data: CommunitySummary[] }>('/communities');
+      return response.data || FALLBACK_COMMUNITIES;
 
     } catch (error) {
 
@@ -1017,6 +1010,11 @@ class ApiService {
   async getPosts(boardId: string, params?: Record<string, string | undefined>): Promise<Post[]> {
 
     try {
+      // Try to fetch from backend first
+      const backendResponse = await this.request<{ success: boolean, data: Post[] }>(`/boards/${boardId}/posts`);
+      if (backendResponse.data) {
+        return backendResponse.data;
+      }
 
       const searchParams = new URLSearchParams()
 
@@ -1038,35 +1036,15 @@ class ApiService {
 
       const endpoint = suffix ? `/boards/${boardId}/posts?${suffix}` : `/boards/${boardId}/posts`
 
-      const response = await this.request<Post[] | { items?: Post[]; posts?: Post[] }>(endpoint)
+      const apiResponse = await this.request<{ success: boolean; data: { posts: Post[] } }>(endpoint)
 
-      let resolved: Post[] = []
+      if (apiResponse && apiResponse.success && apiResponse.data && Array.isArray(apiResponse.data.posts)) {
 
-      if (Array.isArray(response)) {
-
-        resolved = response
-
-      } else if (response && typeof response === 'object') {
-
-        if ('items' in response && Array.isArray(response.items)) {
-
-          resolved = response.items
-
-        } else if ('posts' in response && Array.isArray(response.posts)) {
-
-          resolved = response.posts
-
-        }
+        return apiResponse.data.posts
 
       }
 
-      if (!Array.isArray(resolved) || resolved.length === 0) {
-
-        return resolveFallbackPosts(boardId)
-
-      }
-
-      return resolved
+      return resolveFallbackPosts(boardId)
 
     } catch (error) {
 
@@ -1084,7 +1062,15 @@ class ApiService {
 
     try {
 
-      return await this.request<Post>(`/posts/${postId}`)
+      const response = await this.request<{ success: boolean; data: Post }>(`/posts/${postId}`)
+
+      if (response && response.success && response.data) {
+
+        return response.data
+
+      }
+
+      throw new Error('Post not found')
 
     } catch (error) {
 
@@ -1137,6 +1123,17 @@ class ApiService {
 
 
   async getTrending(limit = 5, periodDays = 7): Promise<TrendingResponse> {
+
+    try {
+      const response = await this.request<{ success: boolean, data: TrendingResponse }>('/trending');
+      return response.data || { items: [] };
+    } catch (error) {
+      console.warn('Failed to fetch trending data:', error)
+      return { items: [] }
+    }
+  }
+
+  async getTrendingOld(limit = 5, periodDays = 7): Promise<TrendingResponse> {
 
     const params = new URLSearchParams()
 
@@ -1336,4 +1333,789 @@ export interface Broadcast {
   created_at: string
   updated_at: string
 }
+
+// Comment API functions
+export interface Comment {
+  id: string;
+  postId: string;
+  parentId?: string;
+  authorId: number;
+  authorName: string;
+  content: string;
+  depth: number;
+  path: string;
+  likes: number;
+  dislikes: number;
+  replies: number;
+  isEdited: boolean;
+  editedAt?: string;
+  createdAt: string;
+  children: Comment[];
+  metadata?: any;
+}
+
+export const getComments = async (postId: string, page: number = 1, limit: number = 50, sort: string = 'newest'): Promise<{ comments: Comment[]; total: number; page: number; limit: number }> => {
+  try {
+    const response = await fetch(`${API_BASE}/comments/posts/${postId}?page=${page}&limit=${limit}&sort=${sort}`);
+    const data = await response.json();
+
+    if (data.success) {
+      return data.data;
+    } else {
+      throw new Error(data.message || 'Failed to fetch comments');
+    }
+  } catch (error) {
+    console.error('Error fetching comments:', error);
+    return { comments: [], total: 0, page, limit };
+  }
+};
+
+export const createComment = async (postId: string, content: string, parentId?: string, authorId: number = 1, authorName: string = '사용자'): Promise<Comment> => {
+  try {
+    const response = await fetch(`${API_BASE}/comments`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        postId,
+        parentId,
+        authorId,
+        authorName,
+        content
+      }),
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      return data.data;
+    } else {
+      throw new Error(data.message || 'Failed to create comment');
+    }
+  } catch (error) {
+    console.error('Error creating comment:', error);
+    throw error;
+  }
+};
+
+export const updateComment = async (commentId: string, content: string, authorId: number = 1): Promise<Comment> => {
+  try {
+    const response = await fetch(`${API_BASE}/comments/${commentId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        content,
+        authorId
+      }),
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      return data.data;
+    } else {
+      throw new Error(data.message || 'Failed to update comment');
+    }
+  } catch (error) {
+    console.error('Error updating comment:', error);
+    throw error;
+  }
+};
+
+export const deleteComment = async (commentId: string, authorId: number = 1): Promise<void> => {
+  try {
+    const response = await fetch(`${API_BASE}/comments/${commentId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        authorId
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!data.success) {
+      throw new Error(data.message || 'Failed to delete comment');
+    }
+  } catch (error) {
+    console.error('Error deleting comment:', error);
+    throw error;
+  }
+};
+
+// Comment Reaction API functions
+export interface CommentReactionStats {
+  total: number;
+  reactions: {
+    [key: string]: number;
+  };
+}
+
+export const toggleCommentReaction = async (commentId: string, reactionType: string, emoji?: string, userId?: number): Promise<{ action: string; reaction: any; stats: CommentReactionStats }> => {
+  try {
+    const response = await fetch(`${API_BASE}/comment-reactions/${commentId}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        reactionType,
+        emoji,
+        userId
+      }),
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      return data.data;
+    } else {
+      throw new Error(data.message || 'Failed to toggle reaction');
+    }
+  } catch (error) {
+    console.error('Error toggling reaction:', error);
+    throw error;
+  }
+};
+
+export const getCommentReactionStats = async (commentId: string): Promise<CommentReactionStats> => {
+  try {
+    const response = await fetch(`${API_BASE}/comment-reactions/${commentId}/stats`);
+    const data = await response.json();
+
+    if (data.success) {
+      return data.data;
+    } else {
+      throw new Error(data.message || 'Failed to fetch reaction stats');
+    }
+  } catch (error) {
+    console.error('Error fetching reaction stats:', error);
+    return { total: 0, reactions: {} };
+  }
+};
+
+export const getUserReactions = async (commentId: string, userId?: number): Promise<string[]> => {
+  try {
+    const response = await fetch(`${API_BASE}/comment-reactions/${commentId}/user-reactions?userId=${userId || ''}`);
+    const data = await response.json();
+
+    if (data.success) {
+      return data.data.map((r: any) => r.type);
+    } else {
+      return [];
+    }
+  } catch (error) {
+    console.error('Error fetching user reactions:', error);
+    return [];
+  }
+};
+
+// Read Status API functions
+export interface ReadStatus {
+  id: string;
+  postId: string;
+  boardId: string;
+  communityId?: string;
+  readAt: string;
+  readDuration?: number;
+  isFullyRead: boolean;
+  scrollPosition?: number;
+  deviceType?: 'desktop' | 'mobile' | 'tablet';
+  isAnonymous: boolean;
+}
+
+export interface ReadStatusStats {
+  totalRead: number;
+  fullyRead: number;
+  avgReadDuration: number;
+  lastReadAt: string | null;
+}
+
+export const updateReadStatus = async (
+  postId: string,
+  boardId: string,
+  communityId?: string,
+  userId?: number,
+  readDuration?: number,
+  scrollPosition?: number,
+  deviceType?: 'desktop' | 'mobile' | 'tablet'
+): Promise<ReadStatus> => {
+  try {
+    const response = await fetch(`${API_BASE}/read-status`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        postId,
+        boardId,
+        communityId,
+        userId,
+        readDuration,
+        scrollPosition,
+        deviceType
+      }),
+    });
+    const data = await response.json();
+
+    if (data.success) {
+      return data.data;
+    } else {
+      throw new Error(data.message || 'Failed to update read status');
+    }
+  } catch (error) {
+    console.error('Error updating read status:', error);
+    throw error;
+  }
+};
+
+export const getUserReadStatus = async (userId?: number, ipAddress?: string): Promise<ReadStatus[]> => {
+  try {
+    const params = new URLSearchParams();
+    if (userId) params.append('userId', userId.toString());
+    if (ipAddress) params.append('ipAddress', ipAddress);
+
+    const response = await fetch(`${API_BASE}/read-status/user?${params}`);
+    const data = await response.json();
+
+    if (data.success) {
+      return data.data;
+    } else {
+      throw new Error(data.message || 'Failed to get user read status');
+    }
+  } catch (error) {
+    console.error('Error getting user read status:', error);
+    throw error;
+  }
+};
+
+export const getPostReadStatus = async (postId: string, userId?: number, ipAddress?: string): Promise<ReadStatus | null> => {
+  try {
+    const params = new URLSearchParams();
+    if (userId) params.append('userId', userId.toString());
+    if (ipAddress) params.append('ipAddress', ipAddress);
+
+    const response = await fetch(`${API_BASE}/read-status/post/${postId}?${params}`);
+    const data = await response.json();
+
+    if (data.success) {
+      return data.data;
+    } else {
+      throw new Error(data.message || 'Failed to get post read status');
+    }
+  } catch (error) {
+    console.error('Error getting post read status:', error);
+    throw error;
+  }
+};
+
+export const getUnreadPosts = async (
+  boardId: string,
+  communityId?: string,
+  userId?: number,
+  ipAddress?: string,
+  limit: number = 20
+): Promise<{ posts: Post[]; total: number; limit: number }> => {
+  try {
+    const params = new URLSearchParams();
+    params.append('boardId', boardId);
+    if (communityId) params.append('communityId', communityId);
+    if (userId) params.append('userId', userId.toString());
+    if (ipAddress) params.append('ipAddress', ipAddress);
+    params.append('limit', limit.toString());
+
+    const response = await fetch(`${API_BASE}/read-status/unread?${params}`);
+    const data = await response.json();
+
+    if (data.success) {
+      return data.data;
+    } else {
+      throw new Error(data.message || 'Failed to get unread posts');
+    }
+  } catch (error) {
+    console.error('Error getting unread posts:', error);
+    throw error;
+  }
+};
+
+export const getReadStats = async (boardId?: string, communityId?: string, userId?: number): Promise<ReadStatusStats> => {
+  try {
+    const params = new URLSearchParams();
+    if (boardId) params.append('boardId', boardId);
+    if (communityId) params.append('communityId', communityId);
+    if (userId) params.append('userId', userId.toString());
+
+    const response = await fetch(`${API_BASE}/read-status/stats?${params}`);
+    const data = await response.json();
+
+    if (data.success) {
+      return data.data;
+    } else {
+      throw new Error(data.message || 'Failed to get read stats');
+    }
+  } catch (error) {
+    console.error('Error getting read stats:', error);
+    throw error;
+  }
+};
+
+export const deleteReadStatus = async (postId: string, userId?: number, ipAddress?: string): Promise<void> => {
+  try {
+    const response = await fetch(`${API_BASE}/read-status/${postId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ userId, ipAddress }),
+    });
+    const data = await response.json();
+
+    if (!data.success) {
+      throw new Error(data.message || 'Failed to delete read status');
+    }
+  } catch (error) {
+    console.error('Error deleting read status:', error);
+    throw error;
+  }
+};
+
+// Comment History API functions
+export interface CommentHistoryItem {
+  id: string;
+  commentId: string;
+  version: number;
+  content: string;
+  previousContent?: string;
+  changeType: 'create' | 'edit' | 'delete' | 'restore';
+  changeReason?: string;
+  editedBy?: number;
+  editedByName?: string;
+  createdAt: string;
+  metadata?: any;
+}
+
+export interface CommentHistoryStats {
+  totalEdits: number;
+  editCount: number;
+  deleteCount: number;
+  restoreCount: number;
+  lastEditAt: string | null;
+}
+
+// Comment Report API functions
+export interface CommentReport {
+  id: string;
+  commentId: string;
+  reporterId?: number;
+  reporterName?: string;
+  reportType: string;
+  reason: string;
+  status: 'pending' | 'reviewing' | 'resolved' | 'dismissed';
+  priority: 'low' | 'medium' | 'high' | 'urgent';
+  isAnonymous: boolean;
+  adminNotes?: string;
+  resolvedBy?: number;
+  resolvedAt?: string;
+  actionTaken?: string;
+  ipAddress?: string;
+  userAgent?: string;
+  metadata?: any;
+  createdAt: string;
+  updatedAt: string;
+  comment?: {
+    id: string;
+    content: string;
+    authorName: string;
+    createdAt: string;
+  };
+  reporter?: {
+    id: number;
+    username: string;
+    email: string;
+  };
+  resolver?: {
+    id: number;
+    username: string;
+  };
+}
+
+export interface CommentReportStats {
+  totalReports: number;
+  pendingReports: number;
+  resolvedReports: number;
+  stats: Array<{
+    status: string;
+    reportType: string;
+    priority: string;
+    count: number;
+  }>;
+}
+
+export const createCommentHistory = async (
+  commentId: string,
+  content: string,
+  previousContent: string | null,
+  changeType: 'create' | 'edit' | 'delete' | 'restore',
+  editedBy?: number,
+  editedByName?: string,
+  changeReason?: string,
+  metadata?: any
+): Promise<CommentHistoryItem> => {
+  try {
+    const response = await fetch(`${API_BASE}/comment-history`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        commentId,
+        content,
+        previousContent,
+        changeType,
+        editedBy,
+        editedByName,
+        changeReason,
+        metadata
+      }),
+    });
+    const data = await response.json();
+
+    if (data.success) {
+      return data.data;
+    } else {
+      throw new Error(data.message || 'Failed to create comment history');
+    }
+  } catch (error) {
+    console.error('Error creating comment history:', error);
+    throw error;
+  }
+};
+
+export const getCommentHistory = async (commentId: string, includeDeleted: boolean = false): Promise<CommentHistoryItem[]> => {
+  try {
+    const params = new URLSearchParams();
+    if (includeDeleted) params.append('includeDeleted', 'true');
+
+    const response = await fetch(`${API_BASE}/comment-history/comment/${commentId}?${params}`);
+    const data = await response.json();
+
+    if (data.success) {
+      return data.data;
+    } else {
+      throw new Error(data.message || 'Failed to get comment history');
+    }
+  } catch (error) {
+    console.error('Error getting comment history:', error);
+    throw error;
+  }
+};
+
+export const getCommentVersion = async (commentId: string, version: number): Promise<CommentHistoryItem | null> => {
+  try {
+    const response = await fetch(`${API_BASE}/comment-history/comment/${commentId}/version/${version}`);
+    const data = await response.json();
+
+    if (data.success) {
+      return data.data;
+    } else {
+      throw new Error(data.message || 'Failed to get comment version');
+    }
+  } catch (error) {
+    console.error('Error getting comment version:', error);
+    throw error;
+  }
+};
+
+export const getCommentHistoryStats = async (commentId?: string, editedBy?: number): Promise<CommentHistoryStats> => {
+  try {
+    const params = new URLSearchParams();
+    if (commentId) params.append('commentId', commentId);
+    if (editedBy) params.append('editedBy', editedBy.toString());
+
+    const response = await fetch(`${API_BASE}/comment-history/stats?${params}`);
+    const data = await response.json();
+
+    if (data.success) {
+      return data.data;
+    } else {
+      throw new Error(data.message || 'Failed to get comment history stats');
+    }
+  } catch (error) {
+    console.error('Error getting comment history stats:', error);
+    throw error;
+  }
+};
+
+export const compareCommentVersions = async (commentId: string, version1: number, version2: number): Promise<any> => {
+  try {
+    const response = await fetch(`${API_BASE}/comment-history/compare/${commentId}?version1=${version1}&version2=${version2}`);
+    const data = await response.json();
+
+    if (data.success) {
+      return data.data;
+    } else {
+      throw new Error(data.message || 'Failed to compare comment versions');
+    }
+  } catch (error) {
+    console.error('Error comparing comment versions:', error);
+    throw error;
+  }
+};
+
+export const restoreCommentVersion = async (
+  commentId: string,
+  version: number,
+  editedBy?: number,
+  editedByName?: string,
+  changeReason?: string
+): Promise<{ comment: any; history: CommentHistoryItem }> => {
+  try {
+    const response = await fetch(`${API_BASE}/comment-history/restore/${commentId}/${version}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        editedBy,
+        editedByName,
+        changeReason
+      }),
+    });
+    const data = await response.json();
+
+    if (data.success) {
+      return data.data;
+    } else {
+      throw new Error(data.message || 'Failed to restore comment version');
+    }
+  } catch (error) {
+    console.error('Error restoring comment version:', error);
+    throw error;
+  }
+};
+
+export const searchCommentHistory = async (params: {
+  commentId?: string;
+  editedBy?: number;
+  changeType?: string;
+  startDate?: string;
+  endDate?: string;
+  searchContent?: string;
+  page?: number;
+  limit?: number;
+}): Promise<{
+  history: CommentHistoryItem[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}> => {
+  try {
+    const searchParams = new URLSearchParams();
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== undefined) {
+        searchParams.append(key, value.toString());
+      }
+    });
+
+    const response = await fetch(`${API_BASE}/comment-history/search?${searchParams}`);
+    const data = await response.json();
+
+    if (data.success) {
+      return data.data;
+    } else {
+      throw new Error(data.message || 'Failed to search comment history');
+    }
+  } catch (error) {
+    console.error('Error searching comment history:', error);
+    throw error;
+  }
+};
+
+export const deleteCommentHistory = async (commentId: string, version?: number): Promise<void> => {
+  try {
+    const params = new URLSearchParams();
+    if (version) params.append('version', version.toString());
+
+    const response = await fetch(`${API_BASE}/comment-history/comment/${commentId}?${params}`, {
+      method: 'DELETE',
+    });
+    const data = await response.json();
+
+    if (!data.success) {
+      throw new Error(data.message || 'Failed to delete comment history');
+    }
+  } catch (error) {
+    console.error('Error deleting comment history:', error);
+    throw error;
+  }
+};
+
+// Comment Report API functions
+export const createCommentReport = async (
+  commentId: string,
+  reportType: string,
+  reason: string,
+  isAnonymous: boolean = false,
+  reporterName?: string
+): Promise<{ reportId: string; message: string }> => {
+  const response = await fetch(`${API_BASE}/comment-reports`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      commentId,
+      reportType,
+      reason,
+      isAnonymous,
+      reporterName
+    }),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || 'Failed to create comment report');
+  }
+
+  return response.json();
+};
+
+export const getCommentReports = async (
+  page: number = 1,
+  limit: number = 20,
+  status?: string,
+  reportType?: string,
+  priority?: string,
+  sortBy: string = 'created_at',
+  sortOrder: string = 'DESC'
+): Promise<{
+  reports: CommentReport[];
+  pagination: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  };
+}> => {
+  const params = new URLSearchParams({
+    page: page.toString(),
+    limit: limit.toString(),
+    sortBy,
+    sortOrder,
+  });
+
+  if (status) params.append('status', status);
+  if (reportType) params.append('reportType', reportType);
+  if (priority) params.append('priority', priority);
+
+  const response = await fetch(`${API_BASE}/comment-reports?${params}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || 'Failed to fetch comment reports');
+  }
+
+  return response.json();
+};
+
+export const getCommentReport = async (reportId: string): Promise<{ report: CommentReport }> => {
+  const response = await fetch(`${API_BASE}/comment-reports/${reportId}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || 'Failed to fetch comment report');
+  }
+
+  return response.json();
+};
+
+export const resolveCommentReport = async (
+  reportId: string,
+  status: string,
+  actionTaken?: string,
+  adminNotes?: string,
+  priority?: string
+): Promise<{ message: string; report: CommentReport }> => {
+  const response = await fetch(`${API_BASE}/comment-reports/${reportId}/resolve`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      status,
+      actionTaken,
+      adminNotes,
+      priority
+    }),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || 'Failed to resolve comment report');
+  }
+
+  return response.json();
+};
+
+export const getCommentReportStats = async (): Promise<CommentReportStats> => {
+  const response = await fetch(`${API_BASE}/comment-reports/stats/overview`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || 'Failed to fetch comment report stats');
+  }
+
+  return response.json();
+};
+
+export const getCommentReportsByComment = async (commentId: string): Promise<{ reports: CommentReport[] }> => {
+  const response = await fetch(`${API_BASE}/comment-reports/comment/${commentId}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || 'Failed to fetch comment reports');
+  }
+
+  return response.json();
+};
+
+export const deleteCommentReport = async (reportId: string): Promise<void> => {
+  const response = await fetch(`${API_BASE}/comment-reports/${reportId}`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || 'Failed to delete comment report');
+  }
+};
 

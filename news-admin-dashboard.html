@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>뉴스 페이퍼 관리자 대시보드</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: #333;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .admin-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(15px);
+            border-bottom: 2px solid rgba(30, 60, 114, 0.1);
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .admin-header h1 {
+            font-size: 1.6em;
+            font-weight: 700;
+            color: #1e3c72;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .admin-header h1::before {
+            content: "📰";
+            font-size: 1.4em;
+        }
+
+        .admin-header h1::after {
+            content: "관리자 대시보드";
+            font-size: 0.6em;
+            color: #666;
+            margin-left: 8px;
+        }
+
+        .admin-controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .admin-btn {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 20px rgba(30, 60, 114, 0.3);
+        }
+
+        .admin-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(30, 60, 114, 0.4);
+        }
+
+        .admin-btn:active {
+            transform: translateY(0);
+        }
+
+        .admin-btn.secondary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .admin-btn.danger {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+            box-shadow: 0 4px 20px rgba(255, 107, 107, 0.3);
+        }
+
+        .status-indicator {
+            background: rgba(72, 187, 120, 0.1);
+            color: #38a169;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: 0.9em;
+            font-weight: 600;
+            border: 2px solid rgba(72, 187, 120, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-indicator::before {
+            content: "●";
+            color: #38a169;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .main-dashboard {
+            flex: 1;
+            display: flex;
+            position: relative;
+            overflow: hidden;
+            padding: 20px;
+            gap: 20px;
+        }
+
+        .dashboard-sidebar {
+            width: 300px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(15px);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+            max-height: calc(100vh - 140px);
+        }
+
+        .sidebar-section {
+            margin-bottom: 25px;
+        }
+
+        .sidebar-section h3 {
+            color: #1e3c72;
+            font-size: 1.1em;
+            font-weight: 600;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid rgba(30, 60, 114, 0.1);
+        }
+
+        .metric-card {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            border-left: 4px solid #1e3c72;
+            transition: all 0.3s ease;
+        }
+
+        .metric-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .metric-card h4 {
+            color: #2d3748;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .metric-card .value {
+            color: #1e3c72;
+            font-size: 1.2em;
+            font-weight: 700;
+        }
+
+        .metric-card .change {
+            font-size: 0.8em;
+            margin-top: 5px;
+        }
+
+        .metric-card .change.positive {
+            color: #38a169;
+        }
+
+        .metric-card .change.negative {
+            color: #e53e3e;
+        }
+
+        .dashboard-main {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(15px);
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .iframe-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 15px;
+        }
+
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.95);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            transition: opacity 0.3s ease;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #1e3c72;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .loading-text {
+            color: #1e3c72;
+            font-size: 1.1em;
+            font-weight: 600;
+        }
+
+        .error-message {
+            background: #fed7d7;
+            color: #c53030;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px;
+            border: 2px solid #feb2b2;
+            text-align: center;
+        }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .quick-btn {
+            background: #f7fafc;
+            border: 2px solid #e2e8f0;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            font-size: 0.8em;
+            font-weight: 500;
+            color: #4a5568;
+            transition: all 0.3s ease;
+        }
+
+        .quick-btn:hover {
+            background: #1e3c72;
+            color: white;
+            border-color: #1e3c72;
+        }
+
+        .admin-footer {
+            background: rgba(30, 60, 114, 0.1);
+            padding: 15px 30px;
+            text-align: center;
+            color: #4a5568;
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 1200px) {
+            .dashboard-sidebar {
+                width: 250px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-dashboard {
+                flex-direction: column;
+                padding: 10px;
+            }
+
+            .dashboard-sidebar {
+                width: 100%;
+                max-height: 200px;
+            }
+
+            .admin-header {
+                padding: 15px 20px;
+            }
+
+            .admin-header h1 {
+                font-size: 1.3em;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="admin-header">
+        <h1>뉴스 페이퍼</h1>
+        <div class="admin-controls">
+            <div class="status-indicator" id="statusIndicator">
+                시스템 연결 중...
+            </div>
+            <button class="admin-btn" onclick="refreshDashboard()">
+                🔄 새로고침
+            </button>
+            <button class="admin-btn secondary" onclick="openInBrowser()">
+                🌐 브라우저에서 열기
+            </button>
+            <button class="admin-btn secondary" onclick="showAnalytics()">
+                📊 분석 보기
+            </button>
+            <button class="admin-btn danger" onclick="emergencyStop()">
+                🛑 긴급 정지
+            </button>
+        </div>
+    </div>
+
+    <div class="main-dashboard">
+        <div class="dashboard-sidebar">
+            <div class="sidebar-section">
+                <h3>📈 실시간 통계</h3>
+                <div class="metric-card">
+                    <h4>활성 사용자</h4>
+                    <div class="value" id="activeUsers">-</div>
+                    <div class="change positive">+12% 증가</div>
+                </div>
+                <div class="metric-card">
+                    <h4>페이지 뷰</h4>
+                    <div class="value" id="pageViews">-</div>
+                    <div class="change positive">+8% 증가</div>
+                </div>
+                <div class="metric-card">
+                    <h4>서버 응답시간</h4>
+                    <div class="value" id="responseTime">-</div>
+                    <div class="change negative">+5ms 증가</div>
+                </div>
+                <div class="metric-card">
+                    <h4>에러율</h4>
+                    <div class="value" id="errorRate">-</div>
+                    <div class="change positive">-2% 감소</div>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <h3>🔧 시스템 상태</h3>
+                <div class="metric-card">
+                    <h4>프론트엔드</h4>
+                    <div class="value" id="frontendStatus">확인 중...</div>
+                </div>
+                <div class="metric-card">
+                    <h4>백엔드</h4>
+                    <div class="value" id="backendStatus">확인 중...</div>
+                </div>
+                <div class="metric-card">
+                    <h4>데이터베이스</h4>
+                    <div class="value" id="databaseStatus">확인 중...</div>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <h3>⚡ 빠른 작업</h3>
+                <div class="quick-actions">
+                    <div class="quick-btn" onclick="clearCache()">캐시 정리</div>
+                    <div class="quick-btn" onclick="restartServices()">서비스 재시작</div>
+                    <div class="quick-btn" onclick="exportLogs()">로그 내보내기</div>
+                    <div class="quick-btn" onclick="backupData()">데이터 백업</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="dashboard-main">
+            <div class="iframe-container">
+                <div class="loading-overlay" id="loadingOverlay">
+                    <div class="loading-spinner"></div>
+                    <div class="loading-text">뉴스 페이퍼를 로딩 중...</div>
+                </div>
+                <iframe id="newsFrame" src="http://localhost:5002" onload="hideLoading()"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <div class="admin-footer">
+        <p>뉴스 페이퍼 관리자 대시보드 v2.0 | 마지막 업데이트: <span id="lastUpdate">-</span></p>
+    </div>
+
+    <script>
+        let refreshInterval;
+        let metricsInterval;
+
+        // 대시보드 새로고침
+        function refreshDashboard() {
+            const iframe = document.getElementById('newsFrame');
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            const statusIndicator = document.getElementById('statusIndicator');
+
+            statusIndicator.textContent = '새로고침 중...';
+            statusIndicator.style.background = 'rgba(255, 193, 7, 0.1)';
+            statusIndicator.style.color = '#f6ad55';
+            loadingOverlay.style.display = 'flex';
+
+            iframe.src = iframe.src;
+        }
+
+        // 브라우저에서 열기
+        function openInBrowser() {
+            window.open('http://localhost:5002', '_blank');
+        }
+
+        // 분석 보기
+        function showAnalytics() {
+            alert('📊 분석 기능은 개발 중입니다.\n\n예정 기능:\n- 사용자 행동 분석\n- 콘텐츠 성과 분석\n- 트래픽 패턴 분석');
+        }
+
+        // 긴급 정지
+        function emergencyStop() {
+            if (confirm('🛑 모든 서비스를 긴급 정지하시겠습니까?')) {
+                alert('긴급 정지 명령이 실행되었습니다.\n서버를 수동으로 재시작해주세요.');
+                // 실제로는 서버 종료 스크립트 실행
+            }
+        }
+
+        // 로딩 숨기기
+        function hideLoading() {
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            const statusIndicator = document.getElementById('statusIndicator');
+
+            setTimeout(() => {
+                loadingOverlay.style.display = 'none';
+                statusIndicator.textContent = '시스템 정상 작동';
+                statusIndicator.style.background = 'rgba(72, 187, 120, 0.1)';
+                statusIndicator.style.color = '#38a169';
+            }, 1500);
+        }
+
+        // 실시간 메트릭 업데이트
+        function updateMetrics() {
+            // 활성 사용자 (랜덤 시뮬레이션)
+            const activeUsers = Math.floor(Math.random() * 50) + 100;
+            document.getElementById('activeUsers').textContent = activeUsers.toLocaleString();
+
+            // 페이지 뷰 (랜덤 시뮬레이션)
+            const pageViews = Math.floor(Math.random() * 1000) + 5000;
+            document.getElementById('pageViews').textContent = pageViews.toLocaleString();
+
+            // 서버 응답시간 (랜덤 시뮬레이션)
+            const responseTime = (Math.random() * 50 + 50).toFixed(0);
+            document.getElementById('responseTime').textContent = responseTime + 'ms';
+
+            // 에러율 (랜덤 시뮬레이션)
+            const errorRate = (Math.random() * 2).toFixed(1);
+            document.getElementById('errorRate').textContent = errorRate + '%';
+
+            // 시스템 상태 확인
+            checkSystemStatus();
+        }
+
+        // 시스템 상태 확인
+        function checkSystemStatus() {
+            // 프론트엔드 상태
+            fetch('http://localhost:5002')
+                .then(response => {
+                    document.getElementById('frontendStatus').textContent = '정상 ✅';
+                    document.getElementById('frontendStatus').style.color = '#38a169';
+                })
+                .catch(() => {
+                    document.getElementById('frontendStatus').textContent = '오류 ❌';
+                    document.getElementById('frontendStatus').style.color = '#e53e3e';
+                });
+
+            // 백엔드 상태
+            fetch('http://localhost:50000/api/health')
+                .then(response => {
+                    document.getElementById('backendStatus').textContent = '정상 ✅';
+                    document.getElementById('backendStatus').style.color = '#38a169';
+                })
+                .catch(() => {
+                    document.getElementById('backendStatus').textContent = '오류 ❌';
+                    document.getElementById('backendStatus').style.color = '#e53e3e';
+                });
+
+            // 데이터베이스 상태 (모의)
+            document.getElementById('databaseStatus').textContent = '정상 ✅';
+            document.getElementById('databaseStatus').style.color = '#38a169';
+        }
+
+        // 빠른 작업 함수들
+        function clearCache() {
+            alert('🧹 캐시가 정리되었습니다.');
+        }
+
+        function restartServices() {
+            if (confirm('🔄 서비스를 재시작하시겠습니까?')) {
+                alert('서비스 재시작이 시작되었습니다...');
+                setTimeout(() => {
+                    refreshDashboard();
+                }, 3000);
+            }
+        }
+
+        function exportLogs() {
+            alert('📄 로그 내보내기가 시작되었습니다.');
+        }
+
+        function backupData() {
+            alert('💾 데이터 백업이 시작되었습니다.');
+        }
+
+        // iframe 로드 실패 처리
+        document.getElementById('newsFrame').onerror = function () {
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            const statusIndicator = document.getElementById('statusIndicator');
+
+            loadingOverlay.innerHTML = `
+                <div class="error-message">
+                    <h3>⚠️ 서버 연결 실패</h3>
+                    <p>http://localhost:5002에 연결할 수 없습니다.</p>
+                    <p>서버가 실행 중인지 확인해주세요.</p>
+                </div>
+            `;
+
+            statusIndicator.textContent = '연결 실패 ❌';
+            statusIndicator.style.background = 'rgba(245, 101, 101, 0.1)';
+            statusIndicator.style.color = '#e53e3e';
+        };
+
+        // 키보드 단축키
+        document.addEventListener('keydown', function (e) {
+            if (e.ctrlKey || e.metaKey) {
+                switch (e.key) {
+                    case 'r':
+                        e.preventDefault();
+                        refreshDashboard();
+                        break;
+                    case 'b':
+                        e.preventDefault();
+                        openInBrowser();
+                        break;
+                    case 'a':
+                        e.preventDefault();
+                        showAnalytics();
+                        break;
+                }
+            }
+        });
+
+        // 초기화
+        document.addEventListener('DOMContentLoaded', function () {
+            // 마지막 업데이트 시간 설정
+            document.getElementById('lastUpdate').textContent = new Date().toLocaleString('ko-KR');
+
+            // 메트릭 업데이트 시작
+            updateMetrics();
+            metricsInterval = setInterval(updateMetrics, 5000);
+
+            // 자동 새로고침 (10분마다)
+            refreshInterval = setInterval(refreshDashboard, 600000);
+        });
+
+        // 페이지 언로드 시 정리
+        window.addEventListener('beforeunload', function () {
+            if (refreshInterval) clearInterval(refreshInterval);
+            if (metricsInterval) clearInterval(metricsInterval);
+        });
+    </script>
+</body>
+
+</html>

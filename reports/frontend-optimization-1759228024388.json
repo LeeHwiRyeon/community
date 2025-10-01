@@ -1,0 +1,46 @@
+{
+  "timestamp": "2025-09-30T10:27:04.387Z",
+  "bundleAnalysis": {
+    "totalFiles": 0,
+    "totalSize": 0,
+    "fileTypes": {},
+    "largestFiles": [],
+    "duplicateDependencies": [],
+    "unusedDependencies": [],
+    "dependencies": {
+      "production": 22,
+      "development": 19,
+      "total": 41
+    }
+  },
+  "imageOptimization": {
+    "totalImages": 52,
+    "totalSize": 170236,
+    "imageTypes": {
+      ".png": 52
+    },
+    "unoptimizedImages": [],
+    "recommendations": []
+  },
+  "codeSplitting": {
+    "hasCodeSplitting": false,
+    "chunkFiles": [],
+    "lazyLoadedComponents": [],
+    "recommendations": [
+      "React.lazy()를 사용한 코드 스플리팅을 구현하세요."
+    ]
+  },
+  "memoryUsage": {
+    "rss": 38,
+    "heapTotal": 7,
+    "heapUsed": 5,
+    "external": 2,
+    "recommendations": []
+  },
+  "recommendations": [
+    "코드 스플리팅이 구현되지 않았습니다. React.lazy()를 사용하세요.",
+    "정기적인 번들 분석을 위해 webpack-bundle-analyzer를 사용하세요.",
+    "이미지 최적화를 위해 next/image 또는 react-image를 사용하세요.",
+    "불필요한 의존성을 제거하여 번들 크기를 줄이세요."
+  ]
+}

@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>접근성 모니터링 대시보드</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #7f8c8d;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .stat-card h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .stat-number.good {
+            color: #27ae60;
+        }
+
+        .stat-number.warning {
+            color: #f39c12;
+        }
+
+        .stat-number.error {
+            color: #e74c3c;
+        }
+
+        .stat-description {
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+
+        .chart-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .chart-container h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        .test-results {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .test-results h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        .test-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border: 1px solid #ecf0f1;
+            border-radius: 6px;
+            margin-bottom: 10px;
+        }
+
+        .test-item.passed {
+            border-left: 4px solid #27ae60;
+            background: #f8fff8;
+        }
+
+        .test-item.failed {
+            border-left: 4px solid #e74c3c;
+            background: #fff8f8;
+        }
+
+        .test-item.warning {
+            border-left: 4px solid #f39c12;
+            background: #fffdf8;
+        }
+
+        .test-name {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .test-status {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 600;
+        }
+
+        .test-status.passed {
+            background: #d5f4e6;
+            color: #27ae60;
+        }
+
+        .test-status.failed {
+            background: #fadbd8;
+            color: #e74c3c;
+        }
+
+        .test-status.warning {
+            background: #fef9e7;
+            color: #f39c12;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2980b9;
+        }
+
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #229954;
+        }
+
+        .btn-warning {
+            background: #f39c12;
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: #e67e22;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #7f8c8d;
+        }
+
+        .error {
+            background: #e74c3c;
+            color: white;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+
+        .success {
+            background: #27ae60;
+            color: white;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+
+        .accessibility-score {
+            font-size: 3em;
+            font-weight: bold;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .score-excellent {
+            color: #27ae60;
+        }
+
+        .score-good {
+            color: #f39c12;
+        }
+
+        .score-poor {
+            color: #e74c3c;
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .controls {
+                flex-direction: column;
+            }
+
+            .test-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔍 접근성 모니터링 대시보드</h1>
+            <p>웹 접근성 표준(WCAG 2.1 AA) 준수 여부를 실시간으로 모니터링합니다.</p>
+        </div>
+
+        <div class="controls">
+            <button class="btn btn-primary" onclick="refreshData()">새로고침</button>
+            <button class="btn btn-success" onclick="runAccessibilityTest()">접근성 테스트 실행</button>
+            <button class="btn btn-warning" onclick="showAccessibilitySettings()">접근성 설정</button>
+        </div>
+
+        <div id="message"></div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>전체 점수</h3>
+                <div id="overallScore" class="stat-number">-</div>
+                <div class="stat-description">WCAG 2.1 AA 기준</div>
+            </div>
+            <div class="stat-card">
+                <h3>통과한 테스트</h3>
+                <div id="passedTests" class="stat-number">-</div>
+                <div class="stat-description">총 테스트 중</div>
+            </div>
+            <div class="stat-card">
+                <h3>오류</h3>
+                <div id="errorCount" class="stat-number">-</div>
+                <div class="stat-description">즉시 수정 필요</div>
+            </div>
+            <div class="stat-card">
+                <h3>경고</h3>
+                <div id="warningCount" class="stat-number">-</div>
+                <div class="stat-description">개선 권장</div>
+            </div>
+        </div>
+
+        <div class="chart-container">
+            <h3>접근성 점수 추이</h3>
+            <canvas id="scoreChart" width="400" height="200"></canvas>
+        </div>
+
+        <div class="chart-container">
+            <h3>테스트 결과 분포</h3>
+            <canvas id="distributionChart" width="400" height="200"></canvas>
+        </div>
+
+        <div class="test-results">
+            <h3>최근 테스트 결과</h3>
+            <div id="testResultsList">
+                <div class="loading">테스트 결과를 불러오는 중...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let scoreChart = null;
+        let distributionChart = null;
+        let testHistory = [];
+
+        // 페이지 로드 시 데이터 새로고침
+        document.addEventListener('DOMContentLoaded', function () {
+            refreshData();
+            initializeCharts();
+        });
+
+        // 데이터 새로고침
+        async function refreshData() {
+            try {
+                showMessage('데이터를 불러오는 중...', 'info');
+
+                // 접근성 테스트 결과 조회
+                const response = await fetch('http://localhost:5000/api/accessibility/test-results?limit=10');
+                const data = await response.json();
+
+                if (data.success) {
+                    updateDashboard(data.data.results);
+                    showMessage('데이터가 성공적으로 업데이트되었습니다.', 'success');
+                } else {
+                    showMessage('데이터를 불러오는데 실패했습니다: ' + data.message, 'error');
+                }
+            } catch (error) {
+                console.error('데이터 새로고침 오류:', error);
+                showMessage('데이터를 불러오는 중 오류가 발생했습니다.', 'error');
+            }
+        }
+
+        // 접근성 테스트 실행
+        async function runAccessibilityTest() {
+            try {
+                showMessage('접근성 테스트를 실행하는 중...', 'info');
+
+                const response = await fetch('http://localhost:5000/api/accessibility/test', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        testType: 'full',
+                        pageUrl: window.location.href
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showMessage('접근성 테스트가 완료되었습니다.', 'success');
+                    refreshData();
+                } else {
+                    showMessage('접근성 테스트 실행에 실패했습니다: ' + data.message, 'error');
+                }
+            } catch (error) {
+                console.error('접근성 테스트 실행 오류:', error);
+                showMessage('접근성 테스트 실행 중 오류가 발생했습니다.', 'error');
+            }
+        }
+
+        // 접근성 설정 표시
+        function showAccessibilitySettings() {
+            alert('접근성 설정 페이지로 이동합니다.\n실제 구현에서는 별도 페이지로 이동합니다.');
+        }
+
+        // 대시보드 업데이트
+        function updateDashboard(testResults) {
+            if (!testResults || testResults.length === 0) {
+                showMessage('테스트 결과가 없습니다.', 'warning');
+                return;
+            }
+
+            const latestResult = testResults[0];
+            const results = latestResult.results;
+
+            // 전체 점수 업데이트
+            const overallScore = results.score;
+            const scoreElement = document.getElementById('overallScore');
+            scoreElement.textContent = overallScore + '%';
+            scoreElement.className = 'stat-number ' + getScoreClass(overallScore);
+
+            // 통과한 테스트 수 업데이트
+            document.getElementById('passedTests').textContent = results.passed + '/' + results.total;
+
+            // 오류 수 업데이트
+            const errorCount = results.errors;
+            document.getElementById('errorCount').textContent = errorCount;
+            document.getElementById('errorCount').className = 'stat-number ' + (errorCount > 0 ? 'error' : 'good');
+
+            // 경고 수 업데이트
+            const warningCount = results.warnings;
+            document.getElementById('warningCount').textContent = warningCount;
+            document.getElementById('warningCount').className = 'stat-number ' + (warningCount > 0 ? 'warning' : 'good');
+
+            // 테스트 결과 목록 업데이트
+            updateTestResultsList(results.tests);
+
+            // 차트 업데이트
+            updateCharts(testResults);
+        }
+
+        // 점수에 따른 CSS 클래스 반환
+        function getScoreClass(score) {
+            if (score >= 90) return 'score-excellent';
+            if (score >= 70) return 'score-good';
+            return 'score-poor';
+        }
+
+        // 테스트 결과 목록 업데이트
+        function updateTestResultsList(tests) {
+            const container = document.getElementById('testResultsList');
+
+            if (!tests || tests.length === 0) {
+                container.innerHTML = '<div class="loading">테스트 결과가 없습니다.</div>';
+                return;
+            }
+
+            const html = tests.map(test => `
+                <div class="test-item ${test.passed ? 'passed' : 'failed'}">
+                    <div class="test-name">${test.name}</div>
+                    <div class="test-status ${test.passed ? 'passed' : 'failed'}">
+                        ${test.passed ? '통과' : '실패'}
+                    </div>
+                </div>
+            `).join('');
+
+            container.innerHTML = html;
+        }
+
+        // 차트 초기화
+        function initializeCharts() {
+            // 점수 추이 차트
+            const scoreCtx = document.getElementById('scoreChart').getContext('2d');
+            scoreChart = new Chart(scoreCtx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: '접근성 점수',
+                        data: [],
+                        borderColor: '#3498db',
+                        backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100
+                        }
+                    }
+                }
+            });
+
+            // 분포 차트
+            const distributionCtx = document.getElementById('distributionChart').getContext('2d');
+            distributionChart = new Chart(distributionCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['통과', '실패', '경고'],
+                    datasets: [{
+                        data: [0, 0, 0],
+                        backgroundColor: ['#27ae60', '#e74c3c', '#f39c12']
+                    }]
+                },
+                options: {
+                    responsive: true
+                }
+            });
+        }
+
+        // 차트 업데이트
+        function updateCharts(testResults) {
+            if (!testResults || testResults.length === 0) return;
+
+            // 점수 추이 차트 업데이트
+            const labels = testResults.map((result, index) => `테스트 ${testResults.length - index}`);
+            const scores = testResults.map(result => result.results.score);
+
+            scoreChart.data.labels = labels;
+            scoreChart.data.datasets[0].data = scores;
+            scoreChart.update();
+
+            // 분포 차트 업데이트
+            const latestResult = testResults[0];
+            const results = latestResult.results;
+
+            distributionChart.data.datasets[0].data = [
+                results.passed,
+                results.errors,
+                results.warnings
+            ];
+            distributionChart.update();
+        }
+
+        // 메시지 표시
+        function showMessage(message, type) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.innerHTML = `<div class="${type}">${message}</div>`;
+
+            setTimeout(() => {
+                messageDiv.innerHTML = '';
+            }, 5000);
+        }
+
+        // 자동 새로고침 (5분마다)
+        setInterval(refreshData, 5 * 60 * 1000);
+    </script>
+</body>
+
+</html>

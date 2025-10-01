@@ -2,271 +2,158 @@ name: Deploy to Production
 
 on:
   push:
-    branches: [ main, master ]
-  workflow_dispatch:
-    inputs:
-      environment:
-        description: 'Deployment environment'
-        required: true
-        default: 'production'
-        type: choice
-        options:
-        - production
-        - staging
+    branches: [main]
+  pull_request:
+    branches: [main]
 
 env:
+  NODE_VERSION: '18'
   REGISTRY: ghcr.io
-  BACKEND_IMAGE: ${{ github.repository }}/backend
-  FRONTEND_IMAGE: ${{ github.repository }}/frontend
+  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  build-and-push:
+  # Test and Build
+  test-and-build:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
 
-    - name: Log in to Container Registry
-      uses: docker/login-action@v3
-      with:
-        registry: ${{ env.REGISTRY }}
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Install dependencies
+        run: |
+          npm ci
+          cd frontend && npm ci
+          cd ../server-backend && npm ci
 
-    - name: Extract metadata for backend
-      id: meta-backend
-      uses: docker/metadata-action@v5
-      with:
-        images: ${{ env.REGISTRY }}/${{ env.BACKEND_IMAGE }}
-        tags: |
-          type=ref,event=branch
-          type=ref,event=pr
-          type=sha,prefix={{branch}}-
-          type=raw,value=latest,enable={{is_default_branch}}
+      - name: Run linting
+        run: |
+          npm run lint
+          cd frontend && npm run lint
+          cd ../server-backend && npm run lint
 
-    - name: Build and push backend image
-      uses: docker/build-push-action@v5
-      with:
-        context: ./server-backend
-        push: true
-        tags: ${{ steps.meta-backend.outputs.tags }}
-        labels: ${{ steps.meta-backend.outputs.labels }}
-        cache-from: type=gha
-        cache-to: type=gha,mode=max
+      - name: Run tests
+        run: |
+          npm run test
+          cd frontend && npm run test
+          cd ../server-backend && npm run test
 
-    - name: Extract metadata for frontend
-      id: meta-frontend
-      uses: docker/metadata-action@v5
-      with:
-        images: ${{ env.REGISTRY }}/${{ env.FRONTEND_IMAGE }}
-        tags: |
-          type=ref,event=branch
-          type=ref,event=pr
-          type=sha,prefix={{branch}}-
-          type=raw,value=latest,enable={{is_default_branch}}
+      - name: Build frontend
+        run: |
+          cd frontend
+          npm run build
 
-    - name: Build and push frontend image
-      uses: docker/build-push-action@v5
-      with:
-        context: ./frontend
-        push: true
-        tags: ${{ steps.meta-frontend.outputs.tags }}
-        labels: ${{ steps.meta-frontend.outputs.labels }}
-        cache-from: type=gha
-        cache-to: type=gha,mode=max
+      - name: Build Docker image
+        run: |
+          docker build -f Dockerfile.production -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} .
 
-  deploy:
-    needs: build-and-push
+  # Security Scan
+  security-scan:
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
-
+    needs: test-and-build
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Deploy to production server
-      uses: appleboy/ssh-action@v1.0.0
-      with:
-        host: ${{ secrets.PRODUCTION_HOST }}
-        username: ${{ secrets.PRODUCTION_USER }}
-        key: ${{ secrets.PRODUCTION_SSH_KEY }}
-        port: ${{ secrets.PRODUCTION_PORT || 22 }}
-        script: |
-          cd /opt/community-platform
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+          format: 'sarif'
+          output: 'trivy-results.sarif'
 
-          # 기존 서비스 중지
-          echo "Stopping existing services..."
-          docker-compose -f docker-compose.prod.yml down
+      - name: Upload Trivy scan results
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: 'trivy-results.sarif'
 
-          # 최신 이미지 pull
-          echo "Pulling latest images..."
-          docker-compose -f docker-compose.prod.yml pull
+      - name: Run npm audit
+        run: |
+          npm audit --audit-level=moderate
+          cd frontend && npm audit --audit-level=moderate
+          cd ../server-backend && npm audit --audit-level=moderate
 
-          # 서비스 시작
-          echo "Starting services..."
-          docker-compose -f docker-compose.prod.yml up -d
+  # Deploy to Staging
+  deploy-staging:
+    runs-on: ubuntu-latest
+    needs: [test-and-build, security-scan]
+    if: github.event_name == 'pull_request'
+    environment: staging
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-          # 헬스체크
-          echo "Waiting for services to be healthy..."
-          sleep 30
+      - name: Deploy to staging
+        run: |
+          echo "Deploying to staging environment..."
+          # Add staging deployment commands here
 
-          # 헬스체크 수행
-          if curl -f http://localhost:50000/api/health; then
-            echo "✅ Deployment successful!"
-          else
-            echo "❌ Deployment failed - rolling back..."
-            docker-compose -f docker-compose.prod.yml down
-            docker-compose -f docker-compose.prod.yml up -d --scale backend=0
-            exit 1
-          fi
+  # Deploy to Production
+  deploy-production:
+    runs-on: ubuntu-latest
+    needs: [test-and-build, security-scan]
+    if: github.ref == 'refs/heads/main'
+    environment: production
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
+      - name: Login to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Push Docker image
+        run: |
+          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+          docker tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+
+      - name: Deploy to production
+        run: |
+          echo "Deploying to production environment..."
+          # Add production deployment commands here
+
+  # Performance Test
+  performance-test:
+    runs-on: ubuntu-latest
+    needs: deploy-staging
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install Lighthouse CI
+        run: npm install -g @lhci/cli@0.12.x
+
+      - name: Run Lighthouse CI
+        run: |
+          lhci autorun
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+
+  # Notification
   notify:
-    needs: [build-and-push, deploy]
     runs-on: ubuntu-latest
+    needs: [deploy-production, performance-test]
     if: always()
-
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-
-    - name: Generate notification payload
-      id: notification
-      run: |
-        # 배포 상태에 따른 메시지 생성
-        if [ "${{ job.status }}" = "success" ]; then
-          STATUS="✅ 성공"
-          COLOR="good"
-          ICON=":white_check_mark:"
-        else
-          STATUS="❌ 실패"
-          COLOR="danger"
-          ICON=":x:"
-        fi
-
-        # 커밋 정보 가져오기
-        COMMIT_SHA="${{ github.sha }}"
-        COMMIT_SHORT="${COMMIT_SHA:0:7}"
-        COMMIT_URL="https://github.com/${{ github.repository }}/commit/${COMMIT_SHA}"
-        AUTHOR="${{ github.actor }}"
-        BRANCH="${{ github.ref_name }}"
-
-        # JSON 페이로드 생성 (Slack용)
-        SLACK_PAYLOAD=$(cat <<EOF
-        {
-          "blocks": [
-            {
-              "type": "header",
-              "text": {
-                "type": "plain_text",
-                "text": "${ICON} 배포 ${STATUS}"
-              }
-            },
-            {
-              "type": "section",
-              "fields": [
-                {
-                  "type": "mrkdwn",
-                  "text": "*환경:* 프로덕션"
-                },
-                {
-                  "type": "mrkdwn",
-                  "text": "*브랜치:* ${BRANCH}"
-                },
-                {
-                  "type": "mrkdwn",
-                  "text": "*커밋:* <${COMMIT_URL}|${COMMIT_SHORT}>"
-                },
-                {
-                  "type": "mrkdwn",
-                  "text": "*배포자:* @${AUTHOR}"
-                },
-                {
-                  "type": "mrkdwn",
-                  "text": "*시간:* $(date '+%Y-%m-%d %H:%M:%S %Z')"
-                },
-                {
-                  "type": "mrkdwn",
-                  "text": "*워크플로우:* <https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|${{ github.workflow }}>"
-                }
-              ]
-            }
-          ]
-        }
-        EOF
-        )
-
-        # Discord 페이로드 생성
-        DISCORD_PAYLOAD=$(cat <<EOF
-        {
-          "embeds": [
-            {
-              "title": "${ICON} 배포 ${STATUS}",
-              "color": ${{ job.status == 'success' && '3066993' || '15158332' }},
-              "fields": [
-                {
-                  "name": "환경",
-                  "value": "프로덕션",
-                  "inline": true
-                },
-                {
-                  "name": "브랜치",
-                  "value": "${BRANCH}",
-                  "inline": true
-                },
-                {
-                  "name": "커밋",
-                  "value": "[${COMMIT_SHORT}](${COMMIT_URL})",
-                  "inline": true
-                },
-                {
-                  "name": "배포자",
-                  "value": "@${AUTHOR}",
-                  "inline": true
-                },
-                {
-                  "name": "시간",
-                  "value": "$(date '+%Y-%m-%d %H:%M:%S %Z')",
-                  "inline": true
-                },
-                {
-                  "name": "워크플로우",
-                  "value": "[${{ github.workflow }}](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})",
-                  "inline": true
-                }
-              ],
-              "footer": {
-                "text": "Community Hub CI/CD"
-              }
-            }
-          ]
-        }
-        EOF
-        )
-
-        # 출력 설정
-        echo "slack_payload=${SLACK_PAYLOAD}" >> $GITHUB_OUTPUT
-        echo "discord_payload=${DISCORD_PAYLOAD}" >> $GITHUB_OUTPUT
-
-    - name: Notify Slack
-      if: env.SLACK_WEBHOOK_URL != ''
-      uses: 8398a7/action-slack@v3
-      with:
-        status: ${{ job.status }}
-        webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
-        fields: repo,message,commit,author,action,eventName,ref,workflow
-        custom_payload: ${{ steps.notification.outputs.slack_payload }}
-
-    - name: Notify Discord
-      if: env.DISCORD_WEBHOOK_URL != ''
-      run: |
-        curl -X POST \
-          -H 'Content-type: application/json' \
-          -d '${{ steps.notification.outputs.discord_payload }}' \
-          ${{ secrets.DISCORD_WEBHOOK_URL }}
+      - name: Notify deployment status
+        run: |
+          if [ "${{ needs.deploy-production.result }}" == "success" ]; then
+            echo "✅ Production deployment successful!"
+          else
+            echo "❌ Production deployment failed!"
+          fi

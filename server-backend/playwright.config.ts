@@ -69,10 +69,10 @@ export default defineConfig({
     ],
 
     /* Run your local dev server before starting the tests */
-    webServer: {
-        command: 'cd ../frontend && npm run dev',
-        port: 5002,
-        reuseExistingServer: !process.env.CI,
-        timeout: 180 * 1000,
-    },
+    // webServer: {
+    //     command: 'cd ../frontend && npm run dev',
+    //     port: 5002,
+    //     reuseExistingServer: !process.env.CI,
+    //     timeout: 180 * 1000,
+    // },
 });

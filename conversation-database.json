@@ -1,0 +1,33 @@
+{
+  "conversations": [
+    {
+      "id": "f5f04c20-6184-427b-acc5-263d5d59a39e",
+      "workflowId": "ff319344-40b2-4cf5-b8d3-4ae3255ff0f7",
+      "userMessage": "긴급! 사용자 로그인 시 500 오류 발생 - 즉시 수정 필요",
+      "systemResponse": "Cursor에서 요청된 작업이 3개의 작업으로 분할되었습니다.",
+      "timestamp": "2025-09-29T20:50:31.523Z"
+    },
+    {
+      "id": "284f4d2b-ecbf-41bd-bb60-552ba78aadee",
+      "workflowId": "b653c8f3-f084-46af-98c6-a401ec654411",
+      "userMessage": "중요한 새로운 기능 개발 - 사용자 대시보드 구현",
+      "systemResponse": "Cursor에서 요청된 작업이 3개의 작업으로 분할되었습니다.",
+      "timestamp": "2025-09-29T20:50:32.548Z"
+    },
+    {
+      "id": "e25fa3e0-f64b-46d5-af14-1bf922bf8013",
+      "workflowId": "abf30188-c547-4add-b0b3-f01b3f8ec3e9",
+      "userMessage": "프로젝트 문서 정리 및 README 업데이트",
+      "systemResponse": "Cursor에서 요청된 작업이 3개의 작업으로 분할되었습니다.",
+      "timestamp": "2025-09-29T20:50:33.567Z"
+    },
+    {
+      "id": "e55162d3-b876-4281-a9b1-385a26410cd3",
+      "workflowId": "3eb0b8ed-5ff8-4b5f-8cf1-3d6f51c9f016",
+      "userMessage": "전체 시스템 리팩토링 - 마이크로서비스 아키텍처로 전환, 데이터베이스 최적화, API 개선",
+      "systemResponse": "Cursor에서 요청된 작업이 3개의 작업으로 분할되었습니다.",
+      "timestamp": "2025-09-29T20:50:34.583Z"
+    }
+  ],
+  "lastUpdated": "2025-09-29T20:50:34.583Z"
+}

@@ -206,7 +206,7 @@ describe('ContentTester Integration', () => {
             // Wait for completion
             await waitFor(() => {
                 expect(runButton).not.toBeDisabled()
-                expect(screen.queryByText('테스트 실행 중...')).not.toBeInTheDocument()
+                expect(screen.queryByText('?�스???�행 �?..')).not.toBeInTheDocument()
             })
         })
 

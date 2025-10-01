@@ -1,0 +1,40 @@
+{
+  "monitoring": {
+    "enabled": true,
+    "interval": 300000,
+    "maxTasksPerDay": 20,
+    "priorityThreshold": 3,
+    "qualityThreshold": 0.7
+  },
+  "notifications": {
+    "email": "admin@community-project.com",
+    "slack": "",
+    "discord": "",
+    "enabled": true
+  },
+  "quality": {
+    "minTaskQuality": 0.7,
+    "duplicateThreshold": 0.8,
+    "autoApprove": false,
+    "requireReview": true
+  },
+  "versioning": {
+    "currentVersion": "2.0.0",
+    "targetVersion": "3.0.0",
+    "milestoneInterval": 0.1,
+    "autoIncrement": true
+  },
+  "limits": {
+    "maxConcurrentTasks": 10,
+    "maxTasksPerSprint": 50,
+    "maxTaskAge": 30,
+    "maxFileSize": 10485760
+  },
+  "features": {
+    "autoTaskGeneration": true,
+    "autoProgressTracking": true,
+    "autoNotification": true,
+    "autoQualityCheck": true,
+    "autoVersionUpdate": true
+  }
+}

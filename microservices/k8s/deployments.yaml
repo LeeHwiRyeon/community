@@ -1,0 +1,694 @@
+# API Gateway Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-gateway
+  namespace: community-platform
+  labels:
+    app.kubernetes.io/name: community-platform
+    app.kubernetes.io/component: api-gateway
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: community-platform
+      app.kubernetes.io/component: api-gateway
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: community-platform
+        app.kubernetes.io/component: api-gateway
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8001"
+        prometheus.io/path: "/metrics"
+    spec:
+      containers:
+      - name: kong
+        image: kong:3.4-alpine
+        ports:
+        - containerPort: 8000
+          name: http
+        - containerPort: 8001
+          name: admin
+        env:
+        - name: KONG_DATABASE
+          value: "off"
+        - name: KONG_DECLARATIVE_CONFIG
+          value: "/kong/declarative/kong.yml"
+        - name: KONG_PROXY_ACCESS_LOG
+          value: "/dev/stdout"
+        - name: KONG_ADMIN_ACCESS_LOG
+          value: "/dev/stdout"
+        - name: KONG_PROXY_ERROR_LOG
+          value: "/dev/stdout"
+        - name: KONG_ADMIN_ERROR_LOG
+          value: "/dev/stdout"
+        - name: KONG_ADMIN_LISTEN
+          value: "0.0.0.0:8001"
+        - name: KONG_PROXY_LISTEN
+          value: "0.0.0.0:8000"
+        - name: KONG_PLUGINS
+          value: "bundled,rate-limiting,cors,jwt,request-transformer,response-transformer,prometheus"
+        volumeMounts:
+        - name: kong-config
+          mountPath: /kong/declarative
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /status
+            port: 8001
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /status
+            port: 8001
+          initialDelaySeconds: 5
+          periodSeconds: 5
+      volumes:
+      - name: kong-config
+        configMap:
+          name: kong-config
+      restartPolicy: Always
+
+---
+# Auth Service Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-service
+  namespace: community-platform
+  labels:
+    app.kubernetes.io/name: community-platform
+    app.kubernetes.io/component: auth-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: community-platform
+      app.kubernetes.io/component: auth-service
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: community-platform
+        app.kubernetes.io/component: auth-service
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "3001"
+        prometheus.io/path: "/metrics"
+    spec:
+      containers:
+      - name: auth-service
+        image: community-platform/auth-service:latest
+        ports:
+        - containerPort: 3001
+          name: http
+        envFrom:
+        - configMapRef:
+            name: community-config
+        env:
+        - name: DATABASE_URL
+          value: "postgresql://postgres:password@postgres-service:5432/community_auth"
+        - name: REDIS_URL
+          value: "redis://redis-service:6379"
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 3001
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 3001
+          initialDelaySeconds: 5
+          periodSeconds: 5
+      restartPolicy: Always
+
+---
+# User Service Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-service
+  namespace: community-platform
+  labels:
+    app.kubernetes.io/name: community-platform
+    app.kubernetes.io/component: user-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: community-platform
+      app.kubernetes.io/component: user-service
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: community-platform
+        app.kubernetes.io/component: user-service
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "3002"
+        prometheus.io/path: "/metrics"
+    spec:
+      containers:
+      - name: user-service
+        image: community-platform/user-service:latest
+        ports:
+        - containerPort: 3002
+          name: http
+        envFrom:
+        - configMapRef:
+            name: community-config
+        env:
+        - name: DATABASE_URL
+          value: "mongodb://admin:password@mongo-service:27017/community_users"
+        - name: REDIS_URL
+          value: "redis://redis-service:6379"
+        - name: AUTH_SERVICE_URL
+          value: "http://auth-service:3001"
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 3002
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 3002
+          initialDelaySeconds: 5
+          periodSeconds: 5
+      restartPolicy: Always
+
+---
+# Content Service Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: content-service
+  namespace: community-platform
+  labels:
+    app.kubernetes.io/name: community-platform
+    app.kubernetes.io/component: content-service
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: community-platform
+      app.kubernetes.io/component: content-service
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: community-platform
+        app.kubernetes.io/component: content-service
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "3003"
+        prometheus.io/path: "/metrics"
+    spec:
+      containers:
+      - name: content-service
+        image: community-platform/content-service:latest
+        ports:
+        - containerPort: 3003
+          name: http
+        envFrom:
+        - configMapRef:
+            name: community-config
+        env:
+        - name: DATABASE_URL
+          value: "postgresql://postgres:password@postgres-service:5432/community_content"
+        - name: REDIS_URL
+          value: "redis://redis-service:6379"
+        - name: AUTH_SERVICE_URL
+          value: "http://auth-service:3001"
+        - name: FILE_SERVICE_URL
+          value: "http://file-service:3007"
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "500m"
+          limits:
+            memory: "1Gi"
+            cpu: "1000m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 3003
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 3003
+          initialDelaySeconds: 5
+          periodSeconds: 5
+      restartPolicy: Always
+
+---
+# Notification Service Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notification-service
+  namespace: community-platform
+  labels:
+    app.kubernetes.io/name: community-platform
+    app.kubernetes.io/component: notification-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: community-platform
+      app.kubernetes.io/component: notification-service
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: community-platform
+        app.kubernetes.io/component: notification-service
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "3004"
+        prometheus.io/path: "/metrics"
+    spec:
+      containers:
+      - name: notification-service
+        image: community-platform/notification-service:latest
+        ports:
+        - containerPort: 3004
+          name: http
+        envFrom:
+        - configMapRef:
+            name: community-config
+        env:
+        - name: DATABASE_URL
+          value: "postgresql://postgres:password@postgres-service:5432/community_notifications"
+        - name: REDIS_URL
+          value: "redis://redis-service:6379"
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 3004
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 3004
+          initialDelaySeconds: 5
+          periodSeconds: 5
+      restartPolicy: Always
+
+---
+# Analytics Service Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: analytics-service
+  namespace: community-platform
+  labels:
+    app.kubernetes.io/name: community-platform
+    app.kubernetes.io/component: analytics-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: community-platform
+      app.kubernetes.io/component: analytics-service
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: community-platform
+        app.kubernetes.io/component: analytics-service
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "3005"
+        prometheus.io/path: "/metrics"
+    spec:
+      containers:
+      - name: analytics-service
+        image: community-platform/analytics-service:latest
+        ports:
+        - containerPort: 3005
+          name: http
+        envFrom:
+        - configMapRef:
+            name: community-config
+        env:
+        - name: DATABASE_URL
+          value: "postgresql://postgres:password@postgres-service:5432/community_analytics"
+        - name: REDIS_URL
+          value: "redis://redis-service:6379"
+        - name: CLICKHOUSE_URL
+          value: "http://clickhouse-service:8123"
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "500m"
+          limits:
+            memory: "1Gi"
+            cpu: "1000m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 3005
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 3005
+          initialDelaySeconds: 5
+          periodSeconds: 5
+      restartPolicy: Always
+
+---
+# Search Service Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: search-service
+  namespace: community-platform
+  labels:
+    app.kubernetes.io/name: community-platform
+    app.kubernetes.io/component: search-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: community-platform
+      app.kubernetes.io/component: search-service
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: community-platform
+        app.kubernetes.io/component: search-service
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "3006"
+        prometheus.io/path: "/metrics"
+    spec:
+      containers:
+      - name: search-service
+        image: community-platform/search-service:latest
+        ports:
+        - containerPort: 3006
+          name: http
+        envFrom:
+        - configMapRef:
+            name: community-config
+        env:
+        - name: ELASTICSEARCH_URL
+          value: "http://elasticsearch-service:9200"
+        - name: REDIS_URL
+          value: "redis://redis-service:6379"
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "500m"
+          limits:
+            memory: "1Gi"
+            cpu: "1000m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 3006
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 3006
+          initialDelaySeconds: 5
+          periodSeconds: 5
+      restartPolicy: Always
+
+---
+# File Service Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: file-service
+  namespace: community-platform
+  labels:
+    app.kubernetes.io/name: community-platform
+    app.kubernetes.io/component: file-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: community-platform
+      app.kubernetes.io/component: file-service
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: community-platform
+        app.kubernetes.io/component: file-service
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "3007"
+        prometheus.io/path: "/metrics"
+    spec:
+      containers:
+      - name: file-service
+        image: community-platform/file-service:latest
+        ports:
+        - containerPort: 3007
+          name: http
+        envFrom:
+        - configMapRef:
+            name: community-config
+        env:
+        - name: MINIO_ENDPOINT
+          value: "minio-service:9000"
+        - name: REDIS_URL
+          value: "redis://redis-service:6379"
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 3007
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 3007
+          initialDelaySeconds: 5
+          periodSeconds: 5
+      restartPolicy: Always
+
+---
+# Chat Service Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chat-service
+  namespace: community-platform
+  labels:
+    app.kubernetes.io/name: community-platform
+    app.kubernetes.io/component: chat-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: community-platform
+      app.kubernetes.io/component: chat-service
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: community-platform
+        app.kubernetes.io/component: chat-service
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "3008"
+        prometheus.io/path: "/metrics"
+    spec:
+      containers:
+      - name: chat-service
+        image: community-platform/chat-service:latest
+        ports:
+        - containerPort: 3008
+          name: http
+        envFrom:
+        - configMapRef:
+            name: community-config
+        env:
+        - name: DATABASE_URL
+          value: "postgresql://postgres:password@postgres-service:5432/community_chat"
+        - name: REDIS_URL
+          value: "redis://redis-service:6379"
+        - name: AUTH_SERVICE_URL
+          value: "http://auth-service:3001"
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 3008
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 3008
+          initialDelaySeconds: 5
+          periodSeconds: 5
+      restartPolicy: Always
+
+---
+# Admin Service Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: admin-service
+  namespace: community-platform
+  labels:
+    app.kubernetes.io/name: community-platform
+    app.kubernetes.io/component: admin-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: community-platform
+      app.kubernetes.io/component: admin-service
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: community-platform
+        app.kubernetes.io/component: admin-service
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "3009"
+        prometheus.io/path: "/metrics"
+    spec:
+      containers:
+      - name: admin-service
+        image: community-platform/admin-service:latest
+        ports:
+        - containerPort: 3009
+          name: http
+        envFrom:
+        - configMapRef:
+            name: community-config
+        env:
+        - name: DATABASE_URL
+          value: "postgresql://postgres:password@postgres-service:5432/community_admin"
+        - name: REDIS_URL
+          value: "redis://redis-service:6379"
+        - name: AUTH_SERVICE_URL
+          value: "http://auth-service:3001"
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 3009
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 3009
+          initialDelaySeconds: 5
+          periodSeconds: 5
+      restartPolicy: Always
+
+---
+# Frontend Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  namespace: community-platform
+  labels:
+    app.kubernetes.io/name: community-platform
+    app.kubernetes.io/component: frontend
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: community-platform
+      app.kubernetes.io/component: frontend
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: community-platform
+        app.kubernetes.io/component: frontend
+    spec:
+      containers:
+      - name: frontend
+        image: community-platform/frontend:latest
+        ports:
+        - containerPort: 3000
+          name: http
+        env:
+        - name: REACT_APP_API_URL
+          value: "http://api-gateway:8000"
+        - name: REACT_APP_WS_URL
+          value: "ws://chat-service:3008"
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 3000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 3000
+          initialDelaySeconds: 5
+          periodSeconds: 5
+      restartPolicy: Always

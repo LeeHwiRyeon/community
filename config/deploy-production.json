@@ -1,0 +1,67 @@
+{
+    "environment": "production",
+    "description": "프로덕션 환경 배포 설정",
+    "docker": {
+        "registry": "ghcr.io",
+        "imageName": "community-platform",
+        "tag": "latest"
+    },
+    "services": {
+        "backend": {
+            "port": 50000,
+            "healthCheck": "/api/health",
+            "replicas": 5
+        },
+        "frontend": {
+            "port": 3000,
+            "healthCheck": "/",
+            "replicas": 3
+        }
+    },
+    "database": {
+        "host": "prod-db.example.com",
+        "port": 3306,
+        "name": "community_production",
+        "user": "prod_user",
+        "password": "prod_password"
+    },
+    "redis": {
+        "host": "prod-redis.example.com",
+        "port": 6379,
+        "password": "prod_redis_password"
+    },
+    "monitoring": {
+        "enabled": true,
+        "prometheus": "http://prod-prometheus.example.com:9090",
+        "grafana": "http://prod-grafana.example.com:3000"
+    },
+    "notifications": {
+        "slack": {
+            "webhook": "https://hooks.slack.com/services/production/webhook",
+            "channel": "#production-deployments"
+        },
+        "email": {
+            "enabled": true,
+            "recipients": [
+                "ops-team@example.com",
+                "dev-team@example.com"
+            ]
+        },
+        "sms": {
+            "enabled": true,
+            "recipients": [
+                "+82-10-1234-5678"
+            ]
+        }
+    },
+    "rollback": {
+        "enabled": true,
+        "maxVersions": 10,
+        "autoRollback": false
+    },
+    "security": {
+        "ssl": true,
+        "certPath": "/etc/ssl/certs/community.crt",
+        "keyPath": "/etc/ssl/private/community.key"
+    }
+}

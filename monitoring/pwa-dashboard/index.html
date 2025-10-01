@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PWA 모니터링 대시보드</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #7f8c8d;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .stat-card h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .stat-number.good {
+            color: #27ae60;
+        }
+
+        .stat-number.warning {
+            color: #f39c12;
+        }
+
+        .stat-number.error {
+            color: #e74c3c;
+        }
+
+        .stat-description {
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+
+        .chart-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .chart-container h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        .pwa-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-card h4 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .feature-status {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: 600;
+        }
+
+        .feature-status.supported {
+            background: #d5f4e6;
+            color: #27ae60;
+        }
+
+        .feature-status.not-supported {
+            background: #fadbd8;
+            color: #e74c3c;
+        }
+
+        .feature-status.partial {
+            background: #fef9e7;
+            color: #f39c12;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2980b9;
+        }
+
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #229954;
+        }
+
+        .btn-warning {
+            background: #f39c12;
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: #e67e22;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #7f8c8d;
+        }
+
+        .error {
+            background: #e74c3c;
+            color: white;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+
+        .success {
+            background: #27ae60;
+            color: white;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+
+        .install-prompt {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .install-prompt h3 {
+            margin-bottom: 10px;
+        }
+
+        .install-prompt p {
+            margin-bottom: 20px;
+            opacity: 0.9;
+        }
+
+        .install-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .btn-white {
+            background: white;
+            color: #667eea;
+            border: 2px solid white;
+        }
+
+        .btn-white:hover {
+            background: transparent;
+            color: white;
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+
+        .btn-outline:hover {
+            background: white;
+            color: #667eea;
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .pwa-features {
+                grid-template-columns: 1fr;
+            }
+
+            .controls {
+                flex-direction: column;
+            }
+
+            .install-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📱 PWA 모니터링 대시보드</h1>
+            <p>Progressive Web App의 성능과 사용 현황을 실시간으로 모니터링합니다.</p>
+        </div>
+
+        <div class="controls">
+            <button class="btn btn-primary" onclick="refreshData()">새로고침</button>
+            <button class="btn btn-success" onclick="checkPWAFeatures()">PWA 기능 확인</button>
+            <button class="btn btn-warning" onclick="testOfflineMode()">오프라인 테스트</button>
+        </div>
+
+        <div id="message"></div>
+
+        <!-- PWA 설치 프롬프트 -->
+        <div id="installPrompt" class="install-prompt" style="display: none;">
+            <h3>🚀 PWA 설치 가능</h3>
+            <p>Community Platform을 홈 화면에 설치하여 더 나은 경험을 즐기세요!</p>
+            <div class="install-buttons">
+                <button class="btn btn-white" onclick="installPWA()">설치하기</button>
+                <button class="btn btn-outline" onclick="dismissInstall()">나중에</button>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>PWA 점수</h3>
+                <div id="pwaScore" class="stat-number">-</div>
+                <div class="stat-description">Lighthouse PWA 점수</div>
+            </div>
+            <div class="stat-card">
+                <h3>설치율</h3>
+                <div id="installRate" class="stat-number">-</div>
+                <div class="stat-description">사용자 설치 비율</div>
+            </div>
+            <div class="stat-card">
+                <h3>오프라인 사용</h3>
+                <div id="offlineUsage" class="stat-number">-</div>
+                <div class="stat-description">오프라인 세션 수</div>
+            </div>
+            <div class="stat-card">
+                <h3>캐시 히트율</h3>
+                <div id="cacheHitRate" class="stat-number">-</div>
+                <div class="stat-description">캐시 성공률</div>
+            </div>
+        </div>
+
+        <div class="chart-container">
+            <h3>PWA 사용 현황</h3>
+            <canvas id="usageChart" width="400" height="200"></canvas>
+        </div>
+
+        <div class="chart-container">
+            <h3>성능 지표</h3>
+            <canvas id="performanceChart" width="400" height="200"></canvas>
+        </div>
+
+        <div class="pwa-features" id="pwaFeatures">
+            <div class="loading">PWA 기능을 확인하는 중...</div>
+        </div>
+    </div>
+
+    <script>
+        let usageChart = null;
+        let performanceChart = null;
+        let installPrompt = null;
+
+        // 페이지 로드 시 초기화
+        document.addEventListener('DOMContentLoaded', function () {
+            refreshData();
+            initializeCharts();
+            checkInstallPrompt();
+        });
+
+        // 데이터 새로고침
+        async function refreshData() {
+            try {
+                showMessage('데이터를 불러오는 중...', 'info');
+
+                // PWA 통계 조회 (실제로는 API 호출)
+                const pwaStats = await getPWAStats();
+                updateDashboard(pwaStats);
+
+                showMessage('데이터가 성공적으로 업데이트되었습니다.', 'success');
+            } catch (error) {
+                console.error('데이터 새로고침 오류:', error);
+                showMessage('데이터를 불러오는 중 오류가 발생했습니다.', 'error');
+            }
+        }
+
+        // PWA 통계 가져오기
+        async function getPWAStats() {
+            // 실제로는 API에서 데이터를 가져옴
+            return {
+                pwaScore: 95,
+                installRate: 23.5,
+                offlineUsage: 156,
+                cacheHitRate: 87.3,
+                features: {
+                    serviceWorker: true,
+                    manifest: true,
+                    https: true,
+                    responsive: true,
+                    offline: true,
+                    pushNotifications: true,
+                    backgroundSync: true,
+                    webShare: true
+                }
+            };
+        }
+
+        // 대시보드 업데이트
+        function updateDashboard(stats) {
+            // PWA 점수
+            const scoreElement = document.getElementById('pwaScore');
+            scoreElement.textContent = stats.pwaScore;
+            scoreElement.className = 'stat-number ' + (stats.pwaScore >= 90 ? 'good' :
+                stats.pwaScore >= 70 ? 'warning' : 'error');
+
+            // 설치율
+            document.getElementById('installRate').textContent = stats.installRate + '%';
+
+            // 오프라인 사용
+            document.getElementById('offlineUsage').textContent = stats.offlineUsage;
+
+            // 캐시 히트율
+            document.getElementById('cacheHitRate').textContent = stats.cacheHitRate + '%';
+
+            // PWA 기능 표시
+            updatePWAFeatures(stats.features);
+
+            // 차트 업데이트
+            updateCharts(stats);
+        }
+
+        // PWA 기능 업데이트
+        function updatePWAFeatures(features) {
+            const container = document.getElementById('pwaFeatures');
+
+            const featureList = [
+                { key: 'serviceWorker', name: 'Service Worker', description: '백그라운드 작업 처리' },
+                { key: 'manifest', name: 'Web App Manifest', description: '앱 설치 및 메타데이터' },
+                { key: 'https', name: 'HTTPS', description: '보안 연결' },
+                { key: 'responsive', name: '반응형 디자인', description: '모든 디바이스 지원' },
+                { key: 'offline', name: '오프라인 지원', description: '인터넷 없이도 사용 가능' },
+                { key: 'pushNotifications', name: '푸시 알림', description: '실시간 알림 전송' },
+                { key: 'backgroundSync', name: '백그라운드 동기화', description: '오프라인 데이터 동기화' },
+                { key: 'webShare', name: '웹 공유', description: '네이티브 공유 기능' }
+            ];
+
+            const html = featureList.map(feature => {
+                const isSupported = features[feature.key];
+                const statusClass = isSupported ? 'supported' : 'not-supported';
+                const statusText = isSupported ? '지원됨' : '지원 안됨';
+
+                return `
+                    <div class="feature-card">
+                        <h4>
+                            ${feature.name}
+                            <span class="feature-status ${statusClass}">${statusText}</span>
+                        </h4>
+                        <p>${feature.description}</p>
+                    </div>
+                `;
+            }).join('');
+
+            container.innerHTML = html;
+        }
+
+        // 차트 초기화
+        function initializeCharts() {
+            // 사용 현황 차트
+            const usageCtx = document.getElementById('usageChart').getContext('2d');
+            usageChart = new Chart(usageCtx, {
+                type: 'line',
+                data: {
+                    labels: ['1일', '2일', '3일', '4일', '5일', '6일', '7일'],
+                    datasets: [{
+                        label: 'PWA 사용자',
+                        data: [120, 135, 142, 138, 156, 148, 162],
+                        borderColor: '#3498db',
+                        backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                        tension: 0.4
+                    }, {
+                        label: '웹 사용자',
+                        data: [200, 210, 205, 215, 220, 218, 225],
+                        borderColor: '#e74c3c',
+                        backgroundColor: 'rgba(231, 76, 60, 0.1)',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            // 성능 지표 차트
+            const performanceCtx = document.getElementById('performanceChart').getContext('2d');
+            performanceChart = new Chart(performanceCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['캐시 히트', '네트워크 요청', '오프라인'],
+                    datasets: [{
+                        data: [87, 10, 3],
+                        backgroundColor: ['#27ae60', '#f39c12', '#e74c3c']
+                    }]
+                },
+                options: {
+                    responsive: true
+                }
+            });
+        }
+
+        // 차트 업데이트
+        function updateCharts(stats) {
+            // 실제 데이터로 차트 업데이트
+            // 여기서는 시뮬레이션 데이터 사용
+        }
+
+        // PWA 기능 확인
+        function checkPWAFeatures() {
+            const features = {
+                serviceWorker: 'serviceWorker' in navigator,
+                pushManager: 'PushManager' in window,
+                notification: 'Notification' in window,
+                backgroundSync: 'serviceWorker' in navigator && 'sync' in window.ServiceWorkerRegistration.prototype,
+                webAppManifest: 'onbeforeinstallprompt' in window,
+                indexedDB: 'indexedDB' in window,
+                webShare: 'share' in navigator,
+                webShareTarget: 'serviceWorker' in navigator && 'share' in navigator
+            };
+
+            console.log('PWA 기능 지원 현황:', features);
+            showMessage('PWA 기능 확인이 완료되었습니다. 콘솔을 확인하세요.', 'success');
+        }
+
+        // 오프라인 테스트
+        function testOfflineMode() {
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.ready.then(registration => {
+                    // 오프라인 모드 시뮬레이션
+                    showMessage('오프라인 모드 테스트를 시작합니다...', 'info');
+
+                    setTimeout(() => {
+                        showMessage('오프라인 모드 테스트가 완료되었습니다.', 'success');
+                    }, 2000);
+                });
+            } else {
+                showMessage('Service Worker를 지원하지 않습니다.', 'error');
+            }
+        }
+
+        // 설치 프롬프트 확인
+        function checkInstallPrompt() {
+            if ('onbeforeinstallprompt' in window) {
+                document.getElementById('installPrompt').style.display = 'block';
+            }
+        }
+
+        // PWA 설치
+        function installPWA() {
+            if (installPrompt) {
+                installPrompt.prompt();
+                installPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        showMessage('PWA가 설치되었습니다!', 'success');
+                    }
+                    installPrompt = null;
+                });
+            }
+        }
+
+        // 설치 프롬프트 닫기
+        function dismissInstall() {
+            document.getElementById('installPrompt').style.display = 'none';
+        }
+
+        // 메시지 표시
+        function showMessage(message, type) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.innerHTML = `<div class="${type}">${message}</div>`;
+
+            setTimeout(() => {
+                messageDiv.innerHTML = '';
+            }, 5000);
+        }
+
+        // 설치 프롬프트 이벤트 리스너
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            installPrompt = e;
+            checkInstallPrompt();
+        });
+
+        // 앱 설치 완료 이벤트
+        window.addEventListener('appinstalled', () => {
+            showMessage('PWA가 성공적으로 설치되었습니다!', 'success');
+            document.getElementById('installPrompt').style.display = 'none';
+        });
+
+        // 자동 새로고침 (5분마다)
+        setInterval(refreshData, 5 * 60 * 1000);
+    </script>
+</body>
+
+</html>

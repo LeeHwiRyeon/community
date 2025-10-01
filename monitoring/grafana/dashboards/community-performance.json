@@ -1,0 +1,171 @@
+{
+    "dashboard": {
+        "id": null,
+        "title": "Community Platform Performance",
+        "tags": [
+            "community",
+            "performance"
+        ],
+        "style": "dark",
+        "timezone": "browser",
+        "panels": [
+            {
+                "id": 1,
+                "title": "API Response Time Distribution",
+                "type": "heatmap",
+                "targets": [
+                    {
+                        "expr": "rate(http_request_duration_seconds_bucket[5m])",
+                        "legendFormat": "{{le}}"
+                    }
+                ],
+                "gridPos": {
+                    "h": 8,
+                    "w": 12,
+                    "x": 0,
+                    "y": 0
+                }
+            },
+            {
+                "id": 2,
+                "title": "Database Query Performance",
+                "type": "graph",
+                "targets": [
+                    {
+                        "expr": "mysql_global_status_slow_queries",
+                        "legendFormat": "Slow Queries"
+                    },
+                    {
+                        "expr": "rate(mysql_global_status_queries[5m])",
+                        "legendFormat": "Queries/sec"
+                    }
+                ],
+                "yAxes": [
+                    {
+                        "label": "Queries",
+                        "min": 0
+                    }
+                ],
+                "gridPos": {
+                    "h": 8,
+                    "w": 12,
+                    "x": 12,
+                    "y": 0
+                }
+            },
+            {
+                "id": 3,
+                "title": "Cache Hit Rate",
+                "type": "graph",
+                "targets": [
+                    {
+                        "expr": "rate(redis_keyspace_hits_total[5m]) / (rate(redis_keyspace_hits_total[5m]) + rate(redis_keyspace_misses_total[5m])) * 100",
+                        "legendFormat": "Hit Rate %"
+                    }
+                ],
+                "yAxes": [
+                    {
+                        "label": "Hit Rate %",
+                        "min": 0,
+                        "max": 100
+                    }
+                ],
+                "gridPos": {
+                    "h": 8,
+                    "w": 12,
+                    "x": 0,
+                    "y": 8
+                }
+            },
+            {
+                "id": 4,
+                "title": "Memory Usage by Service",
+                "type": "graph",
+                "targets": [
+                    {
+                        "expr": "process_resident_memory_bytes{job=\"community-backend\"}",
+                        "legendFormat": "Backend"
+                    },
+                    {
+                        "expr": "process_resident_memory_bytes{job=\"community-frontend\"}",
+                        "legendFormat": "Frontend"
+                    }
+                ],
+                "yAxes": [
+                    {
+                        "label": "Bytes",
+                        "min": 0
+                    }
+                ],
+                "gridPos": {
+                    "h": 8,
+                    "w": 12,
+                    "x": 12,
+                    "y": 8
+                }
+            },
+            {
+                "id": 5,
+                "title": "Network I/O",
+                "type": "graph",
+                "targets": [
+                    {
+                        "expr": "rate(node_network_receive_bytes_total[5m])",
+                        "legendFormat": "Receive {{device}}"
+                    },
+                    {
+                        "expr": "rate(node_network_transmit_bytes_total[5m])",
+                        "legendFormat": "Transmit {{device}}"
+                    }
+                ],
+                "yAxes": [
+                    {
+                        "label": "Bytes/sec",
+                        "min": 0
+                    }
+                ],
+                "gridPos": {
+                    "h": 8,
+                    "w": 12,
+                    "x": 0,
+                    "y": 16
+                }
+            },
+            {
+                "id": 6,
+                "title": "Disk I/O",
+                "type": "graph",
+                "targets": [
+                    {
+                        "expr": "rate(node_disk_read_bytes_total[5m])",
+                        "legendFormat": "Read {{device}}"
+                    },
+                    {
+                        "expr": "rate(node_disk_written_bytes_total[5m])",
+                        "legendFormat": "Write {{device}}"
+                    }
+                ],
+                "yAxes": [
+                    {
+                        "label": "Bytes/sec",
+                        "min": 0
+                    }
+                ],
+                "gridPos": {
+                    "h": 8,
+                    "w": 12,
+                    "x": 12,
+                    "y": 16
+                }
+            }
+        ],
+        "time": {
+            "from": "now-1h",
+            "to": "now"
+        },
+        "refresh": "30s",
+        "schemaVersion": 27,
+        "version": 1,
+        "links": []
+    }
+}

@@ -1,0 +1,102 @@
+groups:
+  - name: community.rules
+    rules:
+      # 높은 CPU 사용률
+      - alert: HighCPUUsage
+        expr: 100 - (avg by(instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "높은 CPU 사용률 감지"
+          description: "{{ $labels.instance }}의 CPU 사용률이 80%를 초과했습니다. 현재 값: {{ $value }}%"
+
+      # 높은 메모리 사용률
+      - alert: HighMemoryUsage
+        expr: (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100 > 85
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "높은 메모리 사용률 감지"
+          description: "{{ $labels.instance }}의 메모리 사용률이 85%를 초과했습니다. 현재 값: {{ $value }}%"
+
+      # 디스크 공간 부족
+      - alert: DiskSpaceLow
+        expr: (1 - (node_filesystem_avail_bytes / node_filesystem_size_bytes)) * 100 > 90
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "디스크 공간 부족"
+          description: "{{ $labels.instance }}의 {{ $labels.mountpoint }} 디스크 사용률이 90%를 초과했습니다. 현재 값: {{ $value }}%"
+
+      # 데이터베이스 연결 실패
+      - alert: DatabaseConnectionFailed
+        expr: mysql_up == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "데이터베이스 연결 실패"
+          description: "MySQL 데이터베이스에 연결할 수 없습니다."
+
+      # Redis 연결 실패
+      - alert: RedisConnectionFailed
+        expr: redis_up == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Redis 연결 실패"
+          description: "Redis 서버에 연결할 수 없습니다."
+
+      # 높은 응답 시간
+      - alert: HighResponseTime
+        expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m])) > 1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "높은 응답 시간"
+          description: "95% 응답 시간이 1초를 초과했습니다. 현재 값: {{ $value }}초"
+
+      # 높은 오류율
+      - alert: HighErrorRate
+        expr: rate(http_requests_total{status=~"5.."}[5m]) / rate(http_requests_total[5m]) > 0.05
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "높은 오류율"
+          description: "5xx 오류율이 5%를 초과했습니다. 현재 값: {{ $value }}%"
+
+      # 서비스 다운
+      - alert: ServiceDown
+        expr: up == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "서비스 다운"
+          description: "{{ $labels.job }} 서비스가 다운되었습니다."
+
+      # 컨테이너 재시작
+      - alert: ContainerRestarted
+        expr: increase(container_start_time_seconds[1h]) > 0
+        for: 0m
+        labels:
+          severity: warning
+        annotations:
+          summary: "컨테이너 재시작"
+          description: "{{ $labels.name }} 컨테이너가 재시작되었습니다."
+
+      # 높은 네트워크 트래픽
+      - alert: HighNetworkTraffic
+        expr: rate(node_network_receive_bytes_total[5m]) > 100000000
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "높은 네트워크 트래픽"
+          description: "{{ $labels.instance }}의 네트워크 수신 트래픽이 높습니다. 현재 값: {{ $value }} bytes/sec"

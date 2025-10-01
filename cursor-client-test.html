@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cursor 통합 시스템 테스트</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .status {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #dc3545;
+            animation: pulse 2s infinite;
+        }
+
+        .status-dot.connected {
+            background: #28a745;
+        }
+
+        @keyframes pulse {
+            0% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .panel {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            border: 1px solid #dee2e6;
+        }
+
+        .panel h3 {
+            margin-top: 0;
+            color: #495057;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .form-group textarea {
+            height: 80px;
+            resize: vertical;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .log {
+            background: #1e1e1e;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+
+        .task-item {
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 10px;
+            transition: box-shadow 0.2s;
+        }
+
+        .task-item:hover {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .task-title {
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .task-status {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .task-status.pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .task-status.in-progress {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .task-status.completed {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .task-status.failed {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #6c757d;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Cursor 통합 자동 개발 시스템</h1>
+            <p>실시간 Task 생성 및 자동화 모니터링</p>
+        </div>
+
+        <div class="status">
+            <div class="status-indicator">
+                <div class="status-dot" id="statusDot"></div>
+                <span id="statusText">연결 중...</span>
+            </div>
+            <div>
+                <span>클라이언트 ID: </span>
+                <strong id="clientId">-</strong>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="panel">
+                <h3>📋 Task 생성</h3>
+                <form id="taskForm">
+                    <div class="form-group">
+                        <label for="taskTitle">작업 제목</label>
+                        <input type="text" id="taskTitle" placeholder="예: 버그 수정, 새 기능 추가" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="taskCategory">카테고리</label>
+                        <select id="taskCategory">
+                            <option value="bug-fix">버그 수정</option>
+                            <option value="feature">새 기능</option>
+                            <option value="refactor">리팩토링</option>
+                            <option value="optimization">최적화</option>
+                            <option value="documentation">문서화</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="taskPriority">우선순위</label>
+                        <select id="taskPriority">
+                            <option value="low">낮음</option>
+                            <option value="medium" selected>보통</option>
+                            <option value="high">높음</option>
+                            <option value="urgent">긴급</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="taskDescription">상세 설명</label>
+                        <textarea id="taskDescription" placeholder="작업에 대한 자세한 설명을 입력하세요..."></textarea>
+                    </div>
+
+                    <button type="submit" class="btn" id="submitBtn">Task 생성</button>
+                </form>
+            </div>
+
+            <div class="panel">
+                <h3>📊 시스템 상태</h3>
+                <div class="stats" id="stats">
+                    <div class="stat-card">
+                        <div class="stat-value" id="filesChanged">0</div>
+                        <div class="stat-label">파일 변경</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="tasksCreated">0</div>
+                        <div class="stat-label">Task 생성</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="bugsFixed">0</div>
+                        <div class="stat-label">버그 수정</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="buildErrors">0</div>
+                        <div class="stat-label">빌드 오류</div>
+                    </div>
+                </div>
+
+                <h4>📝 실시간 로그</h4>
+                <div class="log" id="log"></div>
+            </div>
+        </div>
+
+        <div class="panel" style="margin: 20px;">
+            <h3>📋 활성 Task 목록</h3>
+            <div id="taskList">
+                <p style="text-align: center; color: #6c757d; padding: 20px;">Task가 없습니다.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class CursorClient {
+            constructor() {
+                this.ws = null;
+                this.clientId = null;
+                this.isConnected = false;
+                this.tasks = [];
+                this.stats = {
+                    filesChanged: 0,
+                    tasksCreated: 0,
+                    bugsFixed: 0,
+                    buildErrors: 0
+                };
+
+                this.init();
+            }
+
+            init() {
+                this.connect();
+                this.setupEventListeners();
+                this.startPing();
+            }
+
+            connect() {
+                try {
+                    this.ws = new WebSocket('ws://localhost:3001');
+
+                    this.ws.onopen = () => {
+                        this.isConnected = true;
+                        this.updateStatus('연결됨', true);
+                        this.log('✅ 서버에 연결되었습니다.');
+                    };
+
+                    this.ws.onmessage = (event) => {
+                        this.handleMessage(JSON.parse(event.data));
+                    };
+
+                    this.ws.onclose = () => {
+                        this.isConnected = false;
+                        this.updateStatus('연결 끊김', false);
+                        this.log('❌ 서버 연결이 끊어졌습니다. 재연결 시도...');
+                        setTimeout(() => this.connect(), 3000);
+                    };
+
+                    this.ws.onerror = (error) => {
+                        this.log('❌ 연결 오류: ' + error.message);
+                    };
+
+                } catch (error) {
+                    this.log('❌ WebSocket 연결 실패: ' + error.message);
+                    setTimeout(() => this.connect(), 3000);
+                }
+            }
+
+            handleMessage(message) {
+                const { type, data } = message;
+
+                switch (type) {
+                    case 'CONNECTION_ESTABLISHED':
+                        this.clientId = data.clientId;
+                        document.getElementById('clientId').textContent = data.clientId;
+                        this.log('🔌 클라이언트 ID: ' + data.clientId);
+                        break;
+
+                    case 'TASK_CREATED':
+                        this.addTask(data.task);
+                        this.log('📋 새 Task 생성: ' + data.task.title);
+                        break;
+
+                    case 'TASK_COMPLETED':
+                        this.updateTask(data.task);
+                        this.log('✅ Task 완료: ' + data.task.title);
+                        break;
+
+                    case 'TASK_FAILED':
+                        this.updateTask(data.task);
+                        this.log('❌ Task 실패: ' + data.task.title + ' - ' + data.error);
+                        break;
+
+                    case 'FILE_CHANGED':
+                        this.log('📝 파일 변경: ' + data.path + ' (' + data.eventType + ')');
+                        break;
+
+                    case 'BUILD_SUCCESS':
+                        this.log('✅ 빌드 성공');
+                        break;
+
+                    case 'BUILD_ERROR':
+                        this.log('🐛 빌드 오류 감지, 자동 수정 시도 중...');
+                        this.addTask(data.task);
+                        break;
+
+                    case 'STATUS_RESPONSE':
+                        this.updateStats(data.status.stats);
+                        break;
+
+                    case 'PONG':
+                        // Ping 응답 처리
+                        break;
+                }
+            }
+
+            setupEventListeners() {
+                document.getElementById('taskForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.createTask();
+                });
+            }
+
+            createTask() {
+                if (!this.isConnected) {
+                    alert('서버에 연결되지 않았습니다.');
+                    return;
+                }
+
+                const title = document.getElementById('taskTitle').value;
+                const category = document.getElementById('taskCategory').value;
+                const priority = document.getElementById('taskPriority').value;
+                const description = document.getElementById('taskDescription').value;
+
+                const taskData = {
+                    title,
+                    category,
+                    priority,
+                    description
+                };
+
+                this.sendMessage('TASK_REQUEST', taskData);
+
+                // 폼 초기화
+                document.getElementById('taskForm').reset();
+                document.getElementById('taskPriority').value = 'medium';
+            }
+
+            addTask(task) {
+                this.tasks.unshift(task);
+                this.updateTaskList();
+            }
+
+            updateTask(updatedTask) {
+                const index = this.tasks.findIndex(task => task.id === updatedTask.id);
+                if (index !== -1) {
+                    this.tasks[index] = updatedTask;
+                    this.updateTaskList();
+                }
+            }
+
+            updateTaskList() {
+                const taskList = document.getElementById('taskList');
+
+                if (this.tasks.length === 0) {
+                    taskList.innerHTML = '<p style="text-align: center; color: #6c757d; padding: 20px;">Task가 없습니다.</p>';
+                    return;
+                }
+
+                taskList.innerHTML = this.tasks.map(task => `
+                    <div class="task-item">
+                        <div class="task-header">
+                            <div class="task-title">${task.title}</div>
+                            <div class="task-status ${task.status}">${this.getStatusText(task.status)}</div>
+                        </div>
+                        <div style="font-size: 12px; color: #6c757d;">
+                            <div>ID: ${task.id}</div>
+                            <div>카테고리: ${task.category} | 우선순위: ${task.priority}</div>
+                            <div>생성: ${new Date(task.createdAt).toLocaleString()}</div>
+                            ${task.completedAt ? `<div>완료: ${new Date(task.completedAt).toLocaleString()}</div>` : ''}
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            getStatusText(status) {
+                const statusMap = {
+                    'pending': '대기 중',
+                    'in-progress': '진행 중',
+                    'completed': '완료',
+                    'failed': '실패'
+                };
+                return statusMap[status] || status;
+            }
+
+            updateStats(stats) {
+                this.stats = { ...this.stats, ...stats };
+                document.getElementById('filesChanged').textContent = this.stats.filesChanged;
+                document.getElementById('tasksCreated').textContent = this.stats.tasksCreated;
+                document.getElementById('bugsFixed').textContent = this.stats.bugsFixed;
+                document.getElementById('buildErrors').textContent = this.stats.buildErrors;
+            }
+
+            updateStatus(text, connected) {
+                document.getElementById('statusText').textContent = text;
+                const statusDot = document.getElementById('statusDot');
+                if (connected) {
+                    statusDot.classList.add('connected');
+                } else {
+                    statusDot.classList.remove('connected');
+                }
+            }
+
+            log(message) {
+                const logElement = document.getElementById('log');
+                const timestamp = new Date().toLocaleTimeString();
+                logElement.textContent += `[${timestamp}] ${message}\n`;
+                logElement.scrollTop = logElement.scrollHeight;
+            }
+
+            sendMessage(type, data) {
+                if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+                    this.ws.send(JSON.stringify({ type, data }));
+                }
+            }
+
+            startPing() {
+                setInterval(() => {
+                    if (this.isConnected) {
+                        this.sendMessage('PING', {});
+                    }
+                }, 30000);
+            }
+        }
+
+        // 클라이언트 시작
+        const client = new CursorClient();
+    </script>
+</body>
+
+</html>

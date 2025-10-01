@@ -1,0 +1,51 @@
+{
+  "timestamp": "2025-09-29T18:46:36.752Z",
+  "summary": {
+    "total": 8,
+    "completed": 3,
+    "inProgress": 0,
+    "pending": 5,
+    "completionRate": 38
+  },
+  "completedTasks": [
+    {
+      "id": "COMM_001",
+      "title": "프론트엔드 빌드 오류 수정",
+      "completedAt": "2025-09-29T18:38:18.384Z",
+      "estimatedTime": "2-3시간"
+    },
+    {
+      "id": "COMM_002",
+      "title": "백엔드 API 서버 구동",
+      "completedAt": "2025-09-29T18:45:12.590Z",
+      "estimatedTime": "1-2시간"
+    },
+    {
+      "id": "COMM_003",
+      "title": "사용자 인증 시스템 구현",
+      "completedAt": "2025-09-29T18:46:29.792Z",
+      "estimatedTime": "3-4시간"
+    }
+  ],
+  "inProgressTasks": [],
+  "nextTasks": [
+    {
+      "id": "COMM_004",
+      "title": "게시판 CRUD 기능 구현",
+      "priority": "high",
+      "estimatedTime": "4-5시간"
+    },
+    {
+      "id": "COMM_005",
+      "title": "실시간 채팅 기능 구현",
+      "priority": "medium",
+      "estimatedTime": "3-4시간"
+    },
+    {
+      "id": "COMM_006",
+      "title": "관리자 대시보드 개발",
+      "priority": "medium",
+      "estimatedTime": "5-6시간"
+    }
+  ]
+}

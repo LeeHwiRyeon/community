@@ -105,7 +105,7 @@ async function draftRequest<T>(path: string, init: RequestInit = {}): Promise<{ 
     }
 }
 
-export interface UseDraftAutoSaveOptions<TFormValues> {
+export interface UseDraftAutoSaveOptions<TFormValues extends FieldValues> {
     form: UseFormReturn<TFormValues>
     boardId: string
     postId?: string | null
@@ -133,7 +133,7 @@ interface UseDraftAutoSaveResult {
     resolveConflict: (strategy: DraftConflictResolutionStrategy) => Promise<boolean>
 }
 
-export function useDraftAutoSave<TFormValues extends Record<string, any>>(
+export function useDraftAutoSave<TFormValues extends FieldValues>(
     options: UseDraftAutoSaveOptions<TFormValues>
 ): UseDraftAutoSaveResult {
     const { form, boardId, postId, mapFormToDraft, storageKey: storageKeyProp, isEnabled = true } = options

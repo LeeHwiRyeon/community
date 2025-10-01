@@ -85,3 +85,21 @@ export function requireModOrAdmin(req, res, next) {
     }
     next();
 }
+
+// Middleware for token authentication
+export function authenticateToken(req, res, next) {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+
+    if (!token) {
+        return res.status(401).json({ error: 'Access token required' });
+    }
+
+    const payload = verifyToken(token, 'access');
+    if (!payload) {
+        return res.status(403).json({ error: 'Invalid or expired token' });
+    }
+
+    req.user = { id: payload.sub, role: payload.role };
+    next();
+}

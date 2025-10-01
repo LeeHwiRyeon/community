@@ -65,7 +65,11 @@ const NAV_ITEMS: NavItem[] = [
   { label: 'News', path: '/board/news' },
   { label: 'Community', path: '/board/free' },
   { label: 'Media', path: '/board/image' },
-  { label: 'Game Hub', path: '/board/game', mega: megaGameColumns }
+  { label: 'Game Hub', path: '/board/game', mega: megaGameColumns },
+  { label: 'Request Center', path: '/action-test' },
+  { label: 'Analytics', path: '/analytics' },
+  { label: 'Admin', path: '/admin' },
+  { label: 'TODO', path: '/todos' }
 ]
 
 const slugifyLabel = (label: string) =>
@@ -338,7 +342,7 @@ const Header: React.FC = () => {
                     id={menuId}
                     className="site-header__mega"
                     role="menu"
-                    aria-label={`${item.label} ?�위 메뉴`}
+                    aria-label={`${item.label} 하위 메뉴`}
                   >
                     {item.mega?.map((column) => (
                       <div key={column.title} className="mega-menu__column">
@@ -479,7 +483,7 @@ const Header: React.FC = () => {
                       className={`login-modal__provider-icon login-modal__provider-icon--${provider}`}
                       aria-hidden="true"
                     >
-                      {provider === 'apple' ? '?' : 'G'}
+                      {provider === 'apple' ? '🍎' : 'G'}
                     </span>
                     {providerLoading === provider
                       ? `Connecting to ${formatProviderLabel(provider)}...`
@@ -557,5 +561,3 @@ const Header: React.FC = () => {
 }
 
 export default Header
-
-

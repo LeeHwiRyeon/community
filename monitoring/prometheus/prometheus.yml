@@ -1,0 +1,155 @@
+# Prometheus 설정
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    cluster: 'community-platform'
+    environment: 'production'
+
+rule_files:
+  - "rules/*.yml"
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+          - alertmanager:9093
+
+scrape_configs:
+  # Prometheus 자체 모니터링
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # Node Exporter (시스템 메트릭)
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['node-exporter:9100']
+    scrape_interval: 5s
+    metrics_path: /metrics
+
+  # 커뮤니티 플랫폼 백엔드
+  - job_name: 'community-backend'
+    static_configs:
+      - targets: ['community-backend:50000']
+    scrape_interval: 10s
+    metrics_path: /api/metrics
+    scrape_timeout: 5s
+
+  # 커뮤니티 플랫폼 프론트엔드
+  - job_name: 'community-frontend'
+    static_configs:
+      - targets: ['community-frontend:3000']
+    scrape_interval: 30s
+    metrics_path: /api/metrics
+
+  # 데이터베이스 (MySQL Exporter)
+  - job_name: 'mysql-exporter'
+    static_configs:
+      - targets: ['mysql-exporter:9104']
+    scrape_interval: 30s
+
+  # Redis (Redis Exporter)
+  - job_name: 'redis-exporter'
+    static_configs:
+      - targets: ['redis-exporter:9121']
+    scrape_interval: 30s
+
+  # Nginx (Nginx Exporter)
+  - job_name: 'nginx-exporter'
+    static_configs:
+      - targets: ['nginx-exporter:9113']
+    scrape_interval: 30s
+
+  # Blackbox Exporter (외부 모니터링)
+  - job_name: 'blackbox'
+    metrics_path: /probe
+    params:
+      module: [http_2xx]
+    static_configs:
+      - targets:
+        - http://community-backend:50000/api/health
+        - http://community-frontend:3000/
+        - https://your-domain.com/api/health
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox-exporter:9115
+
+  # cAdvisor (컨테이너 메트릭)
+  - job_name: 'cadvisor'
+    static_configs:
+      - targets: ['cadvisor:8080']
+    scrape_interval: 30s
+
+  # Grafana
+  - job_name: 'grafana'
+    static_configs:
+      - targets: ['grafana:3000']
+    scrape_interval: 30s
+
+  # Alertmanager
+  - job_name: 'alertmanager'
+    static_configs:
+      - targets: ['alertmanager:9093']
+    scrape_interval: 30s
+
+  # 커스텀 애플리케이션 메트릭
+  - job_name: 'custom-metrics'
+    static_configs:
+      - targets: ['community-backend:50000']
+    scrape_interval: 15s
+    metrics_path: /api/metrics/custom
+    params:
+      format: ['prometheus']
+
+  # 비즈니스 메트릭
+  - job_name: 'business-metrics'
+    static_configs:
+      - targets: ['community-backend:50000']
+    scrape_interval: 60s
+    metrics_path: /api/metrics/business
+    params:
+      format: ['prometheus']
+
+  # 로그 메트릭 (Loki)
+  - job_name: 'loki'
+    static_configs:
+      - targets: ['loki:3100']
+    scrape_interval: 30s
+
+  # Jaeger (분산 추적)
+  - job_name: 'jaeger'
+    static_configs:
+      - targets: ['jaeger:14269']
+    scrape_interval: 30s
+
+  # Uptime Kuma
+  - job_name: 'uptime-kuma'
+    static_configs:
+      - targets: ['uptime-kuma:3001']
+    scrape_interval: 30s
+
+# 저장소 설정
+storage:
+  tsdb:
+    retention.time: 30d
+    retention.size: 10GB
+    wal-compression: true
+
+# 원격 쓰기 설정 (선택사항)
+# remote_write:
+#   - url: "https://your-remote-storage.com/api/v1/write"
+#     basic_auth:
+#       username: "your-username"
+#       password: "your-password"
+
+# 원격 읽기 설정 (선택사항)
+# remote_read:
+#   - url: "https://your-remote-storage.com/api/v1/read"
+#     basic_auth:
+#       username: "your-username"
+#       password: "your-password"

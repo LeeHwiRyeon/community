@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>다국어 모니터링 대시보드</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #7f8c8d;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .stat-card h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .stat-number.good {
+            color: #27ae60;
+        }
+
+        .stat-number.warning {
+            color: #f39c12;
+        }
+
+        .stat-number.error {
+            color: #e74c3c;
+        }
+
+        .stat-description {
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+
+        .chart-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .chart-container h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        .language-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .language-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .language-card h4 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .language-flag {
+            font-size: 1.5em;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #ecf0f1;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #3498db, #2ecc71);
+            transition: width 0.3s ease;
+        }
+
+        .language-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9em;
+            color: #7f8c8d;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2980b9;
+        }
+
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #229954;
+        }
+
+        .btn-warning {
+            background: #f39c12;
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: #e67e22;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #7f8c8d;
+        }
+
+        .error {
+            background: #e74c3c;
+            color: white;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+
+        .success {
+            background: #27ae60;
+            color: white;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+
+        .missing-keys {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .missing-keys h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .missing-key-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border: 1px solid #ecf0f1;
+            border-radius: 4px;
+            margin-bottom: 5px;
+        }
+
+        .missing-key-item:hover {
+            background: #f8f9fa;
+        }
+
+        .key-info {
+            flex: 1;
+        }
+
+        .key-name {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .key-namespace {
+            font-size: 0.8em;
+            color: #7f8c8d;
+        }
+
+        .key-actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .btn-small {
+            padding: 5px 10px;
+            font-size: 0.8em;
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .language-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .controls {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌍 다국어 모니터링 대시보드</h1>
+            <p>전 세계 사용자를 위한 다국어 지원 현황을 실시간으로 모니터링합니다.</p>
+        </div>
+
+        <div class="controls">
+            <button class="btn btn-primary" onclick="refreshData()">새로고침</button>
+            <button class="btn btn-success" onclick="checkMissingKeys()">누락 키 확인</button>
+            <button class="btn btn-warning" onclick="generateReport()">리포트 생성</button>
+        </div>
+
+        <div id="message"></div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>지원 언어</h3>
+                <div id="supportedLanguages" class="stat-number">-</div>
+                <div class="stat-description">총 지원 언어 수</div>
+            </div>
+            <div class="stat-card">
+                <h3>번역 완성도</h3>
+                <div id="overallCompletion" class="stat-number">-</div>
+                <div class="stat-description">전체 평균 완성도</div>
+            </div>
+            <div class="stat-card">
+                <h3>총 번역 키</h3>
+                <div id="totalKeys" class="stat-number">-</div>
+                <div class="stat-description">모든 언어의 총 키 수</div>
+            </div>
+            <div class="stat-card">
+                <h3>누락된 키</h3>
+                <div id="missingKeys" class="stat-number">-</div>
+                <div class="stat-description">번역이 필요한 키</div>
+            </div>
+        </div>
+
+        <div class="chart-container">
+            <h3>언어별 번역 완성도</h3>
+            <canvas id="completionChart" width="400" height="200"></canvas>
+        </div>
+
+        <div class="chart-container">
+            <h3>네임스페이스별 번역 현황</h3>
+            <canvas id="namespaceChart" width="400" height="200"></canvas>
+        </div>
+
+        <div class="language-grid" id="languageGrid">
+            <div class="loading">언어별 번역 현황을 불러오는 중...</div>
+        </div>
+
+        <div class="missing-keys" id="missingKeysSection" style="display: none;">
+            <h3>누락된 번역 키</h3>
+            <div id="missingKeysList">
+                <div class="loading">누락된 키를 확인하는 중...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let completionChart = null;
+        let namespaceChart = null;
+        let translationStats = {};
+
+        // 페이지 로드 시 데이터 새로고침
+        document.addEventListener('DOMContentLoaded', function () {
+            refreshData();
+            initializeCharts();
+        });
+
+        // 데이터 새로고침
+        async function refreshData() {
+            try {
+                showMessage('데이터를 불러오는 중...', 'info');
+
+                // 번역 통계 조회
+                const response = await fetch('http://localhost:5000/api/i18n/stats');
+                const data = await response.json();
+
+                if (data.success) {
+                    translationStats = data.data;
+                    updateDashboard();
+                    showMessage('데이터가 성공적으로 업데이트되었습니다.', 'success');
+                } else {
+                    showMessage('데이터를 불러오는데 실패했습니다: ' + data.message, 'error');
+                }
+            } catch (error) {
+                console.error('데이터 새로고침 오류:', error);
+                showMessage('데이터를 불러오는 중 오류가 발생했습니다.', 'error');
+            }
+        }
+
+        // 대시보드 업데이트
+        function updateDashboard() {
+            const languages = Object.keys(translationStats);
+            const supportedLanguages = languages.length;
+
+            // 전체 번역 완성도 계산
+            let totalKeys = 0;
+            let totalCompletedKeys = 0;
+
+            languages.forEach(lang => {
+                const namespaces = Object.keys(translationStats[lang]);
+                namespaces.forEach(ns => {
+                    totalKeys += translationStats[lang][ns].keyCount || 0;
+                    totalCompletedKeys += translationStats[lang][ns].keyCount || 0;
+                });
+            });
+
+            const overallCompletion = totalKeys > 0 ? (totalCompletedKeys / totalKeys) * 100 : 0;
+
+            // 통계 업데이트
+            document.getElementById('supportedLanguages').textContent = supportedLanguages;
+            document.getElementById('overallCompletion').textContent = overallCompletion.toFixed(1) + '%';
+            document.getElementById('totalKeys').textContent = totalKeys;
+            document.getElementById('missingKeys').textContent = '0'; // 실제로는 계산 필요
+
+            // 언어별 카드 업데이트
+            updateLanguageCards();
+
+            // 차트 업데이트
+            updateCharts();
+        }
+
+        // 언어별 카드 업데이트
+        function updateLanguageCards() {
+            const container = document.getElementById('languageGrid');
+            const languages = [
+                { code: 'ko', name: '한국어', flag: '🇰🇷' },
+                { code: 'en', name: 'English', flag: '🇺🇸' },
+                { code: 'ja', name: '日本語', flag: '🇯🇵' },
+                { code: 'zh-CN', name: '中文 (简体)', flag: '🇨🇳' },
+                { code: 'es', name: 'Español', flag: '🇪🇸' }
+            ];
+
+            const html = languages.map(lang => {
+                const stats = translationStats[lang.code] || {};
+                const totalKeys = Object.values(stats).reduce((sum, ns) => sum + (ns.keyCount || 0), 0);
+                const completionRate = totalKeys > 0 ? (totalKeys / 100) * 100 : 0; // 임시 계산
+
+                return `
+                    <div class="language-card">
+                        <h4>
+                            <span class="language-flag">${lang.flag}</span>
+                            ${lang.name}
+                        </h4>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${completionRate}%"></div>
+                        </div>
+                        <div class="language-stats">
+                            <span>완성도: ${completionRate.toFixed(1)}%</span>
+                            <span>키 수: ${totalKeys}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            container.innerHTML = html;
+        }
+
+        // 차트 초기화
+        function initializeCharts() {
+            // 완성도 차트
+            const completionCtx = document.getElementById('completionChart').getContext('2d');
+            completionChart = new Chart(completionCtx, {
+                type: 'bar',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: '번역 완성도 (%)',
+                        data: [],
+                        backgroundColor: 'rgba(52, 152, 219, 0.8)',
+                        borderColor: 'rgba(52, 152, 219, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100
+                        }
+                    }
+                }
+            });
+
+            // 네임스페이스 차트
+            const namespaceCtx = document.getElementById('namespaceChart').getContext('2d');
+            namespaceChart = new Chart(namespaceCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['common', 'navigation', 'forms', 'errors', 'messages'],
+                    datasets: [{
+                        data: [0, 0, 0, 0, 0],
+                        backgroundColor: [
+                            '#3498db',
+                            '#2ecc71',
+                            '#f39c12',
+                            '#e74c3c',
+                            '#9b59b6'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true
+                }
+            });
+        }
+
+        // 차트 업데이트
+        function updateCharts() {
+            const languages = [
+                { code: 'ko', name: '한국어' },
+                { code: 'en', name: 'English' },
+                { code: 'ja', name: '日本語' },
+                { code: 'zh-CN', name: '中文' },
+                { code: 'es', name: 'Español' }
+            ];
+
+            const labels = languages.map(lang => lang.name);
+            const data = languages.map(lang => {
+                const stats = translationStats[lang.code] || {};
+                const totalKeys = Object.values(stats).reduce((sum, ns) => sum + (ns.keyCount || 0), 0);
+                return totalKeys > 0 ? (totalKeys / 100) * 100 : 0; // 임시 계산
+            });
+
+            completionChart.data.labels = labels;
+            completionChart.data.datasets[0].data = data;
+            completionChart.update();
+
+            // 네임스페이스 차트 업데이트
+            const namespaceData = [25, 20, 15, 10, 30]; // 임시 데이터
+            namespaceChart.data.datasets[0].data = namespaceData;
+            namespaceChart.update();
+        }
+
+        // 누락된 키 확인
+        async function checkMissingKeys() {
+            try {
+                showMessage('누락된 키를 확인하는 중...', 'info');
+
+                const response = await fetch('http://localhost:5000/api/i18n/missing-keys?language=en');
+                const data = await response.json();
+
+                if (data.success) {
+                    displayMissingKeys(data.data.missingKeys);
+                    showMessage('누락된 키 확인이 완료되었습니다.', 'success');
+                } else {
+                    showMessage('누락된 키 확인에 실패했습니다: ' + data.message, 'error');
+                }
+            } catch (error) {
+                console.error('누락된 키 확인 오류:', error);
+                showMessage('누락된 키 확인 중 오류가 발생했습니다.', 'error');
+            }
+        }
+
+        // 누락된 키 표시
+        function displayMissingKeys(missingKeys) {
+            const section = document.getElementById('missingKeysSection');
+            const list = document.getElementById('missingKeysList');
+
+            if (Object.keys(missingKeys).length === 0) {
+                list.innerHTML = '<div class="loading">누락된 키가 없습니다.</div>';
+            } else {
+                const html = Object.entries(missingKeys).map(([namespace, keys]) => `
+                    <div>
+                        <h4>${namespace}</h4>
+                        ${keys.map(key => `
+                            <div class="missing-key-item">
+                                <div class="key-info">
+                                    <div class="key-name">${key.key}</div>
+                                    <div class="key-namespace">${namespace}</div>
+                                </div>
+                                <div class="key-actions">
+                                    <button class="btn btn-primary btn-small" onclick="translateKey('${namespace}', '${key.key}')">
+                                        번역
+                                    </button>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `).join('');
+
+                list.innerHTML = html;
+            }
+
+            section.style.display = 'block';
+        }
+
+        // 키 번역
+        function translateKey(namespace, key) {
+            alert(`키 "${key}" (${namespace}) 번역 기능을 구현합니다.`);
+        }
+
+        // 리포트 생성
+        function generateReport() {
+            alert('번역 리포트 생성 기능을 구현합니다.');
+        }
+
+        // 메시지 표시
+        function showMessage(message, type) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.innerHTML = `<div class="${type}">${message}</div>`;
+
+            setTimeout(() => {
+                messageDiv.innerHTML = '';
+            }, 5000);
+        }
+
+        // 자동 새로고침 (5분마다)
+        setInterval(refreshData, 5 * 60 * 1000);
+    </script>
+</body>
+
+</html>

@@ -1,4 +1,4 @@
-﻿import { act, render, waitFor } from "@testing-library/react"
+import { act, render, waitFor } from "@testing-library/react"
 import React from "react"
 import { beforeEach, afterEach, describe, expect, it, vi } from "vitest"
 import { useForm, type UseFormReturn } from "react-hook-form"
@@ -135,7 +135,7 @@ describe("useDraftAutoSave", () => {
         await waitFor(() => expect(harness.getHandle().getState().lastSavedAt).not.toBeNull())
 
         const firstCall = fetchMock.mock.calls[0]
-        expect(firstCall?.[0]).toBe("http://localhost:50000/api/posts/drafts")
+        expect(firstCall?.[0]).toBe("http://localhost:50001/api/posts/drafts")
         expect(localStorage.getItem("draft:new:general")).toBeTruthy()
     })
 

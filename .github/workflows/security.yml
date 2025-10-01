@@ -1,0 +1,310 @@
+# 보안 스캔 파이프라인
+name: Security Scan
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  schedule:
+    - cron: '0 2 * * 1' # 매주 월요일 오전 2시
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: '18'
+
+jobs:
+  # 의존성 보안 스캔
+  dependency-scan:
+    name: 의존성 보안 스캔
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 코드 체크아웃
+      uses: actions/checkout@v4
+      
+    - name: Node.js 설정
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+        
+    - name: 백엔드 의존성 설치
+      run: |
+        cd server-backend
+        npm ci
+        
+    - name: 프론트엔드 의존성 설치
+      run: |
+        cd frontend
+        npm ci
+        
+    - name: NPM 보안 감사
+      run: |
+        cd server-backend
+        npm audit --audit-level=moderate --json > backend-audit.json || true
+        cd ../frontend
+        npm audit --audit-level=moderate --json > frontend-audit.json || true
+        
+    - name: 보안 감사 결과 업로드
+      uses: actions/upload-artifact@v3
+      with:
+        name: security-audit-results
+        path: |
+          server-backend/backend-audit.json
+          frontend/frontend-audit.json
+        retention-days: 30
+
+  # 코드 보안 스캔
+  code-scan:
+    name: 코드 보안 스캔
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 코드 체크아웃
+      uses: actions/checkout@v4
+      
+    - name: Node.js 설정
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+        
+    - name: 백엔드 의존성 설치
+      run: |
+        cd server-backend
+        npm ci
+        
+    - name: 프론트엔드 의존성 설치
+      run: |
+        cd frontend
+        npm ci
+        
+    - name: ESLint 보안 규칙 검사
+      run: |
+        cd server-backend
+        npm run lint:security
+        cd ../frontend
+        npm run lint:security
+        
+    - name: 정적 코드 분석
+      run: |
+        node scripts/security-audit.js
+        
+    - name: 보안 스캔 결과 업로드
+      uses: actions/upload-artifact@v3
+      with:
+        name: code-scan-results
+        path: reports/security-audit-report.json
+        retention-days: 30
+
+  # 컨테이너 보안 스캔
+  container-scan:
+    name: 컨테이너 보안 스캔
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 코드 체크아웃
+      uses: actions/checkout@v4
+      
+    - name: Docker 빌드
+      run: |
+        docker build -t community-backend:latest -f server-backend/Dockerfile .
+        docker build -t community-frontend:latest -f frontend/Dockerfile .
+        
+    - name: Trivy 보안 스캔
+      uses: aquasecurity/trivy-action@master
+      with:
+        image-ref: 'community-backend:latest'
+        format: 'sarif'
+        output: 'trivy-backend-results.sarif'
+        
+    - name: Trivy 프론트엔드 스캔
+      uses: aquasecurity/trivy-action@master
+      with:
+        image-ref: 'community-frontend:latest'
+        format: 'sarif'
+        output: 'trivy-frontend-results.sarif'
+        
+    - name: Trivy 결과 업로드
+      uses: github/codeql-action/upload-sarif@v2
+      with:
+        sarif_file: 'trivy-backend-results.sarif'
+        
+    - name: Trivy 프론트엔드 결과 업로드
+      uses: github/codeql-action/upload-sarif@v2
+      with:
+        sarif_file: 'trivy-frontend-results.sarif'
+
+  # 시크릿 스캔
+  secret-scan:
+    name: 시크릿 스캔
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 코드 체크아웃
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        
+    - name: TruffleHog 시크릿 스캔
+      uses: trufflesecurity/trufflehog@main
+      with:
+        path: ./
+        base: main
+        head: HEAD
+        extra_args: --debug --only-verified
+
+  # OWASP ZAP 스캔
+  owasp-scan:
+    name: OWASP ZAP 스캔
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    
+    steps:
+    - name: 코드 체크아웃
+      uses: actions/checkout@v4
+      
+    - name: Node.js 설정
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+        
+    - name: 백엔드 의존성 설치
+      run: |
+        cd server-backend
+        npm ci
+        
+    - name: 백엔드 서버 시작
+      run: |
+        cd server-backend
+        npm start &
+        sleep 30
+        
+    - name: OWASP ZAP 스캔
+      uses: zaproxy/action-full-scan@v0.4.0
+      with:
+        target: 'http://localhost:50000'
+        rules_file_name: '.zap/rules.tsv'
+        cmd_options: '-a'
+        
+    - name: ZAP 결과 업로드
+      uses: actions/upload-artifact@v3
+      with:
+        name: zap-results
+        path: zap-report.html
+        retention-days: 30
+
+  # 보안 정책 검사
+  policy-check:
+    name: 보안 정책 검사
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 코드 체크아웃
+      uses: actions/checkout@v4
+      
+    - name: 보안 정책 검사
+      run: |
+        echo "보안 정책 검사 중..."
+        # 보안 정책 검사 스크립트 실행
+        # - 파일 권한 검사
+        # - 환경 변수 검사
+        # - 설정 파일 검사
+        # - 네트워크 설정 검사
+        
+    - name: 정책 검사 결과 업로드
+      uses: actions/upload-artifact@v3
+      with:
+        name: policy-check-results
+        path: reports/policy-check-report.json
+        retention-days: 30
+
+  # 보안 보고서 생성
+  security-report:
+    name: 보안 보고서 생성
+    runs-on: ubuntu-latest
+    needs: [dependency-scan, code-scan, container-scan, secret-scan, policy-check]
+    if: always()
+    
+    steps:
+    - name: 코드 체크아웃
+      uses: actions/checkout@v4
+      
+    - name: 보안 스캔 결과 다운로드
+      uses: actions/download-artifact@v3
+      with:
+        name: security-audit-results
+        path: ./audit-results
+        
+    - name: 코드 스캔 결과 다운로드
+      uses: actions/download-artifact@v3
+      with:
+        name: code-scan-results
+        path: ./code-scan-results
+        
+    - name: 정책 검사 결과 다운로드
+      uses: actions/download-artifact@v3
+      with:
+        name: policy-check-results
+        path: ./policy-check-results
+        
+    - name: 보안 보고서 생성
+      run: |
+        echo "보안 보고서 생성 중..."
+        # 보안 보고서 생성 스크립트 실행
+        node scripts/generate-security-report.js
+        
+    - name: 보안 보고서 업로드
+      uses: actions/upload-artifact@v3
+      with:
+        name: security-report
+        path: reports/security-report.md
+        retention-days: 90
+        
+    - name: 보안 알림
+      uses: 8398a7/action-slack@v3
+      with:
+        status: ${{ job.status }}
+        channel: '#security'
+        webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+      if: always()
+
+  # 보안 취약점 자동 수정
+  auto-fix:
+    name: 보안 취약점 자동 수정
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule'
+    
+    steps:
+    - name: 코드 체크아웃
+      uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        
+    - name: Node.js 설정
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+        
+    - name: 백엔드 의존성 업데이트
+      run: |
+        cd server-backend
+        npm update
+        npm audit fix --force
+        
+    - name: 프론트엔드 의존성 업데이트
+      run: |
+        cd frontend
+        npm update
+        npm audit fix --force
+        
+    - name: 자동 수정 커밋
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add .
+        git diff --staged --quiet || git commit -m "chore: 자동 보안 업데이트"
+        git push

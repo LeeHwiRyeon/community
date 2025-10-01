@@ -1,0 +1,746 @@
+/* 접근성 개선을 위한 CSS 스타일 */
+
+/* 고대비 모드 */
+.high-contrast {
+    --chakra-colors-gray-50: #ffffff !important;
+    --chakra-colors-gray-100: #f7f7f7 !important;
+    --chakra-colors-gray-200: #e5e5e5 !important;
+    --chakra-colors-gray-300: #d4d4d4 !important;
+    --chakra-colors-gray-400: #a3a3a3 !important;
+    --chakra-colors-gray-500: #737373 !important;
+    --chakra-colors-gray-600: #525252 !important;
+    --chakra-colors-gray-700: #404040 !important;
+    --chakra-colors-gray-800: #262626 !important;
+    --chakra-colors-gray-900: #171717 !important;
+
+    --chakra-colors-blue-500: #0066cc !important;
+    --chakra-colors-blue-600: #0052a3 !important;
+    --chakra-colors-red-500: #cc0000 !important;
+    --chakra-colors-red-600: #a30000 !important;
+    --chakra-colors-green-500: #00aa00 !important;
+    --chakra-colors-green-600: #008800 !important;
+    --chakra-colors-yellow-500: #ffaa00 !important;
+    --chakra-colors-yellow-600: #cc8800 !important;
+}
+
+.high-contrast * {
+    border-color: currentColor !important;
+}
+
+/* 애니메이션 감소 */
+.reduce-motion *,
+.reduce-motion *::before,
+.reduce-motion *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+}
+
+/* 포커스 표시 강화 */
+*:focus-visible {
+    outline: 3px solid var(--chakra-colors-blue-500) !important;
+    outline-offset: 2px !important;
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.6) !important;
+}
+
+/* 스킵 링크 */
+.skip-link {
+    position: absolute;
+    top: -40px;
+    left: 6px;
+    background: var(--chakra-colors-blue-500);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 4px;
+    text-decoration: none;
+    z-index: 1000;
+    font-size: 14px;
+    font-weight: bold;
+    transition: top 0.2s ease-in-out;
+}
+
+.skip-link:focus {
+    top: 6px;
+}
+
+/* 접근성 폰트 설정 */
+.accessibility-font-size {
+    font-size: var(--accessibility-font-size, 16px) !important;
+}
+
+.accessibility-line-height {
+    line-height: var(--accessibility-line-height, 1.5) !important;
+}
+
+.accessibility-letter-spacing {
+    letter-spacing: var(--accessibility-letter-spacing, 0px) !important;
+}
+
+.accessibility-word-spacing {
+    word-spacing: var(--accessibility-word-spacing, 0px) !important;
+}
+
+/* 스크린 리더 전용 텍스트 */
+.sr-only {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+}
+
+/* 라이브 영역 */
+#live-region {
+    position: absolute;
+    left: -10000px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}
+
+/* 키보드 네비게이션 개선 */
+.keyboard-navigation button:focus,
+.keyboard-navigation [role="button"]:focus,
+.keyboard-navigation a:focus,
+.keyboard-navigation input:focus,
+.keyboard-navigation select:focus,
+.keyboard-navigation textarea:focus {
+    outline: 3px solid var(--chakra-colors-blue-500) !important;
+    outline-offset: 2px !important;
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.6) !important;
+}
+
+/* 포커스 트랩 */
+.focus-trap {
+    outline: none;
+}
+
+/* 접근성 개선을 위한 버튼 스타일 */
+.accessible-button {
+    min-height: 44px;
+    min-width: 44px;
+    padding: 8px 16px;
+    border: 2px solid transparent;
+    border-radius: 4px;
+    background: var(--chakra-colors-blue-500);
+    color: white;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.accessible-button:hover {
+    background: var(--chakra-colors-blue-600);
+    border-color: var(--chakra-colors-blue-700);
+}
+
+.accessible-button:focus {
+    outline: 3px solid var(--chakra-colors-blue-500);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.6);
+}
+
+.accessible-button:active {
+    background: var(--chakra-colors-blue-700);
+    transform: translateY(1px);
+}
+
+/* 접근성 개선을 위한 입력 필드 스타일 */
+.accessible-input {
+    min-height: 44px;
+    padding: 8px 12px;
+    border: 2px solid var(--chakra-colors-gray-300);
+    border-radius: 4px;
+    font-size: 16px;
+    background: white;
+    transition: all 0.2s ease-in-out;
+}
+
+.accessible-input:focus {
+    outline: 3px solid var(--chakra-colors-blue-500);
+    outline-offset: 2px;
+    border-color: var(--chakra-colors-blue-500);
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.6);
+}
+
+.accessible-input:invalid {
+    border-color: var(--chakra-colors-red-500);
+}
+
+.accessible-input:invalid:focus {
+    outline-color: var(--chakra-colors-red-500);
+    box-shadow: 0 0 0 3px rgba(229, 62, 62, 0.6);
+}
+
+/* 접근성 개선을 위한 링크 스타일 */
+.accessible-link {
+    color: var(--chakra-colors-blue-500);
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 2px;
+    transition: all 0.2s ease-in-out;
+}
+
+.accessible-link:hover {
+    color: var(--chakra-colors-blue-600);
+    text-decoration-thickness: 3px;
+}
+
+.accessible-link:focus {
+    outline: 3px solid var(--chakra-colors-blue-500);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.6);
+}
+
+/* 접근성 개선을 위한 테이블 스타일 */
+.accessible-table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.accessible-table th,
+.accessible-table td {
+    padding: 12px;
+    text-align: left;
+    border: 1px solid var(--chakra-colors-gray-300);
+}
+
+.accessible-table th {
+    background: var(--chakra-colors-gray-100);
+    font-weight: 600;
+}
+
+.accessible-table tbody tr:nth-child(even) {
+    background: var(--chakra-colors-gray-50);
+}
+
+.accessible-table tbody tr:hover {
+    background: var(--chakra-colors-blue-50);
+}
+
+/* 접근성 개선을 위한 폼 스타일 */
+.accessible-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.accessible-form .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.accessible-form .form-label {
+    font-weight: 600;
+    color: var(--chakra-colors-gray-700);
+}
+
+.accessible-form .form-helper {
+    font-size: 14px;
+    color: var(--chakra-colors-gray-600);
+}
+
+.accessible-form .form-error {
+    font-size: 14px;
+    color: var(--chakra-colors-red-500);
+    font-weight: 500;
+}
+
+/* 접근성 개선을 위한 모달 스타일 */
+.accessible-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.accessible-modal .modal-content {
+    background: white;
+    border-radius: 8px;
+    padding: 24px;
+    max-width: 90vw;
+    max-height: 90vh;
+    overflow: auto;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.accessible-modal .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.accessible-modal .modal-title {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.accessible-modal .modal-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+}
+
+.accessible-modal .modal-close:hover {
+    background: var(--chakra-colors-gray-100);
+}
+
+.accessible-modal .modal-close:focus {
+    outline: 3px solid var(--chakra-colors-blue-500);
+    outline-offset: 2px;
+}
+
+/* 접근성 개선을 위한 네비게이션 스타일 */
+.accessible-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.accessible-nav .nav-item {
+    display: block;
+    padding: 12px 16px;
+    color: var(--chakra-colors-gray-700);
+    text-decoration: none;
+    border-radius: 4px;
+    transition: all 0.2s ease-in-out;
+}
+
+.accessible-nav .nav-item:hover {
+    background: var(--chakra-colors-gray-100);
+    color: var(--chakra-colors-gray-900);
+}
+
+.accessible-nav .nav-item:focus {
+    outline: 3px solid var(--chakra-colors-blue-500);
+    outline-offset: 2px;
+    background: var(--chakra-colors-blue-50);
+}
+
+.accessible-nav .nav-item.active {
+    background: var(--chakra-colors-blue-500);
+    color: white;
+}
+
+.accessible-nav .nav-item.active:focus {
+    background: var(--chakra-colors-blue-600);
+}
+
+/* 접근성 개선을 위한 알림 스타일 */
+.accessible-alert {
+    padding: 16px;
+    border-radius: 4px;
+    margin: 16px 0;
+    border-left: 4px solid;
+}
+
+.accessible-alert.info {
+    background: var(--chakra-colors-blue-50);
+    border-left-color: var(--chakra-colors-blue-500);
+    color: var(--chakra-colors-blue-900);
+}
+
+.accessible-alert.success {
+    background: var(--chakra-colors-green-50);
+    border-left-color: var(--chakra-colors-green-500);
+    color: var(--chakra-colors-green-900);
+}
+
+.accessible-alert.warning {
+    background: var(--chakra-colors-yellow-50);
+    border-left-color: var(--chakra-colors-yellow-500);
+    color: var(--chakra-colors-yellow-900);
+}
+
+.accessible-alert.error {
+    background: var(--chakra-colors-red-50);
+    border-left-color: var(--chakra-colors-red-500);
+    color: var(--chakra-colors-red-900);
+}
+
+/* 접근성 개선을 위한 로딩 스타일 */
+.accessible-loading {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid var(--chakra-colors-gray-300);
+    border-radius: 50%;
+    border-top-color: var(--chakra-colors-blue-500);
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* 접근성 개선을 위한 툴팁 스타일 */
+.accessible-tooltip {
+    position: relative;
+    display: inline-block;
+}
+
+.accessible-tooltip .tooltip-content {
+    visibility: hidden;
+    width: 200px;
+    background: var(--chakra-colors-gray-900);
+    color: white;
+    text-align: center;
+    border-radius: 4px;
+    padding: 8px;
+    position: absolute;
+    z-index: 1000;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -100px;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.accessible-tooltip .tooltip-content::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: var(--chakra-colors-gray-900) transparent transparent transparent;
+}
+
+.accessible-tooltip:hover .tooltip-content,
+.accessible-tooltip:focus .tooltip-content {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* 접근성 개선을 위한 드롭다운 스타일 */
+.accessible-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.accessible-dropdown .dropdown-button {
+    background: var(--chakra-colors-blue-500);
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.accessible-dropdown .dropdown-button:hover {
+    background: var(--chakra-colors-blue-600);
+}
+
+.accessible-dropdown .dropdown-button:focus {
+    outline: 3px solid var(--chakra-colors-blue-500);
+    outline-offset: 2px;
+}
+
+.accessible-dropdown .dropdown-content {
+    display: none;
+    position: absolute;
+    background: white;
+    min-width: 160px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    border-radius: 4px;
+    border: 1px solid var(--chakra-colors-gray-300);
+}
+
+.accessible-dropdown .dropdown-content.show {
+    display: block;
+}
+
+.accessible-dropdown .dropdown-item {
+    color: var(--chakra-colors-gray-700);
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    cursor: pointer;
+}
+
+.accessible-dropdown .dropdown-item:hover {
+    background: var(--chakra-colors-gray-100);
+}
+
+.accessible-dropdown .dropdown-item:focus {
+    outline: 3px solid var(--chakra-colors-blue-500);
+    outline-offset: -2px;
+    background: var(--chakra-colors-blue-50);
+}
+
+/* 접근성 개선을 위한 탭 스타일 */
+.accessible-tabs {
+    display: flex;
+    flex-direction: column;
+}
+
+.accessible-tabs .tab-list {
+    display: flex;
+    border-bottom: 2px solid var(--chakra-colors-gray-300);
+    margin-bottom: 16px;
+}
+
+.accessible-tabs .tab-button {
+    background: none;
+    border: none;
+    padding: 12px 16px;
+    cursor: pointer;
+    font-size: 16px;
+    color: var(--chakra-colors-gray-600);
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s ease-in-out;
+}
+
+.accessible-tabs .tab-button:hover {
+    color: var(--chakra-colors-gray-900);
+    background: var(--chakra-colors-gray-50);
+}
+
+.accessible-tabs .tab-button:focus {
+    outline: 3px solid var(--chakra-colors-blue-500);
+    outline-offset: 2px;
+}
+
+.accessible-tabs .tab-button.active {
+    color: var(--chakra-colors-blue-500);
+    border-bottom-color: var(--chakra-colors-blue-500);
+    font-weight: 600;
+}
+
+.accessible-tabs .tab-panel {
+    display: none;
+}
+
+.accessible-tabs .tab-panel.active {
+    display: block;
+}
+
+/* 접근성 개선을 위한 아코디언 스타일 */
+.accessible-accordion {
+    border: 1px solid var(--chakra-colors-gray-300);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.accessible-accordion .accordion-item {
+    border-bottom: 1px solid var(--chakra-colors-gray-300);
+}
+
+.accessible-accordion .accordion-item:last-child {
+    border-bottom: none;
+}
+
+.accessible-accordion .accordion-button {
+    width: 100%;
+    background: none;
+    border: none;
+    padding: 16px;
+    text-align: left;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--chakra-colors-gray-700);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.accessible-accordion .accordion-button:hover {
+    background: var(--chakra-colors-gray-50);
+}
+
+.accessible-accordion .accordion-button:focus {
+    outline: 3px solid var(--chakra-colors-blue-500);
+    outline-offset: -2px;
+}
+
+.accessible-accordion .accordion-button[aria-expanded="true"] {
+    background: var(--chakra-colors-blue-50);
+    color: var(--chakra-colors-blue-700);
+}
+
+.accessible-accordion .accordion-content {
+    padding: 0 16px 16px;
+    display: none;
+}
+
+.accessible-accordion .accordion-content.active {
+    display: block;
+}
+
+.accessible-accordion .accordion-icon {
+    transition: transform 0.2s ease-in-out;
+}
+
+.accessible-accordion .accordion-button[aria-expanded="true"] .accordion-icon {
+    transform: rotate(180deg);
+}
+
+/* 접근성 개선을 위한 캐러셀 스타일 */
+.accessible-carousel {
+    position: relative;
+    overflow: hidden;
+    border-radius: 4px;
+}
+
+.accessible-carousel .carousel-container {
+    display: flex;
+    transition: transform 0.3s ease-in-out;
+}
+
+.accessible-carousel .carousel-item {
+    min-width: 100%;
+    flex-shrink: 0;
+}
+
+.accessible-carousel .carousel-controls {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    padding: 12px;
+    cursor: pointer;
+    font-size: 18px;
+    border-radius: 4px;
+}
+
+.accessible-carousel .carousel-controls:hover {
+    background: rgba(0, 0, 0, 0.7);
+}
+
+.accessible-carousel .carousel-controls:focus {
+    outline: 3px solid var(--chakra-colors-blue-500);
+    outline-offset: 2px;
+}
+
+.accessible-carousel .carousel-controls.prev {
+    left: 16px;
+}
+
+.accessible-carousel .carousel-controls.next {
+    right: 16px;
+}
+
+.accessible-carousel .carousel-indicators {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    padding: 16px;
+}
+
+.accessible-carousel .carousel-indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--chakra-colors-gray-300);
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.accessible-carousel .carousel-indicator:hover {
+    background: var(--chakra-colors-gray-500);
+}
+
+.accessible-carousel .carousel-indicator:focus {
+    outline: 3px solid var(--chakra-colors-blue-500);
+    outline-offset: 2px;
+}
+
+.accessible-carousel .carousel-indicator.active {
+    background: var(--chakra-colors-blue-500);
+}
+
+/* 접근성 개선을 위한 모바일 스타일 */
+@media (max-width: 768px) {
+    .accessible-button {
+        min-height: 48px;
+        min-width: 48px;
+        font-size: 18px;
+    }
+
+    .accessible-input {
+        min-height: 48px;
+        font-size: 18px;
+    }
+
+    .accessible-link {
+        text-decoration-thickness: 3px;
+        text-underline-offset: 3px;
+    }
+
+    .accessible-nav .nav-item {
+        padding: 16px;
+        font-size: 18px;
+    }
+
+    .accessible-tabs .tab-button {
+        padding: 16px;
+        font-size: 18px;
+    }
+
+    .accessible-accordion .accordion-button {
+        padding: 20px;
+        font-size: 18px;
+    }
+
+    .accessible-accordion .accordion-content {
+        padding: 0 20px 20px;
+    }
+}
+
+/* 접근성 개선을 위한 인쇄 스타일 */
+@media print {
+
+    .skip-link,
+    .accessible-tooltip .tooltip-content,
+    .accessible-dropdown .dropdown-content,
+    .accessible-carousel .carousel-controls,
+    .accessible-carousel .carousel-indicators {
+        display: none !important;
+    }
+
+    .accessible-button,
+    .accessible-input,
+    .accessible-link {
+        border: 1px solid var(--chakra-colors-gray-900) !important;
+        background: white !important;
+        color: var(--chakra-colors-gray-900) !important;
+    }
+
+    .accessible-table th,
+    .accessible-table td {
+        border: 1px solid var(--chakra-colors-gray-900) !important;
+    }
+
+    .accessible-alert {
+        border: 1px solid var(--chakra-colors-gray-900) !important;
+        background: white !important;
+        color: var(--chakra-colors-gray-900) !important;
+    }
+}

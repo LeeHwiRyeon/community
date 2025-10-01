@@ -56,7 +56,7 @@ describe('CommentSection Integration', () => {
         const mockComments = [
             {
                 id: 1,
-                content: '첫 번째 댓글입니다.',
+                content: '�?번째 ?��??�니??',
                 author: 'user1',
                 created_at: '2024-01-01T10:00:00Z',
                 parent_id: null,
@@ -78,7 +78,7 @@ describe('CommentSection Integration', () => {
         )
 
         await waitFor(() => {
-            expect(screen.getByText('첫 번째 댓글입니다.')).toBeInTheDocument()
+            expect(screen.getByText('�?번째 ?��??�니??')).toBeInTheDocument()
         })
 
         expect(screen.getByText('user1')).toBeInTheDocument()

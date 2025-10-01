@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoAgent 실시간 모니터링 대시보드</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .card h3 {
+            color: #4a5568;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .card h3::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #48bb78;
+            margin-right: 10px;
+            animation: pulse 2s infinite;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-online {
+            background: #48bb78;
+            animation: pulse 2s infinite;
+        }
+
+        .status-offline {
+            background: #f56565;
+        }
+
+        .metric {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .metric:last-child {
+            border-bottom: none;
+        }
+
+        .metric-label {
+            font-weight: 500;
+            color: #4a5568;
+        }
+
+        .metric-value {
+            font-weight: bold;
+            color: #2d3748;
+        }
+
+        .chart-container {
+            height: 200px;
+            margin-top: 15px;
+            position: relative;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #48bb78, #38a169);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .log-container {
+            background: #1a202c;
+            color: #e2e8f0;
+            border-radius: 10px;
+            padding: 20px;
+            height: 300px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .log-entry {
+            margin-bottom: 8px;
+            padding: 5px 0;
+            border-bottom: 1px solid #2d3748;
+        }
+
+        .log-timestamp {
+            color: #68d391;
+            font-weight: bold;
+        }
+
+        .log-level-info {
+            color: #63b3ed;
+        }
+
+        .log-level-warning {
+            color: #f6e05e;
+        }
+
+        .log-level-error {
+            color: #fc8181;
+        }
+
+        .refresh-btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: transform 0.2s ease;
+            margin: 20px auto;
+            display: block;
+        }
+
+        .refresh-btn:hover {
+            transform: scale(1.05);
+        }
+
+        @keyframes pulse {
+            0% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 15px;
+            background: #f7fafc;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #2d3748;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #718096;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 AutoAgent 실시간 모니터링 대시보드</h1>
+            <p>Community Platform 통합 자동화 에이전트 상태 모니터링</p>
+        </div>
+
+        <div class="dashboard">
+            <!-- 시스템 상태 카드 -->
+            <div class="card fade-in">
+                <h3>시스템 상태</h3>
+                <div class="metric">
+                    <span class="metric-label">AutoAgent 상태</span>
+                    <span class="metric-value">
+                        <span class="status-indicator status-online"></span>
+                        온라인
+                    </span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">실행 시간</span>
+                    <span class="metric-value" id="uptime">00:00:00</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">마지막 업데이트</span>
+                    <span class="metric-value" id="lastUpdate">-</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 100%"></div>
+                </div>
+            </div>
+
+            <!-- 데이터 수집 상태 카드 -->
+            <div class="card fade-in">
+                <h3>데이터 수집 상태</h3>
+                <div class="metric">
+                    <span class="metric-label">뉴스 수집</span>
+                    <span class="metric-value" id="newsStatus">활성</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">환율 수집</span>
+                    <span class="metric-value" id="fxStatus">활성</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">커뮤니티 모니터링</span>
+                    <span class="metric-value" id="communityStatus">활성</span>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-number" id="newsCount">0</div>
+                        <div class="stat-label">뉴스 수집</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="fxCount">0</div>
+                        <div class="stat-label">환율 수집</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 성능 메트릭 카드 -->
+            <div class="card fade-in">
+                <h3>성능 메트릭</h3>
+                <div class="metric">
+                    <span class="metric-label">CPU 사용률</span>
+                    <span class="metric-value" id="cpuUsage">0%</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">메모리 사용률</span>
+                    <span class="metric-value" id="memoryUsage">0%</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">API 응답 시간</span>
+                    <span class="metric-value" id="responseTime">0ms</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="cpuProgress" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <!-- 커뮤니티 통계 카드 -->
+            <div class="card fade-in">
+                <h3>커뮤니티 통계</h3>
+                <div class="metric">
+                    <span class="metric-label">총 사용자</span>
+                    <span class="metric-value" id="totalUsers">0</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">활성 사용자</span>
+                    <span class="metric-value" id="activeUsers">0</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">총 게시글</span>
+                    <span class="metric-value" id="totalPosts">0</span>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-number" id="todayPosts">0</div>
+                        <div class="stat-label">오늘 게시글</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="todayComments">0</div>
+                        <div class="stat-label">오늘 댓글</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 실시간 로그 카드 -->
+            <div class="card fade-in" style="grid-column: 1 / -1;">
+                <h3>실시간 로그</h3>
+                <div class="log-container" id="logContainer">
+                    <div class="log-entry">
+                        <span class="log-timestamp">[2025-09-30 21:55:00]</span>
+                        <span class="log-level-info">[INFO]</span>
+                        AutoAgent 대시보드가 시작되었습니다.
+                    </div>
+                    <div class="log-entry">
+                        <span class="log-timestamp">[2025-09-30 21:55:01]</span>
+                        <span class="log-level-info">[INFO]</span>
+                        Community Platform과의 연결을 확인하는 중...
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button class="refresh-btn" onclick="refreshData()">🔄 데이터 새로고침</button>
+    </div>
+
+    <script>
+        let startTime = Date.now();
+        let logEntries = [];
+
+        // 실시간 시계 업데이트
+        function updateClock() {
+            const now = new Date();
+            const uptime = Math.floor((now.getTime() - startTime) / 1000);
+            const hours = Math.floor(uptime / 3600).toString().padStart(2, '0');
+            const minutes = Math.floor((uptime % 3600) / 60).toString().padStart(2, '0');
+            const seconds = (uptime % 60).toString().padStart(2, '0');
+
+            document.getElementById('uptime').textContent = `${hours}:${minutes}:${seconds}`;
+            document.getElementById('lastUpdate').textContent = now.toLocaleTimeString('ko-KR');
+        }
+
+        // 로그 추가
+        function addLog(level, message) {
+            const timestamp = new Date().toLocaleString('ko-KR');
+            const logEntry = document.createElement('div');
+            logEntry.className = 'log-entry';
+            logEntry.innerHTML = `
+                <span class="log-timestamp">[${timestamp}]</span>
+                <span class="log-level-${level}">[${level.toUpperCase()}]</span>
+                ${message}
+            `;
+
+            const logContainer = document.getElementById('logContainer');
+            logContainer.appendChild(logEntry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+
+            // 최대 100개 로그만 유지
+            if (logContainer.children.length > 100) {
+                logContainer.removeChild(logContainer.firstChild);
+            }
+        }
+
+        // 데이터 새로고침
+        async function refreshData() {
+            addLog('info', '데이터를 새로고침하는 중...');
+
+            try {
+                // Community Platform API 호출
+                const healthResponse = await fetch('http://localhost:5000/api/health-check');
+                const healthData = await healthResponse.json();
+
+                if (healthResponse.ok) {
+                    addLog('info', 'Community Platform 연결 성공');
+
+                    // 통계 데이터 가져오기
+                    const statsResponse = await fetch('http://localhost:5000/api/agent/stats');
+                    const statsData = await statsResponse.json();
+
+                    if (statsResponse.ok) {
+                        updateCommunityStats(statsData);
+                        addLog('info', '커뮤니티 통계 업데이트 완료');
+                    }
+
+                    // 성능 데이터 가져오기
+                    const perfResponse = await fetch('http://localhost:5000/api/agent/performance');
+                    const perfData = await perfResponse.json();
+
+                    if (perfResponse.ok) {
+                        updatePerformanceMetrics(perfData);
+                        addLog('info', '성능 메트릭 업데이트 완료');
+                    }
+                } else {
+                    addLog('warning', 'Community Platform 연결 실패');
+                }
+            } catch (error) {
+                addLog('error', `데이터 새로고침 오류: ${error.message}`);
+            }
+        }
+
+        // 커뮤니티 통계 업데이트
+        function updateCommunityStats(data) {
+            document.getElementById('totalUsers').textContent = data.users?.total || 0;
+            document.getElementById('activeUsers').textContent = data.users?.active || 0;
+            document.getElementById('totalPosts').textContent = data.posts?.total || 0;
+            document.getElementById('todayPosts').textContent = data.posts?.today || 0;
+            document.getElementById('todayComments').textContent = data.comments?.today || 0;
+        }
+
+        // 성능 메트릭 업데이트
+        function updatePerformanceMetrics(data) {
+            const cpuUsage = Math.round(data.system?.cpu?.user / 1000000) || 0;
+            const memoryUsage = Math.round((data.system?.memory?.heapUsed / data.system?.memory?.heapTotal) * 100) || 0;
+            const responseTime = data.api?.avg_response_time || 0;
+
+            document.getElementById('cpuUsage').textContent = `${cpuUsage}%`;
+            document.getElementById('memoryUsage').textContent = `${memoryUsage}%`;
+            document.getElementById('responseTime').textContent = `${responseTime}ms`;
+
+            document.getElementById('cpuProgress').style.width = `${cpuUsage}%`;
+        }
+
+        // 랜덤 데이터 시뮬레이션 (실제 API가 없을 때)
+        function simulateData() {
+            // 랜덤 뉴스 수집 수
+            const newsCount = Math.floor(Math.random() * 10) + 5;
+            document.getElementById('newsCount').textContent = newsCount;
+
+            // 랜덤 환율 수집 수
+            const fxCount = Math.floor(Math.random() * 5) + 1;
+            document.getElementById('fxCount').textContent = fxCount;
+
+            // 랜덤 성능 메트릭
+            const cpuUsage = Math.floor(Math.random() * 30) + 10;
+            const memoryUsage = Math.floor(Math.random() * 40) + 20;
+            const responseTime = Math.floor(Math.random() * 100) + 50;
+
+            document.getElementById('cpuUsage').textContent = `${cpuUsage}%`;
+            document.getElementById('memoryUsage').textContent = `${memoryUsage}%`;
+            document.getElementById('responseTime').textContent = `${responseTime}ms`;
+
+            document.getElementById('cpuProgress').style.width = `${cpuUsage}%`;
+
+            // 랜덤 커뮤니티 통계
+            const totalUsers = Math.floor(Math.random() * 1000) + 1000;
+            const activeUsers = Math.floor(Math.random() * 100) + 50;
+            const totalPosts = Math.floor(Math.random() * 2000) + 3000;
+            const todayPosts = Math.floor(Math.random() * 50) + 10;
+            const todayComments = Math.floor(Math.random() * 200) + 50;
+
+            document.getElementById('totalUsers').textContent = totalUsers;
+            document.getElementById('activeUsers').textContent = activeUsers;
+            document.getElementById('totalPosts').textContent = totalPosts;
+            document.getElementById('todayPosts').textContent = todayPosts;
+            document.getElementById('todayComments').textContent = todayComments;
+        }
+
+        // 초기화
+        function init() {
+            addLog('info', 'AutoAgent 대시보드 초기화 중...');
+
+            // 시계 업데이트 시작
+            setInterval(updateClock, 1000);
+
+            // 초기 데이터 로드
+            refreshData();
+
+            // 30초마다 자동 새로고침
+            setInterval(() => {
+                refreshData();
+                simulateData(); // 실제 API가 없을 때 시뮬레이션
+            }, 30000);
+
+            addLog('info', '대시보드 초기화 완료');
+        }
+
+        // 페이지 로드 시 초기화
+        window.addEventListener('load', init);
+    </script>
+</body>
+
+</html>

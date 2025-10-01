@@ -1,0 +1,344 @@
+{
+  "overview": {
+    "pattern": "layered",
+    "description": "계층별로 분리된 아키텍처",
+    "benefits": [
+      "명확한 책임",
+      "재사용성",
+      "테스트 용이",
+      "유지보수성"
+    ],
+    "tradeoffs": [
+      "성능 오버헤드",
+      "유연성 제한",
+      "계층 간 의존성"
+    ],
+    "diagram": "\ngraph TB\n    Client[Client] --> UI[Presentation Layer]\n    UI --> Business[Business Layer]\n    Business --> Data[Data Layer]\n    Data --> Database[(Database)]\n"
+  },
+  "components": [],
+  "dataFlow": [],
+  "deployment": {
+    "strategy": "blue-green",
+    "environments": [
+      {
+        "name": "production",
+        "purpose": "운영 환경",
+        "components": [],
+        "resources": [],
+        "config": {}
+      },
+      {
+        "name": "staging",
+        "purpose": "스테이징 환경",
+        "components": [],
+        "resources": [],
+        "config": {}
+      }
+    ],
+    "infrastructure": {
+      "provider": "aws",
+      "regions": [
+        "us-east-1",
+        "us-west-2"
+      ],
+      "networking": {
+        "vpc": "main-vpc",
+        "subnets": [
+          {
+            "name": "public-subnet-1",
+            "cidr": "10.0.1.0/24",
+            "availabilityZone": "us-east-1a",
+            "public": true
+          },
+          {
+            "name": "private-subnet-1",
+            "cidr": "10.0.2.0/24",
+            "availabilityZone": "us-east-1a",
+            "public": false
+          }
+        ],
+        "loadBalancers": [
+          {
+            "name": "main-alb",
+            "type": "application",
+            "targets": [],
+            "healthCheck": {
+              "path": "/health",
+              "interval": 30,
+              "timeout": 5,
+              "healthyThreshold": 2,
+              "unhealthyThreshold": 3
+            }
+          }
+        ]
+      },
+      "storage": {
+        "databases": [
+          {
+            "name": "main-db",
+            "type": "relational",
+            "engine": "postgresql",
+            "size": 100,
+            "replicas": 2,
+            "backup": {
+              "frequency": "daily",
+              "retention": 30
+            }
+          }
+        ],
+        "objectStorage": [],
+        "fileStorage": []
+      },
+      "compute": {
+        "containers": [],
+        "functions": [],
+        "virtualMachines": []
+      }
+    },
+    "ciCd": {
+      "provider": "github-actions",
+      "stages": [
+        "build",
+        "test",
+        "deploy"
+      ],
+      "environments": [
+        "staging",
+        "production"
+      ],
+      "approvals": {
+        "production": true,
+        "staging": false
+      }
+    }
+  },
+  "security": {
+    "authentication": {
+      "method": "oauth2",
+      "providers": [
+        "google",
+        "github"
+      ],
+      "mfa": false,
+      "session": {
+        "type": "jwt",
+        "expiry": 3600
+      }
+    },
+    "authorization": {
+      "model": "rbac",
+      "policies": [],
+      "permissions": []
+    },
+    "encryption": {
+      "atRest": true,
+      "inTransit": true,
+      "algorithm": "AES-256"
+    },
+    "network": {
+      "vpc": true,
+      "securityGroups": true,
+      "waf": false
+    },
+    "compliance": [
+      "GDPR"
+    ]
+  },
+  "monitoring": {
+    "metrics": [
+      {
+        "name": "response_time",
+        "type": "latency",
+        "threshold": 200
+      },
+      {
+        "name": "error_rate",
+        "type": "counter",
+        "threshold": 1
+      },
+      {
+        "name": "cpu_usage",
+        "type": "gauge",
+        "threshold": 80
+      },
+      {
+        "name": "memory_usage",
+        "type": "gauge",
+        "threshold": 80
+      }
+    ],
+    "logging": {
+      "level": "info",
+      "retention": 30,
+      "aggregation": true
+    },
+    "alerting": {
+      "channels": [
+        "email",
+        "slack"
+      ],
+      "rules": []
+    },
+    "dashboards": [
+      {
+        "name": "overview",
+        "components": []
+      },
+      {
+        "name": "performance",
+        "metrics": [
+          "response_time",
+          "throughput"
+        ]
+      }
+    ],
+    "tracing": {
+      "enabled": false,
+      "sampling": 0.1
+    }
+  },
+  "scalability": {
+    "horizontal": {
+      "enabled": true,
+      "minInstances": 2,
+      "maxInstances": 10,
+      "scalingPolicy": "cpu-based"
+    },
+    "vertical": {
+      "enabled": true,
+      "maxCpu": 4,
+      "maxMemory": 8
+    },
+    "caching": {
+      "strategy": "redis",
+      "ttl": 3600,
+      "invalidation": "time-based"
+    },
+    "loadBalancing": {
+      "algorithm": "round-robin",
+      "healthCheck": true,
+      "stickySessions": false
+    },
+    "database": {
+      "readReplicas": 2,
+      "sharding": false,
+      "partitioning": false
+    }
+  },
+  "cost": {
+    "monthly": 500,
+    "yearly": 6000,
+    "breakdown": {
+      "infrastructure": 300,
+      "development": 100,
+      "maintenance": 75,
+      "licensing": 25
+    },
+    "optimization": [
+      {
+        "type": "reserved-instances",
+        "savings": 0.3,
+        "description": "Reserved instances 사용"
+      },
+      {
+        "type": "spot-instances",
+        "savings": 0.5,
+        "description": "Spot instances 활용"
+      }
+    ]
+  },
+  "timeline": {
+    "phases": [
+      {
+        "name": "Planning",
+        "duration": 2,
+        "start": 0,
+        "end": 2
+      },
+      {
+        "name": "Development",
+        "duration": 10,
+        "start": 2,
+        "end": 12
+      },
+      {
+        "name": "Testing",
+        "duration": 2,
+        "start": 12,
+        "end": 14
+      },
+      {
+        "name": "Deployment",
+        "duration": 2,
+        "start": 14,
+        "end": 16
+      }
+    ],
+    "milestones": [
+      {
+        "name": "Architecture Complete",
+        "week": 2
+      },
+      {
+        "name": "Core Features Complete",
+        "week": 9
+      },
+      {
+        "name": "Testing Complete",
+        "week": 14
+      },
+      {
+        "name": "Production Ready",
+        "week": 16
+      }
+    ],
+    "dependencies": [],
+    "criticalPath": [
+      "Planning",
+      "Development",
+      "Testing",
+      "Deployment"
+    ]
+  },
+  "risks": [
+    {
+      "id": "scaling-risk",
+      "description": "예상보다 높은 트래픽으로 인한 성능 저하",
+      "probability": "medium",
+      "impact": "high",
+      "mitigation": [
+        "자동 스케일링 설정",
+        "로드 테스트 수행"
+      ],
+      "contingency": [
+        "수동 스케일링",
+        "CDN 활용"
+      ]
+    },
+    {
+      "id": "security-risk",
+      "description": "보안 취약점으로 인한 데이터 유출",
+      "probability": "low",
+      "impact": "high",
+      "mitigation": [
+        "정기 보안 감사",
+        "침입 탐지 시스템"
+      ],
+      "contingency": [
+        "사고 대응 계획",
+        "데이터 백업"
+      ]
+    }
+  ],
+  "recommendations": [
+    {
+      "type": "technology",
+      "priority": "medium",
+      "description": "컨테이너 오케스트레이션 도입",
+      "rationale": "배포 자동화 및 리소스 최적화",
+      "implementation": "Kubernetes 클러스터 구축",
+      "effort": "medium",
+      "impact": "medium"
+    }
+  ]
+}

@@ -1,0 +1,55 @@
+{
+    "environment": "staging",
+    "description": "스테이징 환경 배포 설정",
+    "docker": {
+        "registry": "ghcr.io",
+        "imageName": "community-platform",
+        "tag": "staging"
+    },
+    "services": {
+        "backend": {
+            "port": 50000,
+            "healthCheck": "/api/health",
+            "replicas": 2
+        },
+        "frontend": {
+            "port": 3000,
+            "healthCheck": "/",
+            "replicas": 2
+        }
+    },
+    "database": {
+        "host": "staging-db.example.com",
+        "port": 3306,
+        "name": "community_staging",
+        "user": "staging_user",
+        "password": "staging_password"
+    },
+    "redis": {
+        "host": "staging-redis.example.com",
+        "port": 6379,
+        "password": "staging_redis_password"
+    },
+    "monitoring": {
+        "enabled": true,
+        "prometheus": "http://staging-prometheus.example.com:9090",
+        "grafana": "http://staging-grafana.example.com:3000"
+    },
+    "notifications": {
+        "slack": {
+            "webhook": "https://hooks.slack.com/services/staging/webhook",
+            "channel": "#staging-deployments"
+        },
+        "email": {
+            "enabled": true,
+            "recipients": [
+                "dev-team@example.com"
+            ]
+        }
+    },
+    "rollback": {
+        "enabled": true,
+        "maxVersions": 5,
+        "autoRollback": true
+    }
+}

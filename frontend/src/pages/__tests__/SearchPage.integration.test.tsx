@@ -131,7 +131,7 @@ describe('SearchPage Integration', () => {
             })
 
             await waitFor(() => {
-                expect(screen.queryByText('검색 중...')).not.toBeInTheDocument()
+                expect(screen.queryByText('검??�?..')).not.toBeInTheDocument()
             })
         })
 

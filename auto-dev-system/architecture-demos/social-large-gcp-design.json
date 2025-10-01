@@ -1,0 +1,757 @@
+{
+  "overview": {
+    "pattern": "microservices",
+    "description": "독립적인 서비스들의 집합으로 구성된 아키텍처",
+    "benefits": [
+      "확장성",
+      "기술 다양성",
+      "팀 독립성",
+      "장애 격리"
+    ],
+    "tradeoffs": [
+      "복잡성",
+      "네트워크 지연",
+      "데이터 일관성",
+      "운영 복잡성"
+    ],
+    "diagram": "\ngraph TB\n    Client[Client] --> Gateway[API Gateway]\n    Gateway --> UserService[User Service]\n    Gateway --> DataService[Data Service]\n    UserService --> Database[(Database)]\n    DataService --> Database\n    Gateway --> Cache[(Redis Cache)]\n"
+  },
+  "components": [
+    {
+      "id": "api-gateway",
+      "name": "API Gateway",
+      "type": "gateway",
+      "description": "모든 클라이언트 요청의 진입점",
+      "responsibilities": [
+        "라우팅",
+        "인증",
+        "로드 밸런싱",
+        "레이트 리미팅"
+      ],
+      "technologies": {
+        "language": "typescript",
+        "framework": "express",
+        "runtime": "node.js",
+        "database": "redis"
+      },
+      "interfaces": [
+        {
+          "name": "REST API",
+          "type": "rest",
+          "description": "클라이언트와의 통신",
+          "endpoints": [
+            {
+              "method": "GET",
+              "path": "/api/*",
+              "description": "모든 API 요청",
+              "parameters": [],
+              "response": {
+                "status": 200,
+                "type": "json",
+                "description": "API 응답"
+              }
+            }
+          ]
+        }
+      ],
+      "dependencies": [],
+      "scaling": {
+        "type": "horizontal",
+        "min": 2,
+        "max": 10,
+        "metric": "cpu"
+      }
+    },
+    {
+      "id": "user-service",
+      "name": "User Service",
+      "type": "service",
+      "description": "사용자 관리 서비스",
+      "responsibilities": [
+        "사용자 등록",
+        "인증",
+        "프로필 관리"
+      ],
+      "technologies": {
+        "language": "typescript",
+        "framework": "express",
+        "runtime": "node.js",
+        "database": "postgresql"
+      },
+      "interfaces": [
+        {
+          "name": "User API",
+          "type": "rest",
+          "description": "사용자 관련 API",
+          "endpoints": [
+            {
+              "method": "POST",
+              "path": "/users",
+              "description": "사용자 등록",
+              "parameters": [
+                {
+                  "name": "email",
+                  "type": "string",
+                  "required": true,
+                  "description": "이메일"
+                },
+                {
+                  "name": "password",
+                  "type": "string",
+                  "required": true,
+                  "description": "비밀번호"
+                }
+              ],
+              "response": {
+                "status": 201,
+                "type": "json",
+                "description": "사용자 정보"
+              }
+            },
+            {
+              "method": "POST",
+              "path": "/auth/login",
+              "description": "로그인",
+              "parameters": [
+                {
+                  "name": "email",
+                  "type": "string",
+                  "required": true,
+                  "description": "이메일"
+                },
+                {
+                  "name": "password",
+                  "type": "string",
+                  "required": true,
+                  "description": "비밀번호"
+                }
+              ],
+              "response": {
+                "status": 200,
+                "type": "json",
+                "description": "토큰"
+              }
+            }
+          ]
+        }
+      ],
+      "dependencies": [
+        "api-gateway"
+      ],
+      "scaling": {
+        "type": "horizontal",
+        "min": 2,
+        "max": 5,
+        "metric": "cpu"
+      }
+    },
+    {
+      "id": "post-service",
+      "name": "Post Service",
+      "type": "service",
+      "description": "게시물 관리 서비스",
+      "responsibilities": [
+        "게시물 작성",
+        "좋아요",
+        "공유"
+      ],
+      "technologies": {
+        "language": "typescript",
+        "framework": "express",
+        "runtime": "node.js",
+        "database": "postgresql"
+      },
+      "interfaces": [
+        {
+          "name": "Post API",
+          "type": "rest",
+          "description": "게시물 관련 API",
+          "endpoints": []
+        }
+      ],
+      "dependencies": [
+        "api-gateway"
+      ],
+      "scaling": {
+        "type": "horizontal",
+        "min": 3,
+        "max": 10,
+        "metric": "cpu"
+      }
+    },
+    {
+      "id": "messaging-service",
+      "name": "Messaging Service",
+      "type": "service",
+      "description": "메시징 서비스",
+      "responsibilities": [
+        "1:1 채팅",
+        "그룹 채팅",
+        "실시간 알림"
+      ],
+      "technologies": {
+        "language": "typescript",
+        "framework": "socket.io",
+        "runtime": "node.js",
+        "database": "redis"
+      },
+      "interfaces": [
+        {
+          "name": "WebSocket API",
+          "type": "websocket",
+          "description": "실시간 통신",
+          "endpoints": []
+        }
+      ],
+      "dependencies": [
+        "api-gateway"
+      ],
+      "scaling": {
+        "type": "horizontal",
+        "min": 3,
+        "max": 15,
+        "metric": "cpu"
+      }
+    },
+    {
+      "id": "database",
+      "name": "PostgreSQL Database",
+      "type": "database",
+      "description": "주 데이터베이스",
+      "responsibilities": [
+        "데이터 저장",
+        "트랜잭션 관리",
+        "백업"
+      ],
+      "technologies": {
+        "language": "sql",
+        "framework": "postgresql",
+        "runtime": "postgresql",
+        "database": "postgresql"
+      },
+      "interfaces": [
+        {
+          "name": "Database Connection",
+          "type": "database",
+          "description": "데이터베이스 연결",
+          "schema": {
+            "tables": [
+              "users",
+              "posts",
+              "orders",
+              "products"
+            ]
+          }
+        }
+      ],
+      "dependencies": [],
+      "scaling": {
+        "type": "vertical",
+        "min": 1,
+        "max": 1,
+        "metric": "memory"
+      }
+    },
+    {
+      "id": "cache",
+      "name": "Redis Cache",
+      "type": "cache",
+      "description": "캐시 서버",
+      "responsibilities": [
+        "세션 저장",
+        "캐시 데이터",
+        "실시간 데이터"
+      ],
+      "technologies": {
+        "language": "javascript",
+        "framework": "redis",
+        "runtime": "redis",
+        "database": "redis"
+      },
+      "interfaces": [
+        {
+          "name": "Cache API",
+          "type": "database",
+          "description": "캐시 접근",
+          "endpoints": []
+        }
+      ],
+      "dependencies": [],
+      "scaling": {
+        "type": "horizontal",
+        "min": 1,
+        "max": 3,
+        "metric": "memory"
+      }
+    }
+  ],
+  "dataFlow": [
+    {
+      "id": "client-to-gateway",
+      "name": "Client to Gateway",
+      "source": "client",
+      "destination": "api-gateway",
+      "data": "HTTP requests",
+      "protocol": "HTTPS",
+      "frequency": "real-time",
+      "volume": 1000,
+      "criticality": "high"
+    },
+    {
+      "id": "gateway-to-user-service",
+      "name": "Gateway to User Service",
+      "source": "api-gateway",
+      "destination": "user-service",
+      "data": "API requests",
+      "protocol": "HTTP",
+      "frequency": "real-time",
+      "volume": 500,
+      "criticality": "high"
+    },
+    {
+      "id": "gateway-to-post-service",
+      "name": "Gateway to Post Service",
+      "source": "api-gateway",
+      "destination": "post-service",
+      "data": "API requests",
+      "protocol": "HTTP",
+      "frequency": "real-time",
+      "volume": 500,
+      "criticality": "high"
+    },
+    {
+      "id": "gateway-to-messaging-service",
+      "name": "Gateway to Messaging Service",
+      "source": "api-gateway",
+      "destination": "messaging-service",
+      "data": "API requests",
+      "protocol": "HTTP",
+      "frequency": "real-time",
+      "volume": 500,
+      "criticality": "high"
+    }
+  ],
+  "deployment": {
+    "strategy": "blue-green",
+    "environments": [
+      {
+        "name": "production",
+        "purpose": "운영 환경",
+        "components": [
+          "api-gateway",
+          "user-service",
+          "post-service",
+          "messaging-service",
+          "database",
+          "cache"
+        ],
+        "resources": [],
+        "config": {}
+      },
+      {
+        "name": "staging",
+        "purpose": "스테이징 환경",
+        "components": [
+          "api-gateway",
+          "user-service",
+          "post-service",
+          "messaging-service",
+          "database",
+          "cache"
+        ],
+        "resources": [],
+        "config": {}
+      }
+    ],
+    "infrastructure": {
+      "provider": "gcp",
+      "regions": [
+        "us-central1",
+        "europe-west1"
+      ],
+      "networking": {
+        "vpc": "main-vpc",
+        "subnets": [
+          {
+            "name": "public-subnet-1",
+            "cidr": "10.0.1.0/24",
+            "availabilityZone": "us-east-1a",
+            "public": true
+          },
+          {
+            "name": "private-subnet-1",
+            "cidr": "10.0.2.0/24",
+            "availabilityZone": "us-east-1a",
+            "public": false
+          }
+        ],
+        "loadBalancers": [
+          {
+            "name": "main-alb",
+            "type": "application",
+            "targets": [
+              "user-service",
+              "post-service",
+              "messaging-service"
+            ],
+            "healthCheck": {
+              "path": "/health",
+              "interval": 30,
+              "timeout": 5,
+              "healthyThreshold": 2,
+              "unhealthyThreshold": 3
+            }
+          }
+        ]
+      },
+      "storage": {
+        "databases": [
+          {
+            "name": "main-db",
+            "type": "relational",
+            "engine": "postgresql",
+            "size": 500,
+            "replicas": 3,
+            "backup": {
+              "frequency": "daily",
+              "retention": 30
+            }
+          }
+        ],
+        "objectStorage": [],
+        "fileStorage": []
+      },
+      "compute": {
+        "containers": [
+          {
+            "name": "user-service",
+            "image": "user-service:latest",
+            "resources": {
+              "cpu": 2,
+              "memory": 4,
+              "storage": 10
+            },
+            "replicas": 3,
+            "scaling": {
+              "type": "horizontal",
+              "min": 2,
+              "max": 5,
+              "metric": "cpu"
+            }
+          },
+          {
+            "name": "post-service",
+            "image": "post-service:latest",
+            "resources": {
+              "cpu": 2,
+              "memory": 4,
+              "storage": 10
+            },
+            "replicas": 3,
+            "scaling": {
+              "type": "horizontal",
+              "min": 3,
+              "max": 10,
+              "metric": "cpu"
+            }
+          },
+          {
+            "name": "messaging-service",
+            "image": "messaging-service:latest",
+            "resources": {
+              "cpu": 2,
+              "memory": 4,
+              "storage": 10
+            },
+            "replicas": 3,
+            "scaling": {
+              "type": "horizontal",
+              "min": 3,
+              "max": 15,
+              "metric": "cpu"
+            }
+          }
+        ],
+        "functions": [],
+        "virtualMachines": []
+      }
+    },
+    "ciCd": {
+      "provider": "github-actions",
+      "stages": [
+        "build",
+        "test",
+        "deploy"
+      ],
+      "environments": [
+        "staging",
+        "production"
+      ],
+      "approvals": {
+        "production": true,
+        "staging": false
+      }
+    }
+  },
+  "security": {
+    "authentication": {
+      "method": "oauth2",
+      "providers": [
+        "google",
+        "github"
+      ],
+      "mfa": true,
+      "session": {
+        "type": "jwt",
+        "expiry": 3600
+      }
+    },
+    "authorization": {
+      "model": "rbac",
+      "policies": [],
+      "permissions": []
+    },
+    "encryption": {
+      "atRest": true,
+      "inTransit": true,
+      "algorithm": "AES-256"
+    },
+    "network": {
+      "vpc": true,
+      "securityGroups": true,
+      "waf": true
+    },
+    "compliance": [
+      "GDPR",
+      "SOC2"
+    ]
+  },
+  "monitoring": {
+    "metrics": [
+      {
+        "name": "response_time",
+        "type": "latency",
+        "threshold": 200
+      },
+      {
+        "name": "error_rate",
+        "type": "counter",
+        "threshold": 1
+      },
+      {
+        "name": "cpu_usage",
+        "type": "gauge",
+        "threshold": 80
+      },
+      {
+        "name": "memory_usage",
+        "type": "gauge",
+        "threshold": 80
+      }
+    ],
+    "logging": {
+      "level": "info",
+      "retention": 30,
+      "aggregation": true
+    },
+    "alerting": {
+      "channels": [
+        "email",
+        "slack"
+      ],
+      "rules": []
+    },
+    "dashboards": [
+      {
+        "name": "overview",
+        "components": [
+          "api-gateway",
+          "user-service",
+          "post-service",
+          "messaging-service",
+          "database",
+          "cache"
+        ]
+      },
+      {
+        "name": "performance",
+        "metrics": [
+          "response_time",
+          "throughput"
+        ]
+      }
+    ],
+    "tracing": {
+      "enabled": true,
+      "sampling": 0.1
+    }
+  },
+  "scalability": {
+    "horizontal": {
+      "enabled": true,
+      "minInstances": 3,
+      "maxInstances": 20,
+      "scalingPolicy": "cpu-based"
+    },
+    "vertical": {
+      "enabled": true,
+      "maxCpu": 8,
+      "maxMemory": 16
+    },
+    "caching": {
+      "strategy": "redis",
+      "ttl": 3600,
+      "invalidation": "time-based"
+    },
+    "loadBalancing": {
+      "algorithm": "round-robin",
+      "healthCheck": true,
+      "stickySessions": false
+    },
+    "database": {
+      "readReplicas": 3,
+      "sharding": true,
+      "partitioning": false
+    }
+  },
+  "cost": {
+    "monthly": 3420,
+    "yearly": 41040,
+    "breakdown": {
+      "infrastructure": 2052,
+      "development": 684,
+      "maintenance": 513,
+      "licensing": 171
+    },
+    "optimization": [
+      {
+        "type": "reserved-instances",
+        "savings": 0.3,
+        "description": "Reserved instances 사용"
+      },
+      {
+        "type": "spot-instances",
+        "savings": 0.5,
+        "description": "Spot instances 활용"
+      }
+    ]
+  },
+  "timeline": {
+    "phases": [
+      {
+        "name": "Planning",
+        "duration": 2,
+        "start": 0,
+        "end": 2
+      },
+      {
+        "name": "Development",
+        "duration": 18,
+        "start": 2,
+        "end": 20
+      },
+      {
+        "name": "Testing",
+        "duration": 2,
+        "start": 20,
+        "end": 22
+      },
+      {
+        "name": "Deployment",
+        "duration": 2,
+        "start": 22,
+        "end": 24
+      }
+    ],
+    "milestones": [
+      {
+        "name": "Architecture Complete",
+        "week": 2
+      },
+      {
+        "name": "Core Features Complete",
+        "week": 14
+      },
+      {
+        "name": "Testing Complete",
+        "week": 22
+      },
+      {
+        "name": "Production Ready",
+        "week": 24
+      }
+    ],
+    "dependencies": [],
+    "criticalPath": [
+      "Planning",
+      "Development",
+      "Testing",
+      "Deployment"
+    ]
+  },
+  "risks": [
+    {
+      "id": "scaling-risk",
+      "description": "예상보다 높은 트래픽으로 인한 성능 저하",
+      "probability": "high",
+      "impact": "high",
+      "mitigation": [
+        "자동 스케일링 설정",
+        "로드 테스트 수행"
+      ],
+      "contingency": [
+        "수동 스케일링",
+        "CDN 활용"
+      ]
+    },
+    {
+      "id": "security-risk",
+      "description": "보안 취약점으로 인한 데이터 유출",
+      "probability": "low",
+      "impact": "high",
+      "mitigation": [
+        "정기 보안 감사",
+        "침입 탐지 시스템"
+      ],
+      "contingency": [
+        "사고 대응 계획",
+        "데이터 백업"
+      ]
+    },
+    {
+      "id": "complexity-risk",
+      "description": "마이크로서비스 복잡성으로 인한 운영 어려움",
+      "probability": "medium",
+      "impact": "medium",
+      "mitigation": [
+        "모니터링 강화",
+        "문서화",
+        "팀 교육"
+      ],
+      "contingency": [
+        "단순화",
+        "전문가 고용"
+      ]
+    }
+  ],
+  "recommendations": [
+    {
+      "type": "technology",
+      "priority": "medium",
+      "description": "컨테이너 오케스트레이션 도입",
+      "rationale": "배포 자동화 및 리소스 최적화",
+      "implementation": "Kubernetes 클러스터 구축",
+      "effort": "medium",
+      "impact": "medium"
+    },
+    {
+      "type": "performance",
+      "priority": "high",
+      "description": "CDN 및 캐싱 전략 도입",
+      "rationale": "실시간 성능 향상",
+      "implementation": "CloudFront + Redis 캐시",
+      "effort": "low",
+      "impact": "high"
+    }
+  ]
+}

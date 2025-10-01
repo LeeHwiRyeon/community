@@ -1,0 +1,393 @@
+{
+  "overview": {
+    "pattern": "monolith",
+    "description": "단일 애플리케이션으로 구성된 아키텍처",
+    "benefits": [
+      "단순성",
+      "개발 속도",
+      "디버깅 용이",
+      "배포 간단"
+    ],
+    "tradeoffs": [
+      "확장성 제한",
+      "기술 제약",
+      "팀 의존성",
+      "장애 전파"
+    ],
+    "diagram": "\ngraph TB\n    Client[Client] --> Monolith[Monolithic App]\n    Monolith --> Database[(Database)]\n    Monolith --> Cache[(Cache)]\n"
+  },
+  "components": [
+    {
+      "id": "monolith",
+      "name": "Monolithic Application",
+      "type": "service",
+      "description": "단일 애플리케이션",
+      "responsibilities": [
+        "모든 비즈니스 로직",
+        "API 제공",
+        "데이터 처리"
+      ],
+      "technologies": {
+        "language": "typescript",
+        "framework": "express",
+        "runtime": "node.js",
+        "database": "postgresql"
+      },
+      "interfaces": [
+        {
+          "name": "REST API",
+          "type": "rest",
+          "description": "모든 API 엔드포인트",
+          "endpoints": []
+        }
+      ],
+      "dependencies": [],
+      "scaling": {
+        "type": "horizontal",
+        "min": 1,
+        "max": 3,
+        "metric": "cpu"
+      }
+    }
+  ],
+  "dataFlow": [],
+  "deployment": {
+    "strategy": "blue-green",
+    "environments": [
+      {
+        "name": "production",
+        "purpose": "운영 환경",
+        "components": [
+          "monolith"
+        ],
+        "resources": [],
+        "config": {}
+      },
+      {
+        "name": "staging",
+        "purpose": "스테이징 환경",
+        "components": [
+          "monolith"
+        ],
+        "resources": [],
+        "config": {}
+      }
+    ],
+    "infrastructure": {
+      "provider": "azure",
+      "regions": [
+        "us-central1",
+        "europe-west1"
+      ],
+      "networking": {
+        "vpc": "main-vpc",
+        "subnets": [
+          {
+            "name": "public-subnet-1",
+            "cidr": "10.0.1.0/24",
+            "availabilityZone": "us-east-1a",
+            "public": true
+          },
+          {
+            "name": "private-subnet-1",
+            "cidr": "10.0.2.0/24",
+            "availabilityZone": "us-east-1a",
+            "public": false
+          }
+        ],
+        "loadBalancers": [
+          {
+            "name": "main-alb",
+            "type": "application",
+            "targets": [
+              "monolith"
+            ],
+            "healthCheck": {
+              "path": "/health",
+              "interval": 30,
+              "timeout": 5,
+              "healthyThreshold": 2,
+              "unhealthyThreshold": 3
+            }
+          }
+        ]
+      },
+      "storage": {
+        "databases": [
+          {
+            "name": "main-db",
+            "type": "relational",
+            "engine": "postgresql",
+            "size": 50,
+            "replicas": 2,
+            "backup": {
+              "frequency": "daily",
+              "retention": 30
+            }
+          }
+        ],
+        "objectStorage": [],
+        "fileStorage": []
+      },
+      "compute": {
+        "containers": [
+          {
+            "name": "monolith",
+            "image": "monolith:latest",
+            "resources": {
+              "cpu": 1,
+              "memory": 2,
+              "storage": 10
+            },
+            "replicas": 2,
+            "scaling": {
+              "type": "horizontal",
+              "min": 1,
+              "max": 3,
+              "metric": "cpu"
+            }
+          }
+        ],
+        "functions": [],
+        "virtualMachines": []
+      }
+    },
+    "ciCd": {
+      "provider": "github-actions",
+      "stages": [
+        "build",
+        "test",
+        "deploy"
+      ],
+      "environments": [
+        "staging",
+        "production"
+      ],
+      "approvals": {
+        "production": true,
+        "staging": false
+      }
+    }
+  },
+  "security": {
+    "authentication": {
+      "method": "oauth2",
+      "providers": [
+        "google",
+        "github"
+      ],
+      "mfa": false,
+      "session": {
+        "type": "jwt",
+        "expiry": 3600
+      }
+    },
+    "authorization": {
+      "model": "rbac",
+      "policies": [],
+      "permissions": []
+    },
+    "encryption": {
+      "atRest": true,
+      "inTransit": true,
+      "algorithm": "AES-256"
+    },
+    "network": {
+      "vpc": true,
+      "securityGroups": true,
+      "waf": false
+    },
+    "compliance": [
+      "GDPR"
+    ]
+  },
+  "monitoring": {
+    "metrics": [
+      {
+        "name": "response_time",
+        "type": "latency",
+        "threshold": 200
+      },
+      {
+        "name": "error_rate",
+        "type": "counter",
+        "threshold": 1
+      },
+      {
+        "name": "cpu_usage",
+        "type": "gauge",
+        "threshold": 80
+      },
+      {
+        "name": "memory_usage",
+        "type": "gauge",
+        "threshold": 80
+      }
+    ],
+    "logging": {
+      "level": "info",
+      "retention": 30,
+      "aggregation": true
+    },
+    "alerting": {
+      "channels": [
+        "email",
+        "slack"
+      ],
+      "rules": []
+    },
+    "dashboards": [
+      {
+        "name": "overview",
+        "components": [
+          "monolith"
+        ]
+      },
+      {
+        "name": "performance",
+        "metrics": [
+          "response_time",
+          "throughput"
+        ]
+      }
+    ],
+    "tracing": {
+      "enabled": false,
+      "sampling": 0.1
+    }
+  },
+  "scalability": {
+    "horizontal": {
+      "enabled": true,
+      "minInstances": 2,
+      "maxInstances": 10,
+      "scalingPolicy": "cpu-based"
+    },
+    "vertical": {
+      "enabled": true,
+      "maxCpu": 4,
+      "maxMemory": 8
+    },
+    "caching": {
+      "strategy": "redis",
+      "ttl": 3600,
+      "invalidation": "time-based"
+    },
+    "loadBalancing": {
+      "algorithm": "round-robin",
+      "healthCheck": true,
+      "stickySessions": false
+    },
+    "database": {
+      "readReplicas": 2,
+      "sharding": false,
+      "partitioning": false
+    }
+  },
+  "cost": {
+    "monthly": 220,
+    "yearly": 2640,
+    "breakdown": {
+      "infrastructure": 132,
+      "development": 44,
+      "maintenance": 33,
+      "licensing": 11
+    },
+    "optimization": [
+      {
+        "type": "reserved-instances",
+        "savings": 0.3,
+        "description": "Reserved instances 사용"
+      },
+      {
+        "type": "spot-instances",
+        "savings": 0.5,
+        "description": "Spot instances 활용"
+      }
+    ]
+  },
+  "timeline": {
+    "phases": [
+      {
+        "name": "Planning",
+        "duration": 2,
+        "start": 0,
+        "end": 2
+      },
+      {
+        "name": "Development",
+        "duration": 2,
+        "start": 2,
+        "end": 4
+      },
+      {
+        "name": "Testing",
+        "duration": 2,
+        "start": 4,
+        "end": 6
+      },
+      {
+        "name": "Deployment",
+        "duration": 2,
+        "start": 6,
+        "end": 8
+      }
+    ],
+    "milestones": [
+      {
+        "name": "Architecture Complete",
+        "week": 2
+      },
+      {
+        "name": "Core Features Complete",
+        "week": 4
+      },
+      {
+        "name": "Testing Complete",
+        "week": 6
+      },
+      {
+        "name": "Production Ready",
+        "week": 8
+      }
+    ],
+    "dependencies": [],
+    "criticalPath": [
+      "Planning",
+      "Development",
+      "Testing",
+      "Deployment"
+    ]
+  },
+  "risks": [
+    {
+      "id": "scaling-risk",
+      "description": "예상보다 높은 트래픽으로 인한 성능 저하",
+      "probability": "medium",
+      "impact": "high",
+      "mitigation": [
+        "자동 스케일링 설정",
+        "로드 테스트 수행"
+      ],
+      "contingency": [
+        "수동 스케일링",
+        "CDN 활용"
+      ]
+    },
+    {
+      "id": "security-risk",
+      "description": "보안 취약점으로 인한 데이터 유출",
+      "probability": "low",
+      "impact": "high",
+      "mitigation": [
+        "정기 보안 감사",
+        "침입 탐지 시스템"
+      ],
+      "contingency": [
+        "사고 대응 계획",
+        "데이터 백업"
+      ]
+    }
+  ],
+  "recommendations": []
+}

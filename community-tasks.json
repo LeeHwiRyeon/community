@@ -1,0 +1,189 @@
+{
+  "tasks": [
+    {
+      "id": "COMM_001",
+      "title": "프론트엔드 빌드 오류 수정",
+      "description": "TypeScript 컴파일 오류 및 의존성 문제 해결",
+      "category": "bug-fix",
+      "priority": "urgent",
+      "estimatedTime": "2-3시간",
+      "status": "completed",
+      "subtasks": [
+        "TypeScript 타입 오류 수정",
+        "누락된 의존성 설치",
+        "빌드 설정 최적화",
+        "테스트 실행 및 검증"
+      ],
+      "tags": [
+        "frontend",
+        "typescript",
+        "build",
+        "critical"
+      ],
+      "updatedAt": "2025-09-29T18:38:18.383Z",
+      "notes": "?섏〈???ㅼ튂 諛?湲곕낯 鍮뚮뱶 ?ㅻ쪟 ?섏젙 ?꾨즺",
+      "completedAt": "2025-09-29T18:38:18.384Z"
+    },
+    {
+      "id": "COMM_002",
+      "title": "백엔드 API 서버 구동",
+      "description": "Express 서버 및 데이터베이스 연결 설정",
+      "category": "backend",
+      "priority": "high",
+      "estimatedTime": "1-2시간",
+      "status": "completed",
+      "subtasks": [
+        "Express 서버 설정",
+        "MySQL 데이터베이스 연결",
+        "API 라우트 구현",
+        "CORS 및 미들웨어 설정"
+      ],
+      "tags": [
+        "backend",
+        "api",
+        "database",
+        "server"
+      ],
+      "updatedAt": "2025-09-29T18:45:12.589Z",
+      "notes": "Express ?쒕쾭 諛??곗씠?곕쿋?댁뒪 ?곌껐 ?ㅼ젙 ?꾨즺",
+      "completedAt": "2025-09-29T18:45:12.590Z"
+    },
+    {
+      "id": "COMM_003",
+      "title": "사용자 인증 시스템 구현",
+      "description": "JWT 기반 로그인/회원가입 기능 개발",
+      "category": "feature",
+      "priority": "high",
+      "estimatedTime": "3-4시간",
+      "status": "completed",
+      "subtasks": [
+        "사용자 모델 설계",
+        "JWT 토큰 생성/검증",
+        "로그인/회원가입 API",
+        "비밀번호 암호화",
+        "세션 관리"
+      ],
+      "tags": [
+        "auth",
+        "jwt",
+        "security",
+        "user"
+      ],
+      "updatedAt": "2025-09-29T18:46:29.791Z",
+      "notes": "JWT 湲곕컲 濡쒓렇???뚯썝媛??湲곕뒫 諛?API ?쒕퉬??援ы쁽 ?꾨즺",
+      "completedAt": "2025-09-29T18:46:29.792Z"
+    },
+    {
+      "id": "COMM_004",
+      "title": "게시판 CRUD 기능 구현",
+      "description": "게시글 작성, 읽기, 수정, 삭제 기능 개발",
+      "category": "feature",
+      "priority": "high",
+      "estimatedTime": "4-5시간",
+      "status": "pending",
+      "subtasks": [
+        "게시글 모델 설계",
+        "CRUD API 엔드포인트",
+        "파일 업로드 기능",
+        "댓글 시스템",
+        "권한 관리"
+      ],
+      "tags": [
+        "crud",
+        "board",
+        "posts",
+        "comments"
+      ]
+    },
+    {
+      "id": "COMM_005",
+      "title": "실시간 채팅 기능 구현",
+      "description": "WebSocket 기반 실시간 채팅 시스템",
+      "category": "feature",
+      "priority": "medium",
+      "estimatedTime": "3-4시간",
+      "status": "pending",
+      "subtasks": [
+        "WebSocket 서버 설정",
+        "채팅방 관리",
+        "메시지 전송/수신",
+        "사용자 상태 관리",
+        "메시지 히스토리"
+      ],
+      "tags": [
+        "websocket",
+        "chat",
+        "realtime",
+        "messaging"
+      ]
+    },
+    {
+      "id": "COMM_006",
+      "title": "관리자 대시보드 개발",
+      "description": "사용자 및 콘텐츠 관리용 대시보드",
+      "category": "admin",
+      "priority": "medium",
+      "estimatedTime": "5-6시간",
+      "status": "pending",
+      "subtasks": [
+        "대시보드 UI 설계",
+        "통계 데이터 수집",
+        "사용자 관리 기능",
+        "콘텐츠 모더레이션",
+        "시스템 모니터링"
+      ],
+      "tags": [
+        "admin",
+        "dashboard",
+        "management",
+        "analytics"
+      ]
+    },
+    {
+      "id": "COMM_007",
+      "title": "모바일 반응형 디자인",
+      "description": "모바일 기기 최적화 및 반응형 레이아웃",
+      "category": "ui",
+      "priority": "medium",
+      "estimatedTime": "3-4시간",
+      "status": "pending",
+      "subtasks": [
+        "모바일 레이아웃 설계",
+        "터치 인터페이스 최적화",
+        "반응형 CSS 구현",
+        "모바일 테스트",
+        "성능 최적화"
+      ],
+      "tags": [
+        "mobile",
+        "responsive",
+        "ui",
+        "ux"
+      ]
+    },
+    {
+      "id": "COMM_008",
+      "title": "보안 강화 및 최적화",
+      "description": "보안 취약점 점검 및 성능 최적화",
+      "category": "security",
+      "priority": "high",
+      "estimatedTime": "2-3시간",
+      "status": "pending",
+      "subtasks": [
+        "보안 취약점 스캔",
+        "입력 데이터 검증",
+        "SQL 인젝션 방지",
+        "XSS 방지",
+        "성능 모니터링"
+      ],
+      "tags": [
+        "security",
+        "optimization",
+        "performance",
+        "safety"
+      ]
+    }
+  ],
+  "lastUpdated": "2025-09-29T18:46:29.792Z",
+  "totalCount": 8
+}

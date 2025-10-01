@@ -16,6 +16,8 @@ import { initRedis, zIncrBy, isRedisEnabled } from './redis.js';
 import WebSocket, { WebSocketServer } from 'ws';
 import promClient from 'prom-client';
 import responseTime from 'response-time';
+import { translateInputMiddleware, translateOutputMiddleware } from './middleware/translation.js';
+import { globalErrorHandler, notFoundHandler } from './middleware/errorHandler.js';
 
 // Ensure .env is loaded even when CWD is project root
 const __filename = fileURLToPath(import.meta.url);
@@ -90,6 +92,9 @@ export function createApp() {
         extended: true,
         charset: 'utf-8'
     }));
+
+    // Translation middleware - Korean input to English processing
+    app.use(translateInputMiddleware);
 
     // ?묐떟 ?ㅻ뜑??UTF-8 ?몄퐫???ㅼ젙
     app.use((req, res, next) => {
@@ -388,6 +393,13 @@ export function createApp() {
     });
     app.use('/api', router);
     logger.info('routes.mounted');
+
+    // Translation middleware - English output to Korean display
+    app.use(translateOutputMiddleware);
+
+    // Error handling middleware (must be last)
+    app.use(notFoundHandler);
+    app.use(globalErrorHandler);
 
     // Health check endpoint
     app.get('/api/health', async (req, res) => {
