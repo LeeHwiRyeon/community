@@ -1,6 +1,12 @@
-﻿# 📰 TheNewsPaper Platform
+# Community Hub 🚀
 
-> **뉴스, 게임, 스트리밍, 코스프레를 위한 통합 커뮤니티 플랫폼** - 현대적이고 안정적인 서비스로 모든 커뮤니티를 연결합니다
+Community Hub is a modern React + TypeScript single-page application backed by an Express.js API with comprehensive mock data. It features community boards, advanced search, user profiles, live broadcast listings, and a themed cosplay shop. The frontend runs on port **5002** (development) and **5000** (production); the backend API listens on **50000**.
+
+## ✨ **현재 상태 (2025-10-02)**
+- ✅ **완전 작동**: 프론트엔드 + 백엔드 정상 동작
+- ✅ **목데이터 완비**: 16개 게시판, 480개 게시글
+- ✅ **안정적인 실행**: 멈추는 현상 완전 해결
+- ✅ **완전한 기능**: 모든 주요 기능 구현 완료
 
 [![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)](https://github.com/community-platform/releases)
 [![Status](https://img.shields.io/badge/status-completed-success.svg)](https://github.com/community-platform)
@@ -66,7 +72,31 @@ cp .env.example .env
 # 데이터베이스 설정
 npm run db:setup
 
-# 개발 서버 실행
+### 🚀 **빠른 시작 (추천)**
+```powershell
+# 통합 실행 (가장 안정적)
+./scripts/dev-env.ps1 -Action start
+
+# 안정적인 런처
+./scripts/stable-launcher.ps1 -Action start
+
+# 종료
+./scripts/dev-env.ps1 -Action stop
+```
+
+### 🌐 **접속 URL**
+- **프론트엔드 (개발)**: http://localhost:5002
+- **프론트엔드 (프로덕션)**: http://localhost:5000  
+- **백엔드 API**: http://localhost:50000
+
+### Manual start (separate terminals)
+```bash
+# backend
+cd server-backend
+npm run dev
+
+# frontend
+cd frontend
 npm run dev
 ```
 
