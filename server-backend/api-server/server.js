@@ -78,6 +78,7 @@ const vipPersonalizedServiceRoutes = require('./routes/vip-personalized-service'
 const communityHubRoutes = require('./routes/community-hub'); // Added for COMMUNITY_RELEASE_001
 const autoAgentsManagementRoutes = require('./routes/autoagents-management'); // Added for RELEASE_PREP_004
 const autoAgentsManagementV1Routes = require('./routes/autoagents-management-v1'); // Added for AUTOAGENT_V1_RELEASE
+const bugManagementEnhancedRoutes = require('./routes/bug-management-enhanced'); // Added for BUG_LOOP_PREVENTION
 const cosplayerStreamerIntegrationRoutes = require('./routes/cosplayer-streamer-integration'); // Added for COMMUNITY_INTEGRATION
 const userFeedbackRoutes = require('../../routes/user-feedback'); // Added for RELEASE_PREP_008
 const monitoringDashboardRoutes = require('../../routes/monitoring-dashboard'); // Added for RELEASE_PREP_009
@@ -230,6 +231,7 @@ app.use('/api/vip-personalized-service', vipPersonalizedServiceRoutes); // Added
 app.use('/api/community-hub', communityHubRoutes); // Added for COMMUNITY_RELEASE_001
 app.use('/api/autoagents-management', autoAgentsManagementRoutes); // Added for RELEASE_PREP_004
 app.use('/api/autoagents-management/v1', autoAgentsManagementV1Routes); // Added for AUTOAGENT_V1_RELEASE
+app.use('/api/bug-management', bugManagementEnhancedRoutes); // Added for BUG_LOOP_PREVENTION
 app.use('/api/community-integration', cosplayerStreamerIntegrationRoutes); // Added for COMMUNITY_INTEGRATION
 app.use('/api/user-feedback', userFeedbackRoutes); // Added for RELEASE_PREP_008
 app.use('/api/monitoring', monitoringDashboardRoutes); // Added for RELEASE_PREP_009
