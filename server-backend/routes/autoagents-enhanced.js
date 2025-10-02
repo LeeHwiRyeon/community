@@ -208,7 +208,7 @@ router.get('/agents/enhanced', async (req, res) => {
     try {
         // 실시간 성능 데이터 업데이트
         const systemStatus = intelligentScheduler.getSystemStatus();
-        
+
         // 에이전트별 실시간 메트릭 수집
         for (const [agentId, agent] of Object.entries(enhancedAgentSystem.agents)) {
             // 실시간 성능 데이터 업데이트 (시뮬레이션)
@@ -283,9 +283,9 @@ router.post('/tasks/intelligent-schedule', async (req, res) => {
 router.get('/tasks/:taskId/status', async (req, res) => {
     try {
         const { taskId } = req.params;
-        
+
         const taskStatus = intelligentScheduler.getTaskStatus(taskId);
-        
+
         if (!taskStatus) {
             return res.status(404).json({
                 success: false,
@@ -312,10 +312,10 @@ router.get('/tasks/:taskId/status', async (req, res) => {
 router.get('/analytics/performance', async (req, res) => {
     try {
         const { timeframe = '1h' } = req.query;
-        
+
         // 시스템 상태 수집
         const systemStatus = intelligentScheduler.getSystemStatus();
-        
+
         // 성능 분석 데이터 생성
         const performanceAnalysis = {
             overview: {
@@ -372,7 +372,7 @@ router.get('/analytics/performance', async (req, res) => {
 router.get('/analytics/predictions', async (req, res) => {
     try {
         const { type = 'workload', timeframe = '24h' } = req.query;
-        
+
         const predictions = {
             workload: {
                 expectedTasks: Math.floor(Math.random() * 100) + 50,
@@ -480,7 +480,7 @@ router.post('/collaboration/coordinate', async (req, res) => {
 router.post('/optimization/auto-optimize', async (req, res) => {
     try {
         const { scope = 'all', aggressive = false } = req.body;
-        
+
         // 최적화 분석
         const optimizationAnalysis = {
             currentPerformance: intelligentScheduler.getSystemStatus().metrics,
@@ -587,14 +587,14 @@ function generateCollaborationStrategy(agents, task, type) {
         sequential: '에이전트들이 순차적으로 작업을 전달하며 수행',
         hierarchical: '주 에이전트가 다른 에이전트들을 조정하며 작업 수행'
     };
-    
+
     return strategies[type] || strategies.parallel;
 }
 
 function generateTimeline(agents, task) {
     const baseTime = 300000; // 5분
     const agentFactor = agents.length * 0.8;
-    
+
     return {
         estimatedDuration: Math.floor(baseTime * agentFactor),
         phases: [
@@ -613,7 +613,7 @@ function calculateExpectedEfficiency(agents, type) {
         sequential: 0.1,
         hierarchical: 0.12
     };
-    
+
     return Math.min(0.98, baseEfficiency + (collaborationBonus[type] || 0.1));
 }
 
@@ -627,7 +627,7 @@ function calculateTimeReduction(agents, type) {
         sequential: 0.2,
         hierarchical: 0.3
     };
-    
+
     return reductions[type] || 0.2;
 }
 

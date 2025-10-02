@@ -18,12 +18,12 @@ class IntelligentTaskScheduler {
         this.runningTasks = new Map();
         this.completedTasks = [];
         this.failedTasks = [];
-        
+
         // AI 모델 시뮬레이션 (실제 구현에서는 TensorFlow.js 등 사용)
         this.aiModel = new TaskPriorityAI();
         this.learningData = new Map();
         this.predictiveAnalytics = new PredictiveAnalytics();
-        
+
         // 성능 메트릭
         this.metrics = {
             totalTasks: 0,
@@ -54,7 +54,7 @@ class IntelligentTaskScheduler {
      */
     initializeScheduler() {
         logger.info('지능형 작업 스케줄러 초기화 시작');
-        
+
         // 주기적 최적화 실행
         setInterval(() => {
             this.optimizeScheduling();
@@ -62,7 +62,7 @@ class IntelligentTaskScheduler {
 
         // 성능 모니터링 시작
         this.startPerformanceMonitoring();
-        
+
         logger.info('지능형 작업 스케줄러 초기화 완료');
     }
 
@@ -73,7 +73,7 @@ class IntelligentTaskScheduler {
         try {
             // 작업 ID 생성
             const taskId = this.generateTaskId();
-            
+
             // 작업 정보 보강
             const enhancedTask = {
                 id: taskId,
@@ -125,29 +125,29 @@ class IntelligentTaskScheduler {
             const factors = {
                 // 긴급도 (0-1)
                 urgency: task.deadline ? this.calculateUrgency(task.deadline) : 0.5,
-                
+
                 // 복잡도 (0-1)
                 complexity: await this.analyzeComplexity(task.description || ''),
-                
+
                 // 의존성 (0-1)
                 dependencies: this.analyzeDependencies(task.dependencies || []),
-                
+
                 // 리소스 가용성 (0-1)
                 resourceAvailability: await this.checkResourceAvailability(),
-                
+
                 // 과거 성능 데이터 (0-1)
                 historicalPerformance: await this.getHistoricalPerformance(task.type || 'general'),
-                
+
                 // 비즈니스 영향도 (0-1)
                 businessImpact: this.calculateBusinessImpact(task.category || 'general'),
-                
+
                 // 사용자 우선순위 (0-1)
                 userPriority: this.normalizeUserPriority(task.priority || 'medium')
             };
 
             // AI 모델로 우선순위 예측
             const aiPriority = await this.aiModel.predict(factors);
-            
+
             // 학습 데이터 저장
             if (this.config.learningEnabled) {
                 this.storeLearningData(task, factors, aiPriority);
@@ -169,14 +169,14 @@ class IntelligentTaskScheduler {
         try {
             // 과거 유사 작업 데이터 조회
             const similarTasks = await this.findSimilarTasks(task);
-            
+
             if (similarTasks.length > 0) {
                 // 유사 작업 평균 시간 계산
                 const avgDuration = similarTasks.reduce((sum, t) => sum + t.duration, 0) / similarTasks.length;
-                
+
                 // 복잡도에 따른 조정
                 const complexityFactor = await this.analyzeComplexity(task.description || '');
-                
+
                 return Math.round(avgDuration * (1 + complexityFactor));
             }
 
@@ -205,14 +205,14 @@ class IntelligentTaskScheduler {
         try {
             // 실행 가능한 작업 수 계산
             const availableSlots = this.config.maxConcurrentTasks - this.runningTasks.size;
-            
+
             if (availableSlots <= 0) {
                 return;
             }
 
             // 실행 가능한 작업 찾기
             const executableTasks = await this.findExecutableTasks(availableSlots);
-            
+
             // 작업 실행
             for (const task of executableTasks) {
                 await this.executeTask(task);
@@ -228,7 +228,7 @@ class IntelligentTaskScheduler {
      */
     async findExecutableTasks(maxCount) {
         const executableTasks = [];
-        
+
         for (const task of this.taskQueue) {
             if (executableTasks.length >= maxCount) {
                 break;
@@ -283,7 +283,7 @@ class IntelligentTaskScheduler {
         return new Promise((resolve, reject) => {
             // 실제 구현에서는 해당 에이전트의 작업 수행 메서드 호출
             const duration = task.estimatedDuration || 5000;
-            
+
             setTimeout(() => {
                 // 90% 성공률 시뮬레이션
                 if (Math.random() > 0.1) {
@@ -348,10 +348,10 @@ class IntelligentTaskScheduler {
                 task.retryCount++;
                 task.status = 'pending';
                 task.lastError = error.message;
-                
+
                 // 우선순위 조정 (실패한 작업은 우선순위 약간 감소)
                 task.priority = Math.max(0, task.priority - 0.1);
-                
+
                 // 다시 큐에 추가
                 this.taskQueue.push(task);
                 this.taskQueue.sort((a, b) => b.priority - a.priority);
@@ -395,13 +395,13 @@ class IntelligentTaskScheduler {
 
             // 성능 분석
             const performance = await this.analyzePerformance();
-            
+
             // 병목 지점 식별
             const bottlenecks = await this.identifyBottlenecks();
-            
+
             // 최적화 제안 생성
             const optimizations = await this.generateOptimizations(performance, bottlenecks);
-            
+
             // 최적화 적용
             await this.applyOptimizations(optimizations);
 
@@ -438,21 +438,21 @@ class IntelligentTaskScheduler {
 
         // 평균 처리 시간 계산
         if (recentCompleted.length > 0) {
-            this.metrics.averageProcessingTime = 
-                recentCompleted.reduce((sum, task) => sum + task.executionTime, 0) / 
+            this.metrics.averageProcessingTime =
+                recentCompleted.reduce((sum, task) => sum + task.executionTime, 0) /
                 recentCompleted.length;
         }
 
         // 성공률 계산
-        const totalRecent = recentCompleted.length + 
+        const totalRecent = recentCompleted.length +
             this.failedTasks.filter(task => task.failedAt > oneHourAgo).length;
-        
+
         if (totalRecent > 0) {
             this.metrics.successRate = (recentCompleted.length / totalRecent) * 100;
         }
 
         // 리소스 사용률 계산
-        this.metrics.resourceUtilization = 
+        this.metrics.resourceUtilization =
             (this.runningTasks.size / this.config.maxConcurrentTasks) * 100;
 
         // 성능 모니터링에 메트릭 전송
@@ -516,7 +516,7 @@ class IntelligentTaskScheduler {
         const now = new Date();
         const timeToDeadline = new Date(deadline) - now;
         const maxUrgency = 24 * 60 * 60 * 1000; // 24시간
-        
+
         return Math.max(0, Math.min(1, 1 - (timeToDeadline / maxUrgency)));
     }
 
@@ -526,7 +526,7 @@ class IntelligentTaskScheduler {
         const complexity = keywords.reduce((score, keyword) => {
             return score + (description.toLowerCase().includes(keyword) ? 0.2 : 0);
         }, 0.3);
-        
+
         return Math.min(1, complexity);
     }
 
@@ -538,7 +538,7 @@ class IntelligentTaskScheduler {
         // 시스템 리소스 확인 (CPU, 메모리 등)
         const usage = process.memoryUsage();
         const memoryUsage = usage.heapUsed / usage.heapTotal;
-        
+
         return Math.max(0, 1 - memoryUsage);
     }
 
@@ -551,7 +551,7 @@ class IntelligentTaskScheduler {
             'maintenance': 0.5,
             'general': 0.4
         };
-        
+
         return impacts[category] || impacts['general'];
     }
 
@@ -562,7 +562,7 @@ class IntelligentTaskScheduler {
             'medium': 0.5,
             'low': 0.2
         };
-        
+
         return priorities[priority] || priorities['medium'];
     }
 }
