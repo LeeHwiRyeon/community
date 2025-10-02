@@ -1,12 +1,12 @@
-# Community Hub 🚀
+# 🏠 Community Platform v1.1 - 완벽한 커뮤니티 플랫폼
 
-Community Hub is a modern React + TypeScript single-page application backed by an Express.js API with comprehensive mock data. It features community boards, advanced search, user profiles, live broadcast listings, and a themed cosplay shop. The frontend runs on port **5002** (development) and **5000** (production); the backend API listens on **50000**.
+**Community Platform v1.1**은 React 19 + TypeScript + Express.js 기반의 현대적인 커뮤니티 플랫폼입니다. 완전한 UTF-8 지원, 최적화된 파일구조, 그리고 빠른 개발 이터레이션을 위한 완벽한 매핑 시스템을 제공합니다.
 
-## ✨ **현재 상태 (2025-10-02)**
-- ✅ **완전 작동**: 프론트엔드 + 백엔드 정상 동작
-- ✅ **목데이터 완비**: 16개 게시판, 480개 게시글
-- ✅ **안정적인 실행**: 멈추는 현상 완전 해결
-- ✅ **완전한 기능**: 모든 주요 기능 구현 완료
+## ✨ **v1.1 완성 상태 (2025-10-02)**
+- ✅ **완벽한 파일구조**: 성격별 분류 및 매핑 완료
+- ✅ **UTF-8 통일**: 모든 파일 UTF-8 (BOM 없음) 변환 완료
+- ✅ **문서 업데이트**: 최신 상태 반영 및 매핑 정보 완비
+- ✅ **빠른 개발**: 이터레이션을 위한 완벽한 구조 구축
 
 [![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)](https://github.com/community-platform/releases)
 [![Status](https://img.shields.io/badge/status-completed-success.svg)](https://github.com/community-platform)
@@ -111,29 +111,48 @@ docker run -p 3000:3000 community-platform-frontend
 docker run -p 5000:5000 community-platform-backend
 ```
 
-## 📁 **프로젝트 구조**
+## 📁 **v1.1 최적화된 프로젝트 구조**
 
 ```
-community-platform-2.0/
-├── frontend/                 # React 프론트엔드
+📂 community/
+├── 📋 **핵심 문서들**
+│   ├── README.md                    # 메인 가이드 (UTF-8)
+│   ├── API_REFERENCE.md             # API 문서 (UTF-8)
+│   ├── FEATURES.md                  # 기능 목록 (UTF-8)
+│   ├── DB_SCHEMA.md                 # 데이터베이스 스키마 (UTF-8)
+│   ├── PROJECT_STRUCTURE_MAP.md     # 파일구조 매핑 (NEW!)
+│   └── AGENT_UTF8_ENCODING_RULES.md # 에이전트 인코딩 규칙 (NEW!)
+│
+├── 🎨 **프론트엔드** (frontend/)
 │   ├── src/
-│   │   ├── components/      # 재사용 가능한 컴포넌트
-│   │   ├── pages/          # 페이지 컴포넌트
-│   │   ├── hooks/          # 커스텀 훅
-│   │   ├── utils/          # 유틸리티 함수
-│   │   └── types/          # TypeScript 타입 정의
-│   └── public/             # 정적 파일
-├── server-backend/          # Node.js 백엔드
-│   ├── api-server/         # Express API 서버
-│   │   ├── routes/         # API 라우트
-│   │   ├── middleware/     # 미들웨어
-│   │   ├── services/       # 비즈니스 로직
-│   │   └── utils/          # 유틸리티
-│   └── database/           # 데이터베이스 설정
-├── docker/                 # Docker 설정
-├── docs/                   # 문서
-└── tests/                  # 테스트 파일
+│   │   ├── components/              # React 컴포넌트들
+│   │   ├── pages/                   # 페이지 컴포넌트들
+│   │   ├── hooks/                   # 커스텀 훅들
+│   │   ├── store/                   # Redux 스토어
+│   │   └── App.tsx                  # 메인 앱 컴포넌트
+│   └── public/data/                 # 클라이언트용 데이터
+│
+├── ⚙️ **백엔드** (server-backend/)
+│   ├── src/                         # 메인 서버 코드
+│   ├── api-server/                  # Express API 서버
+│   ├── services/                    # 비즈니스 로직 서비스들
+│   ├── workers/                     # 백그라운드 작업들
+│   └── tests/                       # 테스트 파일들
+│
+├── 📊 **데이터** (data/)
+│   ├── boards.json                  # 게시판 데이터
+│   ├── posts.json                   # 게시글 데이터
+│   └── categories/                  # 카테고리별 데이터
+│
+├── 📜 **스크립트** (scripts/)
+│   ├── dev-env.ps1                  # 개발환경 실행
+│   └── cleanup-project-v1-1.ps1     # 프로젝트 정리
+│
+└── 📚 **문서** (docs/)
+    └── 세부 가이드 문서들
 ```
+
+> 📋 **자세한 파일구조 매핑은 [PROJECT_STRUCTURE_MAP.md](PROJECT_STRUCTURE_MAP.md)를 참조하세요!**
 
 ## 🛠️ **기술 스택**
 

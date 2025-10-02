@@ -1,54 +1,56 @@
-# Community Hub View Guide
+# 📄 Community Platform v1.1 - 뷰 및 페이지 가이드
 
-## Layout Overview
-The product pairs a Vite-powered React front-end with an Express backend. Community cards contain nested board and post cards so that each community page can summarize activity at a glance.
+## 🏗️ **레이아웃 개요**
+**Community Platform v1.1**은 Vite 기반 React 프론트엔드와 Express 백엔드를 결합한 현대적인 커뮤니티 플랫폼입니다. 커뮤니티 카드는 중첩된 게시판과 게시글 카드를 포함하여 각 커뮤니티 페이지에서 활동을 한눈에 요약할 수 있습니다.
 
-## Navigation Rules
-- Communities are sorted by their daily visit count and rendered in descending order.
-- Boards are grouped under the community they belong to, and each board displays its latest posts.
-- Trending shortcuts highlight the top three boards with an accent badge; the remainder use a subdued treatment.
-- The navigation mega menu lists quick links to platform, series, genre, and resource filters for the game hub.
+## 🧭 **네비게이션 규칙**
+- **커뮤니티 정렬**: 일일 방문 수를 기준으로 내림차순 정렬
+- **게시판 그룹화**: 소속 커뮤니티 하위에 그룹화되며, 각 게시판은 최신 게시글 표시
+- **트렌딩 바로가기**: 상위 3개 게시판은 강조 배지로 표시, 나머지는 일반 처리
+- **메가 메뉴**: 게임 허브의 플랫폼, 시리즈, 장르, 리소스 필터에 대한 빠른 링크 제공
 
-## Data Shapes
-### Board
+## 📊 **데이터 구조**
+
+### 🗂️ **게시판 (Board)**
 ```json
 {
-  "id": "string",
-  "title": "string",
-  "order": 10,
-  "deleted": false
+  "id": "string",           // 게시판 고유 식별자
+  "title": "string",        // 게시판 제목
+  "order": 10,              // 정렬 순서
+  "deleted": false          // 삭제 여부
 }
 ```
 
-### Post
+### 📝 **게시글 (Post)**
 ```json
 {
-  "id": "string",
-  "board_id": "string",
-  "title": "string",
-  "content": "string",
-  "author": "string",
-  "views": 120,
-  "comments_count": 4,
-  "created_at": "ISO8601",
-  "updated_at": "ISO8601"
+  "id": "string",           // 게시글 고유 식별자
+  "board_id": "string",     // 소속 게시판 ID
+  "title": "string",        // 게시글 제목
+  "content": "string",      // 게시글 내용
+  "author": "string",       // 작성자
+  "views": 120,             // 조회수
+  "comments_count": 4,      // 댓글 수
+  "created_at": "ISO8601",  // 생성일시
+  "updated_at": "ISO8601"   // 수정일시
 }
 ```
 
-## Mock Generation
-The mock backend fabricates:
-- 6 communities
-- 4?6 boards per community
-- 12?20 posts per board
-All timestamps are randomized within the past 45 days. View and comment counts are scaled so retaining boards surface higher engagement.
+## 🎲 **목 데이터 생성**
+목 백엔드에서 자동 생성하는 데이터:
+- **6개 커뮤니티**
+- **커뮤니티당 4-6개 게시판**
+- **게시판당 12-20개 게시글**
 
-## Batch Scripts
-| Script | Purpose |
+모든 타임스탬프는 지난 45일 내에서 무작위로 생성되며, 조회수와 댓글 수는 인기 게시판이 더 높은 참여도를 보이도록 조정됩니다.
+
+## 🚀 **실행 스크립트**
+| 스크립트 | 목적 |
 | --- | --- |
-| `start-all.bat` | Start real backend + front-end |
-| `run-mock-all.bat` | Launch mock backend and the front-end |
-| `run-frontend.bat` | Start only the front-end dev server |
-| `run-backend.bat` | Start only the backend |
-| `stop-all.bat` | Stop any dev servers started by the helpers |
+| `dev-env.ps1 -Action start` | 통합 개발환경 시작 (권장) |
+| `stable-launcher.ps1` | 안정적인 런처 |
+| `dev-env.ps1 -Action stop` | 모든 서버 종료 |
 
-Both backend and mock services listen on port **50000**. The front-end dev server listens on port **5000**.
+## 🌐 **포트 정보**
+- **백엔드 API 서버**: 포트 **50000**
+- **프론트엔드 개발 서버**: 포트 **5002**

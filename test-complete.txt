@@ -1,6 +1,0 @@
-React 웹 애플리케이션 개발 - 사용자 인증, 게시판, 댓글 기능 구현
-status
-complete 6086edbd-9a02-41b6-8b12-4aa0588fa304
-status
-next
-quit

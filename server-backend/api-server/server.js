@@ -52,7 +52,7 @@ const abTestingRoutes = require('./routes/ab-testing');
 const encryptionRoutes = require('./routes/encryption'); // Added for SECURITY_002
 const advancedAgentRoutes = require('./routes/advanced-agent'); // Added for AUTOAGENT_001
 const aiPriorityRoutes = require('./routes/ai-priority'); // Added for AUTOAGENT_004
-const contentManagementRoutes = require('./routes/content-management'); // Added for CONTENT_ENHANCEMENT_001
+// const contentManagementRoutes = require('./routes/content-management'); // Added for CONTENT_ENHANCEMENT_001 (중복 제거)
 const aiContentRoutes = require('./routes/ai-content'); // Added for CONTENT_ENHANCEMENT_002
 const communityManagementRoutes = require('./routes/community-management'); // Added for COMMUNITY_ENHANCEMENT_001
 const { router: realtimeChatRoutes, initializeSocketIO } = require('./routes/realtime-chat'); // Added for COMMUNITY_ENHANCEMENT_002
@@ -205,7 +205,7 @@ app.use('/api/ab-testing', abTestingRoutes);
 app.use('/api/encryption', encryptionRoutes); // Added for SECURITY_002
 app.use('/api/advanced-agent', advancedAgentRoutes); // Added for AUTOAGENT_001
 app.use('/api/ai-priority', aiPriorityRoutes); // Added for AUTOAGENT_004
-app.use('/api/content-management', contentManagementRoutes); // Added for CONTENT_ENHANCEMENT_001
+// app.use('/api/content-management', contentManagementRoutes); // Added for CONTENT_ENHANCEMENT_001 (중복 제거)
 app.use('/api/ai-content', aiContentRoutes); // Added for CONTENT_ENHANCEMENT_002
 app.use('/api/community-management', communityManagementRoutes); // Added for COMMUNITY_ENHANCEMENT_001
 app.use('/api/realtime-chat', realtimeChatRoutes); // Added for COMMUNITY_ENHANCEMENT_002

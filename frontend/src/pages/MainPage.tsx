@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Container, Typography, Grid, Card, CardContent, Button, Chip, Avatar, useTheme } from '@mui/material';
+import { Box, Container, Typography, Card, CardContent, Button, Chip, Avatar, useTheme } from '@mui/material';
 import {
     Newspaper as NewsIcon,
     SportsEsports as GameIcon,
@@ -37,9 +37,9 @@ const MainPage: React.FC = () => {
                     📰 뉴스 커뮤니티
                 </Typography>
 
-                <Grid container spacing={3}>
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
                     {/* 실시간 뉴스 피드 */}
-                    <Grid item xs={12} md={8}>
+                    <Box sx={{ flex: '2 1 500px' }}>
                         <Card sx={{ mb: 3, border: '1px solid #e0e0e0' }}>
                             <CardContent>
                                 <Typography variant="h5" gutterBottom sx={{ display: 'flex', alignItems: 'center' }}>
@@ -59,10 +59,10 @@ const MainPage: React.FC = () => {
                                 </Button>
                             </CardContent>
                         </Card>
-                    </Grid>
+                    </Box>
 
                     {/* 트렌딩 토픽 */}
-                    <Grid item xs={12} md={4}>
+                    <Box sx={{ flex: '1 1 300px' }}>
                         <Card sx={{ border: '1px solid #e0e0e0' }}>
                             <CardContent>
                                 <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center' }}>
@@ -76,8 +76,8 @@ const MainPage: React.FC = () => {
                                 </Box>
                             </CardContent>
                         </Card>
-                    </Grid>
-                </Grid>
+                    </Box>
+                </Box>
             </Container>
         </Box>
     );
@@ -95,9 +95,9 @@ const MainPage: React.FC = () => {
                     🎮 게임 커뮤니티
                 </Typography>
 
-                <Grid container spacing={3}>
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
                     {/* 게임 리더보드 */}
-                    <Grid item xs={12} md={8}>
+                    <Box sx={{ flex: '2 1 500px' }}>
                         <Card sx={{ mb: 3, bgcolor: '#1e1e1e', border: '1px solid #9c27b0' }}>
                             <CardContent>
                                 <Typography variant="h5" gutterBottom sx={{ display: 'flex', alignItems: 'center', color: '#9c27b0' }}>
@@ -117,10 +117,10 @@ const MainPage: React.FC = () => {
                                 </Button>
                             </CardContent>
                         </Card>
-                    </Grid>
+                    </Box>
 
                     {/* 커뮤니티 게시글 */}
-                    <Grid item xs={12} md={4}>
+                    <Box sx={{ flex: '1 1 300px' }}>
                         <Card sx={{ bgcolor: '#1e1e1e', border: '1px solid #00e676' }}>
                             <CardContent>
                                 <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center', color: '#00e676' }}>
@@ -134,8 +134,8 @@ const MainPage: React.FC = () => {
                                 </Box>
                             </CardContent>
                         </Card>
-                    </Grid>
-                </Grid>
+                    </Box>
+                </Box>
             </Container>
         </Box>
     );
@@ -153,13 +153,13 @@ const MainPage: React.FC = () => {
                     📺 스트리밍 커뮤니티
                 </Typography>
 
-                <Grid container spacing={3}>
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
                     {/* 라이브 방송 */}
-                    <Grid item xs={12} md={8}>
+                    <Box sx={{ flex: '2 1 500px' }}>
                         <Card sx={{ mb: 3, bgcolor: '#2a2a2a', border: '1px solid #f44336' }}>
                             <CardContent>
                                 <Typography variant="h5" gutterBottom sx={{ display: 'flex', alignItems: 'center', color: '#f44336' }}>
-                                    <LiveTvIcon sx={{ mr: 1 }} />
+                                    <StreamingIcon sx={{ mr: 1 }} />
                                     라이브 방송
                                 </Typography>
                                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 2 }}>
@@ -175,10 +175,10 @@ const MainPage: React.FC = () => {
                                 </Button>
                             </CardContent>
                         </Card>
-                    </Grid>
+                    </Box>
 
                     {/* 연결된 팀 */}
-                    <Grid item xs={12} md={4}>
+                    <Box sx={{ flex: '1 1 300px' }}>
                         <Card sx={{ bgcolor: '#2a2a2a', border: '1px solid #2196f3' }}>
                             <CardContent>
                                 <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center', color: '#2196f3' }}>
@@ -192,8 +192,8 @@ const MainPage: React.FC = () => {
                                 </Box>
                             </CardContent>
                         </Card>
-                    </Grid>
-                </Grid>
+                    </Box>
+                </Box>
             </Container>
         </Box>
     );
@@ -211,13 +211,13 @@ const MainPage: React.FC = () => {
                     🎭 코스프레 커뮤니티
                 </Typography>
 
-                <Grid container spacing={3}>
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
                     {/* 포트폴리오 갤러리 */}
-                    <Grid item xs={12} md={8}>
+                    <Box sx={{ flex: '2 1 500px' }}>
                         <Card sx={{ mb: 3, border: '1px solid #e91e63' }}>
                             <CardContent>
                                 <Typography variant="h5" gutterBottom sx={{ display: 'flex', alignItems: 'center', color: '#e91e63' }}>
-                                    <PaletteIcon sx={{ mr: 1 }} />
+                                    <CosplayIcon sx={{ mr: 1 }} />
                                     포트폴리오 갤러리
                                 </Typography>
                                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 2 }}>
@@ -233,10 +233,10 @@ const MainPage: React.FC = () => {
                                 </Button>
                             </CardContent>
                         </Card>
-                    </Grid>
+                    </Box>
 
                     {/* 상점 연결 */}
-                    <Grid item xs={12} md={4}>
+                    <Box sx={{ flex: '1 1 300px' }}>
                         <Card sx={{ border: '1px solid #ff9800' }}>
                             <CardContent>
                                 <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center', color: '#ff9800' }}>
@@ -250,8 +250,8 @@ const MainPage: React.FC = () => {
                                 </Box>
                             </CardContent>
                         </Card>
-                    </Grid>
-                </Grid>
+                    </Box>
+                </Box>
             </Container>
         </Box>
     );

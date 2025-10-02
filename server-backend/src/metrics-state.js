@@ -1,4 +1,4 @@
-﻿export const runtimeMetrics = {
+export const runtimeMetrics = {
     startTime: Date.now(),
     keepaliveFail: 0,
     lastKeepaliveOk: null,

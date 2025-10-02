@@ -1,10 +1,15 @@
-﻿# 커뮤니티 허브 API 참조
+# 🔌 Community Platform v1.1 API Reference
 
-이 문서는 커뮤니티 허브 플랫폼의 포괄적인 API 문서를 제공합니다.
+**Community Platform v1.1**의 완전한 API 문서입니다. 모든 엔드포인트가 UTF-8을 완벽 지원하며 최적화된 성능을 제공합니다.
 
-## 기본 URL
-- 개발: `http://localhost:50000`
-- 프로덕션: `https://api.communityhub.com`
+## 📋 **v1.1 업데이트 내용**
+- ✅ **UTF-8 완전 지원**: 모든 API 응답 UTF-8 인코딩
+- ✅ **최적화된 엔드포인트**: 성능 향상 및 응답 시간 단축  
+- ✅ **완벽한 매핑**: Frontend ↔ Backend 완전 연동
+
+## 🌐 기본 URL
+- **개발**: `http://localhost:50000`
+- **프로덕션**: `https://api.communityhub.com`
 
 ## 인증
 

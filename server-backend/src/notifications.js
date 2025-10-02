@@ -1,4 +1,4 @@
-﻿const DEFAULT_TTL_MS = 5 * 60 * 1000;
+const DEFAULT_TTL_MS = 5 * 60 * 1000;
 
 const notificationsByUser = new Map();
 

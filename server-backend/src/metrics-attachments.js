@@ -1,4 +1,4 @@
-﻿import { runtimeMetrics, incMetric } from './metrics-state.js';
+import { runtimeMetrics, incMetric } from './metrics-state.js';
 
 function ensureDepthBucket() {
     if (!runtimeMetrics.attachmentsQueueDepth || typeof runtimeMetrics.attachmentsQueueDepth !== 'object') {

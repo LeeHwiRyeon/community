@@ -1,0 +1,393 @@
+/* Simple Board - 기존 뉴스페이퍼 CSS 구조 기반 */
+
+/* CSS Variables (기존 뉴스페이퍼 스타일) */
+:root {
+    --texture-panel: linear-gradient(135deg, #ffffff 0%, #f1f5ff 100%);
+    --texture-panel-elevated: linear-gradient(135deg, #f8fbff 0%, #e7edff 100%);
+    --texture-button-neutral: linear-gradient(135deg, #f7f9ff 0%, #e2e9ff 100%);
+    --texture-button-accent: linear-gradient(135deg, #6d8bff 0%, #6dd5ff 100%);
+    --texture-button-danger: linear-gradient(135deg, #ff7b7b 0%, #ffb88c 100%);
+    --texture-chip: linear-gradient(135deg, #fff6eb 0%, #ffe1c2 100%);
+    --texture-border: rgba(210, 220, 245, 0.9);
+    --texture-checkbox-check: #5265ff;
+    --color-primary: #5265ff;
+    --color-secondary: #66d2ff;
+    --color-text: #2d3748;
+    --color-text-muted: #718096;
+}
+
+/* Simple Board Container */
+.simple-board {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.simple-board__header {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding: 2rem;
+    background: var(--texture-panel);
+    border-radius: 16px;
+    border: 1px solid var(--texture-border);
+}
+
+.simple-board__title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--color-primary);
+    margin: 0 0 0.5rem 0;
+    text-shadow: 0 2px 4px rgba(82, 101, 255, 0.1);
+}
+
+.simple-board__subtitle {
+    font-size: 1.1rem;
+    color: var(--color-text-muted);
+    margin: 0 0 1rem 0;
+}
+
+.simple-board__stats {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+    flex-wrap: wrap;
+}
+
+.simple-board__stats span {
+    padding: 0.25rem 0.75rem;
+    background: var(--texture-chip);
+    border-radius: 12px;
+    font-weight: 500;
+}
+
+.simple-board__content {
+    margin-bottom: 2rem;
+}
+
+.simple-board__loading {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.simple-board__footer {
+    text-align: center;
+    padding: 1.5rem;
+    background: var(--texture-panel-elevated);
+    border-radius: 12px;
+    border: 1px solid var(--texture-border);
+}
+
+.simple-board__footer p {
+    margin: 0.25rem 0;
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+}
+
+/* Board Cards (기존 뉴스페이퍼 스타일 적용) */
+.community-hub__board-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.board-card {
+    background: var(--texture-panel);
+    border: 1px solid var(--texture-border);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 16px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.board-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.board-card:hover::before {
+    opacity: 1;
+}
+
+.board-card:hover {
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+    transform: translateY(-6px);
+    border-color: var(--color-primary);
+}
+
+.board-card.completed {
+    opacity: 0.8;
+    background: var(--texture-panel-elevated);
+}
+
+.board-card.completed::before {
+    background: linear-gradient(90deg, #4caf50, #8bc34a);
+}
+
+.board-card__header {
+    margin-bottom: 16px;
+    position: relative;
+    z-index: 1;
+}
+
+.board-card__title-section {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.board-card__todo-checkbox {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--texture-checkbox-check);
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.board-card__checkbox-label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    flex: 1;
+    min-width: 0;
+}
+
+.board-card__title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--color-text);
+    transition: color 0.2s ease;
+    margin: 0;
+    line-height: 1.4;
+}
+
+.board-card:hover .board-card__title {
+    color: var(--color-primary);
+}
+
+.board-card.completed .board-card__title {
+    text-decoration: line-through;
+    color: var(--color-text-muted);
+}
+
+.board-card__badge {
+    background: var(--color-primary);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: uppercase;
+    flex-shrink: 0;
+}
+
+.board-card__badge.completed {
+    background: #4caf50;
+}
+
+.board-card__badge.in-progress {
+    background: #ff9800;
+}
+
+.board-card__badge.review {
+    background: #9c27b0;
+}
+
+.board-card__summary {
+    display: block;
+    font-size: 14px;
+    color: var(--color-text-muted);
+    line-height: 1.5;
+    margin: 0;
+}
+
+.board-card.completed .board-card__summary {
+    opacity: 0.7;
+}
+
+.board-card__body {
+    display: flex;
+    gap: 16px;
+    font-size: 13px;
+    color: var(--color-text-muted);
+    position: relative;
+    z-index: 1;
+    flex-wrap: wrap;
+}
+
+.board-card__body span {
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* Skeleton Loading Styles (기존 뉴스페이퍼 스타일) */
+.skeleton {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s infinite;
+    display: block;
+    border-radius: 4px;
+}
+
+@keyframes skeleton-loading {
+    0% {
+        background-position: 200% 0;
+    }
+
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+.board-card-skeleton {
+    background: var(--texture-panel);
+    border: 1px solid var(--texture-border);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 16px;
+}
+
+.board-card-skeleton__header {
+    margin-bottom: 16px;
+}
+
+.board-card-skeleton__title-section {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.board-card-skeleton__body {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+/* Card Animations (기존 뉴스페이퍼 스타일) */
+@keyframes cardFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card-enter {
+    animation: cardFadeIn 0.6s ease-out forwards;
+}
+
+/* Pulse animation for interactive elements */
+@keyframes pulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.02);
+    }
+}
+
+.card-pulse:hover {
+    animation: pulse 0.6s ease-in-out;
+}
+
+/* Enhanced hover transitions */
+.board-card {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .simple-board {
+        padding: 1rem;
+    }
+
+    .simple-board__header {
+        padding: 1.5rem;
+    }
+
+    .simple-board__title {
+        font-size: 2rem;
+    }
+
+    .simple-board__stats {
+        gap: 0.75rem;
+    }
+
+    .board-card {
+        padding: 16px;
+    }
+
+    .board-card__title {
+        font-size: 16px;
+    }
+
+    .board-card__body {
+        gap: 12px;
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .simple-board {
+        padding: 0.75rem;
+    }
+
+    .simple-board__stats {
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .board-card {
+        padding: 12px;
+    }
+
+    .board-card__title-section {
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+
+    .board-card__body {
+        flex-direction: column;
+        gap: 8px;
+    }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --texture-panel: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+        --texture-panel-elevated: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
+        --texture-border: rgba(255, 255, 255, 0.1);
+        --color-text: #f7fafc;
+        --color-text-muted: #a0aec0;
+    }
+
+    .skeleton {
+        background: linear-gradient(90deg, #2d3748 25%, #4a5568 50%, #2d3748 75%);
+    }
+}

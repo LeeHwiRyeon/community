@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env node
+#!/usr/bin/env node
 import { Worker, QueueScheduler, Queue } from 'bullmq';
 import { resolveAttachmentQueueConfig, resolveBullConnection, loadWorkerDefinitions } from '../src/services/attachments/worker-config.js';
 import { recordAttachmentJobCompleted, recordAttachmentJobFailed, recordAttachmentJobRetried, recordAttachmentCleanupRun, setAttachmentQueueDepth } from '../src/metrics-attachments.js';

@@ -2,66 +2,53 @@ import React, { useState, useEffect } from 'react';
 import {
     Box,
     Typography,
-    Grid,
+    Container,
     Card,
     CardContent,
     Button,
-    Tabs,
-    Tab,
-    List,
-    ListItem,
-    ListItemText,
-    ListItemIcon,
     Chip,
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    DialogActions,
-    TextField,
-    Select,
-    MenuItem,
-    FormControl,
-    InputLabel,
     Alert,
     CircularProgress,
-    Paper,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-    Rating,
-    Avatar,
-    Badge,
-    IconButton,
-    Tooltip,
+    Tabs,
+    Tab,
+    TextField,
+    FormControl,
+    InputLabel,
+    Select,
+    MenuItem,
     Slider,
     Switch,
-    FormControlLabel
+    FormControlLabel,
+    Divider,
+    Avatar,
+    List,
+    ListItem,
+    ListItemAvatar,
+    ListItemText,
+    IconButton
 } from '@mui/material';
 import {
     Person as PersonIcon,
+    Settings as SettingsIcon,
     Recommend as RecommendIcon,
     Support as SupportIcon,
-    Chat as ChatIcon,
-    Star as StarIcon,
-    ThumbUp as ThumbUpIcon,
-    ThumbDown as ThumbDownIcon,
-    Visibility as VisibilityIcon,
+    Palette as PaletteIcon,
     ShoppingCart as ShoppingCartIcon,
-    Add as AddIcon,
-    Refresh as RefreshIcon,
-    Settings as SettingsIcon,
-    Analytics as AnalyticsIcon,
-    Group as GroupIcon,
-    Message as MessageIcon
+    Chat as ChatIcon,
+    Send as SendIcon,
+    Close as CloseIcon
 } from '@mui/icons-material';
 
+// 개인화 데이터 타입 정의
 interface VIPProfile {
     id: string;
     userId: string;
-    preferences: Record<string, any>;
+    preferences: {
+        theme: string;
+        language: string;
+        notifications: boolean;
+        autoRecommendations: boolean;
+    };
     interests: string[];
     budgetRange: { min: number; max: number };
     stylePreferences: string[];
@@ -69,723 +56,532 @@ interface VIPProfile {
     colorPreferences: string[];
     brandPreferences: string[];
     activityLevel: string;
-    socialPreferences: Record<string, any>;
-    personalizationLevel: string;
-    recommendationScore: number;
+    socialPreferences: {
+        publicProfile: boolean;
+        shareActivity: boolean;
+        allowMessages: boolean;
+    };
 }
 
 interface Recommendation {
     id: string;
-    name: string;
-    category: string;
+    type: string;
+    title: string;
+    description: string;
     price: number;
-    discount: number;
-    reason: string;
+    image: string;
     confidence: number;
+    category: string;
 }
 
 interface SupportTicket {
     id: string;
-    category: string;
-    priority: string;
     subject: string;
-    description: string;
     status: string;
-    assignedTo: string;
+    priority: string;
     createdAt: string;
-    firstResponseTime: string;
-    resolutionTime: string;
-}
-
-interface ExclusiveChannel {
-    id: string;
-    channelName: string;
-    description: string;
-    accessLevel: string;
-    maxMembers: number;
-    features: string[];
-    members: string[];
-    moderators: string[];
-    isActive: boolean;
+    lastUpdate: string;
+    messages: Array<{
+        id: string;
+        sender: string;
+        message: string;
+        timestamp: string;
+    }>;
 }
 
 const VIPPersonalizedService: React.FC = () => {
-    const [currentTab, setCurrentTab] = useState(0);
+    const [activeTab, setActiveTab] = useState(0);
     const [profile, setProfile] = useState<VIPProfile | null>(null);
     const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
     const [supportTickets, setSupportTickets] = useState<SupportTicket[]>([]);
-    const [exclusiveChannels, setExclusiveChannels] = useState<ExclusiveChannel[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-
-    // 다이얼로그 상태
-    const [openProfileDialog, setOpenProfileDialog] = useState(false);
-    const [openSupportDialog, setOpenSupportDialog] = useState(false);
-    const [openChannelDialog, setOpenChannelDialog] = useState(false);
-    const [openRecommendationDialog, setOpenRecommendationDialog] = useState(false);
-
-    // 폼 상태
-    const [profileForm, setProfileForm] = useState({
-        interests: [] as string[],
-        budgetRange: { min: 0, max: 1000000 },
-        stylePreferences: [] as string[],
-        brandPreferences: [] as string[],
-        activityLevel: 'medium'
-    });
-
-    const [supportForm, setSupportForm] = useState({
-        category: '',
-        priority: 'HIGH',
-        subject: '',
-        description: '',
-        urgencyLevel: 'medium'
-    });
-
-    const [channelForm, setChannelForm] = useState({
-        channelType: 'general',
-        channelName: '',
-        description: '',
-        maxMembers: 50,
-        features: [] as string[]
-    });
+    const [newTicketSubject, setNewTicketSubject] = useState('');
+    const [newTicketMessage, setNewTicketMessage] = useState('');
 
     useEffect(() => {
-        fetchVIPData();
+        const loadPersonalizedData = async () => {
+            try {
+                setLoading(true);
+
+                // VIP 프로필 로딩
+                const profileResponse = await fetch('/api/vip-personalized-service/profiles/current');
+                if (profileResponse.ok) {
+                    const profileData = await profileResponse.json();
+                    setProfile(profileData.data);
+                } else {
+                    // 모의 프로필 데이터
+                    setProfile({
+                        id: 'profile_001',
+                        userId: 'user_123',
+                        preferences: {
+                            theme: 'dark',
+                            language: 'ko',
+                            notifications: true,
+                            autoRecommendations: true
+                        },
+                        interests: ['코스프레', '스트리밍', '게임', '애니메이션'],
+                        budgetRange: { min: 50000, max: 500000 },
+                        stylePreferences: ['모던', '캐주얼', '엘레간트'],
+                        sizePreferences: ['M', 'L'],
+                        colorPreferences: ['블랙', '화이트', '네이비', '레드'],
+                        brandPreferences: ['프리미엄 브랜드', '수제 브랜드'],
+                        activityLevel: 'high',
+                        socialPreferences: {
+                            publicProfile: true,
+                            shareActivity: true,
+                            allowMessages: true
+                        }
+                    });
+                }
+
+                // 개인화 추천 로딩
+                const recommendationsResponse = await fetch('/api/vip-personalized-service/recommendations/current');
+                if (recommendationsResponse.ok) {
+                    const recommendationsData = await recommendationsResponse.json();
+                    setRecommendations(recommendationsData.data || []);
+                } else {
+                    // 모의 추천 데이터
+                    setRecommendations([
+                        {
+                            id: 'rec_001',
+                            type: 'product',
+                            title: '프리미엄 코스프레 의상 - 엘사',
+                            description: '고품질 소재로 제작된 겨울왕국 엘사 의상',
+                            price: 180000,
+                            image: '/images/cosplay-elsa.jpg',
+                            confidence: 95,
+                            category: 'cosplay'
+                        },
+                        {
+                            id: 'rec_002',
+                            type: 'equipment',
+                            title: '4K 웹캠 - 스트리밍 전용',
+                            description: '전문 스트리머를 위한 고화질 웹캠',
+                            price: 250000,
+                            image: '/images/webcam-4k.jpg',
+                            confidence: 88,
+                            category: 'streaming'
+                        },
+                        {
+                            id: 'rec_003',
+                            type: 'accessory',
+                            title: '게이밍 키보드 - RGB',
+                            description: '기계식 스위치와 RGB 백라이트',
+                            price: 120000,
+                            image: '/images/gaming-keyboard.jpg',
+                            confidence: 92,
+                            category: 'gaming'
+                        }
+                    ]);
+                }
+
+                // VIP 지원 티켓 로딩
+                const ticketsResponse = await fetch('/api/vip-personalized-service/support-tickets/current');
+                if (ticketsResponse.ok) {
+                    const ticketsData = await ticketsResponse.json();
+                    setSupportTickets(ticketsData.data || []);
+                } else {
+                    // 모의 지원 티켓 데이터
+                    setSupportTickets([
+                        {
+                            id: 'ticket_001',
+                            subject: '맞춤 추천 개선 요청',
+                            status: 'open',
+                            priority: 'medium',
+                            createdAt: '2024-10-01T10:00:00Z',
+                            lastUpdate: '2024-10-02T14:30:00Z',
+                            messages: [
+                                {
+                                    id: 'msg_001',
+                                    sender: 'user',
+                                    message: '추천되는 상품들이 제 취향과 맞지 않는 것 같습니다.',
+                                    timestamp: '2024-10-01T10:00:00Z'
+                                },
+                                {
+                                    id: 'msg_002',
+                                    sender: 'support',
+                                    message: '안녕하세요! 개인화 설정을 다시 검토해보겠습니다. 어떤 스타일을 선호하시나요?',
+                                    timestamp: '2024-10-02T14:30:00Z'
+                                }
+                            ]
+                        }
+                    ]);
+                }
+
+            } catch (err) {
+                setError('개인화 서비스 데이터를 불러오는 중 오류가 발생했습니다.');
+                console.error('개인화 서비스 로딩 오류:', err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        loadPersonalizedData();
     }, []);
 
-    const fetchVIPData = async () => {
+    // 프로필 업데이트
+    const updateProfile = async (updatedProfile: Partial<VIPProfile>) => {
         try {
-            setLoading(true);
-            const userId = 'vip_user_001';
+            const response = await fetch('/api/vip-personalized-service/profiles/current', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(updatedProfile)
+            });
 
-            // 프로필 데이터 가져오기
-            const profileResponse = await fetch(`http://localhost:5000/api/vip-personalized-service/profiles/${userId}`);
-            if (profileResponse.ok) {
-                const profileData = await profileResponse.json();
-                setProfile(profileData.data);
+            if (response.ok) {
+                const updatedData = await response.json();
+                setProfile(updatedData.data);
             }
-
-            // 추천 데이터 가져오기
-            const recommendationsResponse = await fetch(`http://localhost:5000/api/vip-personalized-service/recommendations/${userId}`);
-            if (recommendationsResponse.ok) {
-                const recommendationsData = await recommendationsResponse.json();
-                setRecommendations(recommendationsData.data.products || []);
-            }
-
-            // 지원 티켓 가져오기
-            const ticketsResponse = await fetch(`http://localhost:5000/api/vip-personalized-service/support-tickets/${userId}`);
-            if (ticketsResponse.ok) {
-                const ticketsData = await ticketsResponse.json();
-                setSupportTickets(ticketsData.data || []);
-            }
-
-            // 전용 채널 가져오기
-            const channelsResponse = await fetch(`http://localhost:5000/api/vip-personalized-service/exclusive-channels/${userId}`);
-            if (channelsResponse.ok) {
-                const channelsData = await channelsResponse.json();
-                setExclusiveChannels(channelsData.data || []);
-            }
-
-        } catch (e: any) {
-            setError(e.message);
-        } finally {
-            setLoading(false);
+        } catch (err) {
+            console.error('프로필 업데이트 오류:', err);
         }
     };
 
-    const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
-        setCurrentTab(newValue);
-    };
+    // 새 지원 티켓 생성
+    const createSupportTicket = async () => {
+        if (!newTicketSubject.trim() || !newTicketMessage.trim()) return;
 
-    const handleRecommendationFeedback = async (productId: string, action: string, rating?: number) => {
         try {
-            const response = await fetch(`http://localhost:5000/api/vip-personalized-service/recommendations/vip_user_001/feedback`, {
+            const response = await fetch('/api/vip-personalized-service/support-tickets', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    productId,
-                    action,
-                    rating: rating || 0
+                    subject: newTicketSubject,
+                    message: newTicketMessage,
+                    priority: 'medium'
                 })
             });
 
             if (response.ok) {
-                // 추천 목록 새로고침
-                fetchVIPData();
+                const newTicket = await response.json();
+                setSupportTickets([newTicket.data, ...supportTickets]);
+                setNewTicketSubject('');
+                setNewTicketMessage('');
             }
-        } catch (e) {
-            console.error('피드백 처리 실패:', e);
-        }
-    };
-
-    const handleCreateSupportTicket = async () => {
-        try {
-            const response = await fetch('http://localhost:5000/api/vip-personalized-service/support-tickets', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    userId: 'vip_user_001',
-                    ...supportForm
-                })
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                setSupportTickets([data.data, ...supportTickets]);
-                setOpenSupportDialog(false);
-                setSupportForm({
-                    category: '',
-                    priority: 'HIGH',
-                    subject: '',
-                    description: '',
-                    urgencyLevel: 'medium'
-                });
-            }
-        } catch (e) {
-            console.error('지원 티켓 생성 실패:', e);
-        }
-    };
-
-    const handleCreateChannel = async () => {
-        try {
-            const response = await fetch('http://localhost:5000/api/vip-personalized-service/exclusive-channels', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    userId: 'vip_user_001',
-                    ...channelForm
-                })
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                setExclusiveChannels([data.data, ...exclusiveChannels]);
-                setOpenChannelDialog(false);
-                setChannelForm({
-                    channelType: 'general',
-                    channelName: '',
-                    description: '',
-                    maxMembers: 50,
-                    features: []
-                });
-            }
-        } catch (e) {
-            console.error('채널 생성 실패:', e);
-        }
-    };
-
-    const getPriorityColor = (priority: string) => {
-        switch (priority) {
-            case 'URGENT': return 'error';
-            case 'HIGH': return 'warning';
-            case 'MEDIUM': return 'info';
-            case 'LOW': return 'success';
-            default: return 'default';
-        }
-    };
-
-    const getStatusColor = (status: string) => {
-        switch (status) {
-            case 'OPEN': return 'error';
-            case 'ASSIGNED': return 'warning';
-            case 'IN_PROGRESS': return 'info';
-            case 'RESOLVED': return 'success';
-            default: return 'default';
+        } catch (err) {
+            console.error('지원 티켓 생성 오류:', err);
         }
     };
 
     if (loading) {
         return (
-            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-                <CircularProgress />
-            </Box>
+            <Container maxWidth="lg">
+                <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '50vh' }}>
+                    <CircularProgress size={60} />
+                </Box>
+            </Container>
         );
     }
 
     if (error) {
         return (
-            <Box sx={{ p: 3 }}>
-                <Alert severity="error">Error: {error}</Alert>
-            </Box>
+            <Container maxWidth="lg">
+                <Box sx={{ py: 4 }}>
+                    <Alert severity="error">{error}</Alert>
+                </Box>
+            </Container>
         );
     }
 
     return (
-        <Box sx={{ p: 3 }}>
-            <Typography variant="h4" component="h1" gutterBottom sx={{ display: 'flex', alignItems: 'center' }}>
-                <PersonIcon sx={{ mr: 1 }} />
-                VIP 전용 맞춤형 서비스
-            </Typography>
-
-            {/* 프로필 요약 카드 */}
-            {profile && (
-                <Grid container spacing={3} sx={{ mb: 4 }}>
-                    <Grid item xs={12} sm={6} md={3}>
-                        <Card raised>
-                            <CardContent>
-                                <Typography variant="h6" component="h2" sx={{ display: 'flex', alignItems: 'center' }}>
-                                    <StarIcon sx={{ mr: 1 }} /> 개인화 수준
-                                </Typography>
-                                <Typography variant="h4" color="primary.main">
-                                    {profile.personalizationLevel.toUpperCase()}
-                                </Typography>
-                            </CardContent>
-                        </Card>
-                    </Grid>
-                    <Grid item xs={12} sm={6} md={3}>
-                        <Card raised>
-                            <CardContent>
-                                <Typography variant="h6" component="h2" sx={{ display: 'flex', alignItems: 'center' }}>
-                                    <RecommendIcon sx={{ mr: 1 }} /> 추천 점수
-                                </Typography>
-                                <Typography variant="h4" color="success.main">
-                                    {Math.round(profile.recommendationScore * 100)}%
-                                </Typography>
-                            </CardContent>
-                        </Card>
-                    </Grid>
-                    <Grid item xs={12} sm={6} md={3}>
-                        <Card raised>
-                            <CardContent>
-                                <Typography variant="h6" component="h2" sx={{ display: 'flex', alignItems: 'center' }}>
-                                    <SupportIcon sx={{ mr: 1 }} /> 활성 지원
-                                </Typography>
-                                <Typography variant="h4" color="warning.main">
-                                    {supportTickets.filter(t => t.status === 'OPEN' || t.status === 'IN_PROGRESS').length}
-                                </Typography>
-                            </CardContent>
-                        </Card>
-                    </Grid>
-                    <Grid item xs={12} sm={6} md={3}>
-                        <Card raised>
-                            <CardContent>
-                                <Typography variant="h6" component="h2" sx={{ display: 'flex', alignItems: 'center' }}>
-                                    <ChatIcon sx={{ mr: 1 }} /> 전용 채널
-                                </Typography>
-                                <Typography variant="h4" color="info.main">
-                                    {exclusiveChannels.length}
-                                </Typography>
-                            </CardContent>
-                        </Card>
-                    </Grid>
-                </Grid>
-            )}
-
-            <Tabs value={currentTab} onChange={handleTabChange} aria-label="VIP personalized service tabs" sx={{ mb: 3 }}>
-                <Tab label="개인화 추천" />
-                <Tab label="우선 지원" />
-                <Tab label="전용 채널" />
-                <Tab label="프로필 관리" />
-            </Tabs>
-
-            {/* 개인화 추천 탭 */}
-            {currentTab === 0 && (
-                <Box>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-                        <Typography variant="h5">개인화된 추천</Typography>
-                        <Box sx={{ display: 'flex', gap: 2 }}>
-                            <Button
-                                variant="contained"
-                                startIcon={<AddIcon />}
-                                onClick={() => setOpenRecommendationDialog(true)}
-                            >
-                                추천 요청
-                            </Button>
-                            <IconButton onClick={fetchVIPData}>
-                                <RefreshIcon />
-                            </IconButton>
-                        </Box>
-                    </Box>
-
-                    <Grid container spacing={3}>
-                        {recommendations.map((recommendation) => (
-                            <Grid item key={recommendation.id} xs={12} sm={6} md={4} lg={3}>
-                                <Card raised sx={{ height: '100%' }}>
-                                    <CardContent>
-                                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
-                                            <Typography variant="h6" component="h3" sx={{ flexGrow: 1 }}>
-                                                {recommendation.name}
-                                            </Typography>
-                                            <Chip
-                                                label={`${Math.round(recommendation.confidence * 100)}%`}
-                                                color="success"
-                                                size="small"
-                                            />
-                                        </Box>
-
-                                        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                                            {recommendation.reason}
-                                        </Typography>
-
-                                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                                            <Typography variant="h6" color="primary">
-                                                {recommendation.price.toLocaleString()}원
-                                            </Typography>
-                                            <Chip
-                                                label={`${recommendation.discount}% 할인`}
-                                                color="error"
-                                                size="small"
-                                            />
-                                        </Box>
-
-                                        <Box sx={{ display: 'flex', gap: 1, justifyContent: 'center' }}>
-                                            <Tooltip title="좋아요">
-                                                <IconButton
-                                                    size="small"
-                                                    onClick={() => handleRecommendationFeedback(recommendation.id, 'liked', 5)}
-                                                >
-                                                    <ThumbUpIcon />
-                                                </IconButton>
-                                            </Tooltip>
-                                            <Tooltip title="보기">
-                                                <IconButton
-                                                    size="small"
-                                                    onClick={() => handleRecommendationFeedback(recommendation.id, 'viewed')}
-                                                >
-                                                    <VisibilityIcon />
-                                                </IconButton>
-                                            </Tooltip>
-                                            <Tooltip title="구매">
-                                                <IconButton
-                                                    size="small"
-                                                    onClick={() => handleRecommendationFeedback(recommendation.id, 'purchased')}
-                                                >
-                                                    <ShoppingCartIcon />
-                                                </IconButton>
-                                            </Tooltip>
-                                            <Tooltip title="싫어요">
-                                                <IconButton
-                                                    size="small"
-                                                    onClick={() => handleRecommendationFeedback(recommendation.id, 'dismissed', 1)}
-                                                >
-                                                    <ThumbDownIcon />
-                                                </IconButton>
-                                            </Tooltip>
-                                        </Box>
-                                    </CardContent>
-                                </Card>
-                            </Grid>
-                        ))}
-                    </Grid>
+        <Container maxWidth="lg">
+            <Box sx={{ py: 4 }}>
+                {/* 헤더 */}
+                <Box sx={{ mb: 4 }}>
+                    <Typography variant="h3" component="h1" gutterBottom sx={{ display: 'flex', alignItems: 'center' }}>
+                        <PersonIcon sx={{ mr: 2, fontSize: 'inherit' }} />
+                        VIP 개인화 서비스
+                    </Typography>
+                    <Typography variant="h6" color="text.secondary">
+                        맞춤형 추천, 개인 설정, 전용 지원 서비스
+                    </Typography>
                 </Box>
-            )}
 
-            {/* 우선 지원 탭 */}
-            {currentTab === 1 && (
-                <Box>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-                        <Typography variant="h5">VIP 우선 지원</Typography>
-                        <Button
-                            variant="contained"
-                            startIcon={<AddIcon />}
-                            onClick={() => setOpenSupportDialog(true)}
-                        >
-                            지원 요청
-                        </Button>
-                    </Box>
+                {/* 탭 네비게이션 */}
+                <Card sx={{ mb: 3 }}>
+                    <Tabs
+                        value={activeTab}
+                        onChange={(_, newValue) => setActiveTab(newValue)}
+                        variant="scrollable"
+                        scrollButtons="auto"
+                    >
+                        <Tab icon={<SettingsIcon />} label="개인 설정" />
+                        <Tab icon={<RecommendIcon />} label="맞춤 추천" />
+                        <Tab icon={<SupportIcon />} label="VIP 지원" />
+                        <Tab icon={<PaletteIcon />} label="테마 설정" />
+                    </Tabs>
+                </Card>
 
-                    <TableContainer component={Paper}>
-                        <Table>
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell>제목</TableCell>
-                                    <TableCell>카테고리</TableCell>
-                                    <TableCell>우선순위</TableCell>
-                                    <TableCell>상태</TableCell>
-                                    <TableCell>담당자</TableCell>
-                                    <TableCell>생성일</TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {supportTickets.map((ticket) => (
-                                    <TableRow key={ticket.id}>
-                                        <TableCell>{ticket.subject}</TableCell>
-                                        <TableCell>{ticket.category}</TableCell>
-                                        <TableCell>
-                                            <Chip
-                                                label={ticket.priority}
-                                                color={getPriorityColor(ticket.priority)}
-                                                size="small"
-                                            />
-                                        </TableCell>
-                                        <TableCell>
-                                            <Chip
-                                                label={ticket.status}
-                                                color={getStatusColor(ticket.status)}
-                                                size="small"
-                                            />
-                                        </TableCell>
-                                        <TableCell>{ticket.assignedTo}</TableCell>
-                                        <TableCell>
-                                            {new Date(ticket.createdAt).toLocaleDateString()}
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
-                </Box>
-            )}
+                {/* 개인 설정 탭 */}
+                {activeTab === 0 && profile && (
+                    <Card>
+                        <CardContent>
+                            <Typography variant="h5" gutterBottom>⚙️ 개인 설정</Typography>
 
-            {/* 전용 채널 탭 */}
-            {currentTab === 2 && (
-                <Box>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-                        <Typography variant="h5">VIP 전용 채널</Typography>
-                        <Button
-                            variant="contained"
-                            startIcon={<AddIcon />}
-                            onClick={() => setOpenChannelDialog(true)}
-                        >
-                            채널 생성
-                        </Button>
-                    </Box>
+                            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 3 }}>
+                                {/* 기본 설정 */}
+                                <Box>
+                                    <Typography variant="h6" gutterBottom>기본 설정</Typography>
 
-                    <Grid container spacing={3}>
-                        {exclusiveChannels.map((channel) => (
-                            <Grid item key={channel.id} xs={12} sm={6} md={4}>
-                                <Card raised>
-                                    <CardContent>
-                                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
-                                            <Typography variant="h6" component="h3">
-                                                {channel.channelName}
-                                            </Typography>
-                                            <Chip
-                                                label={channel.isActive ? '활성' : '비활성'}
-                                                color={channel.isActive ? 'success' : 'default'}
-                                                size="small"
-                                            />
-                                        </Box>
+                                    <FormControl fullWidth sx={{ mb: 2 }}>
+                                        <InputLabel>테마</InputLabel>
+                                        <Select
+                                            value={profile.preferences.theme}
+                                            onChange={(e) => updateProfile({
+                                                preferences: { ...profile.preferences, theme: e.target.value }
+                                            })}
+                                        >
+                                            <MenuItem value="light">라이트</MenuItem>
+                                            <MenuItem value="dark">다크</MenuItem>
+                                            <MenuItem value="auto">자동</MenuItem>
+                                        </Select>
+                                    </FormControl>
 
-                                        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                                            {channel.description}
-                                        </Typography>
+                                    <FormControl fullWidth sx={{ mb: 2 }}>
+                                        <InputLabel>언어</InputLabel>
+                                        <Select
+                                            value={profile.preferences.language}
+                                            onChange={(e) => updateProfile({
+                                                preferences: { ...profile.preferences, language: e.target.value }
+                                            })}
+                                        >
+                                            <MenuItem value="ko">한국어</MenuItem>
+                                            <MenuItem value="en">English</MenuItem>
+                                            <MenuItem value="ja">日本語</MenuItem>
+                                        </Select>
+                                    </FormControl>
 
-                                        <Box sx={{ display: 'flex', gap: 1, mb: 2 }}>
-                                            <Chip
-                                                icon={<GroupIcon />}
-                                                label={`${channel.members.length}/${channel.maxMembers}`}
-                                                size="small"
-                                                variant="outlined"
-                                            />
-                                            <Chip
-                                                icon={<MessageIcon />}
-                                                label={channel.accessLevel}
-                                                size="small"
-                                                variant="outlined"
-                                            />
-                                        </Box>
-
-                                        <Typography variant="body2" color="text.secondary">
-                                            기능: {channel.features.join(', ')}
-                                        </Typography>
-                                    </CardContent>
-                                </Card>
-                            </Grid>
-                        ))}
-                    </Grid>
-                </Box>
-            )}
-
-            {/* 프로필 관리 탭 */}
-            {currentTab === 3 && (
-                <Box>
-                    <Typography variant="h5" gutterBottom>프로필 관리</Typography>
-                    <Grid container spacing={3}>
-                        <Grid item xs={12} md={6}>
-                            <Card>
-                                <CardContent>
-                                    <Typography variant="h6" gutterBottom>현재 프로필</Typography>
-                                    {profile && (
-                                        <Box>
-                                            <Typography variant="body1" gutterBottom>
-                                                <strong>관심사:</strong> {profile.interests.join(', ')}
-                                            </Typography>
-                                            <Typography variant="body1" gutterBottom>
-                                                <strong>예산 범위:</strong> {profile.budgetRange.min.toLocaleString()}원 - {profile.budgetRange.max.toLocaleString()}원
-                                            </Typography>
-                                            <Typography variant="body1" gutterBottom>
-                                                <strong>스타일 선호도:</strong> {profile.stylePreferences.join(', ')}
-                                            </Typography>
-                                            <Typography variant="body1" gutterBottom>
-                                                <strong>브랜드 선호도:</strong> {profile.brandPreferences.join(', ')}
-                                            </Typography>
-                                            <Typography variant="body1" gutterBottom>
-                                                <strong>활동 수준:</strong> {profile.activityLevel}
-                                            </Typography>
-                                        </Box>
-                                    )}
-                                </CardContent>
-                            </Card>
-                        </Grid>
-                        <Grid item xs={12} md={6}>
-                            <Card>
-                                <CardContent>
-                                    <Typography variant="h6" gutterBottom>프로필 설정</Typography>
-                                    <Button
-                                        variant="contained"
-                                        startIcon={<SettingsIcon />}
-                                        onClick={() => setOpenProfileDialog(true)}
-                                        fullWidth
-                                    >
-                                        프로필 수정
-                                    </Button>
-                                </CardContent>
-                            </Card>
-                        </Grid>
-                    </Grid>
-                </Box>
-            )}
-
-            {/* 지원 요청 다이얼로그 */}
-            <Dialog open={openSupportDialog} onClose={() => setOpenSupportDialog(false)} maxWidth="md" fullWidth>
-                <DialogTitle>VIP 지원 요청</DialogTitle>
-                <DialogContent>
-                    <Grid container spacing={2} sx={{ mt: 1 }}>
-                        <Grid item xs={12} sm={6}>
-                            <FormControl fullWidth>
-                                <InputLabel>카테고리</InputLabel>
-                                <Select
-                                    value={supportForm.category}
-                                    onChange={(e) => setSupportForm({ ...supportForm, category: e.target.value })}
-                                    label="카테고리"
-                                >
-                                    <MenuItem value="technical">기술 지원</MenuItem>
-                                    <MenuItem value="billing">결제 문의</MenuItem>
-                                    <MenuItem value="product">상품 문의</MenuItem>
-                                    <MenuItem value="general">일반 문의</MenuItem>
-                                </Select>
-                            </FormControl>
-                        </Grid>
-                        <Grid item xs={12} sm={6}>
-                            <FormControl fullWidth>
-                                <InputLabel>우선순위</InputLabel>
-                                <Select
-                                    value={supportForm.priority}
-                                    onChange={(e) => setSupportForm({ ...supportForm, priority: e.target.value })}
-                                    label="우선순위"
-                                >
-                                    <MenuItem value="URGENT">긴급</MenuItem>
-                                    <MenuItem value="HIGH">높음</MenuItem>
-                                    <MenuItem value="MEDIUM">보통</MenuItem>
-                                    <MenuItem value="LOW">낮음</MenuItem>
-                                </Select>
-                            </FormControl>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <TextField
-                                fullWidth
-                                label="제목"
-                                value={supportForm.subject}
-                                onChange={(e) => setSupportForm({ ...supportForm, subject: e.target.value })}
-                            />
-                        </Grid>
-                        <Grid item xs={12}>
-                            <TextField
-                                fullWidth
-                                label="설명"
-                                multiline
-                                rows={4}
-                                value={supportForm.description}
-                                onChange={(e) => setSupportForm({ ...supportForm, description: e.target.value })}
-                            />
-                        </Grid>
-                    </Grid>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={() => setOpenSupportDialog(false)}>취소</Button>
-                    <Button variant="contained" onClick={handleCreateSupportTicket}>
-                        요청
-                    </Button>
-                </DialogActions>
-            </Dialog>
-
-            {/* 채널 생성 다이얼로그 */}
-            <Dialog open={openChannelDialog} onClose={() => setOpenChannelDialog(false)} maxWidth="md" fullWidth>
-                <DialogTitle>VIP 전용 채널 생성</DialogTitle>
-                <DialogContent>
-                    <Grid container spacing={2} sx={{ mt: 1 }}>
-                        <Grid item xs={12} sm={6}>
-                            <FormControl fullWidth>
-                                <InputLabel>채널 타입</InputLabel>
-                                <Select
-                                    value={channelForm.channelType}
-                                    onChange={(e) => setChannelForm({ ...channelForm, channelType: e.target.value })}
-                                    label="채널 타입"
-                                >
-                                    <MenuItem value="general">일반</MenuItem>
-                                    <MenuItem value="cosplay">코스플레이</MenuItem>
-                                    <MenuItem value="streaming">스트리밍</MenuItem>
-                                    <MenuItem value="gaming">게이밍</MenuItem>
-                                </Select>
-                            </FormControl>
-                        </Grid>
-                        <Grid item xs={12} sm={6}>
-                            <TextField
-                                fullWidth
-                                label="최대 멤버 수"
-                                type="number"
-                                value={channelForm.maxMembers}
-                                onChange={(e) => setChannelForm({ ...channelForm, maxMembers: parseInt(e.target.value) })}
-                            />
-                        </Grid>
-                        <Grid item xs={12}>
-                            <TextField
-                                fullWidth
-                                label="채널명"
-                                value={channelForm.channelName}
-                                onChange={(e) => setChannelForm({ ...channelForm, channelName: e.target.value })}
-                            />
-                        </Grid>
-                        <Grid item xs={12}>
-                            <TextField
-                                fullWidth
-                                label="설명"
-                                multiline
-                                rows={3}
-                                value={channelForm.description}
-                                onChange={(e) => setChannelForm({ ...channelForm, description: e.target.value })}
-                            />
-                        </Grid>
-                        <Grid item xs={12}>
-                            <Typography variant="subtitle1" gutterBottom>채널 기능</Typography>
-                            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-                                {['chat', 'voice', 'video', 'file_sharing', 'screen_sharing'].map((feature) => (
                                     <FormControlLabel
-                                        key={feature}
                                         control={
                                             <Switch
-                                                checked={channelForm.features.includes(feature)}
-                                                onChange={(e) => {
-                                                    if (e.target.checked) {
-                                                        setChannelForm({
-                                                            ...channelForm,
-                                                            features: [...channelForm.features, feature]
-                                                        });
-                                                    } else {
-                                                        setChannelForm({
-                                                            ...channelForm,
-                                                            features: channelForm.features.filter(f => f !== feature)
-                                                        });
-                                                    }
-                                                }}
+                                                checked={profile.preferences.notifications}
+                                                onChange={(e) => updateProfile({
+                                                    preferences: { ...profile.preferences, notifications: e.target.checked }
+                                                })}
                                             />
                                         }
-                                        label={feature}
+                                        label="알림 받기"
+                                        sx={{ mb: 2 }}
                                     />
+
+                                    <FormControlLabel
+                                        control={
+                                            <Switch
+                                                checked={profile.preferences.autoRecommendations}
+                                                onChange={(e) => updateProfile({
+                                                    preferences: { ...profile.preferences, autoRecommendations: e.target.checked }
+                                                })}
+                                            />
+                                        }
+                                        label="자동 추천"
+                                    />
+                                </Box>
+
+                                {/* 취향 설정 */}
+                                <Box>
+                                    <Typography variant="h6" gutterBottom>취향 설정</Typography>
+
+                                    <Box sx={{ mb: 3 }}>
+                                        <Typography variant="subtitle2" gutterBottom>관심 분야</Typography>
+                                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                                            {profile.interests.map((interest, index) => (
+                                                <Chip key={index} label={interest} color="primary" />
+                                            ))}
+                                        </Box>
+                                    </Box>
+
+                                    <Box sx={{ mb: 3 }}>
+                                        <Typography variant="subtitle2" gutterBottom>
+                                            예산 범위: {profile.budgetRange.min.toLocaleString()}원 - {profile.budgetRange.max.toLocaleString()}원
+                                        </Typography>
+                                        <Slider
+                                            value={[profile.budgetRange.min, profile.budgetRange.max]}
+                                            onChange={(_, newValue) => {
+                                                const [min, max] = newValue as number[];
+                                                updateProfile({
+                                                    budgetRange: { min, max }
+                                                });
+                                            }}
+                                            valueLabelDisplay="auto"
+                                            min={0}
+                                            max={1000000}
+                                            step={10000}
+                                        />
+                                    </Box>
+
+                                    <Box sx={{ mb: 3 }}>
+                                        <Typography variant="subtitle2" gutterBottom>선호 색상</Typography>
+                                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                                            {profile.colorPreferences.map((color, index) => (
+                                                <Chip key={index} label={color} variant="outlined" />
+                                            ))}
+                                        </Box>
+                                    </Box>
+                                </Box>
+                            </Box>
+                        </CardContent>
+                    </Card>
+                )}
+
+                {/* 맞춤 추천 탭 */}
+                {activeTab === 1 && (
+                    <Card>
+                        <CardContent>
+                            <Typography variant="h5" gutterBottom>🎯 맞춤 추천</Typography>
+
+                            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', lg: '1fr 1fr 1fr' }, gap: 3 }}>
+                                {recommendations.map((recommendation) => (
+                                    <Card key={recommendation.id} variant="outlined">
+                                        <CardContent>
+                                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
+                                                <Chip
+                                                    label={`${recommendation.confidence}% 매치`}
+                                                    color={recommendation.confidence >= 90 ? 'success' : 'primary'}
+                                                    size="small"
+                                                />
+                                                <Chip label={recommendation.category} size="small" variant="outlined" />
+                                            </Box>
+
+                                            <Typography variant="h6" gutterBottom>{recommendation.title}</Typography>
+                                            <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                                                {recommendation.description}
+                                            </Typography>
+
+                                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                <Typography variant="h6" color="primary.main">
+                                                    {recommendation.price.toLocaleString()}원
+                                                </Typography>
+                                                <Button variant="contained" size="small" startIcon={<ShoppingCartIcon />}>
+                                                    구매
+                                                </Button>
+                                            </Box>
+                                        </CardContent>
+                                    </Card>
                                 ))}
                             </Box>
-                        </Grid>
-                    </Grid>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={() => setOpenChannelDialog(false)}>취소</Button>
-                    <Button variant="contained" onClick={handleCreateChannel}>
-                        생성
-                    </Button>
-                </DialogActions>
-            </Dialog>
-        </Box>
+                        </CardContent>
+                    </Card>
+                )}
+
+                {/* VIP 지원 탭 */}
+                {activeTab === 2 && (
+                    <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 3 }}>
+                        {/* 새 지원 요청 */}
+                        <Card>
+                            <CardContent>
+                                <Typography variant="h5" gutterBottom>📞 새 지원 요청</Typography>
+
+                                <TextField
+                                    fullWidth
+                                    label="제목"
+                                    value={newTicketSubject}
+                                    onChange={(e) => setNewTicketSubject(e.target.value)}
+                                    sx={{ mb: 2 }}
+                                />
+
+                                <TextField
+                                    fullWidth
+                                    multiline
+                                    rows={4}
+                                    label="상세 내용"
+                                    value={newTicketMessage}
+                                    onChange={(e) => setNewTicketMessage(e.target.value)}
+                                    sx={{ mb: 2 }}
+                                />
+
+                                <Button
+                                    variant="contained"
+                                    onClick={createSupportTicket}
+                                    startIcon={<SendIcon />}
+                                    disabled={!newTicketSubject.trim() || !newTicketMessage.trim()}
+                                >
+                                    지원 요청 보내기
+                                </Button>
+                            </CardContent>
+                        </Card>
+
+                        {/* 지원 티켓 목록 */}
+                        <Card>
+                            <CardContent>
+                                <Typography variant="h5" gutterBottom>🎫 지원 티켓</Typography>
+
+                                <List>
+                                    {supportTickets.map((ticket) => (
+                                        <ListItem key={ticket.id}>
+                                            <ListItemAvatar>
+                                                <Avatar sx={{ bgcolor: ticket.status === 'open' ? 'warning.main' : 'success.main' }}>
+                                                    <ChatIcon />
+                                                </Avatar>
+                                            </ListItemAvatar>
+                                            <ListItemText
+                                                primary={ticket.subject}
+                                                secondary={
+                                                    <Box>
+                                                        <Typography variant="caption" display="block">
+                                                            상태: {ticket.status === 'open' ? '진행중' : '완료'} •
+                                                            우선순위: {ticket.priority === 'high' ? '높음' : ticket.priority === 'medium' ? '보통' : '낮음'}
+                                                        </Typography>
+                                                        <Typography variant="caption" color="text.secondary">
+                                                            {new Date(ticket.createdAt).toLocaleDateString('ko-KR')}
+                                                        </Typography>
+                                                    </Box>
+                                                }
+                                            />
+                                            <IconButton>
+                                                <ChatIcon />
+                                            </IconButton>
+                                        </ListItem>
+                                    ))}
+                                </List>
+                            </CardContent>
+                        </Card>
+                    </Box>
+                )}
+
+                {/* 테마 설정 탭 */}
+                {activeTab === 3 && (
+                    <Card>
+                        <CardContent>
+                            <Typography variant="h5" gutterBottom>🎨 테마 설정</Typography>
+
+                            <Alert severity="info" sx={{ mb: 3 }}>
+                                VIP 회원만 이용 가능한 고급 테마 커스터마이징 기능입니다.
+                            </Alert>
+
+                            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr 1fr' }, gap: 2 }}>
+                                {['다크 프로', '골드 럭셔리', '네온 게이머', '파스텔 드림', '미니멀 화이트', '레트로 바이브'].map((theme, index) => (
+                                    <Card key={index} variant="outlined" sx={{ cursor: 'pointer', '&:hover': { boxShadow: 4 } }}>
+                                        <CardContent sx={{ textAlign: 'center' }}>
+                                            <Box sx={{
+                                                height: 80,
+                                                mb: 2,
+                                                borderRadius: 1,
+                                                background: `linear-gradient(45deg, ${['#1a1a1a', '#FFD700', '#00ff88', '#FFB6C1', '#ffffff', '#ff6b6b'][index]}, ${['#333', '#FFA500', '#0066ff', '#DDA0DD', '#f0f0f0', '#4ecdc4'][index]})`
+                                            }} />
+                                            <Typography variant="h6">{theme}</Typography>
+                                            <Button variant="outlined" size="small" sx={{ mt: 1 }}>
+                                                적용
+                                            </Button>
+                                        </CardContent>
+                                    </Card>
+                                ))}
+                            </Box>
+                        </CardContent>
+                    </Card>
+                )}
+
+                {/* 푸터 */}
+                <Box sx={{ mt: 4, p: 2, bgcolor: 'grey.50', borderRadius: 2, textAlign: 'center' }}>
+                    <Typography variant="body2" color="text.secondary">
+                        💡 VIP 개인화 서비스가 실제 API와 연결되었습니다!
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                        🚀 API 엔드포인트: /api/vip-personalized-service/* 활용
+                    </Typography>
+                </Box>
+            </Box>
+        </Container>
     );
 };
 

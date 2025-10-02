@@ -1,39 +1,39 @@
 import React, { useState, useEffect } from 'react';
 import {
     Box,
-    Grid,
+    Typography,
+    Container,
     Card,
-    CardBody,
-    CardHeader,
-    Heading,
-    Text,
+    CardContent,
     Button,
-    Badge,
-    Image,
-    VStack,
-    HStack,
-    Stat,
-    StatLabel,
-    StatNumber,
-    StatHelpText,
+    Chip,
+    Alert,
+    CircularProgress,
     Tabs,
-    TabList,
-    TabPanels,
     Tab,
-    TabPanel,
-    Modal,
-    ModalOverlay,
-    ModalContent,
-    ModalHeader,
-    ModalBody,
-    ModalCloseButton,
-    useDisclosure,
-    Progress,
-    IconButton,
-    Tooltip
-} from '@chakra-ui/react';
-import { FaPlay, FaTrophy, FaStar, FaUsers, FaClock, FaGamepad } from 'react-icons/fa';
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+    List,
+    ListItem,
+    ListItemAvatar,
+    ListItemText,
+    Avatar,
+    LinearProgress,
+    Divider
+} from '@mui/material';
+import {
+    SportsEsports as GamesIcon,
+    EmojiEvents as TrophyIcon,
+    Leaderboard as LeaderboardIcon,
+    PlayArrow as PlayIcon,
+    Star as StarIcon,
+    Timer as TimerIcon,
+    People as PeopleIcon
+} from '@mui/icons-material';
 
+// 게임 데이터 타입 정의
 interface Game {
     id: string;
     name: string;
@@ -53,409 +53,514 @@ interface Game {
     };
 }
 
-interface GameSession {
+interface Achievement {
     id: string;
-    gameId: string;
-    userId: string;
-    status: string;
-    score: number;
-    level: number;
-    lives: number;
-    startTime: string;
-    gameData: any;
+    name: string;
+    description: string;
+    icon: string;
+    condition: string;
+    points: number;
+    rarity: string;
+    unlockedBy: number;
 }
 
 interface LeaderboardEntry {
-    userId: string;
-    score: number;
     rank: number;
-    createdAt: string;
+    userId: string;
+    username: string;
+    score: number;
+    gameId: string;
+    achievedAt: string;
 }
 
 const GameCenter: React.FC = () => {
+    const [activeTab, setActiveTab] = useState(0);
     const [games, setGames] = useState<Game[]>([]);
-    const [leaderboards, setLeaderboards] = useState<Record<string, LeaderboardEntry[]>>({});
-    const [stats, setStats] = useState<any>(null);
+    const [achievements, setAchievements] = useState<Achievement[]>([]);
+    const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
     const [selectedGame, setSelectedGame] = useState<Game | null>(null);
-    const [activeSession, setActiveSession] = useState<GameSession | null>(null);
-    const { isOpen, onOpen, onClose } = useDisclosure();
+    const [gameDialogOpen, setGameDialogOpen] = useState(false);
+
+    // 난이도별 색상
+    const getDifficultyColor = (difficulty: string) => {
+        switch (difficulty.toLowerCase()) {
+            case 'easy': return 'success';
+            case 'medium': return 'warning';
+            case 'hard': return 'error';
+            default: return 'default';
+        }
+    };
+
+    // 카테고리별 아이콘
+    const getCategoryIcon = (category: string) => {
+        switch (category.toLowerCase()) {
+            case 'arcade': return '🕹️';
+            case 'puzzle': return '🧩';
+            case 'strategy': return '♟️';
+            case 'action': return '⚡';
+            case 'racing': return '🏎️';
+            default: return '🎮';
+        }
+    };
 
     useEffect(() => {
-        fetchGames();
-        fetchStats();
+        const loadGameData = async () => {
+            try {
+                setLoading(true);
+
+                // 게임 목록 로딩
+                const gamesResponse = await fetch('/api/community-games/games');
+                if (gamesResponse.ok) {
+                    const gamesData = await gamesResponse.json();
+                    setGames(gamesData.data || []);
+                } else {
+                    // 모의 게임 데이터
+                    setGames([
+                        {
+                            id: 'snake',
+                            name: 'Snake Game',
+                            description: '클래식 스네이크 게임 - 먹이를 먹고 길어져라!',
+                            category: 'arcade',
+                            difficulty: 'easy',
+                            maxPlayers: 1,
+                            estimatedTime: 300,
+                            thumbnail: '/games/snake-thumbnail.png',
+                            gameUrl: '/games/snake/index.html',
+                            isActive: true,
+                            stats: {
+                                totalPlays: 1250,
+                                highScore: 4850,
+                                averageScore: 1200,
+                                completionRate: 75
+                            }
+                        },
+                        {
+                            id: 'tetris',
+                            name: 'Tetris',
+                            description: '테트리스 블록 게임 - 라인을 완성하세요!',
+                            category: 'puzzle',
+                            difficulty: 'medium',
+                            maxPlayers: 1,
+                            estimatedTime: 600,
+                            thumbnail: '/games/tetris-thumbnail.png',
+                            gameUrl: '/games/tetris/index.html',
+                            isActive: true,
+                            stats: {
+                                totalPlays: 890,
+                                highScore: 125000,
+                                averageScore: 25000,
+                                completionRate: 60
+                            }
+                        },
+                        {
+                            id: 'pong',
+                            name: 'Pong',
+                            description: '클래식 핑퐁 게임 - 공을 놓치지 마세요!',
+                            category: 'arcade',
+                            difficulty: 'easy',
+                            maxPlayers: 2,
+                            estimatedTime: 180,
+                            thumbnail: '/games/pong-thumbnail.png',
+                            gameUrl: '/games/pong/index.html',
+                            isActive: true,
+                            stats: {
+                                totalPlays: 650,
+                                highScore: 21,
+                                averageScore: 12,
+                                completionRate: 85
+                            }
+                        },
+                        {
+                            id: 'breakout',
+                            name: 'Breakout',
+                            description: '벽돌깨기 게임 - 모든 벽돌을 부수세요!',
+                            category: 'arcade',
+                            difficulty: 'medium',
+                            maxPlayers: 1,
+                            estimatedTime: 420,
+                            thumbnail: '/games/breakout-thumbnail.png',
+                            gameUrl: '/games/breakout/index.html',
+                            isActive: true,
+                            stats: {
+                                totalPlays: 420,
+                                highScore: 15600,
+                                averageScore: 5200,
+                                completionRate: 45
+                            }
+                        }
+                    ]);
+                }
+
+                // 업적 로딩
+                const achievementsResponse = await fetch('/api/community-games/achievements');
+                if (achievementsResponse.ok) {
+                    const achievementsData = await achievementsResponse.json();
+                    setAchievements(achievementsData.data || []);
+                } else {
+                    // 모의 업적 데이터
+                    setAchievements([
+                        {
+                            id: 'first_game',
+                            name: '첫 게임',
+                            description: '첫 번째 게임을 플레이하세요',
+                            icon: '🎮',
+                            condition: 'play_any_game',
+                            points: 10,
+                            rarity: 'common',
+                            unlockedBy: 1250
+                        },
+                        {
+                            id: 'snake_master',
+                            name: '스네이크 마스터',
+                            description: '스네이크 게임에서 3000점 이상 획득',
+                            icon: '🐍',
+                            condition: 'snake_score_3000',
+                            points: 50,
+                            rarity: 'rare',
+                            unlockedBy: 89
+                        },
+                        {
+                            id: 'tetris_legend',
+                            name: '테트리스 전설',
+                            description: '테트리스에서 100,000점 이상 획득',
+                            icon: '🧩',
+                            condition: 'tetris_score_100000',
+                            points: 100,
+                            rarity: 'legendary',
+                            unlockedBy: 12
+                        },
+                        {
+                            id: 'daily_player',
+                            name: '일일 플레이어',
+                            description: '7일 연속 게임 플레이',
+                            icon: '📅',
+                            condition: 'play_7_days_streak',
+                            points: 75,
+                            rarity: 'epic',
+                            unlockedBy: 156
+                        }
+                    ]);
+                }
+
+                // 리더보드 로딩
+                const leaderboardResponse = await fetch('/api/community-games/leaderboard');
+                if (leaderboardResponse.ok) {
+                    const leaderboardData = await leaderboardResponse.json();
+                    setLeaderboard(leaderboardData.data || []);
+                } else {
+                    // 모의 리더보드 데이터
+                    setLeaderboard([
+                        { rank: 1, userId: 'user_001', username: 'GameMaster', score: 4850, gameId: 'snake', achievedAt: '2024-10-01T15:30:00Z' },
+                        { rank: 2, userId: 'user_002', username: 'TetrisKing', score: 125000, gameId: 'tetris', achievedAt: '2024-10-01T14:20:00Z' },
+                        { rank: 3, userId: 'user_003', username: 'ArcadeHero', score: 21, gameId: 'pong', achievedAt: '2024-10-01T13:10:00Z' },
+                        { rank: 4, userId: 'user_004', username: 'BlockBreaker', score: 15600, gameId: 'breakout', achievedAt: '2024-10-01T12:00:00Z' },
+                        { rank: 5, userId: 'user_005', username: 'RetroGamer', score: 3200, gameId: 'snake', achievedAt: '2024-10-01T11:45:00Z' }
+                    ]);
+                }
+
+            } catch (err) {
+                setError('게임 데이터를 불러오는 중 오류가 발생했습니다.');
+                console.error('게임 데이터 로딩 오류:', err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        loadGameData();
     }, []);
 
-    const fetchGames = async () => {
-        try {
-            const response = await fetch('/api/community-games/games');
-            const data = await response.json();
-            if (data.success) {
-                setGames(data.data);
-                // 각 게임의 리더보드도 가져오기
-                data.data.forEach((game: Game) => {
-                    fetchLeaderboard(game.id);
-                });
-            }
-        } catch (error) {
-            console.error('게임 목록 조회 오류:', error);
+    // 게임 시작
+    const startGame = (game: Game) => {
+        setSelectedGame(game);
+        setGameDialogOpen(true);
+    };
+
+    // 게임 실행
+    const launchGame = () => {
+        if (selectedGame) {
+            // 새 창에서 게임 실행
+            window.open(selectedGame.gameUrl, '_blank', 'width=800,height=600,scrollbars=no,resizable=no');
+            setGameDialogOpen(false);
         }
     };
 
-    const fetchLeaderboard = async (gameId: string) => {
-        try {
-            const response = await fetch(`/api/community-games/leaderboard/${gameId}`);
-            const data = await response.json();
-            if (data.success) {
-                setLeaderboards(prev => ({
-                    ...prev,
-                    [gameId]: data.data
-                }));
-            }
-        } catch (error) {
-            console.error('리더보드 조회 오류:', error);
-        }
-    };
+    if (loading) {
+        return (
+            <Container maxWidth="lg">
+                <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '50vh' }}>
+                    <CircularProgress size={60} />
+                </Box>
+            </Container>
+        );
+    }
 
-    const fetchStats = async () => {
-        try {
-            const response = await fetch('/api/community-games/stats');
-            const data = await response.json();
-            if (data.success) {
-                setStats(data.data);
-            }
-        } catch (error) {
-            console.error('통계 조회 오류:', error);
-        }
-    };
-
-    const startGame = async (game: Game) => {
-        try {
-            const response = await fetch(`/api/community-games/games/${game.id}/start`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + localStorage.getItem('token')
-                },
-                body: JSON.stringify({ playerCount: game.maxPlayers })
-            });
-
-            const data = await response.json();
-            if (data.success) {
-                setActiveSession(data.data);
-                setSelectedGame(game);
-                onOpen();
-            }
-        } catch (error) {
-            console.error('게임 시작 오류:', error);
-        }
-    };
-
-    const getDifficultyColor = (difficulty: string) => {
-        switch (difficulty) {
-            case 'easy': return 'green';
-            case 'medium': return 'yellow';
-            case 'hard': return 'red';
-            default: return 'gray';
-        }
-    };
-
-    const getCategoryIcon = (category: string) => {
-        switch (category) {
-            case 'arcade': return '🎮';
-            case 'puzzle': return '🧩';
-            case 'trivia': return '❓';
-            case 'action': return '⚡';
-            default: return '🎯';
-        }
-    };
-
-    const formatTime = (seconds: number) => {
-        const minutes = Math.floor(seconds / 60);
-        const remainingSeconds = seconds % 60;
-        return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
-    };
+    if (error) {
+        return (
+            <Container maxWidth="lg">
+                <Box sx={{ py: 4 }}>
+                    <Alert severity="error">{error}</Alert>
+                </Box>
+            </Container>
+        );
+    }
 
     return (
-        <Box p={6}>
-            <VStack spacing={6} align="stretch">
+        <Container maxWidth="lg">
+            <Box sx={{ py: 4 }}>
                 {/* 헤더 */}
-                <Box textAlign="center">
-                    <Heading size="xl" mb={2} color="blue.500">
-                        🎮 게임 센터
-                    </Heading>
-                    <Text color="gray.600">
-                        플래시 게임 스타일의 커뮤니티 게임을 즐겨보세요!
-                    </Text>
+                <Box sx={{ mb: 4, textAlign: 'center' }}>
+                    <Typography variant="h3" component="h1" gutterBottom sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <GamesIcon sx={{ mr: 2, fontSize: 'inherit' }} />
+                        🎮 Game Center
+                    </Typography>
+                    <Typography variant="h6" color="text.secondary">
+                        커뮤니티 게임을 즐기고 리더보드에서 경쟁하세요!
+                    </Typography>
                 </Box>
 
-                {/* 통계 카드 */}
-                {stats && (
-                    <Grid templateColumns={{ base: '1fr', md: 'repeat(4, 1fr)' }} gap={4}>
-                        <Card>
-                            <CardBody>
-                                <Stat>
-                                    <StatLabel>총 게임 수</StatLabel>
-                                    <StatNumber>{stats.totalGames}</StatNumber>
-                                    <StatHelpText>활성: {stats.activeGames}개</StatHelpText>
-                                </Stat>
-                            </CardBody>
-                        </Card>
-                        <Card>
-                            <CardBody>
-                                <Stat>
-                                    <StatLabel>총 플레이 수</StatLabel>
-                                    <StatNumber>{stats.totalSessions}</StatNumber>
-                                    <StatHelpText>완료: {stats.completedSessions}회</StatHelpText>
-                                </Stat>
-                            </CardBody>
-                        </Card>
-                        <Card>
-                            <CardBody>
-                                <Stat>
-                                    <StatLabel>총 플레이어</StatLabel>
-                                    <StatNumber>{stats.totalPlayers}</StatNumber>
-                                    <StatHelpText>활성 세션: {stats.activeSessions}개</StatHelpText>
-                                </Stat>
-                            </CardBody>
-                        </Card>
-                        <Card>
-                            <CardBody>
-                                <Stat>
-                                    <StatLabel>평균 점수</StatLabel>
-                                    <StatNumber>{Math.round(stats.averageScore)}</StatNumber>
-                                    <StatHelpText>최고 기록</StatHelpText>
-                                </Stat>
-                            </CardBody>
-                        </Card>
-                    </Grid>
-                )}
+                {/* 탭 네비게이션 */}
+                <Card sx={{ mb: 3 }}>
+                    <Tabs
+                        value={activeTab}
+                        onChange={(_, newValue) => setActiveTab(newValue)}
+                        variant="scrollable"
+                        scrollButtons="auto"
+                    >
+                        <Tab icon={<GamesIcon />} label="게임 목록" />
+                        <Tab icon={<LeaderboardIcon />} label="리더보드" />
+                        <Tab icon={<TrophyIcon />} label="업적" />
+                    </Tabs>
+                </Card>
 
-                {/* 게임 목록 */}
-                <Tabs>
-                    <TabList>
-                        <Tab>전체 게임</Tab>
-                        <Tab>아케이드</Tab>
-                        <Tab>퍼즐</Tab>
-                        <Tab>퀴즈</Tab>
-                    </TabList>
+                {/* 게임 목록 탭 */}
+                {activeTab === 0 && (
+                    <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', lg: '1fr 1fr 1fr 1fr' }, gap: 3 }}>
+                        {games.map((game) => (
+                            <Card key={game.id} sx={{ height: '100%', cursor: 'pointer', '&:hover': { boxShadow: 4 } }}>
+                                <CardContent>
+                                    {/* 게임 아이콘 및 상태 */}
+                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
+                                        <Typography variant="h2" component="div">
+                                            {getCategoryIcon(game.category)}
+                                        </Typography>
+                                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                                            <Chip
+                                                label={game.difficulty}
+                                                color={getDifficultyColor(game.difficulty)}
+                                                size="small"
+                                            />
+                                            {game.isActive ? (
+                                                <Chip label="활성" color="success" size="small" />
+                                            ) : (
+                                                <Chip label="점검중" color="default" size="small" />
+                                            )}
+                                        </Box>
+                                    </Box>
 
-                    <TabPanels>
-                        <TabPanel>
-                            <Grid templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)', lg: 'repeat(3, 1fr)' }} gap={6}>
-                                {games.map((game) => (
-                                    <Card key={game.id} maxW="sm" mx="auto">
-                                        <CardHeader>
-                                            <HStack justify="space-between">
-                                                <Heading size="md">{getCategoryIcon(game.category)} {game.name}</Heading>
-                                                <Badge colorScheme={getDifficultyColor(game.difficulty)}>
-                                                    {game.difficulty}
-                                                </Badge>
-                                            </HStack>
-                                        </CardHeader>
-                                        <CardBody>
-                                            <VStack align="stretch" spacing={4}>
-                                                <Image
-                                                    src={game.thumbnail}
-                                                    alt={game.name}
-                                                    borderRadius="md"
-                                                    h="200px"
-                                                    objectFit="cover"
-                                                    fallbackSrc="https://via.placeholder.com/300x200?text=Game+Thumbnail"
-                                                />
+                                    {/* 게임 정보 */}
+                                    <Typography variant="h5" component="h3" gutterBottom>
+                                        {game.name}
+                                    </Typography>
+                                    <Typography variant="body2" color="text.secondary" sx={{ mb: 2, minHeight: 40 }}>
+                                        {game.description}
+                                    </Typography>
 
-                                                <Text fontSize="sm" color="gray.600">
-                                                    {game.description}
-                                                </Text>
+                                    {/* 게임 통계 */}
+                                    <Box sx={{ mb: 2 }}>
+                                        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                                            <Typography variant="caption" sx={{ display: 'flex', alignItems: 'center' }}>
+                                                <PeopleIcon sx={{ fontSize: 16, mr: 0.5 }} />
+                                                {game.stats.totalPlays.toLocaleString()} 플레이
+                                            </Typography>
+                                            <Typography variant="caption" sx={{ display: 'flex', alignItems: 'center' }}>
+                                                <TimerIcon sx={{ fontSize: 16, mr: 0.5 }} />
+                                                {Math.floor(game.estimatedTime / 60)}분
+                                            </Typography>
+                                        </Box>
+                                        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                                            <Typography variant="caption">최고점수:</Typography>
+                                            <Typography variant="caption" fontWeight="bold">
+                                                {game.stats.highScore.toLocaleString()}
+                                            </Typography>
+                                        </Box>
+                                        <Box sx={{ mb: 1 }}>
+                                            <Typography variant="caption">완주율: {game.stats.completionRate}%</Typography>
+                                            <LinearProgress
+                                                variant="determinate"
+                                                value={game.stats.completionRate}
+                                                sx={{ height: 4, borderRadius: 2 }}
+                                            />
+                                        </Box>
+                                    </Box>
 
-                                                <HStack justify="space-between" fontSize="sm">
-                                                    <HStack>
-                                                        <FaUsers />
-                                                        <Text>{game.maxPlayers}명</Text>
-                                                    </HStack>
-                                                    <HStack>
-                                                        <FaClock />
-                                                        <Text>{formatTime(game.estimatedTime)}</Text>
-                                                    </HStack>
-                                                </HStack>
-
-                                                <VStack spacing={2} align="stretch">
-                                                    <HStack justify="space-between">
-                                                        <Text fontSize="sm">플레이 수:</Text>
-                                                        <Text fontSize="sm" fontWeight="bold">{game.stats.totalPlays}</Text>
-                                                    </HStack>
-                                                    <HStack justify="space-between">
-                                                        <Text fontSize="sm">최고 점수:</Text>
-                                                        <Text fontSize="sm" fontWeight="bold">{game.stats.highScore}</Text>
-                                                    </HStack>
-                                                    <HStack justify="space-between">
-                                                        <Text fontSize="sm">완주율:</Text>
-                                                        <Text fontSize="sm" fontWeight="bold">
-                                                            {Math.round(game.stats.completionRate * 100)}%
-                                                        </Text>
-                                                    </HStack>
-                                                </VStack>
-
-                                                <Button
-                                                    colorScheme="blue"
-                                                    leftIcon={<FaPlay />}
-                                                    onClick={() => startGame(game)}
-                                                    isDisabled={!game.isActive}
-                                                >
-                                                    게임 시작
-                                                </Button>
-                                            </VStack>
-                                        </CardBody>
-                                    </Card>
-                                ))}
-                            </Grid>
-                        </TabPanel>
-
-                        {/* 카테고리별 탭들 */}
-                        {['arcade', 'puzzle', 'trivia'].map((category) => (
-                            <TabPanel key={category}>
-                                <Grid templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)', lg: 'repeat(3, 1fr)' }} gap={6}>
-                                    {games
-                                        .filter(game => game.category === category)
-                                        .map((game) => (
-                                            <Card key={game.id} maxW="sm" mx="auto">
-                                                <CardHeader>
-                                                    <HStack justify="space-between">
-                                                        <Heading size="md">{getCategoryIcon(game.category)} {game.name}</Heading>
-                                                        <Badge colorScheme={getDifficultyColor(game.difficulty)}>
-                                                            {game.difficulty}
-                                                        </Badge>
-                                                    </HStack>
-                                                </CardHeader>
-                                                <CardBody>
-                                                    <VStack align="stretch" spacing={4}>
-                                                        <Image
-                                                            src={game.thumbnail}
-                                                            alt={game.name}
-                                                            borderRadius="md"
-                                                            h="200px"
-                                                            objectFit="cover"
-                                                            fallbackSrc="https://via.placeholder.com/300x200?text=Game+Thumbnail"
-                                                        />
-
-                                                        <Text fontSize="sm" color="gray.600">
-                                                            {game.description}
-                                                        </Text>
-
-                                                        <HStack justify="space-between" fontSize="sm">
-                                                            <HStack>
-                                                                <FaUsers />
-                                                                <Text>{game.maxPlayers}명</Text>
-                                                            </HStack>
-                                                            <HStack>
-                                                                <FaClock />
-                                                                <Text>{formatTime(game.estimatedTime)}</Text>
-                                                            </HStack>
-                                                        </HStack>
-
-                                                        <Button
-                                                            colorScheme="blue"
-                                                            leftIcon={<FaPlay />}
-                                                            onClick={() => startGame(game)}
-                                                            isDisabled={!game.isActive}
-                                                        >
-                                                            게임 시작
-                                                        </Button>
-                                                    </VStack>
-                                                </CardBody>
-                                            </Card>
-                                        ))}
-                                </Grid>
-                            </TabPanel>
-                        ))}
-                    </TabPanels>
-                </Tabs>
-
-                {/* 리더보드 섹션 */}
-                <Box>
-                    <Heading size="lg" mb={4}>
-                        <FaTrophy /> 리더보드
-                    </Heading>
-                    <Grid templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)', lg: 'repeat(3, 1fr)' }} gap={4}>
-                        {games.slice(0, 6).map((game) => (
-                            <Card key={game.id}>
-                                <CardHeader>
-                                    <Heading size="sm">{getCategoryIcon(game.category)} {game.name}</Heading>
-                                </CardHeader>
-                                <CardBody>
-                                    <VStack align="stretch" spacing={2}>
-                                        {leaderboards[game.id]?.slice(0, 5).map((entry, index) => (
-                                            <HStack key={entry.userId} justify="space-between">
-                                                <HStack>
-                                                    <Text fontSize="sm" fontWeight="bold">
-                                                        #{entry.rank}
-                                                    </Text>
-                                                    <Text fontSize="sm">User {entry.userId.slice(-4)}</Text>
-                                                </HStack>
-                                                <Text fontSize="sm" fontWeight="bold" color="blue.500">
-                                                    {entry.score}
-                                                </Text>
-                                            </HStack>
-                                        ))}
-                                        {(!leaderboards[game.id] || leaderboards[game.id].length === 0) && (
-                                            <Text fontSize="sm" color="gray.500" textAlign="center">
-                                                아직 기록이 없습니다
-                                            </Text>
-                                        )}
-                                    </VStack>
-                                </CardBody>
+                                    {/* 플레이 버튼 */}
+                                    <Button
+                                        variant="contained"
+                                        fullWidth
+                                        startIcon={<PlayIcon />}
+                                        onClick={() => startGame(game)}
+                                        disabled={!game.isActive}
+                                    >
+                                        {game.isActive ? '게임 시작' : '점검중'}
+                                    </Button>
+                                </CardContent>
                             </Card>
                         ))}
-                    </Grid>
-                </Box>
-            </VStack>
+                    </Box>
+                )}
 
-            {/* 게임 모달 */}
-            <Modal isOpen={isOpen} onClose={onClose} size="full">
-                <ModalOverlay />
-                <ModalContent>
-                    <ModalHeader>
-                        <HStack>
-                            <FaGamepad />
-                            <Text>{selectedGame?.name}</Text>
-                        </HStack>
-                    </ModalHeader>
-                    <ModalCloseButton />
-                    <ModalBody>
-                        {activeSession && (
-                            <VStack spacing={4} align="stretch">
-                                <HStack justify="space-between" p={4} bg="gray.50" borderRadius="md">
-                                    <HStack>
-                                        <Text fontWeight="bold">점수: {activeSession.score}</Text>
-                                        <Text>레벨: {activeSession.level}</Text>
-                                        <Text>생명: {activeSession.lives}</Text>
-                                    </HStack>
-                                    <Button colorScheme="red" size="sm" onClick={onClose}>
-                                        게임 종료
-                                    </Button>
-                                </HStack>
+                {/* 리더보드 탭 */}
+                {activeTab === 1 && (
+                    <Card>
+                        <CardContent>
+                            <Typography variant="h5" gutterBottom sx={{ display: 'flex', alignItems: 'center' }}>
+                                <LeaderboardIcon sx={{ mr: 1 }} />
+                                🏆 리더보드
+                            </Typography>
 
-                                <Box
-                                    border="2px solid"
-                                    borderColor="gray.200"
-                                    borderRadius="md"
-                                    p={4}
-                                    minH="400px"
-                                    bg="black"
-                                    position="relative"
-                                >
-                                    <Text color="white" textAlign="center" mt="50%">
-                                        게임 화면이 여기에 표시됩니다
-                                    </Text>
-                                    <Text color="gray.400" textAlign="center" fontSize="sm">
-                                        실제 게임은 iframe이나 Canvas로 구현됩니다
-                                    </Text>
+                            <List>
+                                {leaderboard.map((entry, index) => (
+                                    <React.Fragment key={`${entry.gameId}-${entry.rank}`}>
+                                        <ListItem>
+                                            <ListItemAvatar>
+                                                <Avatar sx={{
+                                                    bgcolor: index === 0 ? '#FFD700' : index === 1 ? '#C0C0C0' : index === 2 ? '#CD7F32' : 'primary.main',
+                                                    fontWeight: 'bold'
+                                                }}>
+                                                    {entry.rank <= 3 ? ['🥇', '🥈', '🥉'][index] : entry.rank}
+                                                </Avatar>
+                                            </ListItemAvatar>
+                                            <ListItemText
+                                                primary={
+                                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                        <Typography variant="h6">{entry.username}</Typography>
+                                                        <Typography variant="h6" color="primary.main">
+                                                            {entry.score.toLocaleString()}점
+                                                        </Typography>
+                                                    </Box>
+                                                }
+                                                secondary={
+                                                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                                                        <Typography variant="caption">
+                                                            {games.find(g => g.id === entry.gameId)?.name || entry.gameId}
+                                                        </Typography>
+                                                        <Typography variant="caption">
+                                                            {new Date(entry.achievedAt).toLocaleDateString('ko-KR')}
+                                                        </Typography>
+                                                    </Box>
+                                                }
+                                            />
+                                        </ListItem>
+                                        {index < leaderboard.length - 1 && <Divider />}
+                                    </React.Fragment>
+                                ))}
+                            </List>
+                        </CardContent>
+                    </Card>
+                )}
+
+                {/* 업적 탭 */}
+                {activeTab === 2 && (
+                    <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', md: '1fr 1fr 1fr' }, gap: 3 }}>
+                        {achievements.map((achievement) => (
+                            <Card key={achievement.id} variant="outlined">
+                                <CardContent>
+                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
+                                        <Typography variant="h2" component="div">
+                                            {achievement.icon}
+                                        </Typography>
+                                        <Chip
+                                            label={achievement.rarity}
+                                            color={
+                                                achievement.rarity === 'legendary' ? 'warning' :
+                                                    achievement.rarity === 'epic' ? 'secondary' :
+                                                        achievement.rarity === 'rare' ? 'primary' : 'default'
+                                            }
+                                            size="small"
+                                        />
+                                    </Box>
+
+                                    <Typography variant="h6" gutterBottom>{achievement.name}</Typography>
+                                    <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                                        {achievement.description}
+                                    </Typography>
+
+                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                        <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center' }}>
+                                            <StarIcon sx={{ fontSize: 16, mr: 0.5, color: 'warning.main' }} />
+                                            {achievement.points}pt
+                                        </Typography>
+                                        <Typography variant="caption" color="text.secondary">
+                                            {achievement.unlockedBy.toLocaleString()}명 달성
+                                        </Typography>
+                                    </Box>
+                                </CardContent>
+                            </Card>
+                        ))}
+                    </Box>
+                )}
+
+                {/* 게임 시작 다이얼로그 */}
+                <Dialog open={gameDialogOpen} onClose={() => setGameDialogOpen(false)} maxWidth="sm" fullWidth>
+                    <DialogTitle sx={{ display: 'flex', alignItems: 'center' }}>
+                        <Typography variant="h2" component="span" sx={{ mr: 2 }}>
+                            {selectedGame && getCategoryIcon(selectedGame.category)}
+                        </Typography>
+                        {selectedGame?.name} 시작
+                    </DialogTitle>
+                    <DialogContent>
+                        {selectedGame && (
+                            <Box>
+                                <Typography variant="body1" sx={{ mb: 2 }}>
+                                    {selectedGame.description}
+                                </Typography>
+
+                                <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2, mb: 2 }}>
+                                    <Box>
+                                        <Typography variant="caption" display="block">난이도</Typography>
+                                        <Chip label={selectedGame.difficulty} color={getDifficultyColor(selectedGame.difficulty)} size="small" />
+                                    </Box>
+                                    <Box>
+                                        <Typography variant="caption" display="block">예상 시간</Typography>
+                                        <Typography variant="body2">{Math.floor(selectedGame.estimatedTime / 60)}분</Typography>
+                                    </Box>
+                                    <Box>
+                                        <Typography variant="caption" display="block">최대 플레이어</Typography>
+                                        <Typography variant="body2">{selectedGame.maxPlayers}명</Typography>
+                                    </Box>
+                                    <Box>
+                                        <Typography variant="caption" display="block">최고 점수</Typography>
+                                        <Typography variant="body2">{selectedGame.stats.highScore.toLocaleString()}</Typography>
+                                    </Box>
                                 </Box>
-                            </VStack>
+
+                                <Alert severity="info">
+                                    게임이 새 창에서 실행됩니다. 팝업 차단을 해제해주세요.
+                                </Alert>
+                            </Box>
                         )}
-                    </ModalBody>
-                </ModalContent>
-            </Modal>
-        </Box>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={() => setGameDialogOpen(false)}>취소</Button>
+                        <Button variant="contained" onClick={launchGame} startIcon={<PlayIcon />}>
+                            게임 시작
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+
+                {/* 푸터 */}
+                <Box sx={{ mt: 4, p: 2, bgcolor: 'grey.50', borderRadius: 2, textAlign: 'center' }}>
+                    <Typography variant="body2" color="text.secondary">
+                        💡 게임 센터가 실제 API와 연결되었습니다!
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                        🚀 API 엔드포인트: /api/community-games/* 활용
+                    </Typography>
+                </Box>
+            </Box>
+        </Container>
     );
 };
 

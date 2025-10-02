@@ -1,4 +1,4 @@
-﻿import { incMetric, runtimeMetrics } from './metrics-state.js';
+import { incMetric, runtimeMetrics } from './metrics-state.js';
 import logger from './logger.js';
 
 const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
