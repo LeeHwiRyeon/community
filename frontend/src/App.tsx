@@ -25,6 +25,8 @@ import TodoManagement from './pages/TodoManagement';
 import VotingManagement from './pages/VotingManagement';
 import BoardDetail from './pages/BoardDetail';
 import PostDetail from './pages/PostDetail';
+import CosplayShop from './pages/CosplayShop';
+import StreamingStation from './pages/StreamingStation';
 import NotFound from './pages/NotFound';
 
 // Components
@@ -130,6 +132,10 @@ const App: React.FC = () => {
                             <Route path="/monitoring" element={<MonitoringDashboard />} />
                             <Route path="/todos" element={<TodoManagement />} />
                             <Route path="/voting" element={<VotingManagement />} />
+
+                            {/* Feature Routes */}
+                            <Route path="/cosplay" element={<CosplayShop />} />
+                            <Route path="/streaming" element={<StreamingStation />} />
 
                             {/* 404 */}
                             <Route path="/404" element={<NotFound />} />

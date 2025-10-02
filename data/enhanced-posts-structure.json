@@ -1,0 +1,503 @@
+{
+    "enhanced_posts_schema": {
+        "version": "2.0.0",
+        "description": "AI 기반 컨텐츠 분석을 지원하는 향상된 포스트 데이터 구조",
+        "created_at": "2025-10-02T00:00:00Z",
+        "author": "AUTOAGENTS Manager"
+    },
+    "sample_posts": [
+        {
+            "id": "enhanced_post_001",
+            "title": "🚀 Community Platform v1.1 - AI 기반 컨텐츠 분석 시스템 도입",
+            "content": "안녕하세요! 커뮤니티 플랫폼에 혁신적인 AI 기반 컨텐츠 분석 시스템을 도입했습니다.\n\n## 주요 기능\n\n### 1. 감정 분석\n- 긍정/부정/중립 감정 자동 분석\n- 5가지 세부 감정 스코어 제공\n- 실시간 감정 변화 추적\n\n### 2. 품질 분석\n- 제목, 내용, 구조 종합 평가\n- 가독성 및 정보 밀도 분석\n- 참여도 예측 모델\n\n### 3. 개인화 추천\n- 사용자 관심사 기반 맞춤 추천\n- 5차원 점수 계산 시스템\n- 실시간 피드백 학습\n\n이 시스템을 통해 더욱 정확하고 개인화된 컨텐츠 경험을 제공할 수 있게 되었습니다!",
+            "excerpt": "Community Platform v1.1에 도입된 AI 기반 컨텐츠 분석 시스템의 주요 기능과 혁신적인 개인화 추천 시스템을 소개합니다.",
+            "slug": "ai-content-analysis-system-introduction",
+            "author": {
+                "id": "user_autoagents_manager",
+                "name": "AUTOAGENTS Manager",
+                "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=autoagents",
+                "level": 10,
+                "badges": [
+                    "AI 전문가",
+                    "시스템 아키텍트",
+                    "혁신 리더"
+                ],
+                "verified": true,
+                "reputation": 95
+            },
+            "metadata": {
+                "created_at": "2025-10-02T12:00:00Z",
+                "updated_at": "2025-10-02T12:30:00Z",
+                "published_at": "2025-10-02T12:00:00Z",
+                "status": "published",
+                "visibility": "public"
+            },
+            "engagement": {
+                "views": 1247,
+                "likes": 89,
+                "dislikes": 2,
+                "comments": 23,
+                "shares": 15,
+                "bookmarks": 34,
+                "reactions": {
+                    "like": 45,
+                    "love": 28,
+                    "wow": 12,
+                    "laugh": 3,
+                    "sad": 1,
+                    "angry": 0
+                }
+            },
+            "content_analysis": {
+                "reading_time": 3,
+                "sentiment": "positive",
+                "sentiment_score": 0.78,
+                "topics": [
+                    "AI",
+                    "기술",
+                    "혁신",
+                    "개발"
+                ],
+                "keywords": [
+                    {
+                        "word": "AI",
+                        "frequency": 8,
+                        "relevance": 0.95
+                    },
+                    {
+                        "word": "분석",
+                        "frequency": 6,
+                        "relevance": 0.88
+                    },
+                    {
+                        "word": "시스템",
+                        "frequency": 5,
+                        "relevance": 0.82
+                    },
+                    {
+                        "word": "개인화",
+                        "frequency": 4,
+                        "relevance": 0.79
+                    }
+                ],
+                "difficulty": "intermediate",
+                "quality_score": 0.92,
+                "engagement_potential": 0.87,
+                "emotions": {
+                    "joy": 0.65,
+                    "surprise": 0.23,
+                    "trust": 0.78,
+                    "anticipation": 0.45,
+                    "anger": 0.02
+                }
+            },
+            "multimedia": {
+                "thumbnail": "https://picsum.photos/seed/ai-system/800/400",
+                "images": [
+                    "https://picsum.photos/seed/ai-dashboard/1200/600",
+                    "https://picsum.photos/seed/analytics/800/500"
+                ],
+                "videos": [],
+                "audio": [],
+                "attachments": [
+                    {
+                        "name": "AI_분석_시스템_가이드.pdf",
+                        "url": "/attachments/ai-guide.pdf",
+                        "size": 2048576,
+                        "type": "application/pdf"
+                    }
+                ]
+            },
+            "categorization": {
+                "board": "tech",
+                "category": "AI/ML",
+                "subcategory": "컨텐츠 분석",
+                "tags": [
+                    "AI",
+                    "머신러닝",
+                    "컨텐츠분석",
+                    "개인화",
+                    "추천시스템"
+                ],
+                "priority": "high"
+            },
+            "interaction": {
+                "allow_comments": true,
+                "allow_voting": true,
+                "allow_sharing": true,
+                "moderation_required": false
+            },
+            "personalization": {
+                "relevance_score": 0.89,
+                "recommendation_reason": "AI 기술 관심사 완벽 일치",
+                "user_interest_match": 0.92,
+                "trending_score": 0.76
+            },
+            "realtime": {
+                "live_viewers": 12,
+                "recent_activity": [
+                    "새 댓글 3개",
+                    "좋아요 +5",
+                    "공유 +2"
+                ],
+                "hot_comments": 5,
+                "viral_potential": 0.68
+            },
+            "seo": {
+                "meta_title": "AI 기반 컨텐츠 분석 시스템 도입 - Community Platform v1.1",
+                "meta_description": "혁신적인 AI 기술로 컨텐츠 품질을 분석하고 개인화된 추천을 제공하는 새로운 시스템을 소개합니다.",
+                "canonical_url": "https://community.example.com/posts/ai-content-analysis-system-introduction"
+            }
+        },
+        {
+            "id": "enhanced_post_002",
+            "title": "🎮 게임 커뮤니티 리더보드 시스템 완전 개편",
+            "content": "게임 커뮤니티의 경쟁적인 환경을 조성하기 위해 리더보드 시스템을 완전히 개편했습니다!\n\n## 새로운 기능들\n\n### 실시간 순위 업데이트\n- 게임 결과 즉시 반영\n- 라이브 순위 변동 알림\n- 시즌별 순위 관리\n\n### 다양한 게임 지원\n- 스네이크 게임\n- 테트리스\n- 퐁 (Pong)\n- 벽돌깨기\n\n### 성취 시스템\n- 개인 기록 달성 배지\n- 연속 승리 스트릭\n- 특별 이벤트 참여 보상\n\n게이머 여러분의 많은 참여 부탁드립니다! 🏆",
+            "excerpt": "실시간 순위 시스템과 다양한 게임, 성취 시스템을 포함한 새로운 게임 커뮤니티 리더보드가 출시되었습니다.",
+            "slug": "game-leaderboard-system-renewal",
+            "author": {
+                "id": "user_game_developer",
+                "name": "Game Developer",
+                "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=gamedev",
+                "level": 8,
+                "badges": [
+                    "게임 개발자",
+                    "리더보드 마스터"
+                ],
+                "verified": true,
+                "reputation": 87
+            },
+            "metadata": {
+                "created_at": "2025-10-02T10:30:00Z",
+                "updated_at": "2025-10-02T11:00:00Z",
+                "published_at": "2025-10-02T10:30:00Z",
+                "status": "published",
+                "visibility": "public"
+            },
+            "engagement": {
+                "views": 892,
+                "likes": 156,
+                "dislikes": 8,
+                "comments": 47,
+                "shares": 23,
+                "bookmarks": 67,
+                "reactions": {
+                    "like": 89,
+                    "love": 34,
+                    "wow": 18,
+                    "laugh": 12,
+                    "sad": 2,
+                    "angry": 1
+                }
+            },
+            "content_analysis": {
+                "reading_time": 2,
+                "sentiment": "positive",
+                "sentiment_score": 0.82,
+                "topics": [
+                    "게임",
+                    "커뮤니티",
+                    "경쟁",
+                    "시스템"
+                ],
+                "keywords": [
+                    {
+                        "word": "게임",
+                        "frequency": 7,
+                        "relevance": 0.92
+                    },
+                    {
+                        "word": "리더보드",
+                        "frequency": 5,
+                        "relevance": 0.89
+                    },
+                    {
+                        "word": "순위",
+                        "frequency": 4,
+                        "relevance": 0.85
+                    },
+                    {
+                        "word": "실시간",
+                        "frequency": 3,
+                        "relevance": 0.78
+                    }
+                ],
+                "difficulty": "beginner",
+                "quality_score": 0.78,
+                "engagement_potential": 0.91,
+                "emotions": {
+                    "joy": 0.72,
+                    "excitement": 0.68,
+                    "anticipation": 0.55,
+                    "trust": 0.62,
+                    "surprise": 0.15
+                }
+            },
+            "multimedia": {
+                "thumbnail": "https://picsum.photos/seed/game-leaderboard/800/400",
+                "images": [
+                    "https://picsum.photos/seed/leaderboard-ui/1200/800",
+                    "https://picsum.photos/seed/game-stats/800/600"
+                ],
+                "videos": [
+                    {
+                        "url": "https://example.com/videos/leaderboard-demo.mp4",
+                        "thumbnail": "https://picsum.photos/seed/video-thumb/400/300",
+                        "duration": 120
+                    }
+                ],
+                "audio": [],
+                "attachments": []
+            },
+            "categorization": {
+                "board": "games",
+                "category": "시스템",
+                "subcategory": "리더보드",
+                "tags": [
+                    "게임",
+                    "리더보드",
+                    "순위",
+                    "경쟁",
+                    "실시간"
+                ],
+                "priority": "medium"
+            },
+            "interaction": {
+                "allow_comments": true,
+                "allow_voting": true,
+                "allow_sharing": true,
+                "moderation_required": false
+            },
+            "personalization": {
+                "relevance_score": 0.73,
+                "recommendation_reason": "게임 관심사 일치",
+                "user_interest_match": 0.78,
+                "trending_score": 0.84
+            },
+            "realtime": {
+                "live_viewers": 8,
+                "recent_activity": [
+                    "새 댓글 2개",
+                    "좋아요 +12"
+                ],
+                "hot_comments": 3,
+                "viral_potential": 0.45
+            },
+            "seo": {
+                "meta_title": "게임 커뮤니티 리더보드 시스템 완전 개편 - 실시간 순위와 성취 시스템",
+                "meta_description": "실시간 순위 업데이트, 다양한 게임 지원, 성취 시스템을 포함한 새로운 게임 리더보드를 만나보세요.",
+                "canonical_url": "https://community.example.com/posts/game-leaderboard-system-renewal"
+            }
+        },
+        {
+            "id": "enhanced_post_003",
+            "title": "📺 스트리밍 플랫폼 연동 기능 개발 완료",
+            "content": "스트리머와 시청자 간의 소통을 강화하기 위한 스트리밍 플랫폼 연동 기능이 완성되었습니다.\n\n## 주요 기능\n\n### 라이브 방송 상태 표시\n- 실시간 방송 여부 확인\n- 시청자 수 표시\n- 방송 카테고리 정보\n\n### 실시간 채팅 연동\n- 플랫폼 간 채팅 동기화\n- 이모티콘 및 스티커 지원\n- 모더레이션 기능\n\n### 스트리머 프로필 통합\n- 방송 일정 관리\n- 팔로워 통계\n- 하이라이트 클립 공유\n\n스트리머 분들의 활발한 활동을 기대합니다! 📹✨",
+            "excerpt": "스트리머와 시청자 간 소통 강화를 위한 스트리밍 플랫폼 연동 기능이 개발 완료되어 다양한 실시간 기능을 제공합니다.",
+            "slug": "streaming-platform-integration-complete",
+            "author": {
+                "id": "user_streaming_team",
+                "name": "Streaming Team",
+                "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=streaming",
+                "level": 7,
+                "badges": [
+                    "스트리밍 전문가",
+                    "실시간 기술"
+                ],
+                "verified": true,
+                "reputation": 82
+            },
+            "metadata": {
+                "created_at": "2025-10-02T09:15:00Z",
+                "updated_at": "2025-10-02T09:45:00Z",
+                "published_at": "2025-10-02T09:15:00Z",
+                "status": "published",
+                "visibility": "public"
+            },
+            "engagement": {
+                "views": 634,
+                "likes": 78,
+                "dislikes": 3,
+                "comments": 19,
+                "shares": 12,
+                "bookmarks": 28,
+                "reactions": {
+                    "like": 45,
+                    "love": 22,
+                    "wow": 8,
+                    "laugh": 2,
+                    "sad": 1,
+                    "angry": 0
+                }
+            },
+            "content_analysis": {
+                "reading_time": 2,
+                "sentiment": "positive",
+                "sentiment_score": 0.75,
+                "topics": [
+                    "스트리밍",
+                    "기술",
+                    "소통",
+                    "실시간"
+                ],
+                "keywords": [
+                    {
+                        "word": "스트리밍",
+                        "frequency": 6,
+                        "relevance": 0.94
+                    },
+                    {
+                        "word": "실시간",
+                        "frequency": 4,
+                        "relevance": 0.87
+                    },
+                    {
+                        "word": "채팅",
+                        "frequency": 3,
+                        "relevance": 0.82
+                    },
+                    {
+                        "word": "연동",
+                        "frequency": 3,
+                        "relevance": 0.79
+                    }
+                ],
+                "difficulty": "intermediate",
+                "quality_score": 0.81,
+                "engagement_potential": 0.76,
+                "emotions": {
+                    "joy": 0.58,
+                    "anticipation": 0.62,
+                    "trust": 0.71,
+                    "surprise": 0.18,
+                    "excitement": 0.49
+                }
+            },
+            "multimedia": {
+                "thumbnail": "https://picsum.photos/seed/streaming/800/400",
+                "images": [
+                    "https://picsum.photos/seed/streaming-ui/1200/700",
+                    "https://picsum.photos/seed/chat-integration/800/500"
+                ],
+                "videos": [],
+                "audio": [],
+                "attachments": [
+                    {
+                        "name": "스트리밍_연동_가이드.pdf",
+                        "url": "/attachments/streaming-guide.pdf",
+                        "size": 1536000,
+                        "type": "application/pdf"
+                    }
+                ]
+            },
+            "categorization": {
+                "board": "streaming",
+                "category": "기능",
+                "subcategory": "플랫폼 연동",
+                "tags": [
+                    "스트리밍",
+                    "실시간",
+                    "채팅",
+                    "연동",
+                    "소통"
+                ],
+                "priority": "medium"
+            },
+            "interaction": {
+                "allow_comments": true,
+                "allow_voting": true,
+                "allow_sharing": true,
+                "moderation_required": false
+            },
+            "personalization": {
+                "relevance_score": 0.67,
+                "recommendation_reason": "스트리밍 관심사 일치",
+                "user_interest_match": 0.71,
+                "trending_score": 0.58
+            },
+            "realtime": {
+                "live_viewers": 5,
+                "recent_activity": [
+                    "새 댓글 1개",
+                    "좋아요 +3"
+                ],
+                "hot_comments": 2,
+                "viral_potential": 0.32
+            },
+            "seo": {
+                "meta_title": "스트리밍 플랫폼 연동 기능 개발 완료 - 실시간 소통 강화",
+                "meta_description": "스트리머와 시청자 간 소통을 위한 라이브 방송 상태 표시, 실시간 채팅 연동, 프로필 통합 기능을 소개합니다.",
+                "canonical_url": "https://community.example.com/posts/streaming-platform-integration-complete"
+            }
+        }
+    ],
+    "data_structure_enhancements": {
+        "ai_analysis_integration": {
+            "sentiment_analysis": "5가지 감정 스코어와 신뢰도 포함",
+            "quality_metrics": "제목, 내용, 구조, 멀티미디어 종합 평가",
+            "topic_classification": "AI 기반 자동 토픽 분류 및 키워드 추출",
+            "difficulty_assessment": "컨텐츠 난이도 자동 분석"
+        },
+        "personalization_features": {
+            "relevance_scoring": "사용자 관심사 기반 관련성 점수",
+            "recommendation_context": "추천 이유 및 맥락 정보",
+            "user_interaction_tracking": "개인화를 위한 상호작용 데이터",
+            "feedback_learning": "사용자 피드백 기반 학습"
+        },
+        "realtime_capabilities": {
+            "live_metrics": "실시간 조회자 수 및 활동 추적",
+            "viral_tracking": "바이럴 잠재력 실시간 분석",
+            "engagement_monitoring": "참여도 실시간 모니터링",
+            "trending_analysis": "트렌드 점수 실시간 계산"
+        },
+        "multimedia_support": {
+            "enhanced_metadata": "이미지, 비디오, 오디오 메타데이터",
+            "attachment_management": "파일 첨부 및 관리 시스템",
+            "thumbnail_optimization": "자동 썸네일 생성 및 최적화",
+            "media_analytics": "멀티미디어 참여도 분석"
+        },
+        "seo_optimization": {
+            "meta_tags": "검색 엔진 최적화 메타 태그",
+            "canonical_urls": "중복 컨텐츠 방지",
+            "structured_data": "구조화된 데이터 지원",
+            "social_sharing": "소셜 미디어 공유 최적화"
+        }
+    },
+    "performance_considerations": {
+        "indexing_strategy": {
+            "primary_indexes": [
+                "id",
+                "author_id",
+                "board_id",
+                "published_at"
+            ],
+            "composite_indexes": [
+                "status+visibility",
+                "board_id+published_at"
+            ],
+            "gin_indexes": [
+                "tags",
+                "content_analysis",
+                "keywords"
+            ],
+            "full_text_search": "제목 및 내용 전문 검색 지원"
+        },
+        "caching_strategy": {
+            "post_cache": "개별 포스트 캐싱 (TTL: 1시간)",
+            "list_cache": "포스트 목록 캐싱 (TTL: 15분)",
+            "analytics_cache": "분석 결과 캐싱 (TTL: 6시간)",
+            "user_cache": "사용자별 개인화 데이터 캐싱"
+        },
+        "data_partitioning": {
+            "time_based": "월별 파티셔닝 고려",
+            "board_based": "게시판별 분할 고려",
+            "archive_strategy": "오래된 데이터 아카이빙"
+        }
+    },
+    "migration_plan": {
+        "phase_1": "기본 스키마 생성 및 기존 데이터 마이그레이션",
+        "phase_2": "AI 분석 결과 데이터 통합",
+        "phase_3": "개인화 및 실시간 기능 활성화",
+        "phase_4": "성능 최적화 및 모니터링 시스템 구축"
+    }
+}
