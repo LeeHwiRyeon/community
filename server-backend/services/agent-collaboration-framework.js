@@ -16,19 +16,19 @@ const EventEmitter = require('events');
 class AgentCollaborationFramework extends EventEmitter {
     constructor() {
         super();
-        
+
         // 통신 및 조정 시스템
         this.communicationBus = new AgentCommunicationBus();
         this.taskCoordinator = new TaskCoordinator();
         this.conflictResolver = new ConflictResolver();
         this.knowledgeSharing = new KnowledgeSharing();
         this.collectiveIntelligence = new CollectiveIntelligence();
-        
+
         // 에이전트 등록소
         this.registeredAgents = new Map();
         this.activeConnections = new Map();
         this.collaborationSessions = new Map();
-        
+
         // 협업 메트릭
         this.metrics = {
             totalCollaborations: 0,
@@ -60,19 +60,19 @@ class AgentCollaborationFramework extends EventEmitter {
      */
     initializeFramework() {
         logger.info('에이전트 협업 프레임워크 초기화 시작');
-        
+
         // 통신 버스 초기화
         this.communicationBus.initialize();
-        
+
         // 이벤트 리스너 설정
         this.setupEventListeners();
-        
+
         // 기본 에이전트들 등록
         this.registerDefaultAgents();
-        
+
         // 협업 모니터링 시작
         this.startCollaborationMonitoring();
-        
+
         logger.info('에이전트 협업 프레임워크 초기화 완료');
     }
 
@@ -82,7 +82,7 @@ class AgentCollaborationFramework extends EventEmitter {
     async registerAgent(agentInfo) {
         try {
             const agentId = agentInfo.id;
-            
+
             // 에이전트 정보 검증
             if (!this.validateAgentInfo(agentInfo)) {
                 throw new Error(`유효하지 않은 에이전트 정보: ${agentId}`);
@@ -106,15 +106,15 @@ class AgentCollaborationFramework extends EventEmitter {
             };
 
             this.registeredAgents.set(agentId, registeredAgent);
-            
+
             // 통신 연결 설정
             await this.communicationBus.establishConnection(agentId);
-            
+
             logger.info(`에이전트 등록 완료: ${agentId} (${agentInfo.type})`);
-            
+
             // 등록 이벤트 발생
             this.emit('agentRegistered', registeredAgent);
-            
+
             return {
                 success: true,
                 agentId: agentId,
@@ -137,7 +137,7 @@ class AgentCollaborationFramework extends EventEmitter {
 
             // 참여 에이전트 검증
             const validatedParticipants = await this.validateParticipants(participants);
-            
+
             if (validatedParticipants.length < 2) {
                 throw new Error('협업에는 최소 2개 이상의 에이전트가 필요합니다');
             }
@@ -165,17 +165,17 @@ class AgentCollaborationFramework extends EventEmitter {
 
             // 세션 등록
             this.collaborationSessions.set(sessionId, collaborationSession);
-            
+
             // 통신 채널 설정
             await this.setupCommunicationChannels(collaborationSession);
-            
+
             // 작업 조정
             const coordinationPlan = await this.taskCoordinator.coordinate(
-                validatedParticipants, 
-                task, 
+                validatedParticipants,
+                task,
                 type
             );
-            
+
             collaborationSession.coordinationPlan = coordinationPlan;
             collaborationSession.status = 'active';
 
@@ -201,10 +201,10 @@ class AgentCollaborationFramework extends EventEmitter {
     async executeCollaboration(session) {
         try {
             session.progress.phase = 'execution';
-            
+
             // 협업 전략에 따른 실행
             let result;
-            
+
             switch (session.type) {
                 case 'parallel':
                     result = await this.executeParallelCollaboration(session);
@@ -239,11 +239,11 @@ class AgentCollaborationFramework extends EventEmitter {
     async executeParallelCollaboration(session) {
         try {
             const { participants, task, coordinationPlan } = session;
-            
+
             // 각 에이전트에게 병렬로 작업 할당
             const taskPromises = participants.map(async (participant) => {
                 const agentTask = coordinationPlan.agentTasks.get(participant.id);
-                
+
                 return await this.communicationBus.sendRequest(participant.id, {
                     type: 'task_execution',
                     sessionId: session.id,
@@ -258,10 +258,10 @@ class AgentCollaborationFramework extends EventEmitter {
 
             // 모든 작업 완료 대기
             const results = await Promise.all(taskPromises);
-            
+
             // 결과 통합
             const integratedResult = await this.integrateParallelResults(session, results);
-            
+
             // 지식 공유 및 학습
             await this.shareCollaborationKnowledge(session, results);
 
@@ -293,7 +293,7 @@ class AgentCollaborationFramework extends EventEmitter {
             // 순차적으로 작업 실행
             for (const participant of participants) {
                 const agentTask = coordinationPlan.agentTasks.get(participant.id);
-                
+
                 // 이전 결과를 다음 에이전트에게 전달
                 const taskContext = {
                     collaborationType: 'sequential',
@@ -312,10 +312,10 @@ class AgentCollaborationFramework extends EventEmitter {
 
                 results.push(result);
                 currentResult = result;
-                
+
                 // 진행률 업데이트
                 session.progress.completion = (results.length / participants.length) * 100;
-                
+
                 // 중간 지식 공유
                 await this.shareIntermediateKnowledge(session, result);
             }
@@ -342,7 +342,7 @@ class AgentCollaborationFramework extends EventEmitter {
     async executeHierarchicalCollaboration(session) {
         try {
             const { participants, coordinationPlan } = session;
-            
+
             // 리더 에이전트 선정
             const leader = this.selectLeaderAgent(participants);
             const subordinates = participants.filter(p => p.id !== leader.id);
@@ -359,7 +359,7 @@ class AgentCollaborationFramework extends EventEmitter {
             // 하위 에이전트들 작업 실행
             const subordinatePromises = subordinates.map(async (subordinate) => {
                 const assignedTask = distributionPlan.assignments.find(a => a.agentId === subordinate.id);
-                
+
                 return await this.communicationBus.sendRequest(subordinate.id, {
                     type: 'task_execution',
                     sessionId: session.id,
@@ -432,14 +432,14 @@ class AgentCollaborationFramework extends EventEmitter {
                     proposals: proposals,
                     votingCriteria: session.task.criteria || {}
                 });
-                
+
                 votes.set(participant.id, vote);
             }
 
             // 3단계: 합의 도출
             const consensus = await this.collectiveIntelligence.reachConsensus(
-                proposals, 
-                votes, 
+                proposals,
+                votes,
                 this.config.collectiveDecisionThreshold
             );
 
@@ -478,14 +478,14 @@ class AgentCollaborationFramework extends EventEmitter {
             logger.info(`충돌 해결 시작: ${conflict.type} - ${conflict.sessionId}`);
 
             const resolution = await this.conflictResolver.resolve(conflict);
-            
+
             if (resolution.success) {
                 // 충돌 해결 성공
                 this.metrics.conflictsResolved++;
-                
+
                 // 해결 방안 적용
                 await this.applyConflictResolution(conflict.sessionId, resolution);
-                
+
                 logger.info(`충돌 해결 완료: ${conflict.sessionId}`);
             } else {
                 // 에스컬레이션 필요
@@ -513,7 +513,7 @@ class AgentCollaborationFramework extends EventEmitter {
 
             // 메트릭 업데이트
             this.metrics.knowledgeExchanges++;
-            
+
             // 지식 활용도 추적
             await this.trackKnowledgeUtilization(knowledge, targetAgentIds);
 
@@ -556,22 +556,22 @@ class AgentCollaborationFramework extends EventEmitter {
     }
 
     validateAgentInfo(agentInfo) {
-        return agentInfo && 
-               agentInfo.id && 
-               agentInfo.type && 
-               agentInfo.name;
+        return agentInfo &&
+            agentInfo.id &&
+            agentInfo.type &&
+            agentInfo.name;
     }
 
     async validateParticipants(participants) {
         const validated = [];
-        
+
         for (const participantId of participants) {
             const agent = this.registeredAgents.get(participantId);
             if (agent && agent.status === 'active') {
                 validated.push(agent);
             }
         }
-        
+
         return validated;
     }
 
@@ -580,7 +580,7 @@ class AgentCollaborationFramework extends EventEmitter {
         return participants.reduce((leader, current) => {
             const leaderScore = leader.trustScore * leader.performanceMetrics.successRate;
             const currentScore = current.trustScore * current.performanceMetrics.successRate;
-            
+
             return currentScore > leaderScore ? current : leader;
         });
     }
@@ -640,7 +640,7 @@ class AgentCollaborationFramework extends EventEmitter {
     updateMetrics() {
         // 협업 효율성 계산
         if (this.metrics.totalCollaborations > 0) {
-            this.metrics.collaborationEfficiency = 
+            this.metrics.collaborationEfficiency =
                 (this.metrics.successfulCollaborations / this.metrics.totalCollaborations) * 100;
         }
 
@@ -653,7 +653,7 @@ class AgentCollaborationFramework extends EventEmitter {
         const cleanupThreshold = 3600000; // 1시간
 
         for (const [sessionId, session] of this.collaborationSessions) {
-            if (session.status === 'completed' && 
+            if (session.status === 'completed' &&
                 (now - session.endTime) > cleanupThreshold) {
                 this.collaborationSessions.delete(sessionId);
             }
@@ -753,8 +753,8 @@ class TaskCoordinator {
 
     getRequiredCapabilities(task, agent) {
         // 작업과 에이전트 능력 매칭
-        return agent.capabilities.filter(cap => 
-            task.requiredCapabilities?.includes(cap) || 
+        return agent.capabilities.filter(cap =>
+            task.requiredCapabilities?.includes(cap) ||
             task.type === agent.type
         );
     }
@@ -841,13 +841,13 @@ class KnowledgeSharing {
     async distribute(sourceAgentId, targetAgentIds, knowledge) {
         try {
             const shareId = `share_${Date.now()}`;
-            
+
             // 지식 검증 및 처리
             const processedKnowledge = await this.processKnowledge(knowledge);
-            
+
             // 대상 에이전트들에게 지식 전송
             const distributionResults = [];
-            
+
             for (const targetId of targetAgentIds) {
                 const result = await this.shareToAgent(targetId, processedKnowledge);
                 distributionResults.push({
@@ -909,13 +909,13 @@ class CollectiveIntelligence {
         try {
             // 투표 집계
             const voteScores = this.aggregateVotes(proposals, votes);
-            
+
             // 최고 득표 제안 찾기
             const topProposal = this.findTopProposal(voteScores);
-            
+
             // 합의 임계값 확인
             const consensusAchieved = topProposal.score >= threshold;
-            
+
             return {
                 achieved: consensusAchieved,
                 decision: consensusAchieved ? topProposal.proposal : null,
@@ -932,18 +932,18 @@ class CollectiveIntelligence {
 
     aggregateVotes(proposals, votes) {
         const scores = new Map();
-        
+
         proposals.forEach((proposal, index) => {
             let totalScore = 0;
             let voteCount = 0;
-            
+
             votes.forEach((vote) => {
                 if (vote.proposalScores && vote.proposalScores[index] !== undefined) {
                     totalScore += vote.proposalScores[index];
                     voteCount++;
                 }
             });
-            
+
             scores.set(proposal.id, {
                 proposal: proposal,
                 totalScore: totalScore,
@@ -951,14 +951,14 @@ class CollectiveIntelligence {
                 voteCount: voteCount
             });
         });
-        
+
         return scores;
     }
 
     findTopProposal(voteScores) {
         let topProposal = null;
         let highestScore = -1;
-        
+
         voteScores.forEach((scoreData) => {
             if (scoreData.averageScore > highestScore) {
                 highestScore = scoreData.averageScore;
@@ -968,7 +968,7 @@ class CollectiveIntelligence {
                 };
             }
         });
-        
+
         return topProposal || { proposal: null, score: 0 };
     }
 }
