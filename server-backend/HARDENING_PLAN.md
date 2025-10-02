@@ -1,4 +1,8 @@
-4. Document new env vars in API docs (`API_REFERENCE.md` / `API_USAGE.md`).
+# 🔒 Community Platform v1.1 - 보안 강화 계획
+
+## 📋 보안 강화 작업 목록
+
+4. API 문서에 새로운 환경 변수 문서화 (`API_REFERENCE.md` / `API_USAGE.md`).
 # Backend Hardening Plan
 
 Status: Living document (initial version)

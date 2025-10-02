@@ -10,32 +10,32 @@
 
 ## 📊 **테이블 개요 (한눈에 보기)**
 
-| 테이블명                | 목적                | 주요 특징                                      |
+| 테이블명               | 목적               | 주요 특징                                     |
 | ---------------------- | ------------------ | --------------------------------------------- |
-| boards                 | 게시판 메타데이터   | 소프트 삭제(`deleted`), 정렬 인덱스            |
-| posts                  | 게시글 본문/메타    | 전문검색(title,content), board_id 필터 인덱스  |
-| post_views             | 조회수 누적         | 배치 플러시, 게시글당 단일 행                  |
-| users                  | 사용자 정보         | 첫 사용자는 관리자, 이메일 고유                |
-| user_social_identities | 소셜 계정 연결      | (제공자,제공자_사용자_ID) 고유                 |
-| user_stats             | 사용자 활동 집계    | 경험치/레벨 메타, activity_score 생성 컬럼     |
-| user_badges            | 배지 획득 이력      | (사용자_ID,배지_코드) 고유, 획득일 인덱스      |
-| announcements          | 공지사항            | 기간 필터 + 우선순위, 소프트 삭제 + 히스토리   |
-| events                 | 이벤트 정보         | 상태/시간 필터, 소프트 삭제 + 히스토리         |
-| announcement_history   | 공지사항 변경 기록  | 추가 전용 로그                                |
-| event_history          | 이벤트 변경 기록    | 추가 전용 로그                                |
-| auth_audit             | 인증 감사 로그      | 로그인/갱신/연결 이벤트 기록                  |
-| votes                  | 투표 기록           | 사용자/대상/투표유형, 중복 투표 방지           |
-| broadcasts             | 방송 정보           | 스트림 URL, 라이브 상태, 일정, 게시글 연동     |
+| boards                 | 게시판 메타데이터  | 소프트 삭제(`deleted`), 정렬 인덱스           |
+| posts                  | 게시글 본문/메타   | 전문검색(title,content), board_id 필터 인덱스 |
+| post_views             | 조회수 누적        | 배치 플러시, 게시글당 단일 행                 |
+| users                  | 사용자 정보        | 첫 사용자는 관리자, 이메일 고유               |
+| user_social_identities | 소셜 계정 연결     | (제공자,제공자_사용자_ID) 고유                |
+| user_stats             | 사용자 활동 집계   | 경험치/레벨 메타, activity_score 생성 컬럼    |
+| user_badges            | 배지 획득 이력     | (사용자_ID,배지_코드) 고유, 획득일 인덱스     |
+| announcements          | 공지사항           | 기간 필터 + 우선순위, 소프트 삭제 + 히스토리  |
+| events                 | 이벤트 정보        | 상태/시간 필터, 소프트 삭제 + 히스토리        |
+| announcement_history   | 공지사항 변경 기록 | 추가 전용 로그                                |
+| event_history          | 이벤트 변경 기록   | 추가 전용 로그                                |
+| auth_audit             | 인증 감사 로그     | 로그인/갱신/연결 이벤트 기록                  |
+| votes                  | 투표 기록          | 사용자/대상/투표유형, 중복 투표 방지          |
+| broadcasts             | 방송 정보          | 스트림 URL, 라이브 상태, 일정, 게시글 연동    |
 
 ## 📋 **boards (게시판 테이블)**
-| 컬럼명      | 데이터 타입        | 설명                |
-| ---------- | ----------------- | ------------------- |
-| id         | VARCHAR(64) PK    | 게시판 고유 식별자   |
-| title      | VARCHAR(200)      | 게시판 제목         |
-| ordering   | INT DEFAULT 1000  | UI 정렬 우선순위 |
-| deleted    | TINYINT DEFAULT 0 | 1=숨김           |
-| created_at | TIMESTAMP         | 생성             |
-| updated_at | TIMESTAMP         | 수정             |
+| 컬럼명     | 데이터 타입       | 설명               |
+| ---------- | ----------------- | ------------------ |
+| id         | VARCHAR(64) PK    | 게시판 고유 식별자 |
+| title      | VARCHAR(200)      | 게시판 제목        |
+| ordering   | INT DEFAULT 1000  | UI 정렬 우선순위   |
+| deleted    | TINYINT DEFAULT 0 | 1=숨김             |
+| created_at | TIMESTAMP         | 생성               |
+| updated_at | TIMESTAMP         | 수정               |
 
 ## posts
 (게시글 본문 및 메타)

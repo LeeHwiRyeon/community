@@ -1,4 +1,4 @@
-# Authentication & Identity Plan (v0.3)
+# 🔐 Community Platform v1.1 - 인증 및 신원 확인 계획 (v0.3)
 
 ## Overview
 This document captures the current interim (mock) multi-provider social authentication scaffolding and the forward plan to evolve it into production-grade OAuth 2.0 / OIDC based login with persistence, security controls, and auditing.

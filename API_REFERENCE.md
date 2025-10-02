@@ -1,4 +1,4 @@
-# 🔌 Community Platform v1.1 API Reference
+# 🔌 Community Platform v1.1 API 참조 문서
 
 **Community Platform v1.1**의 완전한 API 문서입니다. 모든 엔드포인트가 UTF-8을 완벽 지원하며 최적화된 성능을 제공합니다.
 

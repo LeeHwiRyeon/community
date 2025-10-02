@@ -1,4 +1,4 @@
-# Community Backend (Express + MariaDB)
+# 🚀 Community Platform v1.1 - 백엔드 서버 (Express + MariaDB)
 
 ## Setup
 
