@@ -127,4 +127,16 @@ keys/
 
 # Temporary files
 *.tmp
+
+# Agents and AI generated files
+agents/
+**/agents/
+*.agent
+*.agents
+agent-*.md
+agents-*.md
+**/agent-*.md
+**/agents-*.md
+AUTOAGENTS_*.md
+**/AUTOAGENTS_*.md
 *.temp

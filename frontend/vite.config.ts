@@ -12,12 +12,9 @@ export default defineConfig({
             fastRefresh: true,
             // JSX 런타임 최적화
             jsxRuntime: 'automatic',
-            // Babel 플러그인 최적화
+            // Babel 설정 완전 제거 (중복 방지)
             babel: {
-                plugins: [
-                    // 개발 환경에서만 React DevTools 지원
-                    process.env.NODE_ENV === 'development' && 'react-refresh/babel'
-                ].filter(Boolean)
+                plugins: []
             }
         }),
 
@@ -99,7 +96,7 @@ export default defineConfig({
         // 프록시 설정 (백엔드 API)
         proxy: {
             '/api': {
-                target: 'http://localhost:5001',
+                target: 'http://localhost:3001',
                 changeOrigin: true,
                 secure: false
             }

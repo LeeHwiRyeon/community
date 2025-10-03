@@ -1,4 +1,4 @@
-# Community Hub 안정적인 런처 스크립트
+# Community Hub 안정적인 런처 스크립트 (수정된 버전)
 # 매니저님을 위한 완벽한 서버 시작 도구
 
 param(
@@ -76,6 +76,7 @@ function Start-Backend {
     $env:USE_MOCK_DB = "1"
     $env:ENV_ALLOW_MOCK = "1"
     $env:NODE_ENV = "development"
+    $env:PORT = "3001"
     
     # 백엔드 디렉토리로 이동
     Push-Location "server-backend"
@@ -84,9 +85,6 @@ function Start-Backend {
         # 백그라운드에서 서버 시작
         $backendJob = Start-Job -ScriptBlock {
             Set-Location $using:PWD
-            $env:USE_MOCK_DB = "1"
-            $env:ENV_ALLOW_MOCK = "1"
-            $env:NODE_ENV = "development"
             node src/index.js
         }
         
@@ -158,33 +156,54 @@ function Start-Frontend {
 function Show-Status {
     Write-ColorOutput "📊 서버 상태 확인 중..." "Cyan"
     
-    $backendHealthy = Test-ServerHealth "http://localhost:50000/api/health" "백엔드"
-    $frontendHealthy = Test-ServerHealth "http://localhost:5002" "프론트엔드"
+    # 백엔드 상태 확인
+    if (Test-ServerHealth "http://localhost:3001/api/health" "백엔드") {
+        Write-ColorOutput "✅ 백엔드 서버: 정상 실행 중 (포트 3001)" "Green"
+    }
+    else {
+        Write-ColorOutput "❌ 백엔드 서버: 중지됨" "Red"
+    }
     
-    Write-ColorOutput "`n=== 서버 상태 ===" "White"
-    Write-ColorOutput "백엔드 (포트 50000): $(if($backendHealthy) {'✅ 정상'} else {'❌ 중단'})" $(if ($backendHealthy) { "Green" } else { "Red" })
-    Write-ColorOutput "프론트엔드 (포트 5002): $(if($frontendHealthy) {'✅ 정상'} else {'❌ 중단'})" $(if ($frontendHealthy) { "Green" } else { "Red" })
+    # 프론트엔드 상태 확인
+    if (Test-ServerHealth "http://localhost:3000" "프론트엔드") {
+        Write-ColorOutput "✅ 프론트엔드 서버: 정상 실행 중 (포트 3000)" "Green"
+    }
+    else {
+        Write-ColorOutput "❌ 프론트엔드 서버: 중지됨" "Red"
+    }
     
-    if ($backendHealthy -and $frontendHealthy) {
-        Write-ColorOutput "`n🌐 접속 URL:" "White"
-        Write-ColorOutput "  백엔드 API: http://localhost:50000" "Cyan"
-        Write-ColorOutput "  프론트엔드: http://localhost:5002" "Cyan"
-        Write-ColorOutput "  프로덕션: http://localhost:5000" "Cyan"
+    # 포트 사용 현황
+    Write-ColorOutput "`n📋 포트 사용 현황:" "Yellow"
+    $ports = @(3000, 3001)
+    foreach ($port in $ports) {
+        if (Test-Port $port) {
+            Write-ColorOutput "  • 포트 $port: 사용 중" "Green"
+        }
+        else {
+            Write-ColorOutput "  • 포트 $port: 사용 가능" "Gray"
+        }
     }
 }
 
 # 로그 확인 함수
 function Show-Logs {
-    Write-ColorOutput "📋 서버 로그 확인 중..." "Cyan"
+    Write-ColorOutput "📋 서버 로그 확인" "Cyan"
+    Write-ColorOutput "================================" "Cyan"
     
-    if (Test-Path "server-backend/logs/runtime.log") {
-        Write-ColorOutput "`n=== 백엔드 로그 (최근 20줄) ===" "White"
-        Get-Content "server-backend/logs/runtime.log" -Tail 20 | ForEach-Object {
-            Write-Host $_ -ForegroundColor Gray
+    # 백엔드 로그
+    if (Test-Path "server-backend/logs") {
+        Write-ColorOutput "🔧 백엔드 로그:" "Yellow"
+        Get-ChildItem "server-backend/logs" -Name | Select-Object -First 5 | ForEach-Object {
+            Write-ColorOutput "  • $_" "White"
         }
     }
-    else {
-        Write-ColorOutput "⚠️  백엔드 로그 파일을 찾을 수 없습니다." "Yellow"
+    
+    # 프론트엔드 로그
+    if (Test-Path "frontend/logs") {
+        Write-ColorOutput "🎨 프론트엔드 로그:" "Yellow"
+        Get-ChildItem "frontend/logs" -Name | Select-Object -First 5 | ForEach-Object {
+            Write-ColorOutput "  • $_" "White"
+        }
     }
 }
 
@@ -220,7 +239,7 @@ switch ($Action) {
             Start-Process "http://localhost:3000"
         }
         
-        Write-ColorOutput "`n💡 서버를 중지하려면: .\scripts\stable-launcher.ps1 -Action stop" "Yellow"
+        Write-ColorOutput "`n💡 서버를 중지하려면: .\scripts\stable-launcher-fixed.ps1 -Action stop" "Yellow"
     }
     
     "stop" {

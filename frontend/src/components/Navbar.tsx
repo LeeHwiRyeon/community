@@ -29,6 +29,21 @@ const Navbar: React.FC = () => {
                     <Button color="inherit" onClick={() => navigate('/dashboard')}>
                         Dashboard
                     </Button>
+                    <Button color="inherit" onClick={() => navigate('/cosplay')}>
+                        코스프레
+                    </Button>
+                    <Button color="inherit" onClick={() => navigate('/streaming')}>
+                        스트리밍
+                    </Button>
+                    <Button color="inherit" onClick={() => navigate('/design-system')}>
+                        디자인
+                    </Button>
+                    <Button color="inherit" onClick={() => navigate('/interactions')}>
+                        인터랙션
+                    </Button>
+                    <Button color="inherit" onClick={() => navigate('/uiux-v2')}>
+                        UI/UX 2.0
+                    </Button>
                     <Button color="inherit" onClick={() => navigate('/login')}>
                         Login
                     </Button>

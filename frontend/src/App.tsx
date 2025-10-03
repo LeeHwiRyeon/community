@@ -27,6 +27,11 @@ import BoardDetail from './pages/BoardDetail';
 import PostDetail from './pages/PostDetail';
 import CosplayShop from './pages/CosplayShop';
 import StreamingStation from './pages/StreamingStation';
+import EnhancedDesignSystem from './components/EnhancedDesignSystem';
+import AdvancedInteractionSystem from './components/AdvancedInteractionSystem';
+import UIUXV2DesignSystem from './components/UIUXV2DesignSystem';
+import PerformanceDashboard from './components/PerformanceDashboard';
+import AccessibilityPanel from './components/AccessibilityPanel';
 import NotFound from './pages/NotFound';
 
 // Components
@@ -136,6 +141,11 @@ const App: React.FC = () => {
                             {/* Feature Routes */}
                             <Route path="/cosplay" element={<CosplayShop />} />
                             <Route path="/streaming" element={<StreamingStation />} />
+                            <Route path="/design-system" element={<EnhancedDesignSystem />} />
+                            <Route path="/interactions" element={<AdvancedInteractionSystem />} />
+                            <Route path="/uiux-v2" element={<UIUXV2DesignSystem />} />
+                            <Route path="/performance" element={<PerformanceDashboard />} />
+                            <Route path="/accessibility" element={<AccessibilityPanel />} />
 
                             {/* 404 */}
                             <Route path="/404" element={<NotFound />} />

@@ -14,7 +14,6 @@ import {
     Box,
     Container,
     Typography,
-    Grid,
     Card,
     CardContent,
     CardMedia,
@@ -211,7 +210,7 @@ const CosplayShop: React.FC = () => {
     };
 
     const renderCostumeCard = (costume: CostumeItem) => (
-        <Grid item xs={12} sm={6} md={4} key={costume.id}>
+        <Box key={costume.id} sx={{ width: { xs: '100%', sm: '50%', md: '33.33%' }, p: 1 }}>
             <Card sx={{ height: '100%', position: 'relative' }}>
                 {costume.isNew && (
                     <Chip
@@ -300,11 +299,11 @@ const CosplayShop: React.FC = () => {
                     </Box>
                 </CardContent>
             </Card>
-        </Grid>
+        </Box>
     );
 
     const renderEventCard = (event: CosplayEvent) => (
-        <Grid item xs={12} md={6} key={event.id}>
+        <Box key={event.id} sx={{ width: { xs: '100%', md: '50%' }, p: 1 }}>
             <Card>
                 <CardMedia
                     component="img"
@@ -346,11 +345,11 @@ const CosplayShop: React.FC = () => {
                     </Button>
                 </CardContent>
             </Card>
-        </Grid>
+        </Box>
     );
 
     const renderPortfolioCard = (item: PortfolioItem) => (
-        <Grid item xs={12} sm={6} md={4} key={item.id}>
+        <Box key={item.id} sx={{ width: { xs: '100%', sm: '50%', md: '33.33%' }, p: 1 }}>
             <Card>
                 <CardMedia
                     component="img"
@@ -383,7 +382,7 @@ const CosplayShop: React.FC = () => {
                     </Box>
                 </CardContent>
             </Card>
-        </Grid>
+        </Box>
     );
 
     if (loading) {
@@ -412,8 +411,8 @@ const CosplayShop: React.FC = () => {
 
             {/* 검색 및 필터 */}
             <Box sx={{ mb: 4 }}>
-                <Grid container spacing={2} alignItems="center">
-                    <Grid item xs={12} md={6}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                    <Box sx={{ width: { xs: '100%', md: '50%' }, p: 1 }}>
                         <TextField
                             fullWidth
                             placeholder="코스프레 의상, 브랜드, 캐릭터 검색..."
@@ -427,8 +426,8 @@ const CosplayShop: React.FC = () => {
                                 )
                             }}
                         />
-                    </Grid>
-                    <Grid item xs={12} md={6}>
+                    </Box>
+                    <Box sx={{ width: { xs: '100%', md: '50%' }, p: 1 }}>
                         <Box sx={{ display: 'flex', gap: 1, justifyContent: 'flex-end' }}>
                             <Button startIcon={<FilterIcon />} variant="outlined">
                                 필터
@@ -437,8 +436,8 @@ const CosplayShop: React.FC = () => {
                                 AI 추천
                             </Button>
                         </Box>
-                    </Grid>
-                </Grid>
+                    </Box>
+                </Box>
             </Box>
 
             {/* 탭 네비게이션 */}
@@ -456,9 +455,9 @@ const CosplayShop: React.FC = () => {
                     <Typography variant="h5" gutterBottom>
                         🛍️ 코스프레 의상
                     </Typography>
-                    <Grid container spacing={3}>
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
                         {costumes.map(renderCostumeCard)}
-                    </Grid>
+                    </Box>
                 </Box>
             )}
 
@@ -467,9 +466,9 @@ const CosplayShop: React.FC = () => {
                     <Typography variant="h5" gutterBottom>
                         🎪 코스프레 이벤트
                     </Typography>
-                    <Grid container spacing={3}>
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
                         {events.map(renderEventCard)}
-                    </Grid>
+                    </Box>
                 </Box>
             )}
 
@@ -478,9 +477,9 @@ const CosplayShop: React.FC = () => {
                     <Typography variant="h5" gutterBottom>
                         📸 포트폴리오 갤러리
                     </Typography>
-                    <Grid container spacing={3}>
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
                         {portfolio.map(renderPortfolioCard)}
-                    </Grid>
+                    </Box>
                 </Box>
             )}
 

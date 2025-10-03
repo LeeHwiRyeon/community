@@ -76,37 +76,8 @@ const ScrollToTopFab = styled(Fab)(({ theme }) => ({
     zIndex: 1000,
 }));
 
-// 인터페이스 정의
-interface PostData {
-    id: string;
-    title: string;
-    content: string;
-    author: {
-        name: string;
-        avatar?: string;
-        verified?: boolean;
-    };
-    community?: string;
-    timestamp?: string;
-    stats?: {
-        views: number;
-        likes: number;
-        comments: number;
-    };
-    metadata: {
-        created_at: string;
-        views: number;
-        likes: number;
-        comments: number;
-    };
-    aiAnalysis?: {
-        sentiment: string;
-        quality_score: number;
-        trend_score: number;
-    };
-    thumbnail?: string;
-    type: 'enhanced' | 'standard';
-}
+// 공통 타입 import
+import { PostData, UniversalPostData } from '../types/PostData';
 
 interface VirtualizedContentFeedProps {
     posts?: PostData[];

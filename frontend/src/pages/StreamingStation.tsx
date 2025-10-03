@@ -14,7 +14,6 @@ import {
     Box,
     Container,
     Typography,
-    Grid,
     Card,
     CardContent,
     Button,
@@ -279,9 +278,9 @@ const StreamingStation: React.FC = () => {
                 </Typography>
             </Box>
 
-            <Grid container spacing={3}>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
                 {/* 메인 스트리밍 영역 */}
-                <Grid item xs={12} lg={8}>
+                <Box sx={{ width: { xs: '100%', lg: '66.67%' }, p: 1 }}>
                     <Card>
                         <CardContent>
                             {/* 비디오 영역 */}
@@ -394,47 +393,47 @@ const StreamingStation: React.FC = () => {
                                 <Typography variant="h6" gutterBottom>
                                     📊 실시간 통계
                                 </Typography>
-                                <Grid container spacing={2}>
-                                    <Grid item xs={6} sm={3}>
+                                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
+                                    <Box sx={{ width: { xs: '50%', sm: '25%' }, p: 1 }}>
                                         <Box textAlign="center">
                                             <Typography variant="h4" color="primary">
                                                 {streamStats.viewers}
                                             </Typography>
                                             <Typography variant="body2">현재 시청자</Typography>
                                         </Box>
-                                    </Grid>
-                                    <Grid item xs={6} sm={3}>
+                                    </Box>
+                                    <Box sx={{ width: { xs: '50%', sm: '25%' }, p: 1 }}>
                                         <Box textAlign="center">
                                             <Typography variant="h4" color="secondary">
                                                 {streamStats.peakViewers}
                                             </Typography>
                                             <Typography variant="body2">최고 시청자</Typography>
                                         </Box>
-                                    </Grid>
-                                    <Grid item xs={6} sm={3}>
+                                    </Box>
+                                    <Box sx={{ width: { xs: '50%', sm: '25%' }, p: 1 }}>
                                         <Box textAlign="center">
                                             <Typography variant="h4" color="success.main">
                                                 ₩{streamStats.totalDonations.toLocaleString()}
                                             </Typography>
                                             <Typography variant="body2">총 후원금</Typography>
                                         </Box>
-                                    </Grid>
-                                    <Grid item xs={6} sm={3}>
+                                    </Box>
+                                    <Box sx={{ width: { xs: '50%', sm: '25%' }, p: 1 }}>
                                         <Box textAlign="center">
                                             <Typography variant="h4" color="warning.main">
                                                 {streamStats.newSubscribers}
                                             </Typography>
                                             <Typography variant="body2">신규 구독자</Typography>
                                         </Box>
-                                    </Grid>
-                                </Grid>
+                                    </Box>
+                                </Box>
                             </CardContent>
                         </Card>
                     )}
-                </Grid>
+                </Box>
 
                 {/* 사이드바 */}
-                <Grid item xs={12} lg={4}>
+                <Box sx={{ width: { xs: '100%', lg: '33.33%' }, p: 1 }}>
                     {/* 탭 네비게이션 */}
                     <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 2 }}>
                         <Tabs value={activeTab} onChange={(e, newValue) => setActiveTab(newValue)}>
@@ -607,8 +606,8 @@ const StreamingStation: React.FC = () => {
                             </CardContent>
                         </Card>
                     )}
-                </Grid>
-            </Grid>
+                </Box>
+            </Box>
 
             {/* 알림 FAB */}
             <Tooltip title="알림">
