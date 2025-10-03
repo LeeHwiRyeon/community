@@ -61,7 +61,7 @@ export function useAdvancedMemo<T>(
         if (cache.size >= maxSize) {
             const oldestKey = cache.keys().next().value;
             if (oldestKey !== undefined) {
-                cache.delete(oldestKey);
+                if (oldestKey) cache.delete(oldestKey);
             }
         }
 
@@ -315,7 +315,7 @@ export function useLazyComponent<T>(
         } catch (err) {
             setError(err instanceof Error ? err : new Error('Component loading failed'));
             if (fallback) {
-                setComponent(() => fallback as ComponentType<T>);
+                setComponent(fallback as ComponentType<T>);
             }
         } finally {
             setLoading(false);

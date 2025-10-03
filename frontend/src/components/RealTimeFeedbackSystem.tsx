@@ -234,7 +234,7 @@ const NotificationPanel = styled(Card)(({ theme }) => ({
     maxHeight: 500,
     overflow: 'auto',
     zIndex: 1300,
-    boxShadow: theme.shadows[8]
+    boxShadow: theme.shadows?.[8] || '0px 4px 8px rgba(0,0,0,0.12)'
 }));
 
 const QuickFeedbackContainer = styled(Box)(({ theme }) => ({

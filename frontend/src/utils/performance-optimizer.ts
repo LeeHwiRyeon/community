@@ -9,7 +9,7 @@
  * @created 2025-10-02
  */
 
-import React from 'react';
+import React, { ComponentType } from 'react';
 
 // ============================================================================
 // 1. 이미지 최적화

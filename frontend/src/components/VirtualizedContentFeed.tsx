@@ -86,6 +86,13 @@ interface PostData {
         avatar?: string;
         verified?: boolean;
     };
+    community?: string;
+    timestamp?: string;
+    stats?: {
+        views: number;
+        likes: number;
+        comments: number;
+    };
     metadata: {
         created_at: string;
         views: number;

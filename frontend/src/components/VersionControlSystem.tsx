@@ -56,6 +56,14 @@ import {
     useTheme
 } from '@mui/material';
 import {
+    Timeline,
+    TimelineItem,
+    TimelineSeparator,
+    TimelineDot,
+    TimelineConnector,
+    TimelineContent
+} from '@mui/lab';
+import {
     History as HistoryIcon,
     Save as SaveIcon,
     Restore as RestoreIcon,
@@ -194,7 +202,7 @@ const VersionItem = styled(Card)<{ isActive?: boolean }>(({ theme, isActive }) =
     transition: 'all 0.2s ease',
 
     '&:hover': {
-        boxShadow: theme.shadows[4],
+        boxShadow: theme.shadows?.[4] || '0px 2px 4px rgba(0,0,0,0.1)',
         transform: 'translateY(-2px)'
     }
 }));
