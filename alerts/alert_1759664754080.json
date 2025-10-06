@@ -1,0 +1,12 @@
+{
+  "type": "high_cpu_usage",
+  "severity": "critical",
+  "message": "CPU 사용률이 높습니다: 93.98%",
+  "metrics": {
+    "cpu": 93.98333330503857,
+    "memory": 21.393706028771664,
+    "disk": 7.016823797782557,
+    "responseTime": 587.2240892610781
+  },
+  "id": "high_cpu_usage_1759664754079_mqrz250t4"
+}

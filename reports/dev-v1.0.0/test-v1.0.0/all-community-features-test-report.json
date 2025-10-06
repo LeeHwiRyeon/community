@@ -1,0 +1,38 @@
+{
+  "version": "1.0.0",
+  "timestamp": "2025-10-05T08:49:12.556Z",
+  "type": "all_community_features_test",
+  "results": [
+    {
+      "name": "메인 페이지",
+      "success": true,
+      "message": "모든 커뮤니티 기능 링크 확인"
+    },
+    {
+      "name": "코스프레 상점",
+      "success": true,
+      "message": "코스프레 상점 모든 기능 테스트 성공"
+    },
+    {
+      "name": "방송국",
+      "success": true,
+      "message": "방송국 모든 기능 테스트 성공"
+    },
+    {
+      "name": "게임 센터",
+      "success": true,
+      "message": "게임 센터 모든 기능 테스트 성공"
+    },
+    {
+      "name": "커뮤니티 허브",
+      "success": true,
+      "message": "커뮤니티 허브 모든 기능 테스트 성공"
+    }
+  ],
+  "summary": {
+    "total": 5,
+    "passed": 5,
+    "failed": 0,
+    "successRate": 100
+  }
+}

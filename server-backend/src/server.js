@@ -18,6 +18,20 @@ import promClient from 'prom-client';
 import responseTime from 'response-time';
 import { translateInputMiddleware, translateOutputMiddleware } from './middleware/translation.js';
 import { globalErrorHandler, notFoundHandler } from './middleware/errorHandler.js';
+import {
+    sanitizeInput,
+    preventSQLInjection,
+    preventXSS,
+    requestSizeLimiter,
+    securityHeaders
+} from './middleware/security.js';
+import { wafMiddleware, getWAFStats } from './middleware/waf.js';
+import { ddosProtectionMiddleware, createDynamicRateLimit, getDDoSStats } from './middleware/ddos-protection.js';
+import { securityMonitor, SecurityEventTypes, SecuritySeverity, securityEventMiddleware } from './middleware/security-monitoring.js';
+import { aiThreatDetector, aiThreatDetectionMiddleware } from './middleware/ai-threat-detection.js';
+import { zeroDayProtection, zeroDayProtectionMiddleware } from './middleware/zero-day-protection.js';
+import { supplyChainSecurity, supplyChainSecurityMiddleware } from './middleware/supply-chain-security.js';
+import { quantumResistantCrypto, quantumResistantCryptoMiddleware } from './middleware/quantum-resistant-crypto.js';
 
 // Ensure .env is loaded even when CWD is project root
 const __filename = fileURLToPath(import.meta.url);
@@ -82,6 +96,40 @@ export function createApp() {
 
     app.use(cors(corsOptions));
 
+    // 2025년 고급 보안 미들웨어 체인
+    // 1. 보안 모니터링 미들웨어 (최우선)
+    app.use(securityEventMiddleware);
+
+    // 2. AI 기반 위협 감지
+    app.use(aiThreatDetectionMiddleware);
+
+    // 3. 제로데이 취약점 보호
+    app.use(zeroDayProtectionMiddleware);
+
+    // 4. 공급망 보안
+    app.use(supplyChainSecurityMiddleware);
+
+    // 5. 양자 내성 암호화
+    app.use(quantumResistantCryptoMiddleware);
+
+    // 6. DDoS 보호 (WAF보다 먼저)
+    app.use(ddosProtectionMiddleware);
+    app.use(createDynamicRateLimit());
+
+    // 7. WAF (Web Application Firewall)
+    app.use(wafMiddleware);
+
+    // 8. Security headers
+    app.use(securityHeaders);
+
+    // 9. Request size limiting
+    app.use(requestSizeLimiter('10mb'));
+
+    // 10. Input sanitization and validation
+    app.use(sanitizeInput);
+    app.use(preventSQLInjection);
+    app.use(preventXSS);
+
     // UTF-8 ?몄퐫???ㅼ젙
     app.use(express.json({
         limit: '1mb',
@@ -120,7 +168,15 @@ export function createApp() {
             referrerPolicy: { policy: 'same-origin' },
             frameguard: { action: 'deny' },
             noSniff: true, // X-Content-Type-Options: nosniff
-            crossOriginEmbedderPolicy: false // avoid issues with media/examples
+            crossOriginEmbedderPolicy: false, // avoid issues with media/examples
+            hsts: {
+                maxAge: 31536000,
+                includeSubDomains: true,
+                preload: true
+            },
+            xssFilter: true,
+            hidePoweredBy: true,
+            crossOriginResourcePolicy: { policy: "cross-origin" }
         }));
     }
     // --- In-memory rate limit state (per IP) ---
@@ -194,6 +250,123 @@ export function createApp() {
             }
         } catch (e) { console.warn('[static] setup failed', e.message); }
     }
+    // 보안 모니터링 API 엔드포인트
+    app.get('/api/security/stats', (req, res) => {
+        try {
+            const stats = securityMonitor.getStats();
+            res.json({
+                ok: true,
+                timestamp: new Date().toISOString(),
+                ...stats
+            });
+        } catch (error) {
+            res.status(500).json({ error: 'Failed to get security stats' });
+        }
+    });
+
+    app.get('/api/security/waf-stats', (req, res) => {
+        try {
+            const stats = getWAFStats(req, res);
+        } catch (error) {
+            res.status(500).json({ error: 'Failed to get WAF stats' });
+        }
+    });
+
+    app.get('/api/security/ddos-stats', (req, res) => {
+        try {
+            const stats = getDDoSStats(req, res);
+        } catch (error) {
+            res.status(500).json({ error: 'Failed to get DDoS stats' });
+        }
+    });
+
+    // 2025년 고급 보안 API 엔드포인트
+    app.get('/api/security/ai-threat-stats', (req, res) => {
+        try {
+            const stats = aiThreatDetector.getStats();
+            res.json({
+                ok: true,
+                timestamp: new Date().toISOString(),
+                ...stats
+            });
+        } catch (error) {
+            res.status(500).json({ error: 'Failed to get AI threat detection stats' });
+        }
+    });
+
+    app.get('/api/security/zero-day-stats', (req, res) => {
+        try {
+            const stats = zeroDayProtection.getStats();
+            res.json({
+                ok: true,
+                timestamp: new Date().toISOString(),
+                ...stats
+            });
+        } catch (error) {
+            res.status(500).json({ error: 'Failed to get zero-day protection stats' });
+        }
+    });
+
+    app.get('/api/security/supply-chain-stats', (req, res) => {
+        try {
+            const stats = supplyChainSecurity.getStats();
+            res.json({
+                ok: true,
+                timestamp: new Date().toISOString(),
+                ...stats
+            });
+        } catch (error) {
+            res.status(500).json({ error: 'Failed to get supply chain security stats' });
+        }
+    });
+
+    app.get('/api/security/quantum-crypto-stats', (req, res) => {
+        try {
+            const stats = quantumResistantCrypto.getStats();
+            res.json({
+                ok: true,
+                timestamp: new Date().toISOString(),
+                ...stats
+            });
+        } catch (error) {
+            res.status(500).json({ error: 'Failed to get quantum-resistant crypto stats' });
+        }
+    });
+
+    // 패키지 상태 조회 API
+    app.get('/api/security/package-status/:packageName', (req, res) => {
+        try {
+            const packageName = req.params.packageName;
+            const status = supplyChainSecurity.getPackageStatus(packageName);
+
+            if (!status) {
+                return res.status(404).json({ error: 'Package not found' });
+            }
+
+            res.json({
+                ok: true,
+                timestamp: new Date().toISOString(),
+                package: status
+            });
+        } catch (error) {
+            res.status(500).json({ error: 'Failed to get package status' });
+        }
+    });
+
+    // 양자 내성 검증 API
+    app.post('/api/security/verify-quantum-resistance', async (req, res) => {
+        try {
+            const result = await quantumResistantCrypto.verifyQuantumResistance();
+            res.json({
+                ok: true,
+                timestamp: new Date().toISOString(),
+                ...result
+            });
+        } catch (error) {
+            res.status(500).json({ error: 'Failed to verify quantum resistance' });
+        }
+    });
+
     // Help endpoint (NOT logged intentionally): quick capability map
     app.get('/api/help', (req, res) => {
         res.json({

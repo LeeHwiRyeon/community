@@ -139,7 +139,7 @@ import {
     Analytics as AnalyticsIcon,
     Build as BuildAltIcon,
     CheckCircleOutline as CheckCircleOutlineIcon,
-    Deployment as DeploymentIcon,
+    CloudUpload as DeploymentIcon,
     Monitor as MonitorIcon,
     BugReport as BugDetectionIcon,
     AutoFixHigh as AutoFixHighIcon,
@@ -338,9 +338,9 @@ const PerformanceDashboard: React.FC<PerformanceDashboardProps> = ({ onClose }) 
                 🎯 Core Web Vitals
             </Typography>
 
-            <Grid container spacing={3} sx={{ mb: 4 }}>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3, mb: 4 }}>
                 {/* LCP */}
-                <Grid item xs={12} md={4}>
+                <Box sx={{ flex: '1 1 300px', minWidth: 300 }}>
                     <MetricCard status={getPerformanceStatus(metrics.metrics?.lcp || 0, { good: 2500, poor: 4000 })}>
                         <CardContent>
                             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
@@ -365,10 +365,10 @@ const PerformanceDashboard: React.FC<PerformanceDashboardProps> = ({ onClose }) 
                             />
                         </CardContent>
                     </MetricCard>
-                </Grid>
+                </Box>
 
                 {/* FID */}
-                <Grid item xs={12} md={4}>
+                <Box sx={{ flex: '1 1 300px', minWidth: 300 }}>
                     <MetricCard status={getPerformanceStatus(metrics.metrics?.fid || 0, { good: 100, poor: 300 })}>
                         <CardContent>
                             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
@@ -393,10 +393,10 @@ const PerformanceDashboard: React.FC<PerformanceDashboardProps> = ({ onClose }) 
                             />
                         </CardContent>
                     </MetricCard>
-                </Grid>
+                </Box>
 
                 {/* CLS */}
-                <Grid item xs={12} md={4}>
+                <Box sx={{ flex: '1 1 300px', minWidth: 300 }}>
                     <MetricCard status={getPerformanceStatus(metrics.metrics?.cls || 0, { good: 0.1, poor: 0.25 })}>
                         <CardContent>
                             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
@@ -421,17 +421,17 @@ const PerformanceDashboard: React.FC<PerformanceDashboardProps> = ({ onClose }) 
                             />
                         </CardContent>
                     </MetricCard>
-                </Grid>
-            </Grid>
+                </Box>
+            </Box>
 
             {/* 추가 메트릭 */}
             <Typography variant="h5" component="h2" gutterBottom sx={{ mt: 4, mb: 2 }}>
                 📈 추가 메트릭
             </Typography>
 
-            <Grid container spacing={3} sx={{ mb: 4 }}>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3, mb: 4 }}>
                 {/* FCP */}
-                <Grid item xs={12} md={3}>
+                <Box sx={{ flex: '1 1 250px', minWidth: 250 }}>
                     <Card>
                         <CardContent>
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
@@ -446,10 +446,10 @@ const PerformanceDashboard: React.FC<PerformanceDashboardProps> = ({ onClose }) 
                             </Typography>
                         </CardContent>
                     </Card>
-                </Grid>
+                </Box>
 
                 {/* Load Time */}
-                <Grid item xs={12} md={3}>
+                <Box sx={{ flex: '1 1 250px', minWidth: 250 }}>
                     <Card>
                         <CardContent>
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
@@ -464,10 +464,10 @@ const PerformanceDashboard: React.FC<PerformanceDashboardProps> = ({ onClose }) 
                             </Typography>
                         </CardContent>
                     </Card>
-                </Grid>
+                </Box>
 
                 {/* Render Time */}
-                <Grid item xs={12} md={3}>
+                <Box sx={{ flex: '1 1 250px', minWidth: 250 }}>
                     <Card>
                         <CardContent>
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
@@ -482,10 +482,10 @@ const PerformanceDashboard: React.FC<PerformanceDashboardProps> = ({ onClose }) 
                             </Typography>
                         </CardContent>
                     </Card>
-                </Grid>
+                </Box>
 
                 {/* Memory Usage */}
-                <Grid item xs={12} md={3}>
+                <Box sx={{ flex: '1 1 250px', minWidth: 250 }}>
                     <Card>
                         <CardContent>
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
@@ -500,17 +500,17 @@ const PerformanceDashboard: React.FC<PerformanceDashboardProps> = ({ onClose }) 
                             </Typography>
                         </CardContent>
                     </Card>
-                </Grid>
-            </Grid>
+                </Box>
+            </Box>
 
             {/* 최적화 상태 */}
             <Typography variant="h5" component="h2" gutterBottom sx={{ mt: 4, mb: 2 }}>
                 ⚡ 최적화 상태
             </Typography>
 
-            <Grid container spacing={3}>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
                 {/* 이미지 최적화 */}
-                <Grid item xs={12} md={4}>
+                <Box sx={{ flex: '1 1 300px', minWidth: 300 }}>
                     <Card>
                         <CardContent>
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
@@ -533,10 +533,10 @@ const PerformanceDashboard: React.FC<PerformanceDashboardProps> = ({ onClose }) 
                             </List>
                         </CardContent>
                     </Card>
-                </Grid>
+                </Box>
 
                 {/* 번들 최적화 */}
-                <Grid item xs={12} md={4}>
+                <Box sx={{ flex: '1 1 300px', minWidth: 300 }}>
                     <Card>
                         <CardContent>
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
@@ -559,10 +559,10 @@ const PerformanceDashboard: React.FC<PerformanceDashboardProps> = ({ onClose }) 
                             </List>
                         </CardContent>
                     </Card>
-                </Grid>
+                </Box>
 
                 {/* 캐싱 전략 */}
-                <Grid item xs={12} md={4}>
+                <Box sx={{ flex: '1 1 300px', minWidth: 300 }}>
                     <Card>
                         <CardContent>
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
@@ -585,8 +585,8 @@ const PerformanceDashboard: React.FC<PerformanceDashboardProps> = ({ onClose }) 
                             </List>
                         </CardContent>
                     </Card>
-                </Grid>
-            </Grid>
+                </Box>
+            </Box>
 
             {/* 상세 설정 다이얼로그 */}
             <Dialog open={showDetails} onClose={() => setShowDetails(false)} maxWidth="md" fullWidth>

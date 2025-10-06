@@ -1,0 +1,12 @@
+{
+  "type": "high_cpu_usage",
+  "severity": "critical",
+  "message": "CPU 사용률이 높습니다: 90.92%",
+  "metrics": {
+    "cpu": 90.91508223332599,
+    "memory": 54.86209298481525,
+    "disk": 46.599436715617095,
+    "responseTime": 700.2418378732705
+  },
+  "id": "high_cpu_usage_1759664648954_tfz70kwsb"
+}

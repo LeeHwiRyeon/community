@@ -1,0 +1,12 @@
+{
+  "type": "high_cpu_usage",
+  "severity": "critical",
+  "message": "CPU 사용률이 높습니다: 95.83%",
+  "metrics": {
+    "cpu": 95.83304235288273,
+    "memory": 20.08344989825407,
+    "disk": 56.57746004476321,
+    "responseTime": 909.2988127247709
+  },
+  "id": "high_cpu_usage_1759664382797_vg540jkrx"
+}

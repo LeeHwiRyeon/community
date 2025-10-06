@@ -95,7 +95,7 @@ const StyledCard = styled(Card)(({ theme }) => ({
     transition: 'transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out',
     '&:hover': {
         transform: 'translateY(-4px)',
-        boxShadow: theme.shadows[8],
+        boxShadow: (theme.shadows as any)?.[8] || '0px 8px 16px rgba(0,0,0,0.1)',
     },
 }));
 
@@ -344,8 +344,8 @@ const AutoAgentsContentDashboard: React.FC = () => {
             </Box>
 
             {/* 시스템 상태 카드 */}
-            <Grid container spacing={3} sx={{ mb: 4 }}>
-                <Grid item xs={12} sm={6} md={2.4}>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3, mb: 4 }}>
+                <Box sx={{ flex: '1 1 200px', minWidth: 200 }}>
                     <MetricCard>
                         <CardContent sx={{ textAlign: 'center' }}>
                             <AnalyticsIcon sx={{ fontSize: 40, color: 'primary.main', mb: 1 }} />
@@ -357,9 +357,9 @@ const AutoAgentsContentDashboard: React.FC = () => {
                             </Typography>
                         </CardContent>
                     </MetricCard>
-                </Grid>
+                </Box>
 
-                <Grid item xs={12} sm={6} md={2.4}>
+                <Box sx={{ flex: '1 1 200px', minWidth: 200 }}>
                     <MetricCard>
                         <CardContent sx={{ textAlign: 'center' }}>
                             <AutoAwesomeIcon sx={{ fontSize: 40, color: 'secondary.main', mb: 1 }} />
@@ -371,9 +371,9 @@ const AutoAgentsContentDashboard: React.FC = () => {
                             </Typography>
                         </CardContent>
                     </MetricCard>
-                </Grid>
+                </Box>
 
-                <Grid item xs={12} sm={6} md={2.4}>
+                <Box sx={{ flex: '1 1 200px', minWidth: 200 }}>
                     <MetricCard>
                         <CardContent sx={{ textAlign: 'center' }}>
                             <StarIcon sx={{ fontSize: 40, color: 'warning.main', mb: 1 }} />
@@ -385,9 +385,9 @@ const AutoAgentsContentDashboard: React.FC = () => {
                             </Typography>
                         </CardContent>
                     </MetricCard>
-                </Grid>
+                </Box>
 
-                <Grid item xs={12} sm={6} md={2.4}>
+                <Box sx={{ flex: '1 1 200px', minWidth: 200 }}>
                     <MetricCard>
                         <CardContent sx={{ textAlign: 'center' }}>
                             <SpeedIcon sx={{ fontSize: 40, color: 'info.main', mb: 1 }} />
@@ -399,9 +399,9 @@ const AutoAgentsContentDashboard: React.FC = () => {
                             </Typography>
                         </CardContent>
                     </MetricCard>
-                </Grid>
+                </Box>
 
-                <Grid item xs={12} sm={6} md={2.4}>
+                <Box sx={{ flex: '1 1 200px', minWidth: 200 }}>
                     <MetricCard>
                         <CardContent sx={{ textAlign: 'center' }}>
                             <CheckCircleIcon sx={{ fontSize: 40, color: 'success.main', mb: 1 }} />
@@ -416,8 +416,8 @@ const AutoAgentsContentDashboard: React.FC = () => {
                             </Typography>
                         </CardContent>
                     </MetricCard>
-                </Grid>
-            </Grid>
+                </Box>
+            </Box>
 
             {/* 메인 탭 */}
             <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
@@ -433,9 +433,9 @@ const AutoAgentsContentDashboard: React.FC = () => {
 
             {/* 대시보드 탭 */}
             <TabPanel value={currentTab} index={0}>
-                <Grid container spacing={3}>
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
                     {/* 실시간 성능 차트 */}
-                    <Grid item xs={12} lg={8}>
+                    <Box sx={{ flex: '1 1 600px', minWidth: 600 }}>
                         <StyledCard>
                             <CardHeader
                                 title="실시간 성능 모니터링"
@@ -475,10 +475,10 @@ const AutoAgentsContentDashboard: React.FC = () => {
                                 </ResponsiveContainer>
                             </CardContent>
                         </StyledCard>
-                    </Grid>
+                    </Box>
 
                     {/* 감정 분포 */}
-                    <Grid item xs={12} lg={4}>
+                    <Box sx={{ flex: '1 1 300px', minWidth: 300 }}>
                         <StyledCard>
                             <CardHeader title="감정 분석 분포" />
                             <CardContent>
@@ -502,10 +502,10 @@ const AutoAgentsContentDashboard: React.FC = () => {
                                 </ResponsiveContainer>
                             </CardContent>
                         </StyledCard>
-                    </Grid>
+                    </Box>
 
                     {/* 토픽 분포 */}
-                    <Grid item xs={12}>
+                    <Box sx={{ flex: '1 1 100%', minWidth: 300 }}>
                         <StyledCard>
                             <CardHeader title="인기 토픽 분석" />
                             <CardContent>
@@ -520,14 +520,14 @@ const AutoAgentsContentDashboard: React.FC = () => {
                                 </ResponsiveContainer>
                             </CardContent>
                         </StyledCard>
-                    </Grid>
-                </Grid>
+                    </Box>
+                </Box>
             </TabPanel>
 
             {/* 컨텐츠 분석 탭 */}
             <TabPanel value={currentTab} index={1}>
-                <Grid container spacing={3}>
-                    <Grid item xs={12} md={6}>
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
+                    <Box sx={{ flex: '1 1 400px', minWidth: 400 }}>
                         <StyledCard>
                             <CardHeader title="컨텐츠 분석" />
                             <CardContent>
@@ -557,9 +557,9 @@ const AutoAgentsContentDashboard: React.FC = () => {
                                 </Box>
                             </CardContent>
                         </StyledCard>
-                    </Grid>
+                    </Box>
 
-                    <Grid item xs={12} md={6}>
+                    <Box sx={{ flex: '1 1 400px', minWidth: 400 }}>
                         {analysisResult && (
                             <StyledCard>
                                 <CardHeader title="분석 결과" />
@@ -621,14 +621,14 @@ const AutoAgentsContentDashboard: React.FC = () => {
                                 </CardContent>
                             </StyledCard>
                         )}
-                    </Grid>
-                </Grid>
+                    </Box>
+                </Box>
             </TabPanel>
 
             {/* 컨텐츠 생성 탭 */}
             <TabPanel value={currentTab} index={2}>
-                <Grid container spacing={3}>
-                    <Grid item xs={12} md={6}>
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
+                    <Box sx={{ flex: '1 1 400px', minWidth: 400 }}>
                         <StyledCard>
                             <CardHeader title="AI 컨텐츠 생성" />
                             <CardContent>
@@ -653,9 +653,9 @@ const AutoAgentsContentDashboard: React.FC = () => {
                                 </Box>
                             </CardContent>
                         </StyledCard>
-                    </Grid>
+                    </Box>
 
-                    <Grid item xs={12} md={6}>
+                    <Box sx={{ flex: '1 1 400px', minWidth: 400 }}>
                         {generationResult && (
                             <StyledCard>
                                 <CardHeader title="생성 결과" />
@@ -691,8 +691,8 @@ const AutoAgentsContentDashboard: React.FC = () => {
                                 </CardContent>
                             </StyledCard>
                         )}
-                    </Grid>
-                </Grid>
+                    </Box>
+                </Box>
             </TabPanel>
 
             {/* 개인화 추천 탭 */}
@@ -713,8 +713,8 @@ const AutoAgentsContentDashboard: React.FC = () => {
 
             {/* 성능 모니터링 탭 */}
             <TabPanel value={currentTab} index={5}>
-                <Grid container spacing={3}>
-                    <Grid item xs={12}>
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
+                    <Box sx={{ flex: '1 1 100%', minWidth: 300 }}>
                         <StyledCard>
                             <CardHeader title="시스템 성능 지표" />
                             <CardContent>
@@ -758,8 +758,8 @@ const AutoAgentsContentDashboard: React.FC = () => {
                                 </TableContainer>
                             </CardContent>
                         </StyledCard>
-                    </Grid>
-                </Grid>
+                    </Box>
+                </Box>
             </TabPanel>
 
             {/* 설정 다이얼로그 */}

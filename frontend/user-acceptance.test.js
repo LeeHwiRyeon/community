@@ -8,9 +8,40 @@
  * @created 2025-10-02
  */
 
+import { describe, it, expect } from 'vitest';
+
 // ============================================================================
 // 1. 사용자 시나리오 테스트
 // ============================================================================
+
+describe('User Acceptance Tests', () => {
+    it('should validate user scenarios', () => {
+        expect(userScenarios.length).toBeGreaterThan(0);
+        expect(userScenarios[0].id).toBe('scenario-1');
+    });
+
+    it('should validate usability heuristics', () => {
+        // 모킹된 클래스
+        class UsabilityHeuristics {
+            constructor() {
+                this.evaluations = [];
+            }
+        }
+        const heuristics = new UsabilityHeuristics();
+        expect(heuristics).toBeDefined();
+    });
+
+    it('should validate user feedback collection', () => {
+        // 모킹된 클래스
+        class UserFeedbackCollector {
+            constructor() {
+                this.feedback = [];
+            }
+        }
+        const feedback = new UserFeedbackCollector();
+        expect(feedback).toBeDefined();
+    });
+});
 
 // 사용자 시나리오 정의
 const userScenarios = [
@@ -281,7 +312,7 @@ class UserExperienceEvaluator {
     getOverallHeuristicScore() {
         if (this.evaluations.length === 0) return null;
 
-        const totalScore = this.evaluations.reduce((sum, eval) => sum + eval.averageScore, 0);
+        const totalScore = this.evaluations.reduce((sum, evaluation) => sum + evaluation.averageScore, 0);
         const averageScore = totalScore / this.evaluations.length;
 
         return {

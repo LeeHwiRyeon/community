@@ -1,0 +1,33 @@
+{
+  "version": "3.0.0",
+  "timestamp": "2025-10-04T13:40:47.658Z",
+  "type": "tree_structure_test",
+  "results": [
+    {
+      "name": "홈페이지",
+      "success": true,
+      "message": "트리형 구조 홈페이지 로딩 완료"
+    },
+    {
+      "name": "커뮤니티 허브",
+      "success": true,
+      "message": "커뮤니티 허브 트리형 구조 로딩 완료"
+    },
+    {
+      "name": "뉴스 커뮤니티",
+      "success": true,
+      "message": "뉴스 커뮤니티 트리형 구조 로딩 완료"
+    },
+    {
+      "name": "뉴스 게시판",
+      "success": true,
+      "message": "뉴스 게시판 트리형 구조 로딩 완료"
+    }
+  ],
+  "summary": {
+    "total": 4,
+    "passed": 4,
+    "failed": 0,
+    "successRate": 100
+  }
+}

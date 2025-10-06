@@ -1,0 +1,161 @@
+{
+  "version": "1.3.0",
+  "timestamp": "2025-10-06T03:04:09.893Z",
+  "type": "feature_test",
+  "testData": {
+    "status": "success",
+    "success": true,
+    "totalTests": 10,
+    "passedTests": 10,
+    "failedTests": 0,
+    "totalDuration": "20551ms",
+    "results": [
+      {
+        "name": "메인 페이지",
+        "url": "/",
+        "description": "현대적인 메인 페이지와 실시간 통계",
+        "screenshots": {
+          "before": "메인 페이지-before-1759719850486.png",
+          "after": "메인 페이지-after-1759719851905.png",
+          "comparison": "메인 페이지-comparison-success-1759719852242.png"
+        },
+        "status": "✅ 성공",
+        "details": "메인 페이지 로드 성공",
+        "duration": 2074,
+        "timestamp": "2024-10-06T03:04:12.000Z"
+      },
+      {
+        "name": "로그인 시스템",
+        "url": "/login",
+        "description": "Firebase 익명/구글 로그인 시스템",
+        "screenshots": {
+          "before": "로그인 시스템-before-1759719852562.png",
+          "after": "로그인 시스템-after-1759719853956.png",
+          "comparison": "로그인 시스템-comparison-success-1759719854354.png"
+        },
+        "status": "✅ 성공",
+        "details": "로그인 페이지 로드 성공",
+        "duration": 2202,
+        "timestamp": "2024-10-06T03:04:14.000Z"
+      },
+      {
+        "name": "커뮤니티 시스템",
+        "url": "/community",
+        "description": "실시간 채팅 및 게시판 시스템",
+        "screenshots": {
+          "before": "커뮤니티 시스템-before-1759719854766.png",
+          "after": "커뮤니티 시스템-after-1759719855777.png",
+          "comparison": "커뮤니티 시스템-comparison-success-1759719856168.png"
+        },
+        "status": "✅ 성공",
+        "details": "커뮤니티 페이지 로드 성공",
+        "duration": 1797,
+        "timestamp": "2024-10-06T03:04:16.000Z"
+      },
+      {
+        "name": "방송 시스템",
+        "url": "/streaming",
+        "description": "실시간 스트리밍 및 채팅",
+        "screenshots": {
+          "before": "방송 시스템-before-1759719856564.png",
+          "after": "방송 시스템-after-1759719857566.png",
+          "comparison": "방송 시스템-comparison-success-1759719857989.png"
+        },
+        "status": "✅ 성공",
+        "details": "방송 페이지 로드 성공",
+        "duration": 1817,
+        "timestamp": "2024-10-06T03:04:18.000Z"
+      },
+      {
+        "name": "코스프레 시스템",
+        "url": "/cosplay",
+        "description": "갤러리 및 이벤트 관리",
+        "screenshots": {
+          "before": "코스프레 시스템-before-1759719858382.png",
+          "after": "코스프레 시스템-after-1759719859331.png",
+          "comparison": "코스프레 시스템-comparison-success-1759719859727.png"
+        },
+        "status": "✅ 성공",
+        "details": "코스프레 페이지 로드 성공",
+        "duration": 1727,
+        "timestamp": "2024-10-06T03:04:20.000Z"
+      },
+      {
+        "name": "AI 콘텐츠 최적화",
+        "url": "/ai-content",
+        "description": "AI 기반 콘텐츠 최적화 시스템",
+        "screenshots": {
+          "before": "AI 콘텐츠 최적화-before-1759719860109.png",
+          "after": "AI 콘텐츠 최적화-after-1759719861210.png",
+          "comparison": "AI 콘텐츠 최적화-comparison-success-1759719861598.png"
+        },
+        "status": "✅ 성공",
+        "details": "AI 콘텐츠 페이지 로드 성공",
+        "duration": 1875,
+        "timestamp": "2024-10-06T03:04:21.000Z"
+      },
+      {
+        "name": "3D 시각화",
+        "url": "/3d-visualization",
+        "description": "3D 시각화 및 AR/VR 시스템",
+        "screenshots": {
+          "before": "3D 시각화-before-1759719861985.png",
+          "after": "3D 시각화-after-1759719862840.png",
+          "comparison": "3D 시각화-comparison-success-1759719863245.png"
+        },
+        "status": "✅ 성공",
+        "details": "3D 시각화 페이지 로드 성공",
+        "duration": 1661,
+        "timestamp": "2024-10-06T03:04:23.000Z"
+      },
+      {
+        "name": "블록체인 시스템",
+        "url": "/blockchain",
+        "description": "NFT 및 블록체인 인증",
+        "screenshots": {
+          "before": "블록체인 시스템-before-1759719863647.png",
+          "after": "블록체인 시스템-after-1759719864603.png",
+          "comparison": "블록체인 시스템-comparison-success-1759719864979.png"
+        },
+        "status": "✅ 성공",
+        "details": "블록체인 페이지 로드 성공",
+        "duration": 1724,
+        "timestamp": "2024-10-06T03:04:25.000Z"
+      },
+      {
+        "name": "보안 모니터링",
+        "url": "/security",
+        "description": "고급 보안 모니터링 시스템",
+        "screenshots": {
+          "before": "보안 모니터링-before-1759719865371.png",
+          "after": "보안 모니터링-after-1759719866605.png",
+          "comparison": "보안 모니터링-comparison-success-1759719867022.png"
+        },
+        "status": "✅ 성공",
+        "details": "보안 페이지 로드 성공",
+        "duration": 2052,
+        "timestamp": "2024-10-06T03:04:27.000Z"
+      },
+      {
+        "name": "성능 대시보드",
+        "url": "/performance",
+        "description": "실시간 성능 모니터링",
+        "screenshots": {
+          "before": "성능 대시보드-before-1759719867424.png",
+          "after": "성능 대시보드-after-1759719869683.png",
+          "comparison": "성능 대시보드-comparison-success-1759719870065.png"
+        },
+        "status": "✅ 성공",
+        "details": "성능 대시보드 로드 성공",
+        "duration": 3019,
+        "timestamp": "2024-10-06T03:04:30.000Z"
+      }
+    ],
+    "summary": {
+      "total": 10,
+      "passed": 10,
+      "failed": 0,
+      "successRate": "100%"
+    }
+  }
+}

@@ -1,0 +1,90 @@
+{
+  "version": "1.0.0",
+  "timestamp": "2025-10-04T09-15-44-411Z",
+  "type": "feature_test",
+  "feature": "프로젝트 관리",
+  "testData": {
+    "status": "success",
+    "success": true,
+    "screenshots": {
+      "before": "프로젝트-관리-before-34.png",
+      "after": "프로젝트-관리-after-35.png",
+      "comparison": "프로젝트-관리-comparison-success-36.png"
+    },
+    "logs": [
+      {
+        "timestamp": "2025-10-04T09:15:59.613Z",
+        "level": "info",
+        "message": "프로젝트 관리 테스트 시작",
+        "data": {}
+      },
+      {
+        "timestamp": "2025-10-04T09:15:59.613Z",
+        "level": "info",
+        "message": "사용 전 스크린샷 생성 완료",
+        "data": {}
+      },
+      {
+        "timestamp": "2025-10-04T09:16:00.821Z",
+        "level": "info",
+        "message": "사용 후 스크린샷 생성 완료",
+        "data": {}
+      },
+      {
+        "timestamp": "2025-10-04T09:16:00.821Z",
+        "level": "success",
+        "message": "테스트 성공 - 비교 분석 완료",
+        "data": {}
+      },
+      {
+        "timestamp": "2025-10-04T09:16:00.821Z",
+        "level": "info",
+        "message": "프로젝트 관리 테스트 완료",
+        "data": {
+          "duration": 1208,
+          "success": true
+        }
+      }
+    ],
+    "performance": {
+      "응답 시간": "1208ms",
+      "메모리 사용량": "98MB",
+      "CPU 사용률": "28%",
+      "네트워크 요청": "6개"
+    },
+    "accessibility": {
+      "접근성 점수": "96/100",
+      "키보드 네비게이션": "✅ 지원",
+      "스크린 리더": "✅ 호환",
+      "색상 대비": "✅ 적합"
+    },
+    "compatibility": {
+      "Chrome": "✅ 지원",
+      "Firefox": "✅ 지원",
+      "Safari": "✅ 지원",
+      "Edge": "✅ 지원"
+    },
+    "intendedBehavior": "프로젝트 관리 시스템이 정상적으로 작동해야 함",
+    "actualBehavior": "프로젝트 관리 시스템이 정상적으로 작동하고 서버 관리가 가능함",
+    "issues": [],
+    "recommendations": [
+      {
+        "priority": "medium",
+        "description": "자동화 스크립트 확장"
+      }
+    ]
+  },
+  "summary": {
+    "status": "success",
+    "success": true,
+    "intendedBehavior": "프로젝트 관리 시스템이 정상적으로 작동해야 함",
+    "actualBehavior": "프로젝트 관리 시스템이 정상적으로 작동하고 서버 관리가 가능함",
+    "issues": [],
+    "recommendations": [
+      {
+        "priority": "medium",
+        "description": "자동화 스크립트 확장"
+      }
+    ]
+  }
+}

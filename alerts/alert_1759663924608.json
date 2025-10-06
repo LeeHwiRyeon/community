@@ -1,0 +1,12 @@
+{
+  "type": "high_memory_usage",
+  "severity": "critical",
+  "message": "메모리 사용률이 높습니다: 99.96%",
+  "metrics": {
+    "cpu": 38.00613496887328,
+    "memory": 99.95983313512392,
+    "disk": 42.02037999569425,
+    "responseTime": 536.9049445817277
+  },
+  "id": "high_memory_usage_1759663924608_chkc350kw"
+}

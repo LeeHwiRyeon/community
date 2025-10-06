@@ -84,6 +84,13 @@ const userFeedbackRoutes = require('../../routes/user-feedback'); // Added for R
 const monitoringDashboardRoutes = require('../../routes/monitoring-dashboard'); // Added for RELEASE_PREP_009
 const { metricsMiddleware } = require('./middleware/metricsMiddleware');
 const performanceMonitoringService = require('./services/performanceMonitoringService');
+const {
+    sanitizeInput,
+    preventSQLInjection,
+    preventXSS,
+    requestSizeLimiter,
+    securityHeaders
+} = require('./middleware/security');
 const BackupScheduler = require('./scripts/backup-scheduler');
 const VotingScheduler = require('./services/voting-scheduler');
 const { connectDatabase } = require('./config/database');
@@ -109,8 +116,22 @@ app.use(helmet({
             styleSrc: ["'self'", "'unsafe-inline'"],
             scriptSrc: ["'self'"],
             imgSrc: ["'self'", "data:", "https:"],
+            objectSrc: ["'none'"],
+            baseUri: ["'self'"],
+            frameAncestors: ["'none'"]
         },
     },
+    hsts: {
+        maxAge: 31536000,
+        includeSubDomains: true,
+        preload: true
+    },
+    xssFilter: true,
+    hidePoweredBy: true,
+    noSniff: true,
+    frameguard: { action: 'deny' },
+    referrerPolicy: { policy: 'same-origin' },
+    crossOriginResourcePolicy: { policy: "cross-origin" }
 }));
 
 // CORS 설정
@@ -120,6 +141,17 @@ app.use(cors({
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 }));
+
+// Security headers
+app.use(securityHeaders);
+
+// Request size limiting
+app.use(requestSizeLimiter('10mb'));
+
+// Input sanitization and validation
+app.use(sanitizeInput);
+app.use(preventSQLInjection);
+app.use(preventXSS);
 
 // 최적화된 압축 미들웨어
 app.use(optimizedCompression);
@@ -367,3 +399,4 @@ process.on('uncaughtException', (error) => {
 startServer();
 
 module.exports = app;
+

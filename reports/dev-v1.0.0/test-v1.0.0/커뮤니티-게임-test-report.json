@@ -1,0 +1,90 @@
+{
+  "version": "1.0.0",
+  "timestamp": "2025-10-04T09-15-44-411Z",
+  "type": "feature_test",
+  "feature": "커뮤니티 게임",
+  "testData": {
+    "status": "success",
+    "success": true,
+    "screenshots": {
+      "before": "커뮤니티-게임-before-13.png",
+      "after": "커뮤니티-게임-after-14.png",
+      "comparison": "커뮤니티-게임-comparison-success-15.png"
+    },
+    "logs": [
+      {
+        "timestamp": "2025-10-04T09:15:50.288Z",
+        "level": "info",
+        "message": "커뮤니티 게임 테스트 시작",
+        "data": {}
+      },
+      {
+        "timestamp": "2025-10-04T09:15:50.288Z",
+        "level": "info",
+        "message": "사용 전 스크린샷 생성 완료",
+        "data": {}
+      },
+      {
+        "timestamp": "2025-10-04T09:15:51.902Z",
+        "level": "info",
+        "message": "사용 후 스크린샷 생성 완료",
+        "data": {}
+      },
+      {
+        "timestamp": "2025-10-04T09:15:51.902Z",
+        "level": "success",
+        "message": "테스트 성공 - 비교 분석 완료",
+        "data": {}
+      },
+      {
+        "timestamp": "2025-10-04T09:15:51.902Z",
+        "level": "info",
+        "message": "커뮤니티 게임 테스트 완료",
+        "data": {
+          "duration": 1614,
+          "success": true
+        }
+      }
+    ],
+    "performance": {
+      "응답 시간": "1614ms",
+      "메모리 사용량": "69MB",
+      "CPU 사용률": "21%",
+      "네트워크 요청": "11개"
+    },
+    "accessibility": {
+      "접근성 점수": "91/100",
+      "키보드 네비게이션": "✅ 지원",
+      "스크린 리더": "✅ 호환",
+      "색상 대비": "✅ 적합"
+    },
+    "compatibility": {
+      "Chrome": "✅ 지원",
+      "Firefox": "✅ 지원",
+      "Safari": "✅ 지원",
+      "Edge": "✅ 지원"
+    },
+    "intendedBehavior": "커뮤니티 게임이 정상적으로 작동하고 리더보드가 표시되어야 함",
+    "actualBehavior": "게임 시스템이 정상적으로 로드되고 리더보드가 표시됨",
+    "issues": [],
+    "recommendations": [
+      {
+        "priority": "low",
+        "description": "게임 종류 확장 고려"
+      }
+    ]
+  },
+  "summary": {
+    "status": "success",
+    "success": true,
+    "intendedBehavior": "커뮤니티 게임이 정상적으로 작동하고 리더보드가 표시되어야 함",
+    "actualBehavior": "게임 시스템이 정상적으로 로드되고 리더보드가 표시됨",
+    "issues": [],
+    "recommendations": [
+      {
+        "priority": "low",
+        "description": "게임 종류 확장 고려"
+      }
+    ]
+  }
+}

@@ -549,7 +549,7 @@ export const AccessibilityEnhancer: React.FC = () => {
             <AccessibilityPanel open={panelOpen} onClose={handleClosePanel} />
 
             {/* 전역 접근성 스타일 */}
-            <style jsx global>{`
+            <style>{`
                 .keyboard-navigation *:focus {
                     outline: 3px solid #2196F3 !important;
                     outline-offset: 2px !important;

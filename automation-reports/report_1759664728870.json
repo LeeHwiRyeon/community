@@ -1,0 +1,42 @@
+{
+  "timestamp": 1759664728870,
+  "automationLevel": 100,
+  "metrics": {
+    "totalTasks": 9,
+    "completedTasks": 5,
+    "failedTasks": 4,
+    "automationRate": 55.55555555555556,
+    "averageTaskTime": 1213.2,
+    "systemUptime": 1027285
+  },
+  "queueStatus": {
+    "queued": 0,
+    "active": 0,
+    "completed": 5,
+    "failed": 0
+  },
+  "systemHealth": {
+    "timestamp": 1759664728870,
+    "system": "healthy",
+    "services": [
+      {
+        "name": "database",
+        "status": "running"
+      },
+      {
+        "name": "redis",
+        "status": "running"
+      },
+      {
+        "name": "websocket",
+        "status": "running"
+      }
+    ],
+    "metrics": {
+      "cpu": 92.72114429777278,
+      "memory": 59.29047358700675,
+      "disk": 62.96117136865193,
+      "uptime": 1030765
+    }
+  }
+}

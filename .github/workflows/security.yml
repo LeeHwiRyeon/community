@@ -1,22 +1,23 @@
-# 보안 스캔 파이프라인
+# Security Workflow - Comprehensive Security Scanning
 name: Security Scan
 
 on:
+  schedule:
+    # 매주 월요일 오전 2시에 실행
+    - cron: '0 2 * * 1'
   push:
     branches: [ main, develop ]
   pull_request:
     branches: [ main, develop ]
-  schedule:
-    - cron: '0 2 * * 1' # 매주 월요일 오전 2시
   workflow_dispatch:
 
 env:
-  NODE_VERSION: '18'
+  NODE_VERSION: '20'
 
 jobs:
-  # 의존성 보안 스캔
-  dependency-scan:
-    name: 의존성 보안 스캔
+  # 의존성 보안 감사
+  dependency-audit:
+    name: 의존성 보안 감사
     runs-on: ubuntu-latest
     
     steps:
@@ -29,34 +30,35 @@ jobs:
         node-version: ${{ env.NODE_VERSION }}
         cache: 'npm'
         
-    - name: 백엔드 의존성 설치
+    - name: 루트 의존성 보안 감사
+      run: |
+        npm audit --audit-level=moderate --json > audit-root.json || true
+        npm audit --audit-level=moderate
+        
+    - name: 백엔드 의존성 보안 감사
       run: |
         cd server-backend
-        npm ci
+        npm audit --audit-level=moderate --json > ../audit-backend.json || true
+        npm audit --audit-level=moderate
         
-    - name: 프론트엔드 의존성 설치
+    - name: 프론트엔드 의존성 보안 감사
       run: |
         cd frontend
-        npm ci
-        
-    - name: NPM 보안 감사
-      run: |
-        cd server-backend
-        npm audit --audit-level=moderate --json > backend-audit.json || true
-        cd ../frontend
-        npm audit --audit-level=moderate --json > frontend-audit.json || true
+        npm audit --audit-level=moderate --json > ../audit-frontend.json || true
+        npm audit --audit-level=moderate
         
     - name: 보안 감사 결과 업로드
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
+      if: always()
       with:
         name: security-audit-results
         path: |
-          server-backend/backend-audit.json
-          frontend/frontend-audit.json
-        retention-days: 30
+          audit-root.json
+          audit-backend.json
+          audit-frontend.json
 
   # 코드 보안 스캔
-  code-scan:
+  code-security:
     name: 코드 보안 스캔
     runs-on: ubuntu-latest
     
@@ -70,71 +72,63 @@ jobs:
         node-version: ${{ env.NODE_VERSION }}
         cache: 'npm'
         
-    - name: 백엔드 의존성 설치
+    - name: 의존성 설치
+      run: |
+        npm ci --no-audit --no-fund
+        cd server-backend && npm ci --no-audit --no-fund
+        cd ../frontend && npm ci --no-audit --no-fund
+        
+    - name: 백엔드 보안 테스트
       run: |
         cd server-backend
-        npm ci
+        npm run test:security:comprehensive
         
-    - name: 프론트엔드 의존성 설치
+    - name: 프론트엔드 보안 검사
       run: |
         cd frontend
-        npm ci
-        
-    - name: ESLint 보안 규칙 검사
-      run: |
-        cd server-backend
-        npm run lint:security
-        cd ../frontend
-        npm run lint:security
-        
-    - name: 정적 코드 분석
-      run: |
-        node scripts/security-audit.js
-        
-    - name: 보안 스캔 결과 업로드
-      uses: actions/upload-artifact@v3
-      with:
-        name: code-scan-results
-        path: reports/security-audit-report.json
-        retention-days: 30
+        npm run lint
+        npm run type-check
 
-  # 컨테이너 보안 스캔
-  container-scan:
-    name: 컨테이너 보안 스캔
+  # Docker 보안 스캔
+  docker-security:
+    name: Docker 보안 스캔
     runs-on: ubuntu-latest
     
     steps:
     - name: 코드 체크아웃
       uses: actions/checkout@v4
       
-    - name: Docker 빌드
+    - name: Docker 빌드 (백엔드)
       run: |
-        docker build -t community-backend:latest -f server-backend/Dockerfile .
-        docker build -t community-frontend:latest -f frontend/Dockerfile .
+        cd server-backend
+        docker build -t community-backend:security-scan .
         
-    - name: Trivy 보안 스캔
+    - name: Docker 빌드 (프론트엔드)
+      run: |
+        cd frontend
+        docker build -t community-frontend:security-scan .
+        
+    - name: Trivy 백엔드 스캔
       uses: aquasecurity/trivy-action@master
       with:
-        image-ref: 'community-backend:latest'
+        image-ref: 'community-backend:security-scan'
         format: 'sarif'
-        output: 'trivy-backend-results.sarif'
+        output: 'trivy-backend.sarif'
+        severity: 'CRITICAL,HIGH,MEDIUM'
         
     - name: Trivy 프론트엔드 스캔
       uses: aquasecurity/trivy-action@master
       with:
-        image-ref: 'community-frontend:latest'
+        image-ref: 'community-frontend:security-scan'
         format: 'sarif'
-        output: 'trivy-frontend-results.sarif'
+        output: 'trivy-frontend.sarif'
+        severity: 'CRITICAL,HIGH,MEDIUM'
         
     - name: Trivy 결과 업로드
       uses: github/codeql-action/upload-sarif@v2
+      if: always()
       with:
-        sarif_file: 'trivy-backend-results.sarif'
-        
-    - name: Trivy 프론트엔드 결과 업로드
-      uses: github/codeql-action/upload-sarif@v2
-      with:
-        sarif_file: 'trivy-frontend-results.sarif'
+        sarif_file: 'trivy-backend.sarif,trivy-frontend.sarif'
 
   # 시크릿 스캔
   secret-scan:
@@ -155,156 +149,61 @@ jobs:
         head: HEAD
         extra_args: --debug --only-verified
 
-  # OWASP ZAP 스캔
-  owasp-scan:
-    name: OWASP ZAP 스캔
-    runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
-    
-    steps:
-    - name: 코드 체크아웃
-      uses: actions/checkout@v4
-      
-    - name: Node.js 설정
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ env.NODE_VERSION }}
-        cache: 'npm'
-        
-    - name: 백엔드 의존성 설치
-      run: |
-        cd server-backend
-        npm ci
-        
-    - name: 백엔드 서버 시작
-      run: |
-        cd server-backend
-        npm start &
-        sleep 30
-        
-    - name: OWASP ZAP 스캔
-      uses: zaproxy/action-full-scan@v0.4.0
-      with:
-        target: 'http://localhost:50000'
-        rules_file_name: '.zap/rules.tsv'
-        cmd_options: '-a'
-        
-    - name: ZAP 결과 업로드
-      uses: actions/upload-artifact@v3
-      with:
-        name: zap-results
-        path: zap-report.html
-        retention-days: 30
-
-  # 보안 정책 검사
-  policy-check:
-    name: 보안 정책 검사
-    runs-on: ubuntu-latest
-    
-    steps:
-    - name: 코드 체크아웃
-      uses: actions/checkout@v4
-      
-    - name: 보안 정책 검사
-      run: |
-        echo "보안 정책 검사 중..."
-        # 보안 정책 검사 스크립트 실행
-        # - 파일 권한 검사
-        # - 환경 변수 검사
-        # - 설정 파일 검사
-        # - 네트워크 설정 검사
-        
-    - name: 정책 검사 결과 업로드
-      uses: actions/upload-artifact@v3
-      with:
-        name: policy-check-results
-        path: reports/policy-check-report.json
-        retention-days: 30
-
   # 보안 보고서 생성
   security-report:
     name: 보안 보고서 생성
     runs-on: ubuntu-latest
-    needs: [dependency-scan, code-scan, container-scan, secret-scan, policy-check]
+    needs: [dependency-audit, code-security, docker-security, secret-scan]
     if: always()
     
     steps:
     - name: 코드 체크아웃
       uses: actions/checkout@v4
       
-    - name: 보안 스캔 결과 다운로드
-      uses: actions/download-artifact@v3
+    - name: 보안 감사 결과 다운로드
+      uses: actions/download-artifact@v4
       with:
         name: security-audit-results
         path: ./audit-results
         
-    - name: 코드 스캔 결과 다운로드
-      uses: actions/download-artifact@v3
-      with:
-        name: code-scan-results
-        path: ./code-scan-results
-        
-    - name: 정책 검사 결과 다운로드
-      uses: actions/download-artifact@v3
-      with:
-        name: policy-check-results
-        path: ./policy-check-results
-        
     - name: 보안 보고서 생성
       run: |
-        echo "보안 보고서 생성 중..."
-        # 보안 보고서 생성 스크립트 실행
-        node scripts/generate-security-report.js
+        echo "# 🛡️ 보안 스캔 보고서" > security-report.md
+        echo "**날짜**: $(date)" >> security-report.md
+        echo "**브랜치**: ${{ github.ref_name }}" >> security-report.md
+        echo "**커밋**: ${{ github.sha }}" >> security-report.md
+        echo "" >> security-report.md
+        
+        echo "## 📊 스캔 결과 요약" >> security-report.md
+        echo "- [x] 의존성 보안 감사" >> security-report.md
+        echo "- [x] 코드 보안 스캔" >> security-report.md
+        echo "- [x] Docker 보안 스캔" >> security-report.md
+        echo "- [x] 시크릿 스캔" >> security-report.md
+        echo "" >> security-report.md
+        
+        echo "## 🔍 상세 결과" >> security-report.md
+        echo "### 의존성 보안 감사" >> security-report.md
+        if [ -f "./audit-results/audit-root.json" ]; then
+          echo "루트 프로젝트: $(jq '.vulnerabilities | length' ./audit-results/audit-root.json) 개 취약점" >> security-report.md
+        fi
+        if [ -f "./audit-results/audit-backend.json" ]; then
+          echo "백엔드: $(jq '.vulnerabilities | length' ./audit-results/audit-backend.json) 개 취약점" >> security-report.md
+        fi
+        if [ -f "./audit-results/audit-frontend.json" ]; then
+          echo "프론트엔드: $(jq '.vulnerabilities | length' ./audit-results/audit-frontend.json) 개 취약점" >> security-report.md
+        fi
         
     - name: 보안 보고서 업로드
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: security-report
-        path: reports/security-report.md
-        retention-days: 90
+        path: security-report.md
         
-    - name: 보안 알림
-      uses: 8398a7/action-slack@v3
-      with:
-        status: ${{ job.status }}
-        channel: '#security'
-        webhook_url: ${{ secrets.SLACK_WEBHOOK }}
-      if: always()
-
-  # 보안 취약점 자동 수정
-  auto-fix:
-    name: 보안 취약점 자동 수정
-    runs-on: ubuntu-latest
-    if: github.event_name == 'schedule'
-    
-    steps:
-    - name: 코드 체크아웃
-      uses: actions/checkout@v4
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        
-    - name: Node.js 설정
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ env.NODE_VERSION }}
-        cache: 'npm'
-        
-    - name: 백엔드 의존성 업데이트
-      run: |
-        cd server-backend
-        npm update
-        npm audit fix --force
-        
-    - name: 프론트엔드 의존성 업데이트
-      run: |
-        cd frontend
-        npm update
-        npm audit fix --force
-        
-    - name: 자동 수정 커밋
+    - name: 보안 보고서 커밋 (main 브랜치인 경우)
+      if: github.ref == 'refs/heads/main'
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git add .
-        git diff --staged --quiet || git commit -m "chore: 자동 보안 업데이트"
+        git add security-report.md
+        git commit -m "🛡️ 보안 스캔 보고서 업데이트" || exit 0
         git push

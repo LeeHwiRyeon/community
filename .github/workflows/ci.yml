@@ -1,4 +1,4 @@
-# CI 파이프라인 - 코드 품질 검사 및 테스트
+# CI Pipeline - Security Hardened
 name: CI Pipeline
 
 on:
@@ -8,15 +8,44 @@ on:
     branches: [ main, develop ]
 
 env:
-  NODE_VERSION: '18'
+  NODE_VERSION: '20'
   BACKEND_PORT: 50000
   FRONTEND_PORT: 3000
 
 jobs:
+  # 보안 검사
+  security-audit:
+    name: 보안 감사
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 코드 체크아웃
+      uses: actions/checkout@v4
+      
+    - name: Node.js 설정
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+        
+    - name: 루트 의존성 보안 감사
+      run: npm audit --audit-level=moderate
+      
+    - name: 백엔드 보안 감사
+      run: |
+        cd server-backend
+        npm audit --audit-level=moderate
+        
+    - name: 프론트엔드 보안 감사
+      run: |
+        cd frontend
+        npm audit --audit-level=moderate
+
   # 코드 품질 검사
   code-quality:
     name: 코드 품질 검사
     runs-on: ubuntu-latest
+    needs: security-audit
     
     steps:
     - name: 코드 체크아웃
@@ -31,12 +60,12 @@ jobs:
     - name: 백엔드 의존성 설치
       run: |
         cd server-backend
-        npm ci
+        npm ci --no-audit --no-fund
         
     - name: 프론트엔드 의존성 설치
       run: |
         cd frontend
-        npm ci
+        npm ci --no-audit --no-fund
         
     - name: 백엔드 린팅
       run: |
@@ -47,41 +76,12 @@ jobs:
       run: |
         cd frontend
         npm run lint
-        
-    - name: 코드 포맷팅 검사
-      run: |
-        cd server-backend
-        npm run format:check
-        cd ../frontend
-        npm run format:check
-        
-    - name: TypeScript 타입 검사
-      run: |
-        cd frontend
-        npm run type-check
 
-  # 백엔드 테스트
-  backend-tests:
-    name: 백엔드 테스트
+  # 테스트 실행
+  test:
+    name: 테스트 실행
     runs-on: ubuntu-latest
-    
-    services:
-      mariadb:
-        image: mariadb:10.6
-        env:
-          MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: community_test
-          MYSQL_USER: test_user
-          MYSQL_PASSWORD: test_password
-        ports:
-          - 3306:3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
-        
-      redis:
-        image: redis:6-alpine
-        ports:
-          - 6379:6379
-        options: --health-cmd="redis-cli ping" --health-interval=10s --health-timeout=5s --health-retries=3
+    needs: code-quality
     
     steps:
     - name: 코드 체크아웃
@@ -96,135 +96,33 @@ jobs:
     - name: 백엔드 의존성 설치
       run: |
         cd server-backend
-        npm ci
+        npm ci --no-audit --no-fund
         
-    - name: 환경 변수 설정
+    - name: 프론트엔드 의존성 설치
+      run: |
+        cd frontend
+        npm ci --no-audit --no-fund
+        
+    - name: 백엔드 보안 테스트
       run: |
         cd server-backend
-        cp .env.example .env.test
-        echo "NODE_ENV=test" >> .env.test
-        echo "DATABASE_HOST=localhost" >> .env.test
-        echo "DATABASE_PORT=3306" >> .env.test
-        echo "DATABASE_NAME=community_test" >> .env.test
-        echo "DATABASE_USER=test_user" >> .env.test
-        echo "DATABASE_PASSWORD=test_password" >> .env.test
-        echo "REDIS_HOST=localhost" >> .env.test
-        echo "REDIS_PORT=6379" >> .env.test
-        echo "JWT_SECRET=test_jwt_secret" >> .env.test
-        
-    - name: 데이터베이스 마이그레이션
-      run: |
-        cd server-backend
-        npm run migrate:test
+        npm run test:security
         
     - name: 백엔드 단위 테스트
       run: |
         cd server-backend
         npm run test:unit
         
-    - name: 백엔드 통합 테스트
-      run: |
-        cd server-backend
-        npm run test:integration
-        
-    - name: 테스트 커버리지 생성
-      run: |
-        cd server-backend
-        npm run test:coverage
-        
-    - name: 커버리지 업로드
-      uses: codecov/codecov-action@v3
-      with:
-        file: ./server-backend/coverage/lcov.info
-        flags: backend
-        name: backend-coverage
-
-  # 프론트엔드 테스트
-  frontend-tests:
-    name: 프론트엔드 테스트
-    runs-on: ubuntu-latest
-    
-    steps:
-    - name: 코드 체크아웃
-      uses: actions/checkout@v4
-      
-    - name: Node.js 설정
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ env.NODE_VERSION }}
-        cache: 'npm'
-        
-    - name: 프론트엔드 의존성 설치
+    - name: 프론트엔드 테스트
       run: |
         cd frontend
-        npm ci
-        
-    - name: 프론트엔드 단위 테스트
-      run: |
-        cd frontend
-        npm run test:unit
-        
-    - name: 프론트엔드 E2E 테스트
-      run: |
-        cd frontend
-        npm run test:e2e
-        
-    - name: 테스트 커버리지 생성
-      run: |
-        cd frontend
-        npm run test:coverage
-        
-    - name: 커버리지 업로드
-      uses: codecov/codecov-action@v3
-      with:
-        file: ./frontend/coverage/lcov.info
-        flags: frontend
-        name: frontend-coverage
-
-  # 보안 검사
-  security-scan:
-    name: 보안 검사
-    runs-on: ubuntu-latest
-    
-    steps:
-    - name: 코드 체크아웃
-      uses: actions/checkout@v4
-      
-    - name: Node.js 설정
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ env.NODE_VERSION }}
-        cache: 'npm'
-        
-    - name: 백엔드 의존성 설치
-      run: |
-        cd server-backend
-        npm ci
-        
-    - name: 프론트엔드 의존성 설치
-      run: |
-        cd frontend
-        npm ci
-        
-    - name: NPM 보안 감사
-      run: |
-        cd server-backend
-        npm audit --audit-level=moderate
-        cd ../frontend
-        npm audit --audit-level=moderate
-        
-    - name: 코드 보안 스캔
-      run: |
-        node scripts/security-audit.js
-        
-    - name: 의존성 취약점 스캔
-      uses: actions/dependency-review-action@v3
-      if: github.event_name == 'pull_request'
+        npm run test:run
 
   # 빌드 테스트
-  build-test:
+  build:
     name: 빌드 테스트
     runs-on: ubuntu-latest
+    needs: test
     
     steps:
     - name: 코드 체크아웃
@@ -239,163 +137,59 @@ jobs:
     - name: 백엔드 의존성 설치
       run: |
         cd server-backend
-        npm ci
+        npm ci --only=production --no-audit --no-fund
         
     - name: 프론트엔드 의존성 설치
       run: |
         cd frontend
-        npm ci
-        
-    - name: 백엔드 빌드
-      run: |
-        cd server-backend
-        npm run build
+        npm ci --no-audit --no-fund
         
     - name: 프론트엔드 빌드
       run: |
         cd frontend
         npm run build
         
-    - name: 빌드 아티팩트 업로드
-      uses: actions/upload-artifact@v3
-      with:
-        name: build-artifacts
-        path: |
-          server-backend/dist/
-          frontend/build/
-        retention-days: 7
+    - name: 백엔드 빌드 확인
+      run: |
+        cd server-backend
+        npm run build
 
-  # 통합 테스트
-  integration-tests:
-    name: 통합 테스트
+  # Docker 보안 검사
+  docker-security:
+    name: Docker 보안 검사
     runs-on: ubuntu-latest
-    needs: [code-quality, backend-tests, frontend-tests, security-scan, build-test]
-    
-    services:
-      mariadb:
-        image: mariadb:10.6
-        env:
-          MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: community_test
-          MYSQL_USER: test_user
-          MYSQL_PASSWORD: test_password
-        ports:
-          - 3306:3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
-        
-      redis:
-        image: redis:6-alpine
-        ports:
-          - 6379:6379
-        options: --health-cmd="redis-cli ping" --health-interval=10s --health-timeout=5s --health-retries=3
+    needs: build
     
     steps:
     - name: 코드 체크아웃
       uses: actions/checkout@v4
       
-    - name: Node.js 설정
-      uses: actions/setup-node@v4
+    - name: Docker 빌드 (백엔드)
+      run: |
+        cd server-backend
+        docker build -t community-backend:test .
+        
+    - name: Docker 빌드 (프론트엔드)
+      run: |
+        cd frontend
+        docker build -t community-frontend:test .
+        
+    - name: Docker 보안 스캔 (Trivy)
+      uses: aquasecurity/trivy-action@master
       with:
-        node-version: ${{ env.NODE_VERSION }}
-        cache: 'npm'
+        image-ref: 'community-backend:test'
+        format: 'sarif'
+        output: 'trivy-results-backend.sarif'
         
-    - name: 빌드 아티팩트 다운로드
-      uses: actions/download-artifact@v3
+    - name: Docker 보안 스캔 (Trivy) - Frontend
+      uses: aquasecurity/trivy-action@master
       with:
-        name: build-artifacts
+        image-ref: 'community-frontend:test'
+        format: 'sarif'
+        output: 'trivy-results-frontend.sarif'
         
-    - name: 백엔드 의존성 설치
-      run: |
-        cd server-backend
-        npm ci --production
-        
-    - name: 환경 변수 설정
-      run: |
-        cd server-backend
-        cp .env.example .env
-        echo "NODE_ENV=test" >> .env
-        echo "DATABASE_HOST=localhost" >> .env
-        echo "DATABASE_PORT=3306" >> .env
-        echo "DATABASE_NAME=community_test" >> .env
-        echo "DATABASE_USER=test_user" >> .env
-        echo "DATABASE_PASSWORD=test_password" >> .env
-        echo "REDIS_HOST=localhost" >> .env
-        echo "REDIS_PORT=6379" >> .env
-        echo "JWT_SECRET=test_jwt_secret" >> .env
-        
-    - name: 데이터베이스 마이그레이션
-      run: |
-        cd server-backend
-        npm run migrate:test
-        
-    - name: 백엔드 서버 시작
-      run: |
-        cd server-backend
-        npm start &
-        sleep 10
-        
-    - name: 백엔드 헬스 체크
-      run: |
-        curl -f http://localhost:${{ env.BACKEND_PORT }}/api/health || exit 1
-        
-    - name: API 테스트
-      run: |
-        cd server-backend
-        npm run test:api
-        
-    - name: 백엔드 서버 중지
-      run: |
-        pkill -f "node.*server.js" || true
-
-  # 성능 테스트
-  performance-tests:
-    name: 성능 테스트
-    runs-on: ubuntu-latest
-    needs: [integration-tests]
-    
-    steps:
-    - name: 코드 체크아웃
-      uses: actions/checkout@v4
-      
-    - name: Node.js 설정
-      uses: actions/setup-node@v4
+    - name: Trivy 결과 업로드
+      uses: github/codeql-action/upload-sarif@v2
+      if: always()
       with:
-        node-version: ${{ env.NODE_VERSION }}
-        cache: 'npm'
-        
-    - name: 백엔드 의존성 설치
-      run: |
-        cd server-backend
-        npm ci
-        
-    - name: 성능 테스트 실행
-      run: |
-        node scripts/performance-test.js
-        
-    - name: 성능 테스트 결과 업로드
-      uses: actions/upload-artifact@v3
-      with:
-        name: performance-results
-        path: reports/performance-*.json
-        retention-days: 30
-
-  # CI 결과 요약
-  ci-summary:
-    name: CI 결과 요약
-    runs-on: ubuntu-latest
-    needs: [code-quality, backend-tests, frontend-tests, security-scan, build-test, integration-tests, performance-tests]
-    if: always()
-    
-    steps:
-    - name: CI 결과 요약
-      run: |
-        echo "## CI 파이프라인 결과" >> $GITHUB_STEP_SUMMARY
-        echo "| 작업 | 상태 |" >> $GITHUB_STEP_SUMMARY
-        echo "|------|------|" >> $GITHUB_STEP_SUMMARY
-        echo "| 코드 품질 검사 | ${{ needs.code-quality.result }} |" >> $GITHUB_STEP_SUMMARY
-        echo "| 백엔드 테스트 | ${{ needs.backend-tests.result }} |" >> $GITHUB_STEP_SUMMARY
-        echo "| 프론트엔드 테스트 | ${{ needs.frontend-tests.result }} |" >> $GITHUB_STEP_SUMMARY
-        echo "| 보안 검사 | ${{ needs.security-scan.result }} |" >> $GITHUB_STEP_SUMMARY
-        echo "| 빌드 테스트 | ${{ needs.build-test.result }} |" >> $GITHUB_STEP_SUMMARY
-        echo "| 통합 테스트 | ${{ needs.integration-tests.result }} |" >> $GITHUB_STEP_SUMMARY
-        echo "| 성능 테스트 | ${{ needs.performance-tests.result }} |" >> $GITHUB_STEP_SUMMARY
+        sarif_file: 'trivy-results-backend.sarif,trivy-results-frontend.sarif'

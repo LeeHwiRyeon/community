@@ -1,0 +1,12 @@
+{
+  "type": "high_cpu_usage",
+  "severity": "critical",
+  "message": "CPU 사용률이 높습니다: 98.75%",
+  "metrics": {
+    "cpu": 98.75153269022728,
+    "memory": 27.855573725222516,
+    "disk": 20.124274865947424,
+    "responseTime": 985.1430100273409
+  },
+  "id": "high_cpu_usage_1759663749360_gv28i55gt"
+}

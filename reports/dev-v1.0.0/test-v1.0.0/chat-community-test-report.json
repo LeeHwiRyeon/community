@@ -1,0 +1,33 @@
+{
+  "version": "3.0.0",
+  "timestamp": "2025-10-04T13:54:01.500Z",
+  "type": "chat_community_test",
+  "results": [
+    {
+      "name": "채팅 기반 커뮤니티 페이지",
+      "success": true,
+      "message": "채팅 기반 커뮤니티 페이지 로딩 완료"
+    },
+    {
+      "name": "MMORPG 채팅 테스트",
+      "success": true,
+      "message": "MMORPG 채팅 응답 완료"
+    },
+    {
+      "name": "VIP 등급 변경",
+      "success": true,
+      "message": "VIP 등급 변경 완료"
+    },
+    {
+      "name": "시크릿 페이지",
+      "success": false,
+      "message": "시크릿 페이지 접근 실패"
+    }
+  ],
+  "summary": {
+    "total": 4,
+    "passed": 3,
+    "failed": 1,
+    "successRate": 75
+  }
+}

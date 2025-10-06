@@ -34,19 +34,30 @@ import {
     EmojiEmotions as EmojiIcon,
     AttachFile as AttachIcon,
     MoreVert as MoreIcon,
-    Circle as CircleIcon
+    Circle as CircleIcon,
+    Image as ImageIcon,
+    FileText as FileTextIcon,
+    Download as DownloadIcon,
+    Delete as DeleteIcon
 } from '@mui/icons-material';
+import FileSharing, { FileMetadata } from './FileSharing';
+import { MessageEncryption, useMessageEncryption } from '../utils/MessageEncryption';
 
-// 채팅 데이터 타입 정의
+// 채팅 데이터 타입 정의 (v1.3 확장)
 interface ChatMessage {
     id: string;
     userId: string;
     username: string;
     message: string;
     timestamp: string;
-    type: 'text' | 'image' | 'file' | 'system';
+    type: 'text' | 'image' | 'file' | 'system' | 'encrypted';
     avatar?: string;
     isOnline?: boolean;
+    fileMetadata?: FileMetadata;
+    isEncrypted?: boolean;
+    replyTo?: string;
+    mentions?: string[];
+    reactions?: { [emoji: string]: string[] };
 }
 
 interface ChatRoom {
@@ -101,23 +112,35 @@ const ChatSystem: React.FC<ChatSystemProps> = ({
         scrollToBottom();
     }, [messages]);
 
-    // WebSocket 연결
+    // WebSocket 연결 (v1.3 최적화)
     useEffect(() => {
+        let reconnectAttempts = 0;
+        const maxReconnectAttempts = 5;
+        let reconnectTimeout: NodeJS.Timeout;
+
         const connectWebSocket = () => {
             try {
-                const websocket = new WebSocket(`ws://localhost:50000/chat`);
+                // WebSocket 연결 최적화: 압축 및 하트비트 설정
+                const websocket = new WebSocket(`ws://localhost:50000/chat`, [], {
+                    perMessageDeflate: true,
+                    handshakeTimeout: 10000,
+                    maxPayload: 1024 * 1024 // 1MB
+                });
 
                 websocket.onopen = () => {
-                    console.log('채팅 WebSocket 연결됨');
+                    console.log('채팅 WebSocket 연결됨 (v1.3 최적화)');
                     setIsConnected(true);
                     setWs(websocket);
+                    reconnectAttempts = 0; // 연결 성공 시 재시도 횟수 리셋
 
-                    // 채팅방 입장
+                    // 채팅방 입장 (인증 토큰 포함)
                     websocket.send(JSON.stringify({
                         type: 'join_room',
                         roomId: currentRoom,
                         userId: currentUser.id,
-                        username: currentUser.username
+                        username: currentUser.username,
+                        token: localStorage.getItem('authToken'), // 보안 강화
+                        timestamp: Date.now()
                     }));
                 };
 
@@ -142,13 +165,23 @@ const ChatSystem: React.FC<ChatSystemProps> = ({
                     }
                 };
 
-                websocket.onclose = () => {
-                    console.log('채팅 WebSocket 연결 끊김');
+                websocket.onclose = (event) => {
+                    console.log('채팅 WebSocket 연결 끊김:', event.code, event.reason);
                     setIsConnected(false);
                     setWs(null);
 
-                    // 재연결 시도
-                    setTimeout(connectWebSocket, 3000);
+                    // 지수 백오프를 사용한 재연결 (v1.3 최적화)
+                    if (reconnectAttempts < maxReconnectAttempts) {
+                        const delay = Math.min(1000 * Math.pow(2, reconnectAttempts), 30000);
+                        reconnectAttempts++;
+
+                        console.log(`${delay}ms 후 재연결 시도 (${reconnectAttempts}/${maxReconnectAttempts})`);
+                        reconnectTimeout = setTimeout(connectWebSocket, delay);
+                    } else {
+                        console.error('최대 재연결 시도 횟수 초과. 수동 재연결이 필요합니다.');
+                        // 사용자에게 수동 재연결 옵션 제공
+                        setConnectionError(true);
+                    }
                 };
 
                 websocket.onerror = (error) => {

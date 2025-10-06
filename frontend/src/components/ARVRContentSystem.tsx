@@ -1,825 +1,479 @@
 /**
- * 🥽 AR/VR 컨텐츠 시스템
- * 
- * WebXR 기반 증강현실(AR) 및 가상현실(VR) 컨텐츠 지원
- * 몰입형 컨텐츠 경험을 제공하는 차세대 시스템
- * 
- * @author AUTOAGENTS Manager
- * @version 3.0.0
- * @created 2025-10-02
+ * AR/VR 콘텐츠 시스템 (v1.3)
+ * WebXR 기반 몰입형 경험 제공
  */
 
-import React, {
-    useState,
-    useEffect,
-    useCallback,
-    useRef,
-    useMemo,
-    Suspense
-} from 'react';
+import React, { useState, useEffect } from 'react';
 import {
-    Box,
-    Paper,
-    Typography,
-    Button,
-    IconButton,
-    Card,
-    CardContent,
-    CardActions,
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    DialogActions,
-    Alert,
-    CircularProgress,
-    Chip,
-    Tooltip,
-    Slider,
-    FormControlLabel,
-    Switch,
-    Select,
-    MenuItem,
-    FormControl,
-    InputLabel,
-    useTheme
+  Box,
+  Typography,
+  Card,
+  CardContent,
+  Button,
+  Grid,
+  TextField,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Chip,
+  LinearProgress,
+  CircularProgress,
+  Alert,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemIcon,
+  Divider,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  IconButton,
+  Tooltip,
+  Badge,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions
 } from '@mui/material';
 import {
-    ViewInAr as ARIcon,
-    Vrpano as VRIcon,
-    CameraAlt as CameraIcon,
-    Videocam as VideoIcon,
-    ThreeDRotation as ThreeDIcon,
-    Fullscreen as FullscreenIcon,
-    Settings as SettingsIcon,
-    PlayArrow as PlayIcon,
-    Pause as PauseIcon,
-    Stop as StopIcon,
-    Refresh as RefreshIcon,
-    Share as ShareIcon,
-    Download as DownloadIcon,
-    Warning as WarningIcon,
-    CheckCircle as CheckIcon,
-    Error as ErrorIcon
+  ViewInAr,
+  ViewInCar,
+  PlayArrow,
+  Pause,
+  Stop,
+  Refresh,
+  Settings,
+  Visibility,
+  Download,
+  Share,
+  Favorite,
+  FavoriteBorder,
+  VolumeUp,
+  VolumeOff,
+  Fullscreen,
+  FullscreenExit
 } from '@mui/icons-material';
-import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import {
-    XR,
-    Controllers,
-    Hands,
-    VRButton,
-    ARButton,
-    useXR,
-    useController,
-    useHitTest,
-    Interactive
-} from '@react-three/xr';
-import {
-    OrbitControls,
-    Text,
-    Box as ThreeBox,
-    Sphere,
-    Plane,
-    Html,
-    Environment,
-    PerspectiveCamera,
-    useGLTF,
-    useTexture
-} from '@react-three/drei';
-import { styled } from '@mui/system';
-import * as THREE from 'three';
 
-// AR/VR 타입 정의
-export type XRMode = 'ar' | 'vr' | 'inline';
-export type ContentType = '3d-model' | 'video' | 'image' | 'text' | 'interactive' | 'game';
-export type InteractionType = 'gaze' | 'hand' | 'controller' | 'voice' | 'gesture';
-
-export interface XRContent {
-    id: string;
-    type: ContentType;
-    title: string;
-    description: string;
-    url?: string;
-    position: [number, number, number];
-    rotation: [number, number, number];
-    scale: [number, number, number];
-    interactions: InteractionType[];
-    metadata: {
-        author: string;
-        created: Date;
-        tags: string[];
-        duration?: number;
-        fileSize?: number;
-    };
+// AR/VR 콘텐츠 데이터 타입
+interface ARVRContent {
+  id: string;
+  title: string;
+  description: string;
+  type: 'ar' | 'vr' | 'mixed';
+  thumbnail: string;
+  duration: number;
+  views: number;
+  likes: number;
+  isLiked: boolean;
+  category: string;
+  tags: string[];
+  createdAt: Date;
+  creator: string;
+  status: 'active' | 'draft' | 'archived';
 }
 
-export interface XRSession {
-    id: string;
-    mode: XRMode;
-    isActive: boolean;
-    startTime: Date;
-    duration: number;
-    contents: XRContent[];
-    settings: XRSettings;
+interface ARVRStats {
+  totalContent: number;
+  arContent: number;
+  vrContent: number;
+  mixedContent: number;
+  totalViews: number;
+  totalLikes: number;
+  averageDuration: number;
 }
 
-export interface XRSettings {
-    renderQuality: 'low' | 'medium' | 'high' | 'ultra';
-    frameRate: 30 | 60 | 90 | 120;
-    enableHandTracking: boolean;
-    enableEyeTracking: boolean;
-    enableSpatialAudio: boolean;
-    enableHapticFeedback: boolean;
-    safetyBoundary: boolean;
-    comfortSettings: {
-        locomotion: 'teleport' | 'smooth' | 'room-scale';
-        turnSpeed: number;
-        snapTurn: boolean;
-        vignetteOnMove: boolean;
-    };
-}
+const ARVRContentSystem: React.FC = () => {
+  const [contents, setContents] = useState<ARVRContent[]>([]);
+  const [stats, setStats] = useState<ARVRStats>({
+    totalContent: 0,
+    arContent: 0,
+    vrContent: 0,
+    mixedContent: 0,
+    totalViews: 0,
+    totalLikes: 0,
+    averageDuration: 0
+  });
+  const [loading, setLoading] = useState(false);
+  const [selectedContent, setSelectedContent] = useState<ARVRContent | null>(null);
+  const [showPlayer, setShowPlayer] = useState(false);
+  const [filter, setFilter] = useState('all');
 
-// 스타일드 컴포넌트
-const XRContainer = styled(Paper)(({ theme }) => ({
-    height: '100%',
-    display: 'flex',
-    flexDirection: 'column',
-    overflow: 'hidden',
-    position: 'relative'
-}));
+  useEffect(() => {
+    loadARVRContent();
+  }, []);
 
-const XRCanvas = styled(Box)(({ theme }) => ({
-    flex: 1,
-    position: 'relative',
-    backgroundColor: '#000',
-    borderRadius: theme.shape.borderRadius,
-    overflow: 'hidden'
-}));
-
-const XRControls = styled(Box)(({ theme }) => ({
-    position: 'absolute',
-    bottom: theme.spacing(2),
-    left: '50%',
-    transform: 'translateX(-50%)',
-    zIndex: 10,
-    display: 'flex',
-    gap: theme.spacing(1),
-    backgroundColor: 'rgba(0, 0, 0, 0.8)',
-    borderRadius: theme.shape.borderRadius,
-    padding: theme.spacing(1)
-}));
-
-const XRStatus = styled(Card)(({ theme }) => ({
-    position: 'absolute',
-    top: theme.spacing(2),
-    left: theme.spacing(2),
-    zIndex: 10,
-    minWidth: 200,
-    backgroundColor: 'rgba(0, 0, 0, 0.8)',
-    color: 'white'
-}));
-
-// WebXR 호환성 체크
-const useXRSupport = () => {
-    const [support, setSupport] = useState({
-        ar: false,
-        vr: false,
-        immersiveAR: false,
-        immersiveVR: false
-    });
-
-    useEffect(() => {
-        const checkSupport = async () => {
-            if ('xr' in navigator) {
-                try {
-                    const arSupported = await navigator.xr?.isSessionSupported('immersive-ar');
-                    const vrSupported = await navigator.xr?.isSessionSupported('immersive-vr');
-
-                    setSupport({
-                        ar: !!arSupported,
-                        vr: !!vrSupported,
-                        immersiveAR: !!arSupported,
-                        immersiveVR: !!vrSupported
-                    });
-                } catch (error) {
-                    console.warn('XR support check failed:', error);
-                }
-            }
-        };
-
-        checkSupport();
-    }, []);
-
-    return support;
-};
-
-// 3D 모델 컴포넌트
-const XRModel: React.FC<{ content: XRContent }> = ({ content }) => {
-    const { scene } = useGLTF(content.url || '/models/default.glb');
-    const meshRef = useRef<THREE.Group>(null);
-    const [hovered, setHovered] = useState(false);
-    const [selected, setSelected] = useState(false);
-
-    useFrame((state) => {
-        if (meshRef.current && selected) {
-            meshRef.current.rotation.y += 0.01;
-        }
-    });
-
-    return (
-        <Interactive
-            onSelect={() => setSelected(!selected)}
-            onHover={() => setHovered(true)}
-            onBlur={() => setHovered(false)}
-        >
-            <group
-                ref={meshRef}
-                position={content.position}
-                rotation={content.rotation}
-                scale={content.scale}
-            >
-                <primitive
-                    object={scene}
-                    scale={hovered ? 1.1 : 1}
-                />
-
-                {selected && (
-                    <Html position={[0, 2, 0]} center>
-                        <div style={{
-                            background: 'rgba(0,0,0,0.8)',
-                            color: 'white',
-                            padding: '8px',
-                            borderRadius: '4px',
-                            fontSize: '14px',
-                            textAlign: 'center'
-                        }}>
-                            {content.title}
-                        </div>
-                    </Html>
-                )}
-            </group>
-        </Interactive>
-    );
-};
-
-// AR 히트 테스트 컴포넌트
-const ARPlacement: React.FC<{ onPlace: (position: THREE.Vector3) => void }> = ({ onPlace }) => {
-    const hitTestRef = useRef<THREE.Group>(null);
-
-    useHitTest((hitMatrix) => {
-        if (hitTestRef.current) {
-            hitTestRef.current.matrix.copy(hitMatrix);
-        }
-    });
-
-    const handleSelect = useCallback(() => {
-        if (hitTestRef.current) {
-            const position = new THREE.Vector3();
-            hitTestRef.current.getWorldPosition(position);
-            onPlace(position);
-        }
-    }, [onPlace]);
-
-    return (
-        <Interactive onSelect={handleSelect}>
-            <group ref={hitTestRef}>
-                <Sphere args={[0.1, 16, 16]}>
-                    <meshBasicMaterial color="#00ff00" transparent opacity={0.5} />
-                </Sphere>
-                <Html position={[0, 0.2, 0]} center>
-                    <div style={{
-                        color: 'white',
-                        fontSize: '12px',
-                        textAlign: 'center',
-                        pointerEvents: 'none'
-                    }}>
-                        탭하여 배치
-                    </div>
-                </Html>
-            </group>
-        </Interactive>
-    );
-};
-
-// VR 컨트롤러 인터랙션
-const VRController: React.FC<{ id: number }> = ({ id }) => {
-    const controller = useController(id);
-    const [isPointing, setIsPointing] = useState(false);
-
-    useFrame(() => {
-        if (controller) {
-            const gamepad = controller.inputSource.gamepad;
-            if (gamepad) {
-                const triggerPressed = gamepad.buttons[0]?.pressed;
-                setIsPointing(triggerPressed);
-            }
-        }
-    });
-
-    return (
-        <group>
-            {controller && (
-                <group>
-                    <ThreeBox args={[0.05, 0.05, 0.2]} position={[0, 0, -0.1]}>
-                        <meshStandardMaterial color={isPointing ? "#ff0000" : "#ffffff"} />
-                    </ThreeBox>
-
-                    {isPointing && (
-                        <line>
-                            <bufferGeometry>
-                                <bufferAttribute
-                                    attach="attributes-position"
-                                    count={2}
-                                    array={new Float32Array([0, 0, 0, 0, 0, -10])}
-                                    itemSize={3}
-                                />
-                            </bufferGeometry>
-                            <lineBasicMaterial color="#ff0000" />
-                        </line>
-                    )}
-                </group>
-            )}
-        </group>
-    );
-};
-
-// 핸드 트래킹 컴포넌트
-const HandTracking: React.FC = () => {
-    return (
-        <Hands>
-            {(hand) => (
-                <group key={hand.inputSource.handedness}>
-                    {hand.joints.map((joint, index) => (
-                        <Sphere key={index} args={[0.01, 8, 8]} position={joint.position}>
-                            <meshBasicMaterial color="#00ff00" />
-                        </Sphere>
-                    ))}
-                </group>
-            )}
-        </Hands>
-    );
-};
-
-// XR 씬 컴포넌트
-const XRScene: React.FC<{
-    contents: XRContent[];
-    mode: XRMode;
-    settings: XRSettings;
-}> = ({ contents, mode, settings }) => {
-    const { isPresenting, player } = useXR();
-    const [placedObjects, setPlacedObjects] = useState<XRContent[]>([]);
-
-    const handleARPlacement = useCallback((position: THREE.Vector3) => {
-        const newContent: XRContent = {
-            id: `placed-${Date.now()}`,
-            type: '3d-model',
-            title: '배치된 객체',
-            description: 'AR로 배치된 3D 객체',
-            position: [position.x, position.y, position.z],
-            rotation: [0, 0, 0],
-            scale: [1, 1, 1],
-            interactions: ['gaze', 'hand'],
-            metadata: {
-                author: 'AR 사용자',
-                created: new Date(),
-                tags: ['ar', 'placed']
-            }
-        };
-
-        setPlacedObjects(prev => [...prev, newContent]);
-    }, []);
-
-    return (
-        <>
-            {/* 조명 */}
-            <ambientLight intensity={0.5} />
-            <directionalLight position={[10, 10, 5]} intensity={1} />
-
-            {/* 환경 */}
-            {mode === 'vr' && <Environment preset="city" />}
-
-            {/* 컨트롤러 */}
-            <Controllers />
-            <VRController id={0} />
-            <VRController id={1} />
-
-            {/* 핸드 트래킹 */}
-            {settings.enableHandTracking && <HandTracking />}
-
-            {/* 컨텐츠 렌더링 */}
-            {contents.map(content => (
-                <XRModel key={content.id} content={content} />
-            ))}
-
-            {/* 배치된 객체들 */}
-            {placedObjects.map(content => (
-                <XRModel key={content.id} content={content} />
-            ))}
-
-            {/* AR 배치 도구 */}
-            {mode === 'ar' && isPresenting && (
-                <ARPlacement onPlace={handleARPlacement} />
-            )}
-
-            {/* VR 환경 */}
-            {mode === 'vr' && (
-                <>
-                    <Plane args={[50, 50]} rotation={[-Math.PI / 2, 0, 0]} position={[0, -1, 0]}>
-                        <meshStandardMaterial color="#333333" />
-                    </Plane>
-
-                    {/* 가상 룸 */}
-                    <group>
-                        {/* 벽들 */}
-                        <Plane args={[10, 5]} position={[0, 2.5, -5]}>
-                            <meshStandardMaterial color="#666666" />
-                        </Plane>
-                        <Plane args={[10, 5]} position={[-5, 2.5, 0]} rotation={[0, Math.PI / 2, 0]}>
-                            <meshStandardMaterial color="#666666" />
-                        </Plane>
-                        <Plane args={[10, 5]} position={[5, 2.5, 0]} rotation={[0, -Math.PI / 2, 0]}>
-                            <meshStandardMaterial color="#666666" />
-                        </Plane>
-                    </group>
-                </>
-            )}
-        </>
-    );
-};
-
-// 메인 AR/VR 컴포넌트
-export const ARVRContentSystem: React.FC = () => {
-    const [currentMode, setCurrentMode] = useState<XRMode>('inline');
-    const [isSessionActive, setIsSessionActive] = useState(false);
-    const [showSettings, setShowSettings] = useState(false);
-    const [contents, setContents] = useState<XRContent[]>([
+  const loadARVRContent = async () => {
+    setLoading(true);
+    try {
+      // 모의 AR/VR 콘텐츠 데이터
+      const mockContents: ARVRContent[] = [
         {
-            id: 'sample-1',
-            type: '3d-model',
-            title: '샘플 3D 모델',
-            description: '테스트용 3D 모델',
-            position: [0, 0, -2],
-            rotation: [0, 0, 0],
-            scale: [1, 1, 1],
-            interactions: ['gaze', 'hand', 'controller'],
-            metadata: {
-                author: 'AUTOAGENTS',
-                created: new Date(),
-                tags: ['sample', '3d']
-            }
+          id: '1',
+          title: '가상 갤러리 투어',
+          description: '3D 가상 갤러리에서 작품을 감상하세요',
+          type: 'vr',
+          thumbnail: '/api/placeholder/300/200',
+          duration: 300,
+          views: 1250,
+          likes: 89,
+          isLiked: false,
+          category: 'art',
+          tags: ['gallery', 'art', 'culture'],
+          createdAt: new Date(),
+          creator: 'VR Artist',
+          status: 'active'
+        },
+        {
+          id: '2',
+          title: 'AR 가구 배치',
+          description: '실제 공간에 가구를 AR로 배치해보세요',
+          type: 'ar',
+          thumbnail: '/api/placeholder/300/200',
+          duration: 180,
+          views: 890,
+          likes: 45,
+          isLiked: true,
+          category: 'design',
+          tags: ['furniture', 'interior', 'design'],
+          createdAt: new Date(Date.now() - 86400000),
+          creator: 'AR Designer',
+          status: 'active'
+        },
+        {
+          id: '3',
+          title: '혼합현실 미팅',
+          description: 'AR과 VR을 결합한 혁신적인 미팅 공간',
+          type: 'mixed',
+          thumbnail: '/api/placeholder/300/200',
+          duration: 600,
+          views: 2100,
+          likes: 156,
+          isLiked: false,
+          category: 'business',
+          tags: ['meeting', 'collaboration', 'innovation'],
+          createdAt: new Date(Date.now() - 172800000),
+          creator: 'MR Developer',
+          status: 'active'
         }
-    ]);
+      ];
+      setContents(mockContents);
+      updateStats(mockContents);
+    } catch (error) {
+      console.error('AR/VR 콘텐츠 로드 실패:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    const [settings, setSettings] = useState<XRSettings>({
-        renderQuality: 'high',
-        frameRate: 60,
-        enableHandTracking: true,
-        enableEyeTracking: false,
-        enableSpatialAudio: true,
-        enableHapticFeedback: true,
-        safetyBoundary: true,
-        comfortSettings: {
-            locomotion: 'teleport',
-            turnSpeed: 45,
-            snapTurn: true,
-            vignetteOnMove: true
-        }
+  const updateStats = (contentData: ARVRContent[]) => {
+    const total = contentData.length;
+    const ar = contentData.filter(c => c.type === 'ar').length;
+    const vr = contentData.filter(c => c.type === 'vr').length;
+    const mixed = contentData.filter(c => c.type === 'mixed').length;
+    const totalViews = contentData.reduce((sum, c) => sum + c.views, 0);
+    const totalLikes = contentData.reduce((sum, c) => sum + c.likes, 0);
+    const avgDuration = contentData.reduce((sum, c) => sum + c.duration, 0) / total;
+
+    setStats({
+      totalContent: total,
+      arContent: ar,
+      vrContent: vr,
+      mixedContent: mixed,
+      totalViews,
+      totalLikes,
+      averageDuration: avgDuration
     });
+  };
 
-    const xrSupport = useXRSupport();
-    const theme = useTheme();
+  const handlePlayContent = (content: ARVRContent) => {
+    setSelectedContent(content);
+    setShowPlayer(true);
+  };
 
-    const handleSessionStart = useCallback((mode: XRMode) => {
-        setCurrentMode(mode);
-        setIsSessionActive(true);
-    }, []);
+  const handleLikeContent = (contentId: string) => {
+    setContents(prev => prev.map(content => 
+      content.id === contentId 
+        ? { 
+            ...content, 
+            isLiked: !content.isLiked,
+            likes: content.isLiked ? content.likes - 1 : content.likes + 1
+          }
+        : content
+    ));
+  };
 
-    const handleSessionEnd = useCallback(() => {
-        setIsSessionActive(false);
-        setCurrentMode('inline');
-    }, []);
+  const getTypeIcon = (type: string) => {
+    switch (type) {
+      case 'ar': return <ViewInAr color="primary" />;
+      case 'vr': return <ViewInCar color="secondary" />;
+      case 'mixed': return <ViewInAr color="success" />;
+      default: return <ViewInAr />;
+    }
+  };
 
-    const addContent = useCallback((content: Omit<XRContent, 'id'>) => {
-        const newContent: XRContent = {
-            ...content,
-            id: `content-${Date.now()}`
-        };
-        setContents(prev => [...prev, newContent]);
-    }, []);
+  const getTypeColor = (type: string) => {
+    switch (type) {
+      case 'ar': return 'primary';
+      case 'vr': return 'secondary';
+      case 'mixed': return 'success';
+      default: return 'default';
+    }
+  };
 
-    const removeContent = useCallback((id: string) => {
-        setContents(prev => prev.filter(content => content.id !== id));
-    }, []);
+  const formatDuration = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
 
-    return (
-        <XRContainer>
-            {/* 헤더 */}
-            <Box p={2} borderBottom={1} borderColor="divider">
-                <Box display="flex" justifyContent="space-between" alignItems="center">
-                    <Typography variant="h6">AR/VR 컨텐츠 시스템</Typography>
-                    <Box display="flex" gap={1}>
-                        <Chip
-                            icon={currentMode === 'ar' ? <ARIcon /> : currentMode === 'vr' ? <VRIcon /> : <ThreeDIcon />}
-                            label={currentMode.toUpperCase()}
-                            color={isSessionActive ? 'success' : 'default'}
-                        />
-                        <Chip
-                            label={`${contents.length} 컨텐츠`}
-                            variant="outlined"
-                        />
-                    </Box>
-                </Box>
-            </Box>
+  const filteredContents = contents.filter(content => {
+    if (filter === 'all') return true;
+    return content.type === filter;
+  });
 
-            {/* WebXR 지원 상태 */}
-            <Box p={2}>
-                <Alert
-                    severity={xrSupport.ar || xrSupport.vr ? 'success' : 'warning'}
-                    sx={{ mb: 2 }}
-                >
-                    <Typography variant="body2">
-                        WebXR 지원 상태:
-                        AR {xrSupport.ar ? '✓' : '✗'},
-                        VR {xrSupport.vr ? '✓' : '✗'}
-                        {!xrSupport.ar && !xrSupport.vr && ' - HTTPS 환경에서 XR 지원 기기가 필요합니다.'}
+  return (
+    <Box sx={{ p: 3 }}>
+      <Typography variant="h4" component="h1" gutterBottom>
+        🥽 AR/VR 콘텐츠 시스템
+      </Typography>
+      
+      <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
+        WebXR 기반 몰입형 경험을 제공하는 AR/VR 콘텐츠 플랫폼
+      </Typography>
+
+      {/* 통계 카드 */}
+      <Grid container spacing={3} sx={{ mb: 3 }}>
+        <Grid item xs={12} sm={6} md={3}>
+          <Card>
+            <CardContent>
+              <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                <ViewInAr sx={{ mr: 1, color: 'primary.main' }} />
+                <Typography variant="h6">전체 콘텐츠</Typography>
+              </Box>
+              <Typography variant="h4" color="primary.main">
+                {stats.totalContent}
+              </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+
+        <Grid item xs={12} sm={6} md={3}>
+          <Card>
+            <CardContent>
+              <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                <ViewInAr sx={{ mr: 1, color: 'success.main' }} />
+                <Typography variant="h6">AR 콘텐츠</Typography>
+              </Box>
+              <Typography variant="h4" color="success.main">
+                {stats.arContent}
+              </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+
+        <Grid item xs={12} sm={6} md={3}>
+          <Card>
+            <CardContent>
+              <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                <ViewInCar sx={{ mr: 1, color: 'secondary.main' }} />
+                <Typography variant="h6">VR 콘텐츠</Typography>
+              </Box>
+              <Typography variant="h4" color="secondary.main">
+                {stats.vrContent}
+              </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+
+        <Grid item xs={12} sm={6} md={3}>
+          <Card>
+            <CardContent>
+              <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                <ViewInAr sx={{ mr: 1, color: 'warning.main' }} />
+                <Typography variant="h6">혼합현실</Typography>
+              </Box>
+              <Typography variant="h4" color="warning.main">
+                {stats.mixedContent}
+              </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+      </Grid>
+
+      {/* 필터 및 액션 */}
+      <Box sx={{ mb: 3, display: 'flex', gap: 2, alignItems: 'center' }}>
+        <FormControl sx={{ minWidth: 120 }}>
+          <InputLabel>타입</InputLabel>
+          <Select
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+            label="타입"
+          >
+            <MenuItem value="all">전체</MenuItem>
+            <MenuItem value="ar">AR</MenuItem>
+            <MenuItem value="vr">VR</MenuItem>
+            <MenuItem value="mixed">혼합현실</MenuItem>
+          </Select>
+        </FormControl>
+
+        <IconButton onClick={loadARVRContent} disabled={loading}>
+          <Refresh />
+        </IconButton>
+      </Box>
+
+      {/* 콘텐츠 그리드 */}
+      {loading ? (
+        <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
+          <CircularProgress />
+        </Box>
+      ) : (
+        <Grid container spacing={3}>
+          {filteredContents.map((content) => (
+            <Grid item xs={12} sm={6} md={4} key={content.id}>
+              <Card
+                sx={{
+                  height: '100%',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  transition: 'transform 0.2s',
+                  '&:hover': {
+                    transform: 'translateY(-4px)',
+                    boxShadow: 3
+                  }
+                }}
+              >
+                <Box
+                  component="img"
+                  src={content.thumbnail}
+                  alt={content.title}
+                  sx={{
+                    width: '100%',
+                    height: 200,
+                    objectFit: 'cover'
+                  }}
+                />
+                
+                <CardContent sx={{ flexGrow: 1 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                    {getTypeIcon(content.type)}
+                    <Typography variant="h6" component="h2" sx={{ ml: 1, flexGrow: 1 }}>
+                      {content.title}
                     </Typography>
-                </Alert>
+                  </Box>
+                  
+                  <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                    {content.description}
+                  </Typography>
 
-                <Box display="flex" gap={2} mb={2}>
-                    <Button
-                        variant={currentMode === 'ar' ? 'contained' : 'outlined'}
-                        startIcon={<ARIcon />}
-                        onClick={() => handleSessionStart('ar')}
-                        disabled={!xrSupport.ar}
-                    >
-                        AR 모드
-                    </Button>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+                    <Chip
+                      label={content.type.toUpperCase()}
+                      color={getTypeColor(content.type)}
+                      size="small"
+                    />
+                    <Chip
+                      label={content.category}
+                      size="small"
+                      variant="outlined"
+                    />
+                  </Box>
 
-                    <Button
-                        variant={currentMode === 'vr' ? 'contained' : 'outlined'}
-                        startIcon={<VRIcon />}
-                        onClick={() => handleSessionStart('vr')}
-                        disabled={!xrSupport.vr}
-                    >
-                        VR 모드
-                    </Button>
-
-                    <Button
-                        variant={currentMode === 'inline' ? 'contained' : 'outlined'}
-                        startIcon={<ThreeDIcon />}
-                        onClick={() => handleSessionStart('inline')}
-                    >
-                        3D 모드
-                    </Button>
-
-                    <Button
-                        startIcon={<SettingsIcon />}
-                        onClick={() => setShowSettings(true)}
-                    >
-                        설정
-                    </Button>
-                </Box>
-            </Box>
-
-            {/* XR 캔버스 */}
-            <XRCanvas>
-                <Suspense fallback={
-                    <Box display="flex" justifyContent="center" alignItems="center" height="100%">
-                        <CircularProgress />
+                  <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <Typography variant="body2" color="text.secondary">
+                      {formatDuration(content.duration)}
+                    </Typography>
+                    
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <IconButton
+                        size="small"
+                        onClick={() => handleLikeContent(content.id)}
+                        color={content.isLiked ? 'error' : 'default'}
+                      >
+                        {content.isLiked ? <Favorite /> : <FavoriteBorder />}
+                      </IconButton>
+                      <Typography variant="body2">{content.likes}</Typography>
                     </Box>
-                }>
-                    <Canvas>
-                        <XR
-                            onSessionStart={() => setIsSessionActive(true)}
-                            onSessionEnd={() => setIsSessionActive(false)}
-                        >
-                            <XRScene
-                                contents={contents}
-                                mode={currentMode}
-                                settings={settings}
-                            />
-                        </XR>
+                  </Box>
 
-                        {/* 인라인 모드용 컨트롤 */}
-                        {currentMode === 'inline' && (
-                            <OrbitControls enablePan enableZoom enableRotate />
-                        )}
-                    </Canvas>
-                </Suspense>
+                  <Button
+                    fullWidth
+                    variant="contained"
+                    startIcon={<PlayArrow />}
+                    onClick={() => handlePlayContent(content)}
+                    sx={{ mt: 2 }}
+                  >
+                    재생
+                  </Button>
+                </CardContent>
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
+      )}
 
-                {/* XR 버튼들 */}
-                <XRControls>
-                    {xrSupport.ar && (
-                        <ARButton
-                            sessionInit={{
-                                requiredFeatures: ['hit-test'],
-                                optionalFeatures: ['hand-tracking']
-                            }}
-                        />
-                    )}
-
-                    {xrSupport.vr && (
-                        <VRButton
-                            sessionInit={{
-                                optionalFeatures: ['hand-tracking', 'eye-tracking']
-                            }}
-                        />
-                    )}
-
-                    <IconButton sx={{ color: 'white' }}>
-                        <CameraIcon />
-                    </IconButton>
-
-                    <IconButton sx={{ color: 'white' }}>
-                        <ShareIcon />
-                    </IconButton>
-                </XRControls>
-
-                {/* 상태 정보 */}
-                {isSessionActive && (
-                    <XRStatus>
-                        <CardContent>
-                            <Typography variant="h6" gutterBottom>
-                                {currentMode.toUpperCase()} 세션 활성
-                            </Typography>
-                            <Typography variant="body2">
-                                컨텐츠: {contents.length}개
-                            </Typography>
-                            <Typography variant="body2">
-                                품질: {settings.renderQuality}
-                            </Typography>
-                            <Typography variant="body2">
-                                프레임율: {settings.frameRate}fps
-                            </Typography>
-                        </CardContent>
-                    </XRStatus>
-                )}
-            </XRCanvas>
-
-            {/* 컨텐츠 목록 */}
-            <Box p={2} borderTop={1} borderColor="divider">
-                <Typography variant="h6" gutterBottom>
-                    컨텐츠 목록
+      {/* AR/VR 플레이어 다이얼로그 */}
+      <Dialog
+        open={showPlayer}
+        onClose={() => setShowPlayer(false)}
+        maxWidth="lg"
+        fullWidth
+      >
+        <DialogTitle>
+          {selectedContent?.title}
+          <IconButton
+            onClick={() => setShowPlayer(false)}
+            sx={{ position: 'absolute', right: 8, top: 8 }}
+          >
+            <Stop />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent>
+          {selectedContent && (
+            <Box sx={{ textAlign: 'center', p: 2 }}>
+              <Typography variant="h6" gutterBottom>
+                {selectedContent.type.toUpperCase()} 플레이어
+              </Typography>
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+                WebXR 기반 몰입형 경험을 시작합니다
+              </Typography>
+              
+              <Box sx={{ 
+                width: '100%', 
+                height: 400, 
+                bgcolor: 'grey.100', 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center',
+                borderRadius: 2,
+                mb: 2
+              }}>
+                <Typography variant="h6" color="text.secondary">
+                  AR/VR 플레이어 영역
                 </Typography>
+              </Box>
 
-                <Box display="flex" gap={1} flexWrap="wrap">
-                    {contents.map(content => (
-                        <Card key={content.id} sx={{ minWidth: 200 }}>
-                            <CardContent>
-                                <Typography variant="subtitle1">
-                                    {content.title}
-                                </Typography>
-                                <Typography variant="body2" color="text.secondary">
-                                    {content.description}
-                                </Typography>
-                                <Box mt={1}>
-                                    <Chip
-                                        label={content.type}
-                                        size="small"
-                                        variant="outlined"
-                                    />
-                                </Box>
-                            </CardContent>
-                            <CardActions>
-                                <Button size="small">편집</Button>
-                                <Button
-                                    size="small"
-                                    color="error"
-                                    onClick={() => removeContent(content.id)}
-                                >
-                                    삭제
-                                </Button>
-                            </CardActions>
-                        </Card>
-                    ))}
-
-                    <Card sx={{ minWidth: 200, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <CardContent>
-                            <Button
-                                variant="outlined"
-                                fullWidth
-                                onClick={() => {
-                                    addContent({
-                                        type: '3d-model',
-                                        title: '새 컨텐츠',
-                                        description: '새로운 XR 컨텐츠',
-                                        position: [Math.random() * 4 - 2, 0, Math.random() * 4 - 2],
-                                        rotation: [0, 0, 0],
-                                        scale: [1, 1, 1],
-                                        interactions: ['gaze'],
-                                        metadata: {
-                                            author: '사용자',
-                                            created: new Date(),
-                                            tags: ['new']
-                                        }
-                                    });
-                                }}
-                            >
-                                + 컨텐츠 추가
-                            </Button>
-                        </CardContent>
-                    </Card>
-                </Box>
+              <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center' }}>
+                <Button variant="contained" startIcon={<PlayArrow />}>
+                  재생
+                </Button>
+                <Button variant="outlined" startIcon={<Pause />}>
+                  일시정지
+                </Button>
+                <Button variant="outlined" startIcon={<Fullscreen />}>
+                  전체화면
+                </Button>
+              </Box>
             </Box>
-
-            {/* 설정 다이얼로그 */}
-            <Dialog open={showSettings} onClose={() => setShowSettings(false)} maxWidth="md" fullWidth>
-                <DialogTitle>XR 설정</DialogTitle>
-                <DialogContent>
-                    <Box display="flex" flexDirection="column" gap={3} pt={1}>
-                        <FormControl fullWidth>
-                            <InputLabel>렌더링 품질</InputLabel>
-                            <Select
-                                value={settings.renderQuality}
-                                label="렌더링 품질"
-                                onChange={(e) => setSettings(prev => ({
-                                    ...prev,
-                                    renderQuality: e.target.value as any
-                                }))}
-                            >
-                                <MenuItem value="low">낮음</MenuItem>
-                                <MenuItem value="medium">보통</MenuItem>
-                                <MenuItem value="high">높음</MenuItem>
-                                <MenuItem value="ultra">최고</MenuItem>
-                            </Select>
-                        </FormControl>
-
-                        <FormControl fullWidth>
-                            <InputLabel>프레임율</InputLabel>
-                            <Select
-                                value={settings.frameRate}
-                                label="프레임율"
-                                onChange={(e) => setSettings(prev => ({
-                                    ...prev,
-                                    frameRate: e.target.value as any
-                                }))}
-                            >
-                                <MenuItem value={30}>30 FPS</MenuItem>
-                                <MenuItem value={60}>60 FPS</MenuItem>
-                                <MenuItem value={90}>90 FPS</MenuItem>
-                                <MenuItem value={120}>120 FPS</MenuItem>
-                            </Select>
-                        </FormControl>
-
-                        <FormControlLabel
-                            control={
-                                <Switch
-                                    checked={settings.enableHandTracking}
-                                    onChange={(e) => setSettings(prev => ({
-                                        ...prev,
-                                        enableHandTracking: e.target.checked
-                                    }))}
-                                />
-                            }
-                            label="핸드 트래킹"
-                        />
-
-                        <FormControlLabel
-                            control={
-                                <Switch
-                                    checked={settings.enableSpatialAudio}
-                                    onChange={(e) => setSettings(prev => ({
-                                        ...prev,
-                                        enableSpatialAudio: e.target.checked
-                                    }))}
-                                />
-                            }
-                            label="공간 오디오"
-                        />
-
-                        <FormControlLabel
-                            control={
-                                <Switch
-                                    checked={settings.enableHapticFeedback}
-                                    onChange={(e) => setSettings(prev => ({
-                                        ...prev,
-                                        enableHapticFeedback: e.target.checked
-                                    }))}
-                                />
-                            }
-                            label="햅틱 피드백"
-                        />
-
-                        <FormControlLabel
-                            control={
-                                <Switch
-                                    checked={settings.safetyBoundary}
-                                    onChange={(e) => setSettings(prev => ({
-                                        ...prev,
-                                        safetyBoundary: e.target.checked
-                                    }))}
-                                />
-                            }
-                            label="안전 경계"
-                        />
-                    </Box>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={() => setShowSettings(false)}>취소</Button>
-                    <Button variant="contained">저장</Button>
-                </DialogActions>
-            </Dialog>
-        </XRContainer>
-    );
+          )}
+        </DialogContent>
+      </Dialog>
+    </Box>
+  );
 };
 
 export default ARVRContentSystem;

@@ -77,7 +77,7 @@ const ScrollToTopFab = styled(Fab)(({ theme }) => ({
 }));
 
 // 공통 타입 import
-import { PostData, UniversalPostData } from '../types/PostData';
+import { PostData, UniversalPostData, convertToEnhancedPostData, convertToOptimizedPostData } from '../types/PostData';
 
 interface VirtualizedContentFeedProps {
     posts?: PostData[];
@@ -142,15 +142,14 @@ const VirtualizedPostItem = memo<{
                 }>
                     {post.type === 'enhanced' ? (
                         <EnhancedPostCard
-                            post={post}
+                            post={convertToEnhancedPostData(post) as any}
                             index={index}
-                            onClick={onPostClick}
+                            viewMode="card"
                         />
                     ) : (
                         <OptimizedPostCard
-                            post={post}
+                            post={convertToOptimizedPostData(post) as any}
                             index={index}
-                            onClick={onPostClick}
                         />
                     )}
                 </Suspense>

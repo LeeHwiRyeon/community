@@ -19,7 +19,7 @@ import VIPDashboard from './pages/VIPDashboard';
 import VIPRequirementsDashboard from './pages/VIPRequirementsDashboard';
 import VIPPersonalizedService from './pages/VIPPersonalizedService';
 import MainPage from './pages/MainPage';
-import UserTestingDashboard from './pages/UserTestingDashboard';
+import ModernMainPage from './pages/ModernMainPage';
 import MonitoringDashboard from './pages/MonitoringDashboard';
 import TodoManagement from './pages/TodoManagement';
 import VotingManagement from './pages/VotingManagement';
@@ -30,14 +30,33 @@ import StreamingStation from './pages/StreamingStation';
 import EnhancedDesignSystem from './components/EnhancedDesignSystem';
 import AdvancedInteractionSystem from './components/AdvancedInteractionSystem';
 import UIUXV2DesignSystem from './components/UIUXV2DesignSystem';
-import PerformanceDashboard from './components/PerformanceDashboard';
 import AccessibilityPanel from './components/AccessibilityPanel';
+import CommunityAnalyticsDashboard from './components/CommunityAnalyticsDashboard';
+import PerformanceMetricsDashboard from './components/PerformanceMetricsDashboard';
+import SpamPreventionSystem from './components/SpamPreventionSystem';
+import ReportManagementSystem from './components/ReportManagementSystem';
+// import AutoModerationSystem from './components/AutoModerationSystem';
+import InternationalizationSystem from './components/InternationalizationSystem';
+import PerformanceDashboard from './components/Performance/PerformanceDashboard';
+import NewsManager from './components/News/NewsManager';
+import CommunityManager from './components/Community/CommunityManager';
+import ChatBasedCommunity from './components/ChatBasedCommunity';
+import StreamerManagerSystem from './components/StreamerManagerSystem';
+import CosplayerItemCreatorSystem from './components/CosplayerItemCreatorSystem';
+import RPGProfileSystem from './components/RPGProfileSystem';
+import RichTextEditor from './components/RichTextEditor';
+import FollowSystem from './components/FollowSystem';
+import AdminDashboard from './components/AdminDashboard';
+import { AuthProvider } from './components/Auth/AuthProvider';
+import LoginForm from './components/Auth/LoginForm';
+import UserProfile from './components/Auth/UserProfile';
 import NotFound from './pages/NotFound';
 
 // Components
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import ChatSystem from './components/ChatSystem';
+import BreadcrumbNavigation from './components/BreadcrumbNavigation';
 
 // Create theme
 const theme = createTheme({
@@ -107,60 +126,85 @@ const App: React.FC = () => {
     return (
         <ThemeProvider theme={theme}>
             <CssBaseline />
-            <Router>
-                <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-                    <Navbar />
-                    <Box component="main" sx={{ flexGrow: 1 }}>
-                        <Routes>
-                            {/* Public Routes */}
-                            <Route path="/" element={<MainPage />} />
-                            <Route path="/home" element={<Home />} />
-                            <Route path="/login" element={<Login />} />
-                            <Route path="/register" element={<Register />} />
+            <AuthProvider>
+                <Router>
+                    <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+                        <Navbar />
+                        <BreadcrumbNavigation />
+                        <Box component="main" sx={{ flexGrow: 1 }}>
+                            <Routes>
+                                {/* Public Routes */}
+                                <Route path="/" element={<ModernMainPage />} />
+                                <Route path="/classic" element={<MainPage />} />
+                                <Route path="/home" element={<Home />} />
+                                <Route path="/login" element={<Login />} />
+                                <Route path="/register" element={<Register />} />
 
-                            {/* Community Routes */}
-                            <Route path="/communities" element={<CommunityHub />} />
-                            <Route path="/community/:communityId" element={<CommunityHome />} />
-                            <Route path="/boards/:boardId" element={<BoardDetail />} />
-                            <Route path="/posts/:postId" element={<PostDetail />} />
-                            <Route path="/simple-board" element={<SimpleBoard />} />
-                            <Route path="/quick-content" element={<QuickContent />} />
+                                {/* Tree Structure Routes */}
+                                <Route path="/communities" element={<CommunityHub />} />
+                                <Route path="/communities/:communityId" element={<CommunityHome />} />
+                                <Route path="/communities/:communityId/:boardId" element={<BoardDetail />} />
+                                <Route path="/posts/:postId" element={<PostDetail />} />
 
-                            {/* Protected Routes */}
-                            <Route path="/dashboard" element={<Dashboard />} />
-                            <Route path="/profile" element={<Profile />} />
-                            <Route path="/games" element={<GameCenter />} />
-                            <Route path="/vip" element={<VIPDashboard />} />
-                            <Route path="/vip-requirements" element={<VIPRequirementsDashboard />} />
-                            <Route path="/vip-personalized" element={<VIPPersonalizedService />} />
-                            <Route path="/user-testing" element={<UserTestingDashboard />} />
-                            <Route path="/monitoring" element={<MonitoringDashboard />} />
-                            <Route path="/todos" element={<TodoManagement />} />
-                            <Route path="/voting" element={<VotingManagement />} />
+                                {/* Legacy Routes (for backward compatibility) */}
+                                <Route path="/community/:communityId" element={<CommunityHome />} />
+                                <Route path="/boards/:boardId" element={<BoardDetail />} />
+                                <Route path="/simple-board" element={<SimpleBoard />} />
+                                <Route path="/quick-content" element={<QuickContent />} />
 
-                            {/* Feature Routes */}
-                            <Route path="/cosplay" element={<CosplayShop />} />
-                            <Route path="/streaming" element={<StreamingStation />} />
-                            <Route path="/design-system" element={<EnhancedDesignSystem />} />
-                            <Route path="/interactions" element={<AdvancedInteractionSystem />} />
-                            <Route path="/uiux-v2" element={<UIUXV2DesignSystem />} />
-                            <Route path="/performance" element={<PerformanceDashboard />} />
-                            <Route path="/accessibility" element={<AccessibilityPanel />} />
+                                {/* Protected Routes */}
+                                <Route path="/dashboard" element={<Dashboard />} />
+                                <Route path="/profile" element={<Profile />} />
+                                <Route path="/games" element={<GameCenter />} />
+                                <Route path="/vip" element={<VIPDashboard />} />
+                                <Route path="/vip-requirements" element={<VIPRequirementsDashboard />} />
+                                <Route path="/vip-personalized" element={<VIPPersonalizedService />} />
+                                <Route path="/monitoring" element={<MonitoringDashboard />} />
+                                <Route path="/todos" element={<TodoManagement />} />
+                                <Route path="/voting" element={<VotingManagement />} />
 
-                            {/* 404 */}
-                            <Route path="/404" element={<NotFound />} />
-                            <Route path="*" element={<Navigate to="/404" replace />} />
-                        </Routes>
+                                {/* Feature Routes */}
+                                <Route path="/cosplay" element={<CosplayShop />} />
+                                <Route path="/streaming" element={<StreamingStation />} />
+                                <Route path="/design-system" element={<EnhancedDesignSystem />} />
+                                <Route path="/interactions" element={<AdvancedInteractionSystem />} />
+                                <Route path="/uiux-v2" element={<UIUXV2DesignSystem />} />
+                                <Route path="/performance" element={<PerformanceDashboard />} />
+                                <Route path="/accessibility" element={<AccessibilityPanel />} />
+                                <Route path="/analytics" element={<CommunityAnalyticsDashboard />} />
+                                <Route path="/metrics" element={<PerformanceMetricsDashboard />} />
+                                <Route path="/spam-prevention" element={<SpamPreventionSystem />} />
+                                <Route path="/report-management" element={<ReportManagementSystem />} />
+                                {/* <Route path="/auto-moderation" element={<AutoModerationSystem />} /> */}
+                                <Route path="/internationalization" element={<InternationalizationSystem />} />
+                                <Route path="/performance-dashboard" element={<PerformanceDashboard />} />
+                                <Route path="/news-manager" element={<NewsManager />} />
+                                <Route path="/community-manager" element={<CommunityManager />} />
+                                <Route path="/chat-community" element={<ChatBasedCommunity />} />
+                                <Route path="/streamer-manager" element={<StreamerManagerSystem />} />
+                                <Route path="/cosplayer-manager" element={<CosplayerItemCreatorSystem />} />
+                                <Route path="/rpg-profile" element={<RPGProfileSystem />} />
+                                <Route path="/rich-editor" element={<RichTextEditor />} />
+                                <Route path="/follow-system" element={<FollowSystem currentUserId="1" />} />
+                                <Route path="/admin-dashboard" element={<AdminDashboard />} />
+                                <Route path="/login" element={<LoginForm />} />
+                                <Route path="/profile" element={<UserProfile />} />
+
+                                {/* 404 */}
+                                <Route path="/404" element={<NotFound />} />
+                                <Route path="*" element={<Navigate to="/404" replace />} />
+                            </Routes>
+                        </Box>
+                        <Footer />
+
+                        {/* 전역 채팅 시스템 */}
+                        <ChatSystem
+                            isOpen={chatOpen}
+                            onClose={() => setChatOpen(!chatOpen)}
+                        />
                     </Box>
-                    <Footer />
-
-                    {/* 전역 채팅 시스템 */}
-                    <ChatSystem
-                        isOpen={chatOpen}
-                        onClose={() => setChatOpen(!chatOpen)}
-                    />
-                </Box>
-            </Router>
+                </Router>
+            </AuthProvider>
         </ThemeProvider>
     );
 };

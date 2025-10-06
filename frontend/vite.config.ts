@@ -1,4 +1,6 @@
 ﻿import { defineConfig } from 'vite';
+import fs from 'fs';
+import path from 'path';
 import react from '@vitejs/plugin-react';
 import { resolve } from 'path';
 import { visualizer } from 'rollup-plugin-visualizer';
@@ -92,6 +94,11 @@ export default defineConfig({
         // HMR 최적화
         hmr: {
             overlay: true
+        },
+        // HTTPS 설정
+        https: {
+            key: fs.readFileSync(path.join(__dirname, 'certs/server.key')),
+            cert: fs.readFileSync(path.join(__dirname, 'certs/server.crt'))
         },
         // 프록시 설정 (백엔드 API)
         proxy: {

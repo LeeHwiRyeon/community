@@ -1,0 +1,90 @@
+{
+  "version": "1.0.0",
+  "timestamp": "2025-10-04T09-15-44-411Z",
+  "type": "feature_test",
+  "feature": "다국어 지원",
+  "testData": {
+    "status": "success",
+    "success": true,
+    "screenshots": {
+      "before": "다국어-지원-before-16.png",
+      "after": "다국어-지원-after-17.png",
+      "comparison": "다국어-지원-comparison-success-18.png"
+    },
+    "logs": [
+      {
+        "timestamp": "2025-10-04T09:15:51.905Z",
+        "level": "info",
+        "message": "다국어 지원 테스트 시작",
+        "data": {}
+      },
+      {
+        "timestamp": "2025-10-04T09:15:51.905Z",
+        "level": "info",
+        "message": "사용 전 스크린샷 생성 완료",
+        "data": {}
+      },
+      {
+        "timestamp": "2025-10-04T09:15:53.306Z",
+        "level": "info",
+        "message": "사용 후 스크린샷 생성 완료",
+        "data": {}
+      },
+      {
+        "timestamp": "2025-10-04T09:15:53.307Z",
+        "level": "success",
+        "message": "테스트 성공 - 비교 분석 완료",
+        "data": {}
+      },
+      {
+        "timestamp": "2025-10-04T09:15:53.307Z",
+        "level": "info",
+        "message": "다국어 지원 테스트 완료",
+        "data": {
+          "duration": 1402,
+          "success": true
+        }
+      }
+    ],
+    "performance": {
+      "응답 시간": "1402ms",
+      "메모리 사용량": "88MB",
+      "CPU 사용률": "21%",
+      "네트워크 요청": "9개"
+    },
+    "accessibility": {
+      "접근성 점수": "90/100",
+      "키보드 네비게이션": "✅ 지원",
+      "스크린 리더": "✅ 호환",
+      "색상 대비": "✅ 적합"
+    },
+    "compatibility": {
+      "Chrome": "✅ 지원",
+      "Firefox": "✅ 지원",
+      "Safari": "✅ 지원",
+      "Edge": "✅ 지원"
+    },
+    "intendedBehavior": "다국어 지원이 정상적으로 작동하고 언어 전환이 가능해야 함",
+    "actualBehavior": "다국어 지원 시스템이 정상적으로 작동하고 언어 전환이 가능함",
+    "issues": [],
+    "recommendations": [
+      {
+        "priority": "medium",
+        "description": "추가 언어 지원 확장"
+      }
+    ]
+  },
+  "summary": {
+    "status": "success",
+    "success": true,
+    "intendedBehavior": "다국어 지원이 정상적으로 작동하고 언어 전환이 가능해야 함",
+    "actualBehavior": "다국어 지원 시스템이 정상적으로 작동하고 언어 전환이 가능함",
+    "issues": [],
+    "recommendations": [
+      {
+        "priority": "medium",
+        "description": "추가 언어 지원 확장"
+      }
+    ]
+  }
+}

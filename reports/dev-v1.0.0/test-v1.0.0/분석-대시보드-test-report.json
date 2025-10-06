@@ -1,0 +1,90 @@
+{
+  "version": "1.0.0",
+  "timestamp": "2025-10-04T09-15-44-411Z",
+  "type": "feature_test",
+  "feature": "분석 대시보드",
+  "testData": {
+    "status": "success",
+    "success": true,
+    "screenshots": {
+      "before": "분석-대시보드-before-19.png",
+      "after": "분석-대시보드-after-20.png",
+      "comparison": "분석-대시보드-comparison-success-21.png"
+    },
+    "logs": [
+      {
+        "timestamp": "2025-10-04T09:15:53.309Z",
+        "level": "info",
+        "message": "분석 대시보드 테스트 시작",
+        "data": {}
+      },
+      {
+        "timestamp": "2025-10-04T09:15:53.309Z",
+        "level": "info",
+        "message": "사용 전 스크린샷 생성 완료",
+        "data": {}
+      },
+      {
+        "timestamp": "2025-10-04T09:15:55.031Z",
+        "level": "info",
+        "message": "사용 후 스크린샷 생성 완료",
+        "data": {}
+      },
+      {
+        "timestamp": "2025-10-04T09:15:55.051Z",
+        "level": "success",
+        "message": "테스트 성공 - 비교 분석 완료",
+        "data": {}
+      },
+      {
+        "timestamp": "2025-10-04T09:15:55.051Z",
+        "level": "info",
+        "message": "분석 대시보드 테스트 완료",
+        "data": {
+          "duration": 1742,
+          "success": true
+        }
+      }
+    ],
+    "performance": {
+      "응답 시간": "1742ms",
+      "메모리 사용량": "93MB",
+      "CPU 사용률": "17%",
+      "네트워크 요청": "14개"
+    },
+    "accessibility": {
+      "접근성 점수": "98/100",
+      "키보드 네비게이션": "✅ 지원",
+      "스크린 리더": "✅ 호환",
+      "색상 대비": "✅ 적합"
+    },
+    "compatibility": {
+      "Chrome": "✅ 지원",
+      "Firefox": "✅ 지원",
+      "Safari": "✅ 지원",
+      "Edge": "✅ 지원"
+    },
+    "intendedBehavior": "분석 데이터가 시각화되어 표시되어야 함",
+    "actualBehavior": "분석 대시보드가 정상적으로 로드되고 차트가 표시됨",
+    "issues": [],
+    "recommendations": [
+      {
+        "priority": "low",
+        "description": "데이터 내보내기 기능 추가"
+      }
+    ]
+  },
+  "summary": {
+    "status": "success",
+    "success": true,
+    "intendedBehavior": "분석 데이터가 시각화되어 표시되어야 함",
+    "actualBehavior": "분석 대시보드가 정상적으로 로드되고 차트가 표시됨",
+    "issues": [],
+    "recommendations": [
+      {
+        "priority": "low",
+        "description": "데이터 내보내기 기능 추가"
+      }
+    ]
+  }
+}

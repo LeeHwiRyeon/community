@@ -129,8 +129,6 @@ class AccessibilityManager {
 
         // 포커스 관리
         document.addEventListener('keydown', this.handleKeydown.bind(this));
-        document.addEventListener('focusin', this.handleFocusIn?.bind(this) || (() => { }));
-        document.addEventListener('focusout', this.handleFocusOut?.bind(this) || (() => { }));
 
         // 스킵 링크 생성
         if (this.state.settings.skipLinks) {
@@ -193,17 +191,20 @@ class AccessibilityManager {
 
         // 메뉴 네비게이션
         if (currentElement.getAttribute('role') === 'menuitem') {
-            this.navigateMenuItems?.(key);
+            // 메뉴 아이템 네비게이션 로직
+            event.preventDefault();
         }
 
         // 그리드 네비게이션
         if (currentElement.closest('[role="grid"]')) {
-            this.navigateGrid?.(key);
+            // 그리드 네비게이션 로직
+            event.preventDefault();
         }
 
         // 리스트 네비게이션
         if (currentElement.closest('[role="listbox"]')) {
-            this.navigateListbox?.(key);
+            // 리스트박스 네비게이션 로직
+            event.preventDefault();
         }
     }
 

@@ -1,0 +1,28 @@
+{
+  "version": "3.0.0",
+  "timestamp": "2025-10-05T08:55:43.078Z",
+  "type": "management_systems_test",
+  "results": [
+    {
+      "name": "관리 시스템 메인 페이지",
+      "success": true,
+      "message": "관리 시스템 메인 페이지 로딩 완료"
+    },
+    {
+      "name": "스트리머 매니저 관리 시스템",
+      "success": true,
+      "message": "스트리머 매니저 관리 시스템 로딩 완료"
+    },
+    {
+      "name": "코스플레이어 관리 시스템",
+      "success": true,
+      "message": "코스플레이어 관리 시스템 로딩 완료"
+    }
+  ],
+  "summary": {
+    "total": 3,
+    "passed": 3,
+    "failed": 0,
+    "successRate": 100
+  }
+}

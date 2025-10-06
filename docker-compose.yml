@@ -10,15 +10,34 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=50000
+      - NPM_CONFIG_AUDIT=false
+      - NPM_CONFIG_FUND=false
     networks:
       - community-network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:50000/api/health"]
+      test: [ "CMD", "curl", "-f", "http://localhost:50000/api/health" ]
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 40s
+    # 보안을 위한 리소스 제한
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '0.5'
+        reservations:
+          memory: 256M
+          cpus: '0.25'
+    # 보안을 위한 읽기 전용 루트 파일시스템
+    read_only: true
+    # 필요한 디렉토리만 쓰기 가능하도록 설정
+    tmpfs:
+      - /tmp
+      - /var/cache/nginx
+    # 보안을 위한 사용자 설정
+    user: "1001:1001"
 
   frontend:
     build:
@@ -34,7 +53,24 @@ services:
     restart: unless-stopped
     environment:
       - API_BASE=http://backend:50000
-
+    # 보안을 위한 리소스 제한
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: '0.25'
+        reservations:
+          memory: 128M
+          cpus: '0.1'
+    # 보안을 위한 읽기 전용 루트 파일시스템
+    read_only: true
+    # 필요한 디렉토리만 쓰기 가능하도록 설정
+    tmpfs:
+      - /tmp
+      - /var/cache/nginx
+      - /var/run/nginx.pid
+    # 보안을 위한 사용자 설정
+    user: "1001:1001"
   # 향후 데이터베이스 추가 시 사용
   # database:
   #   image: mariadb:10.6

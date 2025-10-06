@@ -1,0 +1,146 @@
+{
+  "version": "1.0.0",
+  "timestamp": "2025-10-04T09-12-49-364Z",
+  "type": "testing",
+  "testType": "automated_feature",
+  "results": [
+    {
+      "name": "메인 페이지",
+      "description": "현대적인 메인 페이지와 실시간 통계",
+      "url": "/",
+      "startTime": "2025-10-04T09:12:49.375Z",
+      "status": "passed",
+      "details": "메인 페이지가 정상적으로 로드되고 모든 요소가 표시됨",
+      "screenshot": "main-page.png",
+      "duration": 1019,
+      "endTime": "2025-10-04T09:12:50.394Z"
+    },
+    {
+      "name": "로그인 시스템",
+      "description": "Firebase 익명/구글 로그인 시스템",
+      "url": "/login",
+      "startTime": "2025-10-04T09:12:50.397Z",
+      "status": "passed",
+      "details": "로그인 폼과 버튼들이 정상적으로 표시됨",
+      "screenshot": "login-system.png",
+      "duration": 803,
+      "endTime": "2025-10-04T09:12:51.200Z"
+    },
+    {
+      "name": "사용자 프로필",
+      "description": "사용자 프로필 관리 및 계정 설정",
+      "url": "/profile",
+      "startTime": "2025-10-04T09:12:51.202Z",
+      "status": "passed",
+      "details": "프로필 페이지가 정상적으로 로드됨",
+      "screenshot": "user-profile.png",
+      "duration": 904,
+      "endTime": "2025-10-04T09:12:52.106Z"
+    },
+    {
+      "name": "성능 대시보드",
+      "description": "실시간 성능 모니터링 및 최적화",
+      "url": "/performance-dashboard",
+      "startTime": "2025-10-04T09:12:52.109Z",
+      "status": "passed",
+      "details": "성능 대시보드가 정상적으로 로드됨",
+      "screenshot": "performance-dashboard.png",
+      "duration": 1212,
+      "endTime": "2025-10-04T09:12:53.321Z"
+    },
+    {
+      "name": "커뮤니티 게임",
+      "description": "멀티플레이어 게임 및 리더보드",
+      "url": "/community-game",
+      "startTime": "2025-10-04T09:12:53.322Z",
+      "status": "passed",
+      "details": "커뮤니티 게임 시스템이 정상적으로 로드됨",
+      "screenshot": "community-game.png",
+      "duration": 1106,
+      "endTime": "2025-10-04T09:12:54.428Z"
+    },
+    {
+      "name": "다국어 지원",
+      "description": "25개 언어 지원 및 RTL 언어",
+      "url": "/internationalization",
+      "startTime": "2025-10-04T09:12:54.428Z",
+      "status": "passed",
+      "details": "다국어 지원 시스템이 정상적으로 작동함",
+      "screenshot": "internationalization.png",
+      "duration": 1006,
+      "endTime": "2025-10-04T09:12:55.434Z"
+    },
+    {
+      "name": "분석 대시보드",
+      "description": "사용자 행동 분석 및 트렌드",
+      "url": "/analytics",
+      "startTime": "2025-10-04T09:12:55.437Z",
+      "status": "passed",
+      "details": "분석 대시보드가 정상적으로 로드됨",
+      "screenshot": "analytics-dashboard.png",
+      "duration": 1304,
+      "endTime": "2025-10-04T09:12:56.741Z"
+    },
+    {
+      "name": "스팸 방지",
+      "description": "AI 기반 스팸 감지 및 자동 모더레이션",
+      "url": "/spam-prevention",
+      "startTime": "2025-10-04T09:12:56.741Z",
+      "status": "passed",
+      "details": "스팸 방지 시스템이 정상적으로 작동함",
+      "screenshot": "spam-prevention.png",
+      "duration": 906,
+      "endTime": "2025-10-04T09:12:57.647Z"
+    },
+    {
+      "name": "실시간 채팅",
+      "description": "WebSocket 기반 실시간 채팅 시스템",
+      "url": "/chat",
+      "startTime": "2025-10-04T09:12:57.647Z",
+      "status": "passed",
+      "details": "실시간 채팅 시스템이 정상적으로 작동함",
+      "screenshot": "realtime-chat.png",
+      "duration": 1015,
+      "endTime": "2025-10-04T09:12:58.662Z"
+    },
+    {
+      "name": "모던 UI 컴포넌트",
+      "description": "ModernButton, ModernCard, ModernInput",
+      "url": "/ui-components",
+      "startTime": "2025-10-04T09:12:58.662Z",
+      "status": "passed",
+      "details": "모던 UI 컴포넌트들이 정상적으로 렌더링됨",
+      "screenshot": "modern-ui.png",
+      "duration": 802,
+      "endTime": "2025-10-04T09:12:59.464Z"
+    },
+    {
+      "name": "HTTPS 보안",
+      "description": "SSL 인증서 및 보안 서버 설정",
+      "url": "/secure",
+      "startTime": "2025-10-04T09:12:59.465Z",
+      "status": "passed",
+      "details": "HTTPS 연결이 정상적으로 작동함",
+      "screenshot": "https-security.png",
+      "duration": 712,
+      "endTime": "2025-10-04T09:13:00.177Z"
+    },
+    {
+      "name": "프로젝트 관리",
+      "description": "통합 프로젝트 관리자 및 스크립트",
+      "url": "/management",
+      "startTime": "2025-10-04T09:13:00.177Z",
+      "status": "passed",
+      "details": "프로젝트 관리 시스템이 정상적으로 작동함",
+      "screenshot": "project-management.png",
+      "duration": 1003,
+      "endTime": "2025-10-04T09:13:01.180Z"
+    }
+  ],
+  "summary": {
+    "total": 12,
+    "passed": 12,
+    "failed": 0,
+    "error": 0
+  }
+}

@@ -1,0 +1,119 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>테스트 히스토리 리포트 v1.0.0</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .summary {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .history-table th,
+        .history-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .history-table th {
+            background: #f7fafc;
+            font-weight: bold;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        .status-passed {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .status-failed {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        .report-link {
+            color: #3b82f6;
+            text-decoration: none;
+        }
+        .report-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 테스트 히스토리 리포트 v1.0.0</h1>
+            <p>총 1회의 테스트 실행 기록</p>
+        </div>
+
+        <div class="summary">
+            <h2>📈 테스트 실행 통계</h2>
+            <p>총 테스트 실행 횟수: 1회</p>
+            <p>마지막 업데이트: Invalid Date</p>
+        </div>
+
+        <table class="history-table">
+            <thead>
+                <tr>
+                    <th>테스트 번호</th>
+                    <th>실행 시간</th>
+                    <th>총 테스트</th>
+                    <th>성공</th>
+                    <th>실패</th>
+                    <th>오류</th>
+                    <th>성공률</th>
+                    <th>리포트 링크</th>
+                </tr>
+            </thead>
+            <tbody>
+                
+                    <tr>
+                        <td>#1</td>
+                        <td>Invalid Date</td>
+                        <td>12</td>
+                        <td><span class="status-badge status-passed">12</span></td>
+                        <td><span class="status-badge status-failed">0</span></td>
+                        <td><span class="status-badge status-failed">0</span></td>
+                        <td>100%</td>
+                        <td>
+                            <a href="reports\testing\1.0.0\automated_feature-test-report-2025-10-04T09-12-49-364Z.html" class="report-link" target="_blank">보기</a>
+                        </td>
+                    </tr>
+                
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

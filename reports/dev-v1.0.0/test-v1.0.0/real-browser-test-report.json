@@ -1,0 +1,342 @@
+{
+  "version": "1.0.0",
+  "timestamp": "2025-10-05T08:56:14.245Z",
+  "type": "real_browser_test",
+  "totalDuration": 18636,
+  "results": [
+    {
+      "feature": "메인 페이지",
+      "success": false,
+      "duration": 2407,
+      "screenshots": [],
+      "logs": [
+        {
+          "timestamp": "2025-10-05T08:55:55.609Z",
+          "level": "info",
+          "message": "메인 페이지 테스트 시작",
+          "data": {},
+          "test": "메인 페이지"
+        },
+        {
+          "timestamp": "2025-10-05T08:55:55.611Z",
+          "level": "info",
+          "message": "테스트 단계 시작: 메인 페이지 로딩",
+          "data": {},
+          "test": "메인 페이지"
+        },
+        {
+          "timestamp": "2025-10-05T08:55:58.016Z",
+          "level": "error",
+          "message": "테스트 중 오류 발생: net::ERR_CONNECTION_REFUSED at http://localhost:3000/",
+          "data": {},
+          "test": "메인 페이지"
+        }
+      ],
+      "issues": [
+        {
+          "type": "test_error",
+          "description": "net::ERR_CONNECTION_REFUSED at http://localhost:3000/"
+        }
+      ],
+      "recommendations": [
+        {
+          "priority": "high",
+          "description": "테스트 오류 수정이 필요합니다"
+        }
+      ]
+    },
+    {
+      "feature": "로그인 시스템",
+      "success": false,
+      "duration": 2316,
+      "screenshots": [],
+      "logs": [
+        {
+          "timestamp": "2025-10-05T08:55:58.016Z",
+          "level": "info",
+          "message": "로그인 시스템 테스트 시작",
+          "data": {},
+          "test": "로그인 시스템"
+        },
+        {
+          "timestamp": "2025-10-05T08:55:58.016Z",
+          "level": "info",
+          "message": "테스트 단계 시작: 로그인 페이지 로딩",
+          "data": {},
+          "test": "로그인 시스템"
+        },
+        {
+          "timestamp": "2025-10-05T08:56:00.332Z",
+          "level": "error",
+          "message": "테스트 중 오류 발생: net::ERR_CONNECTION_REFUSED at http://localhost:3000/login",
+          "data": {},
+          "test": "로그인 시스템"
+        }
+      ],
+      "issues": [
+        {
+          "type": "test_error",
+          "description": "net::ERR_CONNECTION_REFUSED at http://localhost:3000/login"
+        }
+      ],
+      "recommendations": [
+        {
+          "priority": "high",
+          "description": "테스트 오류 수정이 필요합니다"
+        }
+      ]
+    },
+    {
+      "feature": "사용자 프로필",
+      "success": false,
+      "duration": 2306,
+      "screenshots": [],
+      "logs": [
+        {
+          "timestamp": "2025-10-05T08:56:00.332Z",
+          "level": "info",
+          "message": "사용자 프로필 테스트 시작",
+          "data": {},
+          "test": "사용자 프로필"
+        },
+        {
+          "timestamp": "2025-10-05T08:56:00.332Z",
+          "level": "info",
+          "message": "테스트 단계 시작: 프로필 페이지 로딩",
+          "data": {},
+          "test": "사용자 프로필"
+        },
+        {
+          "timestamp": "2025-10-05T08:56:02.638Z",
+          "level": "error",
+          "message": "테스트 중 오류 발생: net::ERR_CONNECTION_REFUSED at http://localhost:3000/profile",
+          "data": {},
+          "test": "사용자 프로필"
+        }
+      ],
+      "issues": [
+        {
+          "type": "test_error",
+          "description": "net::ERR_CONNECTION_REFUSED at http://localhost:3000/profile"
+        }
+      ],
+      "recommendations": [
+        {
+          "priority": "high",
+          "description": "테스트 오류 수정이 필요합니다"
+        }
+      ]
+    },
+    {
+      "feature": "성능 대시보드",
+      "success": false,
+      "duration": 2316,
+      "screenshots": [],
+      "logs": [
+        {
+          "timestamp": "2025-10-05T08:56:02.638Z",
+          "level": "info",
+          "message": "성능 대시보드 테스트 시작",
+          "data": {},
+          "test": "성능 대시보드"
+        },
+        {
+          "timestamp": "2025-10-05T08:56:02.638Z",
+          "level": "info",
+          "message": "테스트 단계 시작: 성능 대시보드 로딩",
+          "data": {},
+          "test": "성능 대시보드"
+        },
+        {
+          "timestamp": "2025-10-05T08:56:04.953Z",
+          "level": "error",
+          "message": "테스트 중 오류 발생: net::ERR_CONNECTION_REFUSED at http://localhost:3000/performance-dashboard",
+          "data": {},
+          "test": "성능 대시보드"
+        }
+      ],
+      "issues": [
+        {
+          "type": "test_error",
+          "description": "net::ERR_CONNECTION_REFUSED at http://localhost:3000/performance-dashboard"
+        }
+      ],
+      "recommendations": [
+        {
+          "priority": "high",
+          "description": "테스트 오류 수정이 필요합니다"
+        }
+      ]
+    },
+    {
+      "feature": "커뮤니티 게임",
+      "success": false,
+      "duration": 2316,
+      "screenshots": [],
+      "logs": [
+        {
+          "timestamp": "2025-10-05T08:56:04.954Z",
+          "level": "info",
+          "message": "커뮤니티 게임 테스트 시작",
+          "data": {},
+          "test": "커뮤니티 게임"
+        },
+        {
+          "timestamp": "2025-10-05T08:56:04.954Z",
+          "level": "info",
+          "message": "테스트 단계 시작: 커뮤니티 게임 페이지 로딩",
+          "data": {},
+          "test": "커뮤니티 게임"
+        },
+        {
+          "timestamp": "2025-10-05T08:56:07.270Z",
+          "level": "error",
+          "message": "테스트 중 오류 발생: net::ERR_CONNECTION_REFUSED at http://localhost:3000/community-game",
+          "data": {},
+          "test": "커뮤니티 게임"
+        }
+      ],
+      "issues": [
+        {
+          "type": "test_error",
+          "description": "net::ERR_CONNECTION_REFUSED at http://localhost:3000/community-game"
+        }
+      ],
+      "recommendations": [
+        {
+          "priority": "high",
+          "description": "테스트 오류 수정이 필요합니다"
+        }
+      ]
+    },
+    {
+      "feature": "다국어 지원",
+      "success": false,
+      "duration": 2360,
+      "screenshots": [],
+      "logs": [
+        {
+          "timestamp": "2025-10-05T08:56:07.270Z",
+          "level": "info",
+          "message": "다국어 지원 테스트 시작",
+          "data": {},
+          "test": "다국어 지원"
+        },
+        {
+          "timestamp": "2025-10-05T08:56:07.270Z",
+          "level": "info",
+          "message": "테스트 단계 시작: 다국어 지원 페이지 로딩",
+          "data": {},
+          "test": "다국어 지원"
+        },
+        {
+          "timestamp": "2025-10-05T08:56:09.630Z",
+          "level": "error",
+          "message": "테스트 중 오류 발생: net::ERR_CONNECTION_REFUSED at http://localhost:3000/internationalization",
+          "data": {},
+          "test": "다국어 지원"
+        }
+      ],
+      "issues": [
+        {
+          "type": "test_error",
+          "description": "net::ERR_CONNECTION_REFUSED at http://localhost:3000/internationalization"
+        }
+      ],
+      "recommendations": [
+        {
+          "priority": "high",
+          "description": "테스트 오류 수정이 필요합니다"
+        }
+      ]
+    },
+    {
+      "feature": "분석 대시보드",
+      "success": false,
+      "duration": 2320,
+      "screenshots": [],
+      "logs": [
+        {
+          "timestamp": "2025-10-05T08:56:09.630Z",
+          "level": "info",
+          "message": "분석 대시보드 테스트 시작",
+          "data": {},
+          "test": "분석 대시보드"
+        },
+        {
+          "timestamp": "2025-10-05T08:56:09.630Z",
+          "level": "info",
+          "message": "테스트 단계 시작: 분석 대시보드 로딩",
+          "data": {},
+          "test": "분석 대시보드"
+        },
+        {
+          "timestamp": "2025-10-05T08:56:11.950Z",
+          "level": "error",
+          "message": "테스트 중 오류 발생: net::ERR_CONNECTION_REFUSED at http://localhost:3000/analytics",
+          "data": {},
+          "test": "분석 대시보드"
+        }
+      ],
+      "issues": [
+        {
+          "type": "test_error",
+          "description": "net::ERR_CONNECTION_REFUSED at http://localhost:3000/analytics"
+        }
+      ],
+      "recommendations": [
+        {
+          "priority": "high",
+          "description": "테스트 오류 수정이 필요합니다"
+        }
+      ]
+    },
+    {
+      "feature": "스팸 방지",
+      "success": false,
+      "duration": 2294,
+      "screenshots": [],
+      "logs": [
+        {
+          "timestamp": "2025-10-05T08:56:11.950Z",
+          "level": "info",
+          "message": "스팸 방지 테스트 시작",
+          "data": {},
+          "test": "스팸 방지"
+        },
+        {
+          "timestamp": "2025-10-05T08:56:11.950Z",
+          "level": "info",
+          "message": "테스트 단계 시작: 스팸 방지 페이지 로딩",
+          "data": {},
+          "test": "스팸 방지"
+        },
+        {
+          "timestamp": "2025-10-05T08:56:14.244Z",
+          "level": "error",
+          "message": "테스트 중 오류 발생: net::ERR_CONNECTION_REFUSED at http://localhost:3000/spam-prevention",
+          "data": {},
+          "test": "스팸 방지"
+        }
+      ],
+      "issues": [
+        {
+          "type": "test_error",
+          "description": "net::ERR_CONNECTION_REFUSED at http://localhost:3000/spam-prevention"
+        }
+      ],
+      "recommendations": [
+        {
+          "priority": "high",
+          "description": "테스트 오류 수정이 필요합니다"
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "total": 8,
+    "passed": 0,
+    "failed": 8,
+    "successRate": 0
+  }
+}

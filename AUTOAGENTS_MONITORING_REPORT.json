@@ -1,0 +1,1563 @@
+{
+  "timestamp": "2025-10-05T11:51:56.852Z",
+  "systemHealth": "critical",
+  "performance": {
+    "totalAgents": 49,
+    "activeAgents": 49,
+    "healthyAgents": 23,
+    "warningAgents": 8,
+    "criticalAgents": 18,
+    "averageCpuUsage": 41.94030845754827,
+    "averageMemoryUsage": 50.429840481628986,
+    "averageResponseTime": 1893.935955820028,
+    "totalThroughput": 50142.23932935551,
+    "averageErrorRate": 4.635589801622272,
+    "systemUptime": 99.999,
+    "quantumEfficiency": 99.9,
+    "multiverseStability": 99.8
+  },
+  "agents": [
+    {
+      "id": "CODE_GENERATOR",
+      "name": "CODE_GENERATOR 에이전트",
+      "status": "active",
+      "health": "critical",
+      "performance": {
+        "cpuUsage": 84.60872421203095,
+        "memoryUsage": 1.7694360404053597,
+        "responseTime": 1112.2174620787423,
+        "throughput": 211.1076838196291,
+        "errorRate": 10,
+        "uptime": 99.97090338335735
+      },
+      "lastActivity": "2025-10-05T11:51:56.762Z",
+      "quantumLevel": 1,
+      "universe": 2
+    },
+    {
+      "id": "ARCHITECT",
+      "name": "ARCHITECT 에이전트",
+      "status": "active",
+      "health": "warning",
+      "performance": {
+        "cpuUsage": 28.735034552035234,
+        "memoryUsage": 92.73306491235394,
+        "responseTime": 288.2767166216376,
+        "throughput": 1402.3935430021008,
+        "errorRate": 2.1532959557760605,
+        "uptime": 99.95239138480856
+      },
+      "lastActivity": "2025-10-05T11:51:56.762Z",
+      "quantumLevel": 2,
+      "universe": 37
+    },
+    {
+      "id": "TESTER",
+      "name": "TESTER 에이전트",
+      "status": "active",
+      "health": "critical",
+      "performance": {
+        "cpuUsage": 21.627984758353758,
+        "memoryUsage": 79.80142485380345,
+        "responseTime": 227.02968579082403,
+        "throughput": 728.8319296750077,
+        "errorRate": 8.442699604068324,
+        "uptime": 99.91873121184652
+      },
+      "lastActivity": "2025-10-05T11:51:56.762Z",
+      "quantumLevel": 3,
+      "universe": 16
+    },
+    {
+      "id": "OPTIMIZER",
+      "name": "OPTIMIZER 에이전트",
+      "status": "active",
+      "health": "warning",
+      "performance": {
+        "cpuUsage": 44.529205038787026,
+        "memoryUsage": 97.77577120261248,
+        "responseTime": 2739.4020536111034,
+        "throughput": 748.3930993364133,
+        "errorRate": 9.09135534508183,
+        "uptime": 99.94367540652136
+      },
+      "lastActivity": "2025-10-05T11:51:56.762Z",
+      "quantumLevel": 4,
+      "universe": 48
+    },
+    {
+      "id": "SECURITY",
+      "name": "SECURITY 에이전트",
+      "status": "active",
+      "health": "healthy",
+      "performance": {
+        "cpuUsage": 88.08451716620188,
+        "memoryUsage": 8.201448464219101,
+        "responseTime": 2886.3458524774537,
+        "throughput": 1547.0412720512188,
+        "errorRate": 0.48775353717812076,
+        "uptime": 99.93509051227491
+      },
+      "lastActivity": "2025-10-05T11:51:56.762Z",
+      "quantumLevel": 5,
+      "universe": 34
+    },
+    {
+      "id": "UI_UX",
+      "name": "UI_UX 에이전트",
+      "status": "active",
+      "health": "critical",
+      "performance": {
+        "cpuUsage": 62.24457111460079,
+        "memoryUsage": 48.67799347989124,
+        "responseTime": 2958.661533901837,
+        "throughput": 402.03473213418783,
+        "errorRate": 8.32936403385542,
+        "uptime": 99.99560140949866
+      },
+      "lastActivity": "2025-10-05T11:51:56.762Z",
+      "quantumLevel": 6,
+      "universe": 10
+    },
+    {
+      "id": "DATABASE",
+      "name": "DATABASE 에이전트",
+      "status": "active",
+      "health": "warning",
+      "performance": {
+        "cpuUsage": 35.621694842359226,
+        "memoryUsage": 92.41839050191795,
+        "responseTime": 226.57157039898394,
+        "throughput": 1336.165628608704,
+        "errorRate": 1.1733347953838191,
+        "uptime": 99.92807793938705
+      },
+      "lastActivity": "2025-10-05T11:51:56.762Z",
+      "quantumLevel": 7,
+      "universe": 49
+    },
+    {
+      "id": "API",
+      "name": "API 에이전트",
+      "status": "active",
+      "health": "healthy",
+      "performance": {
+        "cpuUsage": 37.895636382246224,
+        "memoryUsage": 2.38316536730241,
+        "responseTime": 609.6228149623818,
+        "throughput": 937.4564073315349,
+        "errorRate": 3.0737189234637983,
+        "uptime": 99.90918137689992
+      },
+      "lastActivity": "2025-10-05T11:51:56.762Z",
+      "quantumLevel": 8,
+      "universe": 22
+    },
+    {
+      "id": "FRONTEND",
+      "name": "FRONTEND 에이전트",
+      "status": "active",
+      "health": "critical",
+      "performance": {
+        "cpuUsage": 15.43407136659604,
+        "memoryUsage": 29.01800029821849,
+        "responseTime": 2357.549237688016,
+        "throughput": 2137.587547667569,
+        "errorRate": 8.793383146564867,
+        "uptime": 99.99075797261081
+      },
+      "lastActivity": "2025-10-05T11:51:56.762Z",
+      "quantumLevel": 9,
+      "universe": 20
+    },
+    {
+      "id": "BACKEND",
+      "name": "BACKEND 에이전트",
+      "status": "active",
+      "health": "critical",
+      "performance": {
+        "cpuUsage": 54.30329478375298,
+        "memoryUsage": 84.295036447202,
+        "responseTime": 2198.3078285530096,
+        "throughput": 124.06804870067954,
+        "errorRate": 7.304312287767075,
+        "uptime": 99.9477586062341
+      },
+      "lastActivity": "2025-10-05T11:51:56.762Z",
+      "quantumLevel": 10,
+      "universe": 13
+    },
+    {
+      "id": "DEVOPS",
+      "name": "DEVOPS 에이전트",
+      "status": "active",
+      "health": "warning",
+      "performance": {
+        "cpuUsage": 69.57200541690335,
+        "memoryUsage": 97.10837027855128,
+        "responseTime": 2665.3471789447735,
+        "throughput": 575.4132011472966,
+        "errorRate": 8.307515997717783,
+        "uptime": 99.9549861901355
+      },
+      "lastActivity": "2025-10-05T11:51:56.762Z",
+      "quantumLevel": 11,
+      "universe": 12
+    },
+    {
+      "id": "ANALYTICS",
+      "name": "ANALYTICS 에이전트",
+      "status": "active",
+      "health": "healthy",
+      "performance": {
+        "cpuUsage": 27.061004210322114,
+        "memoryUsage": 68.51356483003278,
+        "responseTime": 3095.039137194913,
+        "throughput": 1165.4933648075855,
+        "errorRate": 4.334405349136665,
+        "uptime": 99.92563487139529
+      },
+      "lastActivity": "2025-10-05T11:51:56.762Z",
+      "quantumLevel": 12,
+      "universe": 19
+    },
+    {
+      "id": "MONITORING",
+      "name": "MONITORING 에이전트",
+      "status": "active",
+      "health": "warning",
+      "performance": {
+        "cpuUsage": 98.07052979408691,
+        "memoryUsage": 75.25551875915961,
+        "responseTime": 657.9107753207915,
+        "throughput": 874.4949324156801,
+        "errorRate": 6.532646497535811,
+        "uptime": 99.91218356441729
+      },
+      "lastActivity": "2025-10-05T11:51:56.762Z",
+      "quantumLevel": 13,
+      "universe": 45
+    },
+    {
+      "id": "DEPLOYMENT",
+      "name": "DEPLOYMENT 에이전트",
+      "status": "active",
+      "health": "healthy",
+      "performance": {
+        "cpuUsage": 0,
+        "memoryUsage": 63.3481556233787,
+        "responseTime": 2132.051232186706,
+        "throughput": 1351.0002417419132,
+        "errorRate": 0.8387889148335299,
+        "uptime": 99.93650090345086
+      },
+      "lastActivity": "2025-10-05T11:51:56.762Z",
+      "quantumLevel": 14,
+      "universe": 7
+    },
+    {
+      "id": "DOCUMENTATION",
+      "name": "DOCUMENTATION 에이전트",
+      "status": "active",
+      "health": "healthy",
+      "performance": {
+        "cpuUsage": 50.304707283744136,
+        "memoryUsage": 86.6725165190864,
+        "responseTime": 2536.406136017752,
+        "throughput": 1591.682171164082,
+        "errorRate": 0,
+        "uptime": 99.97807753430854
+      },
+      "lastActivity": "2025-10-05T11:51:56.762Z",
+      "quantumLevel": 15,
+      "universe": 34
+    },
+    {
+      "id": "PERFORMANCE",
+      "name": "PERFORMANCE 에이전트",
+      "status": "active",
+      "health": "healthy",
+      "performance": {
+        "cpuUsage": 56.07084942539652,
+        "memoryUsage": 32.90224089313505,
+        "responseTime": 6050.4854712771,
+        "throughput": 248.62879671934186,
+        "errorRate": 3.080470062026069,
+        "uptime": 99.92381585825184
+      },
+      "lastActivity": "2025-10-05T11:51:56.762Z",
+      "quantumLevel": 16,
+      "universe": 11
+    },
+    {
+      "id": "SCALABILITY",
+      "name": "SCALABILITY 에이전트",
+      "status": "active",
+      "health": "critical",
+      "performance": {
+        "cpuUsage": 60.87095412119903,
+        "memoryUsage": 74.62499847631233,
+        "responseTime": 1799.4428593301707,
+        "throughput": 1325.286981821994,
+        "errorRate": 6.437828399814461,
+        "uptime": 99.90827116263375
+      },
+      "lastActivity": "2025-10-05T11:51:56.762Z",
+      "quantumLevel": 17,
+      "universe": 44
+    },
+    {
+      "id": "RELIABILITY",
+      "name": "RELIABILITY 에이전트",
+      "status": "active",
+      "health": "critical",
+      "performance": {
+        "cpuUsage": 42.64049395377867,
+        "memoryUsage": 12.124163400937736,
+        "responseTime": 2073.2198895110205,
+        "throughput": 1498.3231373447404,
+        "errorRate": 10,
+        "uptime": 99.9819955069649
+      },
+      "lastActivity": "2025-10-05T11:51:56.762Z",
+      "quantumLevel": 18,
+      "universe": 34
+    },
+    {
+      "id": "MAINTENANCE",
+      "name": "MAINTENANCE 에이전트",
+      "status": "active",
+      "health": "critical",
+      "performance": {
+        "cpuUsage": 1.3516130021397266,
+        "memoryUsage": 20.757678174210888,
+        "responseTime": 1227.3848034370883,
+        "throughput": 830.8526091129912,
+        "errorRate": 6.7375196866539975,
+        "uptime": 99.94384024760393
+      },
+      "lastActivity": "2025-10-05T11:51:56.762Z",
+      "quantumLevel": 19,
+      "universe": 4
+    },
+    {
+      "id": "INTEGRATION",
+      "name": "INTEGRATION 에이전트",
+      "status": "active",
+      "health": "critical",
+      "performance": {
+        "cpuUsage": 65.99768581815401,
+        "memoryUsage": 50.41164781995562,
+        "responseTime": 1154.177730312312,
+        "throughput": 375.7974797365626,
+        "errorRate": 8.543267404453726,
+        "uptime": 99.9539063438405
+      },
+      "lastActivity": "2025-10-05T11:51:56.762Z",
+      "quantumLevel": 20,
+      "universe": 34
+    },
+    {
+      "id": "AUTOMATION",
+      "name": "AUTOMATION 에이전트",
+      "status": "active",
+      "health": "critical",
+      "performance": {
+        "cpuUsage": 3.958700125685849,
+        "memoryUsage": 2.376637478836438,
+        "responseTime": 118.11511677962434,
+        "throughput": 1320.8752630084489,
+        "errorRate": 6.688392528278194,
+        "uptime": 99.95629292971361
+      },
+      "lastActivity": "2025-10-05T11:51:56.762Z",
+      "quantumLevel": 21,
+      "universe": 37
+    },
+    {
+      "id": "QUALITY",
+      "name": "QUALITY 에이전트",
+      "status": "active",
+      "health": "healthy",
+      "performance": {
+        "cpuUsage": 27.300383060101307,
+        "memoryUsage": 9.769495465604919,
+        "responseTime": 2840.307110129686,
+        "throughput": 395.96086888591407,
+        "errorRate": 4.246766986433205,
+        "uptime": 99.91117289596221
+      },
+      "lastActivity": "2025-10-05T11:51:56.762Z",
+      "quantumLevel": 22,
+      "universe": 40
+    },
+    {
+      "id": "REVIEW",
+      "name": "REVIEW 에이전트",
+      "status": "active",
+      "health": "healthy",
+      "performance": {
+        "cpuUsage": 51.22150520013817,
+        "memoryUsage": 47.394697898575814,
+        "responseTime": 3087.4579917636675,
+        "throughput": 1955.8985267396358,
+        "errorRate": 0,
+        "uptime": 99.99769436745449
+      },
+      "lastActivity": "2025-10-05T11:51:56.762Z",
+      "quantumLevel": 23,
+      "universe": 23
+    },
+    {
+      "id": "REFACTOR",
+      "name": "REFACTOR 에이전트",
+      "status": "active",
+      "health": "healthy",
+      "performance": {
+        "cpuUsage": 79.03904377594681,
+        "memoryUsage": 53.86692102023799,
+        "responseTime": 2186.99572682279,
+        "throughput": 209.7427500776514,
+        "errorRate": 4.97125025487404,
+        "uptime": 99.93594890440811
+      },
+      "lastActivity": "2025-10-05T11:51:56.762Z",
+      "quantumLevel": 24,
+      "universe": 47
+    },
+    {
+      "id": "CACHE_MANAGER",
+      "name": "CACHE_MANAGER 에이전트",
+      "status": "active",
+      "health": "critical",
+      "performance": {
+        "cpuUsage": 21.937656186208095,
+        "memoryUsage": 22.842518914119864,
+        "responseTime": 989.1565639606581,
+        "throughput": 499.8411930180629,
+        "errorRate": 7.3382913346988765,
+        "uptime": 99.91457205068677
+      },
+      "lastActivity": "2025-10-05T11:51:56.762Z",
+      "quantumLevel": 25,
+      "universe": 1
+    },
+    {
+      "id": "LOAD_BALANCER",
+      "name": "LOAD_BALANCER 에이전트",
+      "status": "active",
+      "health": "healthy",
+      "performance": {
+        "cpuUsage": 8.738260974959944,
+        "memoryUsage": 35.470595054924594,
+        "responseTime": 1341.6257235583635,
+        "throughput": 290.54737538054184,
+        "errorRate": 0.8767154234917971,
+        "uptime": 99.96775203325124
+      },
+      "lastActivity": "2025-10-05T11:51:56.762Z",
+      "quantumLevel": 26,
+      "universe": 40
+    },
+    {
+      "id": "BACKUP_MANAGER",
+      "name": "BACKUP_MANAGER 에이전트",
+      "status": "active",
+      "health": "healthy",
+      "performance": {
+        "cpuUsage": 8.822191389798183,
+        "memoryUsage": 54.63427385957425,
+        "responseTime": 3977.745267900877,
+        "throughput": 2735.997096799156,
+        "errorRate": 1.4872185250772594,
+        "uptime": 99.9361656679729
+      },
+      "lastActivity": "2025-10-05T11:51:56.762Z",
+      "quantumLevel": 27,
+      "universe": 50
+    },
+    {
+      "id": "LOG_ANALYZER",
+      "name": "LOG_ANALYZER 에이전트",
+      "status": "active",
+      "health": "critical",
+      "performance": {
+        "cpuUsage": 28.4744785531147,
+        "memoryUsage": 84.21686095993468,
+        "responseTime": 3464.6032174743204,
+        "throughput": 1116.246247039327,
+        "errorRate": 10,
+        "uptime": 99.96549382555686
+      },
+      "lastActivity": "2025-10-05T11:51:56.762Z",
+      "quantumLevel": 28,
+      "universe": 33
+    },
+    {
+      "id": "ERROR_HANDLER",
+      "name": "ERROR_HANDLER 에이전트",
+      "status": "active",
+      "health": "healthy",
+      "performance": {
+        "cpuUsage": 26.681997898197395,
+        "memoryUsage": 67.81633521738156,
+        "responseTime": 3773.57716621562,
+        "throughput": 1083.6855502159904,
+        "errorRate": 1.5170895303380747,
+        "uptime": 99.99740543039339
+      },
+      "lastActivity": "2025-10-05T11:51:56.762Z",
+      "quantumLevel": 29,
+      "universe": 2
+    },
+    {
+      "id": "RESOURCE_OPTIMIZER",
+      "name": "RESOURCE_OPTIMIZER 에이전트",
+      "status": "active",
+      "health": "healthy",
+      "performance": {
+        "cpuUsage": 12.672804986178056,
+        "memoryUsage": 5.350226479897913,
+        "responseTime": 818.2469548246264,
+        "throughput": 694.8270966219047,
+        "errorRate": 4.513006592384321,
+        "uptime": 99.91512829738805
+      },
+      "lastActivity": "2025-10-05T11:51:56.762Z",
+      "quantumLevel": 30,
+      "universe": 29
+    },
+    {
+      "id": "NETWORK_MONITOR",
+      "name": "NETWORK_MONITOR 에이전트",
+      "status": "active",
+      "health": "healthy",
+      "performance": {
+        "cpuUsage": 69.3118472349007,
+        "memoryUsage": 41.31133947950897,
+        "responseTime": 723.1250309550622,
+        "throughput": 415.18953373967855,
+        "errorRate": 4.112140117251558,
+        "uptime": 99.9636835220058
+      },
+      "lastActivity": "2025-10-05T11:51:56.762Z",
+      "quantumLevel": 31,
+      "universe": 18
+    },
+    {
+      "id": "MEMORY_MANAGER",
+      "name": "MEMORY_MANAGER 에이전트",
+      "status": "active",
+      "health": "healthy",
+      "performance": {
+        "cpuUsage": 14.415579414704842,
+        "memoryUsage": 83.24715499575645,
+        "responseTime": 3575.509843835588,
+        "throughput": 608.5660787452354,
+        "errorRate": 1.990334846771015,
+        "uptime": 99.95940986453374
+      },
+      "lastActivity": "2025-10-05T11:51:56.762Z",
+      "quantumLevel": 32,
+      "universe": 40
+    },
+    {
+      "id": "CPU_OPTIMIZER",
+      "name": "CPU_OPTIMIZER 에이전트",
+      "status": "active",
+      "health": "critical",
+      "performance": {
+        "cpuUsage": 60.14105671490081,
+        "memoryUsage": 14.396303506709941,
+        "responseTime": 179.0347316452212,
+        "throughput": 1501.3251624532822,
+        "errorRate": 7.574197688103529,
+        "uptime": 99.98380462592851
+      },
+      "lastActivity": "2025-10-05T11:51:56.762Z",
+      "quantumLevel": 33,
+      "universe": 46
+    },
+    {
+      "id": "DISK_MANAGER",
+      "name": "DISK_MANAGER 에이전트",
+      "status": "active",
+      "health": "critical",
+      "performance": {
+        "cpuUsage": 45.117359452528284,
+        "memoryUsage": 13.597851135299695,
+        "responseTime": 51.617412457223764,
+        "throughput": 270.3251949227564,
+        "errorRate": 6.166803438349894,
+        "uptime": 99.96691840887136
+      },
+      "lastActivity": "2025-10-05T11:51:56.762Z",
+      "quantumLevel": 34,
+      "universe": 45
+    },
+    {
+      "id": "PROCESS_MANAGER",
+      "name": "PROCESS_MANAGER 에이전트",
+      "status": "active",
+      "health": "critical",
+      "performance": {
+        "cpuUsage": 19.715238324008745,
+        "memoryUsage": 36.464537111066385,
+        "responseTime": 4663.178508433935,
+        "throughput": 616.9130520388559,
+        "errorRate": 7.882443107590211,
+        "uptime": 99.94067921953231
+      },
+      "lastActivity": "2025-10-05T11:51:56.762Z",
+      "quantumLevel": 35,
+      "universe": 36
+    },
+    {
+      "id": "THREAD_MANAGER",
+      "name": "THREAD_MANAGER 에이전트",
+      "status": "active",
+      "health": "warning",
+      "performance": {
+        "cpuUsage": 56.66714730165808,
+        "memoryUsage": 94.77619982496525,
+        "responseTime": 1154.0762755489898,
+        "throughput": 592.102507203363,
+        "errorRate": 6.126986614936886,
+        "uptime": 99.90862781252301
+      },
+      "lastActivity": "2025-10-05T11:51:56.762Z",
+      "quantumLevel": 36,
+      "universe": 13
+    },
+    {
+      "id": "QUEUE_MANAGER",
+      "name": "QUEUE_MANAGER 에이전트",
+      "status": "active",
+      "health": "critical",
+      "performance": {
+        "cpuUsage": 18.002595003796777,
+        "memoryUsage": 49.42837766056742,
+        "responseTime": 2868.8339453157473,
+        "throughput": 3719.4841273555217,
+        "errorRate": 5.6665871526599805,
+        "uptime": 99.96579995405976
+      },
+      "lastActivity": "2025-10-05T11:51:56.762Z",
+      "quantumLevel": 37,
+      "universe": 10
+    },
+    {
+      "id": "SCHEDULER",
+      "name": "SCHEDULER 에이전트",
+      "status": "active",
+      "health": "healthy",
+      "performance": {
+        "cpuUsage": 79.79603440262798,
+        "memoryUsage": 69.77068496120921,
+        "responseTime": 2372.609117220108,
+        "throughput": 365.8851826746112,
+        "errorRate": 2.763534422914951,
+        "uptime": 99.95862169236844
+      },
+      "lastActivity": "2025-10-05T11:51:56.762Z",
+      "quantumLevel": 38,
+      "universe": 34
+    },
+    {
+      "id": "VALIDATOR",
+      "name": "VALIDATOR 에이전트",
+      "status": "active",
+      "health": "healthy",
+      "performance": {
+        "cpuUsage": 57.90790634907529,
+        "memoryUsage": 17.215466584253473,
+        "responseTime": 2234.4891254217127,
+        "throughput": 239.07519360510886,
+        "errorRate": 3.401545198483266,
+        "uptime": 99.91158848723849
+      },
+      "lastActivity": "2025-10-05T11:51:56.762Z",
+      "quantumLevel": 39,
+      "universe": 41
+    },
+    {
+      "id": "ENCRYPTION_MANAGER",
+      "name": "ENCRYPTION_MANAGER 에이전트",
+      "status": "active",
+      "health": "critical",
+      "performance": {
+        "cpuUsage": 43.288346704237554,
+        "memoryUsage": 26.467935236671863,
+        "responseTime": 1196.8561630338447,
+        "throughput": 3157.7848339864527,
+        "errorRate": 6.029285774757728,
+        "uptime": 99.93227462431577
+      },
+      "lastActivity": "2025-10-05T11:51:56.762Z",
+      "quantumLevel": 40,
+      "universe": 18
+    },
+    {
+      "id": "AUTHENTICATION_MANAGER",
+      "name": "AUTHENTICATION_MANAGER 에이전트",
+      "status": "active",
+      "health": "healthy",
+      "performance": {
+        "cpuUsage": 0,
+        "memoryUsage": 11.202747318434064,
+        "responseTime": 1680.4717568247852,
+        "throughput": 1848.7778896205277,
+        "errorRate": 1.2200031588997469,
+        "uptime": 99.90756170479804
+      },
+      "lastActivity": "2025-10-05T11:51:56.762Z",
+      "quantumLevel": 41,
+      "universe": 9
+    },
+    {
+      "id": "AUTHORIZATION_MANAGER",
+      "name": "AUTHORIZATION_MANAGER 에이전트",
+      "status": "active",
+      "health": "critical",
+      "performance": {
+        "cpuUsage": 61.67985045634458,
+        "memoryUsage": 53.73247913793005,
+        "responseTime": 1073.4505094915028,
+        "throughput": 852.2340648316111,
+        "errorRate": 7.417064737516153,
+        "uptime": 99.95860498953915
+      },
+      "lastActivity": "2025-10-05T11:51:56.762Z",
+      "quantumLevel": 42,
+      "universe": 15
+    },
+    {
+      "id": "SESSION_MANAGER",
+      "name": "SESSION_MANAGER 에이전트",
+      "status": "active",
+      "health": "healthy",
+      "performance": {
+        "cpuUsage": 13.03827634453502,
+        "memoryUsage": 79.3627893995313,
+        "responseTime": 2289.6409401426317,
+        "throughput": 1606.8854103650697,
+        "errorRate": 4.029902638176007,
+        "uptime": 99.93034693072907
+      },
+      "lastActivity": "2025-10-05T11:51:56.762Z",
+      "quantumLevel": 43,
+      "universe": 19
+    },
+    {
+      "id": "COOKIE_MANAGER",
+      "name": "COOKIE_MANAGER 에이전트",
+      "status": "active",
+      "health": "warning",
+      "performance": {
+        "cpuUsage": 34.10251135348802,
+        "memoryUsage": 98.59599609612536,
+        "responseTime": 542.105518139299,
+        "throughput": 2051.5480190671733,
+        "errorRate": 4.240196040153927,
+        "uptime": 99.93331152891683
+      },
+      "lastActivity": "2025-10-05T11:51:56.762Z",
+      "quantumLevel": 44,
+      "universe": 12
+    },
+    {
+      "id": "HEADER_MANAGER",
+      "name": "HEADER_MANAGER 에이전트",
+      "status": "active",
+      "health": "healthy",
+      "performance": {
+        "cpuUsage": 27.660615495417233,
+        "memoryUsage": 45.22702747872508,
+        "responseTime": 1892.0237140410907,
+        "throughput": 945.6675146208887,
+        "errorRate": 1.9228300008004384,
+        "uptime": 99.97931651871174
+      },
+      "lastActivity": "2025-10-05T11:51:56.762Z",
+      "quantumLevel": 45,
+      "universe": 42
+    },
+    {
+      "id": "ROUTE_MANAGER",
+      "name": "ROUTE_MANAGER 에이전트",
+      "status": "active",
+      "health": "healthy",
+      "performance": {
+        "cpuUsage": 29.541891102900703,
+        "memoryUsage": 78.2494391362909,
+        "responseTime": 1491.9809858402496,
+        "throughput": 1295.4251412302326,
+        "errorRate": 2.57116414309805,
+        "uptime": 99.93013508001734
+      },
+      "lastActivity": "2025-10-05T11:51:56.762Z",
+      "quantumLevel": 46,
+      "universe": 17
+    },
+    {
+      "id": "MIDDLEWARE_MANAGER",
+      "name": "MIDDLEWARE_MANAGER 에이전트",
+      "status": "active",
+      "health": "warning",
+      "performance": {
+        "cpuUsage": 99.77027859988334,
+        "memoryUsage": 71.45578807250106,
+        "responseTime": 344.76610271660775,
+        "throughput": 210.76321319929673,
+        "errorRate": 1.0276032798856776,
+        "uptime": 99.93906375543102
+      },
+      "lastActivity": "2025-10-05T11:51:56.762Z",
+      "quantumLevel": 47,
+      "universe": 21
+    },
+    {
+      "id": "PLUGIN_MANAGER",
+      "name": "PLUGIN_MANAGER 에이전트",
+      "status": "active",
+      "health": "healthy",
+      "performance": {
+        "cpuUsage": 27.59428702321855,
+        "memoryUsage": 44.247243365308286,
+        "responseTime": 1099.4120970765557,
+        "throughput": 18.554009104651854,
+        "errorRate": 3.1637451606843516,
+        "uptime": 99.91171976922939
+      },
+      "lastActivity": "2025-10-05T11:51:56.762Z",
+      "quantumLevel": 48,
+      "universe": 41
+    },
+    {
+      "id": "EXTENSION_MANAGER",
+      "name": "EXTENSION_MANAGER 에이전트",
+      "status": "active",
+      "health": "warning",
+      "performance": {
+        "cpuUsage": 100,
+        "memoryUsage": 50.686733975657575,
+        "responseTime": 1650.7025320634045,
+        "throughput": 414.2335167874658,
+        "errorRate": 3.7418732058154927,
+        "uptime": 99.97700533521511
+      },
+      "lastActivity": "2025-10-05T11:51:56.762Z",
+      "quantumLevel": 49,
+      "universe": 31
+    }
+  ],
+  "alerts": [
+    {
+      "id": "alert_1759664122787_1fpgybbvf",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 26",
+      "timestamp": "2025-10-05T11:35:22.787Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664132801_ditpei5b5",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 26",
+      "timestamp": "2025-10-05T11:35:32.801Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664142808_aecqtvyhl",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 25",
+      "timestamp": "2025-10-05T11:35:42.808Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664152818_eo05d7q89",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 23",
+      "timestamp": "2025-10-05T11:35:52.818Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664162831_s6yvvqlb0",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 28",
+      "timestamp": "2025-10-05T11:36:02.831Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664172832_fli6h0ekr",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 28",
+      "timestamp": "2025-10-05T11:36:12.832Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664182837_5dymmshmy",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 26",
+      "timestamp": "2025-10-05T11:36:22.837Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664192845_inctnm6s4",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 25",
+      "timestamp": "2025-10-05T11:36:32.845Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664202859_vhehcqrfa",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 24",
+      "timestamp": "2025-10-05T11:36:42.859Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664212867_zdkl1cyh3",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 24",
+      "timestamp": "2025-10-05T11:36:52.867Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664222868_49qpjiqb3",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 26",
+      "timestamp": "2025-10-05T11:37:02.868Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664232882_0zqjrgikz",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 24",
+      "timestamp": "2025-10-05T11:37:12.882Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664242935_bxfiuhmb3",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 22",
+      "timestamp": "2025-10-05T11:37:22.935Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664252941_vwjk6710r",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 25",
+      "timestamp": "2025-10-05T11:37:32.942Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664262949_e1s3bu7vm",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 20",
+      "timestamp": "2025-10-05T11:37:42.949Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664272959_zyljl37gr",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 21",
+      "timestamp": "2025-10-05T11:37:52.959Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664282963_3066qnbii",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 20",
+      "timestamp": "2025-10-05T11:38:02.963Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664292973_v6e6ue5ob",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 20",
+      "timestamp": "2025-10-05T11:38:12.973Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664302973_oskh6sjmf",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 20",
+      "timestamp": "2025-10-05T11:38:22.973Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664312981_81m7ju1l5",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 20",
+      "timestamp": "2025-10-05T11:38:32.981Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664322993_xr8q0lvlf",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 20",
+      "timestamp": "2025-10-05T11:38:42.993Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664333006_gt3l7m0rh",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 16",
+      "timestamp": "2025-10-05T11:38:53.006Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664343007_mpocv9awg",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 20",
+      "timestamp": "2025-10-05T11:39:03.007Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664353007_75m3mlb9j",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 19",
+      "timestamp": "2025-10-05T11:39:13.007Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664363008_i4u9w29yf",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 16",
+      "timestamp": "2025-10-05T11:39:23.008Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664373016_lw2krtfb5",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 18",
+      "timestamp": "2025-10-05T11:39:33.016Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664383022_yrzj9kq27",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 18",
+      "timestamp": "2025-10-05T11:39:43.022Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664393036_csm7vztke",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 17",
+      "timestamp": "2025-10-05T11:39:53.036Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664403044_z2w8k4n49",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 14",
+      "timestamp": "2025-10-05T11:40:03.044Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664413058_80ytps6ol",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 12",
+      "timestamp": "2025-10-05T11:40:13.058Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664423060_rby40j9s7",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 18",
+      "timestamp": "2025-10-05T11:40:23.060Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664433072_lzvhjrryp",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 15",
+      "timestamp": "2025-10-05T11:40:33.072Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664443073_1kjpx635i",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 16",
+      "timestamp": "2025-10-05T11:40:43.073Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664453074_ly2pngu9p",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 17",
+      "timestamp": "2025-10-05T11:40:53.074Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664463079_wvlzd6kjm",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 18",
+      "timestamp": "2025-10-05T11:41:03.079Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664473085_wenfz7kd4",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 18",
+      "timestamp": "2025-10-05T11:41:13.085Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664483087_ucpe5u12g",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 19",
+      "timestamp": "2025-10-05T11:41:23.087Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664493098_vj0rmqdhb",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 14",
+      "timestamp": "2025-10-05T11:41:33.098Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664503099_gv5kprtln",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 15",
+      "timestamp": "2025-10-05T11:41:43.100Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664513106_tbm8xfg51",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 13",
+      "timestamp": "2025-10-05T11:41:53.106Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664523108_exbdcxg2t",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 16",
+      "timestamp": "2025-10-05T11:42:03.108Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664533117_17o8m3ve6",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 16",
+      "timestamp": "2025-10-05T11:42:13.117Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664543120_dxd1jep3k",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 16",
+      "timestamp": "2025-10-05T11:42:23.120Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664553126_skatblq1t",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 17",
+      "timestamp": "2025-10-05T11:42:33.126Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664563136_ea9v1td4w",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 19",
+      "timestamp": "2025-10-05T11:42:43.136Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664573142_gulc2nqay",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 18",
+      "timestamp": "2025-10-05T11:42:53.142Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664583145_lpqmf1slt",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 15",
+      "timestamp": "2025-10-05T11:43:03.145Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664593155_ibsbmb1gn",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 17",
+      "timestamp": "2025-10-05T11:43:13.155Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664603165_97304yvb2",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 18",
+      "timestamp": "2025-10-05T11:43:23.165Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664613176_4dmro3tym",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 16",
+      "timestamp": "2025-10-05T11:43:33.176Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664623182_s5vtf14ja",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 19",
+      "timestamp": "2025-10-05T11:43:43.182Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664633188_42q0rfjbr",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 15",
+      "timestamp": "2025-10-05T11:43:53.188Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664643192_sgmgtzcj7",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 18",
+      "timestamp": "2025-10-05T11:44:03.192Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664653201_a015iz26f",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 22",
+      "timestamp": "2025-10-05T11:44:13.201Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664663212_857a5g201",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 20",
+      "timestamp": "2025-10-05T11:44:23.212Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664673222_fd7qnxsf5",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 20",
+      "timestamp": "2025-10-05T11:44:33.222Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664683223_c9t3yahvc",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 21",
+      "timestamp": "2025-10-05T11:44:43.223Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664693237_8sf4wbo3q",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 20",
+      "timestamp": "2025-10-05T11:44:53.238Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664703239_j7mauz6v5",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 19",
+      "timestamp": "2025-10-05T11:45:03.239Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664713251_wuoj1dfqx",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 19",
+      "timestamp": "2025-10-05T11:45:13.251Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664723256_19y451ldi",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 19",
+      "timestamp": "2025-10-05T11:45:23.256Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664733269_mxumd1zfa",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 21",
+      "timestamp": "2025-10-05T11:45:33.269Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664743276_k6m8wukv4",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 18",
+      "timestamp": "2025-10-05T11:45:43.276Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664753278_gqkircol7",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 16",
+      "timestamp": "2025-10-05T11:45:53.278Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664763283_83z7c7st3",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 17",
+      "timestamp": "2025-10-05T11:46:03.283Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664773283_0a96rwekq",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 18",
+      "timestamp": "2025-10-05T11:46:13.283Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664783286_dvde8fnmy",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 17",
+      "timestamp": "2025-10-05T11:46:23.286Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664793289_xdn23k6xr",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 18",
+      "timestamp": "2025-10-05T11:46:33.289Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664803295_brzwiauyw",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 20",
+      "timestamp": "2025-10-05T11:46:43.295Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664813296_7cf9p7ic0",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 19",
+      "timestamp": "2025-10-05T11:46:53.296Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664823312_awb88e2fk",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 21",
+      "timestamp": "2025-10-05T11:47:03.312Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664833322_qijmuwkse",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 17",
+      "timestamp": "2025-10-05T11:47:13.322Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664843336_8bxqs2mlc",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 18",
+      "timestamp": "2025-10-05T11:47:23.336Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664853346_yimhcim8a",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 18",
+      "timestamp": "2025-10-05T11:47:33.347Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664863360_js2r5z5h6",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 18",
+      "timestamp": "2025-10-05T11:47:43.360Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664873368_61acay26c",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 19",
+      "timestamp": "2025-10-05T11:47:53.368Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664883371_gievh4xc6",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 16",
+      "timestamp": "2025-10-05T11:48:03.371Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664893379_rf8k0pgv9",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 18",
+      "timestamp": "2025-10-05T11:48:13.379Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664903390_225p49taj",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 16",
+      "timestamp": "2025-10-05T11:48:23.390Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664913398_o87px8cce",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 20",
+      "timestamp": "2025-10-05T11:48:33.398Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664923408_n1z7wgh1m",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 19",
+      "timestamp": "2025-10-05T11:48:43.409Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664933410_j47z6t7i0",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 18",
+      "timestamp": "2025-10-05T11:48:53.410Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664943412_25lgomdpm",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 17",
+      "timestamp": "2025-10-05T11:49:03.412Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664953415_c2xjc1eve",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 18",
+      "timestamp": "2025-10-05T11:49:13.415Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664963427_ahxsuf2p6",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 18",
+      "timestamp": "2025-10-05T11:49:23.427Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664973432_5m03n9p1a",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 17",
+      "timestamp": "2025-10-05T11:49:33.432Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664983434_mzmp8dh3l",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 19",
+      "timestamp": "2025-10-05T11:49:43.434Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759664993449_6vi1rrpqx",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 19",
+      "timestamp": "2025-10-05T11:49:53.449Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759665003458_gon84nrus",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 21",
+      "timestamp": "2025-10-05T11:50:03.458Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759665013469_0sqvq0sdk",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 16",
+      "timestamp": "2025-10-05T11:50:13.469Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759665023481_hgeemke3l",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 20",
+      "timestamp": "2025-10-05T11:50:23.481Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759665033493_zeszepndy",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 22",
+      "timestamp": "2025-10-05T11:50:33.493Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759665043497_ax18ar5oh",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 17",
+      "timestamp": "2025-10-05T11:50:43.498Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759665053508_d82nv7apx",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 18",
+      "timestamp": "2025-10-05T11:50:53.508Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759665063512_uuz2o8xx3",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 17",
+      "timestamp": "2025-10-05T11:51:03.512Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759665073521_ehezajdyq",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 13",
+      "timestamp": "2025-10-05T11:51:13.521Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759665083525_1039jrxc4",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 13",
+      "timestamp": "2025-10-05T11:51:23.525Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759665093528_pqyc5nvbx",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 15",
+      "timestamp": "2025-10-05T11:51:33.528Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759665103534_3jeho29zj",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 19",
+      "timestamp": "2025-10-05T11:51:43.534Z",
+      "resolved": false
+    },
+    {
+      "id": "alert_1759665113540_0y62us979",
+      "level": "CRITICAL",
+      "message": "Critical agents detected: 16",
+      "timestamp": "2025-10-05T11:51:53.540Z",
+      "resolved": false
+    }
+  ],
+  "summary": {
+    "totalAgents": 49,
+    "healthyAgents": 23,
+    "systemUptime": 99.999,
+    "quantumEfficiency": 99.9,
+    "multiverseStability": 99.8
+  }
+}

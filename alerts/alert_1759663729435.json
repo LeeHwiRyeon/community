@@ -1,0 +1,12 @@
+{
+  "type": "high_memory_usage",
+  "severity": "critical",
+  "message": "메모리 사용률이 높습니다: 90.73%",
+  "metrics": {
+    "cpu": 47.79302527850703,
+    "memory": 90.72843006583258,
+    "disk": 50.52650064520681,
+    "responseTime": 935.1586729690038
+  },
+  "id": "high_memory_usage_1759663729435_lc32q6i3d"
+}

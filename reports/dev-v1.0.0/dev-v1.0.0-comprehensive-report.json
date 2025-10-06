@@ -1,0 +1,200 @@
+{
+  "version": "1.0.0",
+  "timestamp": "2025-10-04T09-15-44-411Z",
+  "type": "development_version",
+  "testReports": [
+    {
+      "name": "HTTPS 보안",
+      "path": "https-보안-test-report.json",
+      "htmlPath": "https-보안-test-report.html",
+      "status": "success",
+      "timestamp": "2025-10-04T09-15-44-411Z"
+    },
+    {
+      "name": "다국어 지원",
+      "path": "다국어-지원-test-report.json",
+      "htmlPath": "다국어-지원-test-report.html",
+      "status": "success",
+      "timestamp": "2025-10-04T09-15-44-411Z"
+    },
+    {
+      "name": "로그인 시스템",
+      "path": "로그인-시스템-test-report.json",
+      "htmlPath": "로그인-시스템-test-report.html",
+      "status": "success",
+      "timestamp": "2025-10-04T09-15-44-411Z"
+    },
+    {
+      "name": "메인 페이지",
+      "path": "메인-페이지-test-report.json",
+      "htmlPath": "메인-페이지-test-report.html",
+      "status": "success",
+      "timestamp": "2025-10-04T09-15-44-411Z"
+    },
+    {
+      "name": "모던 UI 컴포넌트",
+      "path": "모던-ui-컴포넌트-test-report.json",
+      "htmlPath": "모던-ui-컴포넌트-test-report.html",
+      "status": "success",
+      "timestamp": "2025-10-04T09-15-44-411Z"
+    },
+    {
+      "name": "분석 대시보드",
+      "path": "분석-대시보드-test-report.json",
+      "htmlPath": "분석-대시보드-test-report.html",
+      "status": "success",
+      "timestamp": "2025-10-04T09-15-44-411Z"
+    },
+    {
+      "name": "사용자 프로필",
+      "path": "사용자-프로필-test-report.json",
+      "htmlPath": "사용자-프로필-test-report.html",
+      "status": "success",
+      "timestamp": "2025-10-04T09-15-44-411Z"
+    },
+    {
+      "name": "성능 대시보드",
+      "path": "성능-대시보드-test-report.json",
+      "htmlPath": "성능-대시보드-test-report.html",
+      "status": "success",
+      "timestamp": "2025-10-04T09-15-44-411Z"
+    },
+    {
+      "name": "스팸 방지",
+      "path": "스팸-방지-test-report.json",
+      "htmlPath": "스팸-방지-test-report.html",
+      "status": "success",
+      "timestamp": "2025-10-04T09-15-44-411Z"
+    },
+    {
+      "name": "실시간 채팅",
+      "path": "실시간-채팅-test-report.json",
+      "htmlPath": "실시간-채팅-test-report.html",
+      "status": "success",
+      "timestamp": "2025-10-04T09-15-44-411Z"
+    },
+    {
+      "name": "커뮤니티 게임",
+      "path": "커뮤니티-게임-test-report.json",
+      "htmlPath": "커뮤니티-게임-test-report.html",
+      "status": "success",
+      "timestamp": "2025-10-04T09-15-44-411Z"
+    },
+    {
+      "name": "프로젝트 관리",
+      "path": "프로젝트-관리-test-report.json",
+      "htmlPath": "프로젝트-관리-test-report.html",
+      "status": "success",
+      "timestamp": "2025-10-04T09-15-44-411Z"
+    }
+  ],
+  "summary": {
+    "totalTests": 12,
+    "successfulTests": 12,
+    "failedTests": 0,
+    "successRate": 100,
+    "testCoverage": 100,
+    "performanceScore": 99,
+    "accessibilityScore": 96
+  },
+  "links": {
+    "testReports": [
+      {
+        "name": "HTTPS 보안",
+        "jsonLink": "test-v1.0.0/https-보안-test-report.json",
+        "htmlLink": "test-v1.0.0/https-보안-test-report.html",
+        "status": "success"
+      },
+      {
+        "name": "다국어 지원",
+        "jsonLink": "test-v1.0.0/다국어-지원-test-report.json",
+        "htmlLink": "test-v1.0.0/다국어-지원-test-report.html",
+        "status": "success"
+      },
+      {
+        "name": "로그인 시스템",
+        "jsonLink": "test-v1.0.0/로그인-시스템-test-report.json",
+        "htmlLink": "test-v1.0.0/로그인-시스템-test-report.html",
+        "status": "success"
+      },
+      {
+        "name": "메인 페이지",
+        "jsonLink": "test-v1.0.0/메인-페이지-test-report.json",
+        "htmlLink": "test-v1.0.0/메인-페이지-test-report.html",
+        "status": "success"
+      },
+      {
+        "name": "모던 UI 컴포넌트",
+        "jsonLink": "test-v1.0.0/모던-ui-컴포넌트-test-report.json",
+        "htmlLink": "test-v1.0.0/모던-ui-컴포넌트-test-report.html",
+        "status": "success"
+      },
+      {
+        "name": "분석 대시보드",
+        "jsonLink": "test-v1.0.0/분석-대시보드-test-report.json",
+        "htmlLink": "test-v1.0.0/분석-대시보드-test-report.html",
+        "status": "success"
+      },
+      {
+        "name": "사용자 프로필",
+        "jsonLink": "test-v1.0.0/사용자-프로필-test-report.json",
+        "htmlLink": "test-v1.0.0/사용자-프로필-test-report.html",
+        "status": "success"
+      },
+      {
+        "name": "성능 대시보드",
+        "jsonLink": "test-v1.0.0/성능-대시보드-test-report.json",
+        "htmlLink": "test-v1.0.0/성능-대시보드-test-report.html",
+        "status": "success"
+      },
+      {
+        "name": "스팸 방지",
+        "jsonLink": "test-v1.0.0/스팸-방지-test-report.json",
+        "htmlLink": "test-v1.0.0/스팸-방지-test-report.html",
+        "status": "success"
+      },
+      {
+        "name": "실시간 채팅",
+        "jsonLink": "test-v1.0.0/실시간-채팅-test-report.json",
+        "htmlLink": "test-v1.0.0/실시간-채팅-test-report.html",
+        "status": "success"
+      },
+      {
+        "name": "커뮤니티 게임",
+        "jsonLink": "test-v1.0.0/커뮤니티-게임-test-report.json",
+        "htmlLink": "test-v1.0.0/커뮤니티-게임-test-report.html",
+        "status": "success"
+      },
+      {
+        "name": "프로젝트 관리",
+        "jsonLink": "test-v1.0.0/프로젝트-관리-test-report.json",
+        "htmlLink": "test-v1.0.0/프로젝트-관리-test-report.html",
+        "status": "success"
+      }
+    ],
+    "screenshots": [],
+    "logs": [],
+    "relatedFiles": [
+      {
+        "name": "프로젝트 README",
+        "path": "../README.md",
+        "type": "documentation"
+      },
+      {
+        "name": "패키지 설정",
+        "path": "../package.json",
+        "type": "configuration"
+      },
+      {
+        "name": "TypeScript 설정",
+        "path": "../frontend/tsconfig.json",
+        "type": "configuration"
+      },
+      {
+        "name": "빌드 설정",
+        "path": "../frontend/vite.config.ts",
+        "type": "configuration"
+      }
+    ]
+  }
+}

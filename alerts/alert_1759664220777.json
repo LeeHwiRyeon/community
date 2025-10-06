@@ -1,0 +1,12 @@
+{
+  "type": "high_cpu_usage",
+  "severity": "critical",
+  "message": "CPU 사용률이 높습니다: 99.94%",
+  "metrics": {
+    "cpu": 99.94355394390439,
+    "memory": 46.69537702379566,
+    "disk": 34.74231737813243,
+    "responseTime": 777.2281065164009
+  },
+  "id": "high_cpu_usage_1759664220777_nexhs25zq"
+}

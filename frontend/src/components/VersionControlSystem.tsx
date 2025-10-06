@@ -202,7 +202,7 @@ const VersionItem = styled(Card)<{ isActive?: boolean }>(({ theme, isActive }) =
     transition: 'all 0.2s ease',
 
     '&:hover': {
-        boxShadow: theme.shadows?.[4] || '0px 2px 4px rgba(0,0,0,0.1)',
+        boxShadow: '0px 2px 4px rgba(0,0,0,0.1)',
         transform: 'translateY(-2px)'
     }
 }));

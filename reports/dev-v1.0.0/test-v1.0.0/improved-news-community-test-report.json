@@ -1,0 +1,28 @@
+{
+  "version": "1.0.0",
+  "timestamp": "2025-10-04T12:22:58.189Z",
+  "type": "improved_news_community_test",
+  "results": [
+    {
+      "name": "메인 페이지",
+      "success": true,
+      "message": "메인 페이지 및 뉴스 관리자 버튼 클릭 성공"
+    },
+    {
+      "name": "뉴스 관리자",
+      "success": true,
+      "message": "뉴스 관리자 모든 기능 테스트 성공"
+    },
+    {
+      "name": "커뮤니티 관리자",
+      "success": true,
+      "message": "커뮤니티 관리자 모든 기능 테스트 성공"
+    }
+  ],
+  "summary": {
+    "total": 3,
+    "passed": 3,
+    "failed": 0,
+    "successRate": 100
+  }
+}

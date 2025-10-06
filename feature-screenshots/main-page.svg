@@ -1,0 +1,54 @@
+
+<svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+    </linearGradient>
+    <filter id="blur" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="3"/>
+    </filter>
+  </defs>
+  
+  <!-- 배경 -->
+  <rect width="800" height="600" fill="url(#bg)"/>
+  
+  <!-- 글래스모피즘 효과 -->
+  <rect x="50" y="50" width="700" height="500" rx="20" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.2)" stroke-width="2" filter="url(#blur)"/>
+  
+  <!-- 제목 -->
+  <text x="400" y="150" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="36" font-weight="bold">
+    메인 페이지
+  </text>
+  
+  <!-- 설명 -->
+  <text x="400" y="200" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-family="Arial, sans-serif" font-size="18">
+    현대적인 메인 페이지와 실시간 통계
+  </text>
+  
+  <!-- 상태 -->
+  <text x="400" y="250" text-anchor="middle" fill="#10b981" font-family="Arial, sans-serif" font-size="24" font-weight="bold">
+    ✅ 완료
+  </text>
+  
+  <!-- 상세 정보 -->
+  <text x="400" y="300" text-anchor="middle" fill="rgba(255,255,255,0.7)" font-family="Arial, sans-serif" font-size="14">
+    그라데이션 배경, 애니메이션, 반응형 디자인
+  </text>
+  
+  <!-- URL -->
+  <text x="400" y="350" text-anchor="middle" fill="rgba(255,255,255,0.6)" font-family="Arial, sans-serif" font-size="12">
+    URL: /
+  </text>
+  
+  <!-- 아이콘 -->
+  <circle cx="400" cy="450" r="40" fill="rgba(255,255,255,0.2)" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+  <text x="400" y="460" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="24">
+    🚀
+  </text>
+  
+  <!-- Community Platform v3.0 -->
+  <text x="400" y="550" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-family="Arial, sans-serif" font-size="12">
+    Community Platform v3.0 - AUTOAGENTS 고도화 플랫폼
+  </text>
+</svg>

@@ -1,0 +1,228 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Community Platform v3.0 - 기능 테스트 리포트</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .header h1 {
+            color: #2d3748;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        .header p {
+            color: #718096;
+            font-size: 1.1rem;
+        }
+        .summary {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .summary h2 {
+            margin: 0 0 10px 0;
+            font-size: 1.8rem;
+        }
+        .summary p {
+            margin: 0;
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .test-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            border-left: 5px solid #10b981;
+        }
+        .test-card.failed {
+            border-left-color: #ef4444;
+        }
+        .test-card h3 {
+            margin: 0 0 10px 0;
+            color: #2d3748;
+            font-size: 1.3rem;
+        }
+        .test-card .status {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .test-card .description {
+            color: #718096;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+        .test-card .details {
+            background: #f7fafc;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            color: #4a5568;
+        }
+        .screenshot {
+            margin-top: 15px;
+            text-align: center;
+        }
+        .screenshot img {
+            max-width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 2px solid #e2e8f0;
+            color: #718096;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Community Platform v3.0</h1>
+            <p>기능 테스트 및 스크린샷 리포트</p>
+        </div>
+
+        <div class="summary">
+            <h2>📊 테스트 결과 요약</h2>
+            <p>총 8개 기능 중 0개 성공 (0%)</p>
+        </div>
+
+        <div class="test-grid">
+            
+                <div class="test-card failed">
+                    <h3>메인 페이지</h3>
+                    <div class="status">❌ 오류</div>
+                    <div class="description">현대적인 메인 페이지와 실시간 통계</div>
+                    <div class="details">
+                        <strong>URL:</strong> /<br>
+                        <strong>테스트 시간:</strong> 2025. 10. 6. 오전 11:53:26<br>
+                        <strong>상세:</strong> 페이지 이동 실패: 액션 실행 중 오류: net::ERR_CONNECTION_REFUSED at http://localhost:3000/
+                    </div>
+                    
+                </div>
+            
+                <div class="test-card failed">
+                    <h3>로그인 페이지</h3>
+                    <div class="status">❌ 오류</div>
+                    <div class="description">Firebase 익명/구글 로그인 시스템</div>
+                    <div class="details">
+                        <strong>URL:</strong> /login<br>
+                        <strong>테스트 시간:</strong> 2025. 10. 6. 오전 11:53:29<br>
+                        <strong>상세:</strong> 페이지 이동 실패: 액션 실행 중 오류: net::ERR_CONNECTION_REFUSED at http://localhost:3000/login
+                    </div>
+                    
+                </div>
+            
+                <div class="test-card failed">
+                    <h3>프로필 페이지</h3>
+                    <div class="status">❌ 오류</div>
+                    <div class="description">사용자 프로필 관리 및 계정 설정</div>
+                    <div class="details">
+                        <strong>URL:</strong> /profile<br>
+                        <strong>테스트 시간:</strong> 2025. 10. 6. 오전 11:53:31<br>
+                        <strong>상세:</strong> 페이지 이동 실패: 액션 실행 중 오류: net::ERR_CONNECTION_REFUSED at http://localhost:3000/profile
+                    </div>
+                    
+                </div>
+            
+                <div class="test-card failed">
+                    <h3>성능 대시보드</h3>
+                    <div class="status">❌ 오류</div>
+                    <div class="description">실시간 성능 모니터링 및 최적화</div>
+                    <div class="details">
+                        <strong>URL:</strong> /performance-dashboard<br>
+                        <strong>테스트 시간:</strong> 2025. 10. 6. 오전 11:53:33<br>
+                        <strong>상세:</strong> 페이지 이동 실패: 액션 실행 중 오류: net::ERR_CONNECTION_REFUSED at http://localhost:3000/performance-dashboard
+                    </div>
+                    
+                </div>
+            
+                <div class="test-card failed">
+                    <h3>커뮤니티 게임</h3>
+                    <div class="status">❌ 오류</div>
+                    <div class="description">멀티플레이어 게임 및 리더보드</div>
+                    <div class="details">
+                        <strong>URL:</strong> /community-game<br>
+                        <strong>테스트 시간:</strong> 2025. 10. 6. 오전 11:53:35<br>
+                        <strong>상세:</strong> 페이지 이동 실패: 액션 실행 중 오류: net::ERR_CONNECTION_REFUSED at http://localhost:3000/community-game
+                    </div>
+                    
+                </div>
+            
+                <div class="test-card failed">
+                    <h3>다국어 지원</h3>
+                    <div class="status">❌ 오류</div>
+                    <div class="description">25개 언어 지원 및 RTL 언어</div>
+                    <div class="details">
+                        <strong>URL:</strong> /internationalization<br>
+                        <strong>테스트 시간:</strong> 2025. 10. 6. 오전 11:53:38<br>
+                        <strong>상세:</strong> 페이지 이동 실패: 액션 실행 중 오류: net::ERR_CONNECTION_REFUSED at http://localhost:3000/internationalization
+                    </div>
+                    
+                </div>
+            
+                <div class="test-card failed">
+                    <h3>분석 대시보드</h3>
+                    <div class="status">❌ 오류</div>
+                    <div class="description">사용자 행동 분석 및 트렌드</div>
+                    <div class="details">
+                        <strong>URL:</strong> /analytics<br>
+                        <strong>테스트 시간:</strong> 2025. 10. 6. 오전 11:53:40<br>
+                        <strong>상세:</strong> 페이지 이동 실패: 액션 실행 중 오류: net::ERR_CONNECTION_REFUSED at http://localhost:3000/analytics
+                    </div>
+                    
+                </div>
+            
+                <div class="test-card failed">
+                    <h3>스팸 방지</h3>
+                    <div class="status">❌ 오류</div>
+                    <div class="description">AI 기반 스팸 감지 및 자동 모더레이션</div>
+                    <div class="details">
+                        <strong>URL:</strong> /spam-prevention<br>
+                        <strong>테스트 시간:</strong> 2025. 10. 6. 오전 11:53:42<br>
+                        <strong>상세:</strong> 페이지 이동 실패: 액션 실행 중 오류: net::ERR_CONNECTION_REFUSED at http://localhost:3000/spam-prevention
+                    </div>
+                    
+                </div>
+            
+        </div>
+
+        <div class="footer">
+            <p>🤖 AUTOAGENTS Manager가 생성한 테스트 리포트</p>
+            <p>생성 시간: 2025. 10. 6. 오전 11:53:42</p>
+        </div>
+    </div>
+</body>
+</html>
+        

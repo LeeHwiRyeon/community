@@ -25,7 +25,8 @@ import {
     Grow,
     Collapse,
     Paper,
-    Stack
+    Stack,
+    Grid
 } from '@mui/material';
 import { styled, keyframes, alpha } from '@mui/material/styles';
 import {
@@ -430,8 +431,8 @@ const AdvancedInteractionSystem: React.FC = () => {
                 <Typography variant="h5" gutterBottom sx={{ mb: 3 }}>
                     ✨ Animation Cards
                 </Typography>
-                <Grid container spacing={3}>
-                    <Grid item xs={12} md={6} lg={3}>
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
+                    <Box sx={{ flex: '1 1 300px', minWidth: 300 }}>
                         <AnimatedCard animation="bounceIn" delay={0}>
                             <Box sx={{ p: 2, textAlign: 'center' }}>
                                 <TouchIcon sx={{ fontSize: 40, color: 'primary.main', mb: 1 }} />
@@ -441,8 +442,8 @@ const AdvancedInteractionSystem: React.FC = () => {
                                 </Typography>
                             </Box>
                         </AnimatedCard>
-                    </Grid>
-                    <Grid item xs={12} md={6} lg={3}>
+                    </Box>
+                    <Box sx={{ flex: '1 1 300px', minWidth: 300 }}>
                         <AnimatedCard animation="slideInLeft" delay={0.1}>
                             <Box sx={{ p: 2, textAlign: 'center' }}>
                                 <SwipeIcon sx={{ fontSize: 40, color: 'secondary.main', mb: 1 }} />
@@ -452,8 +453,8 @@ const AdvancedInteractionSystem: React.FC = () => {
                                 </Typography>
                             </Box>
                         </AnimatedCard>
-                    </Grid>
-                    <Grid item xs={12} md={6} lg={3}>
+                    </Box>
+                    <Box sx={{ flex: '1 1 300px', minWidth: 300 }}>
                         <AnimatedCard animation="rotateIn" delay={0.2}>
                             <Box sx={{ p: 2, textAlign: 'center' }}>
                                 <RefreshIcon sx={{ fontSize: 40, color: 'success.main', mb: 1 }} />
@@ -463,8 +464,8 @@ const AdvancedInteractionSystem: React.FC = () => {
                                 </Typography>
                             </Box>
                         </AnimatedCard>
-                    </Grid>
-                    <Grid item xs={12} md={6} lg={3}>
+                    </Box>
+                    <Box sx={{ flex: '1 1 300px', minWidth: 300 }}>
                         <AnimatedCard animation="flipIn" delay={0.3}>
                             <Box sx={{ p: 2, textAlign: 'center' }}>
                                 <AnimationIcon sx={{ fontSize: 40, color: 'error.main', mb: 1 }} />
@@ -474,8 +475,8 @@ const AdvancedInteractionSystem: React.FC = () => {
                                 </Typography>
                             </Box>
                         </AnimatedCard>
-                    </Grid>
-                </Grid>
+                    </Box>
+                </Box>
             </Box>
 
             {/* 제스처 데모 섹션 */}
@@ -541,8 +542,8 @@ const AdvancedInteractionSystem: React.FC = () => {
                 <Typography variant="h5" gutterBottom sx={{ mb: 3 }}>
                     🎬 Animation Triggers
                 </Typography>
-                <Grid container spacing={2}>
-                    <Grid item xs={12} sm={6} md={3}>
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
+                    <Box sx={{ flex: '1 1 200px', minWidth: 200 }}>
                         <Card
                             sx={{
                                 p: 2,
@@ -556,8 +557,8 @@ const AdvancedInteractionSystem: React.FC = () => {
                             <GestureIcon sx={{ fontSize: 40, color: 'warning.main', mb: 1 }} />
                             <Typography variant="h6">Shake</Typography>
                         </Card>
-                    </Grid>
-                    <Grid item xs={12} sm={6} md={3}>
+                    </Box>
+                    <Box sx={{ flex: '1 1 200px', minWidth: 200 }}>
                         <Card
                             sx={{
                                 p: 2,
@@ -571,8 +572,8 @@ const AdvancedInteractionSystem: React.FC = () => {
                             <ZoomIcon sx={{ fontSize: 40, color: 'info.main', mb: 1 }} />
                             <Typography variant="h6">Glow</Typography>
                         </Card>
-                    </Grid>
-                    <Grid item xs={12} sm={6} md={3}>
+                    </Box>
+                    <Box sx={{ flex: '1 1 200px', minWidth: 200 }}>
                         <Card
                             sx={{
                                 p: 2,
@@ -586,8 +587,8 @@ const AdvancedInteractionSystem: React.FC = () => {
                             <FeedbackIcon sx={{ fontSize: 40, color: 'success.main', mb: 1 }} />
                             <Typography variant="h6">Bounce</Typography>
                         </Card>
-                    </Grid>
-                    <Grid item xs={12} sm={6} md={3}>
+                    </Box>
+                    <Box sx={{ flex: '1 1 200px', minWidth: 200 }}>
                         <Card
                             sx={{
                                 p: 2,
@@ -601,8 +602,8 @@ const AdvancedInteractionSystem: React.FC = () => {
                             <AnimationIcon sx={{ fontSize: 40, color: 'error.main', mb: 1 }} />
                             <Typography variant="h6">Pulse</Typography>
                         </Card>
-                    </Grid>
-                </Grid>
+                    </Box>
+                </Box>
             </Box>
 
             {/* 활성 애니메이션 표시 */}

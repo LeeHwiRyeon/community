@@ -3,7 +3,10 @@ import { storeRefresh, loadRefresh, deleteRefresh, isRedisEnabled } from '../red
 
 const ACCESS_TTL_SEC = parseInt(process.env.JWT_ACCESS_TTL_SEC || '900', 10); // 15m
 const REFRESH_TTL_SEC = parseInt(process.env.JWT_REFRESH_TTL_SEC || '1209600', 10); // 14d
-const SECRET = process.env.JWT_SECRET || 'dev_insecure_secret_change_me';
+const SECRET = process.env.JWT_SECRET || (() => {
+    console.error('⚠️  JWT_SECRET not set! Using insecure default. Set JWT_SECRET environment variable.');
+    return 'dev_insecure_secret_change_me';
+})();
 
 // In-memory fallback refresh store when Redis disabled
 const refreshStore = new Map(); // jti -> { userId, exp }
@@ -11,8 +14,40 @@ const refreshStore = new Map(); // jti -> { userId, exp }
 export async function issueTokens(user) {
     const now = Math.floor(Date.now() / 1000);
     const jti = 'r_' + Math.random().toString(36).slice(2) + Date.now().toString(36);
-    const access = jwt.sign({ sub: String(user.id), role: user.role, typ: 'access' }, SECRET, { algorithm: 'HS256', expiresIn: ACCESS_TTL_SEC });
-    const refresh = jwt.sign({ sub: String(user.id), jti, typ: 'refresh' }, SECRET, { algorithm: 'HS256', expiresIn: REFRESH_TTL_SEC });
+
+    // Add additional security claims
+    const accessPayload = {
+        sub: String(user.id),
+        role: user.role,
+        typ: 'access',
+        iat: now,
+        iss: process.env.JWT_ISSUER || 'community-platform',
+        aud: process.env.JWT_AUDIENCE || 'community-platform-users'
+    };
+
+    const refreshPayload = {
+        sub: String(user.id),
+        jti,
+        typ: 'refresh',
+        iat: now,
+        iss: process.env.JWT_ISSUER || 'community-platform',
+        aud: process.env.JWT_AUDIENCE || 'community-platform-users'
+    };
+
+    const access = jwt.sign(accessPayload, SECRET, {
+        algorithm: 'HS256',
+        expiresIn: ACCESS_TTL_SEC,
+        issuer: process.env.JWT_ISSUER || 'community-platform',
+        audience: process.env.JWT_AUDIENCE || 'community-platform-users'
+    });
+
+    const refresh = jwt.sign(refreshPayload, SECRET, {
+        algorithm: 'HS256',
+        expiresIn: REFRESH_TTL_SEC,
+        issuer: process.env.JWT_ISSUER || 'community-platform',
+        audience: process.env.JWT_AUDIENCE || 'community-platform-users'
+    });
+
     if (isRedisEnabled()) {
         await storeRefresh(jti, { userId: user.id }, REFRESH_TTL_SEC);
     } else {
@@ -23,10 +58,17 @@ export async function issueTokens(user) {
 
 export function verifyToken(token, expectedTyp = 'access') {
     try {
-        const payload = jwt.verify(token, SECRET, { algorithms: ['HS256'] });
+        const payload = jwt.verify(token, SECRET, {
+            algorithms: ['HS256'],
+            issuer: process.env.JWT_ISSUER || 'community-platform',
+            audience: process.env.JWT_AUDIENCE || 'community-platform-users'
+        });
         if (expectedTyp && payload.typ !== expectedTyp) return null;
         return payload;
-    } catch { return null; }
+    } catch (error) {
+        console.warn('JWT verification failed:', error.message);
+        return null;
+    }
 }
 
 export async function rotateRefresh(oldRefresh) {

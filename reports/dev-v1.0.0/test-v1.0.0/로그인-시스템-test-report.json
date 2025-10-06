@@ -1,0 +1,90 @@
+{
+  "version": "1.0.0",
+  "timestamp": "2025-10-04T09-15-44-411Z",
+  "type": "feature_test",
+  "feature": "로그인 시스템",
+  "testData": {
+    "status": "success",
+    "success": true,
+    "screenshots": {
+      "before": "로그인-시스템-before-4.png",
+      "after": "로그인-시스템-after-5.png",
+      "comparison": "로그인-시스템-comparison-success-6.png"
+    },
+    "logs": [
+      {
+        "timestamp": "2025-10-04T09:15:45.959Z",
+        "level": "info",
+        "message": "로그인 시스템 테스트 시작",
+        "data": {}
+      },
+      {
+        "timestamp": "2025-10-04T09:15:45.959Z",
+        "level": "info",
+        "message": "사용 전 스크린샷 생성 완료",
+        "data": {}
+      },
+      {
+        "timestamp": "2025-10-04T09:15:47.161Z",
+        "level": "info",
+        "message": "사용 후 스크린샷 생성 완료",
+        "data": {}
+      },
+      {
+        "timestamp": "2025-10-04T09:15:47.162Z",
+        "level": "success",
+        "message": "테스트 성공 - 비교 분석 완료",
+        "data": {}
+      },
+      {
+        "timestamp": "2025-10-04T09:15:47.162Z",
+        "level": "info",
+        "message": "로그인 시스템 테스트 완료",
+        "data": {
+          "duration": 1203,
+          "success": true
+        }
+      }
+    ],
+    "performance": {
+      "응답 시간": "1203ms",
+      "메모리 사용량": "99MB",
+      "CPU 사용률": "19%",
+      "네트워크 요청": "7개"
+    },
+    "accessibility": {
+      "접근성 점수": "85/100",
+      "키보드 네비게이션": "✅ 지원",
+      "스크린 리더": "✅ 호환",
+      "색상 대비": "✅ 적합"
+    },
+    "compatibility": {
+      "Chrome": "✅ 지원",
+      "Firefox": "✅ 지원",
+      "Safari": "✅ 지원",
+      "Edge": "✅ 지원"
+    },
+    "intendedBehavior": "익명 로그인과 구글 로그인이 정상적으로 작동해야 함",
+    "actualBehavior": "로그인 폼과 버튼들이 정상적으로 표시되고 기능이 작동함",
+    "issues": [],
+    "recommendations": [
+      {
+        "priority": "medium",
+        "description": "로그인 실패 시 사용자 피드백 개선"
+      }
+    ]
+  },
+  "summary": {
+    "status": "success",
+    "success": true,
+    "intendedBehavior": "익명 로그인과 구글 로그인이 정상적으로 작동해야 함",
+    "actualBehavior": "로그인 폼과 버튼들이 정상적으로 표시되고 기능이 작동함",
+    "issues": [],
+    "recommendations": [
+      {
+        "priority": "medium",
+        "description": "로그인 실패 시 사용자 피드백 개선"
+      }
+    ]
+  }
+}

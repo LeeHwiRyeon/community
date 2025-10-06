@@ -1,159 +1,146 @@
+# Deploy to Production - Security Hardened
 name: Deploy to Production
 
 on:
   push:
     branches: [main]
-  pull_request:
-    branches: [main]
+  workflow_dispatch:
 
 env:
-  NODE_VERSION: '18'
+  NODE_VERSION: '20'
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  # Test and Build
-  test-and-build:
+  # 보안 검사 및 테스트
+  security-and-test:
     runs-on: ubuntu-latest
+    outputs:
+      should-deploy: ${{ steps.decision.outputs.should-deploy }}
+    
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+    - name: 코드 체크아웃
+      uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+    - name: Node.js 설정
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
 
-      - name: Install dependencies
-        run: |
-          npm ci
-          cd frontend && npm ci
-          cd ../server-backend && npm ci
+    - name: 보안 감사
+      run: |
+        npm audit --audit-level=high
+        cd server-backend && npm audit --audit-level=high
+        cd ../frontend && npm audit --audit-level=high
 
-      - name: Run linting
-        run: |
-          npm run lint
-          cd frontend && npm run lint
-          cd ../server-backend && npm run lint
+    - name: 의존성 설치
+      run: |
+        npm ci --no-audit --no-fund
+        cd frontend && npm ci --no-audit --no-fund
+        cd ../server-backend && npm ci --no-audit --no-fund
 
-      - name: Run tests
-        run: |
-          npm run test
-          cd frontend && npm run test
-          cd ../server-backend && npm run test
+    - name: 보안 테스트
+      run: |
+        cd server-backend
+        npm run test:security
 
-      - name: Build frontend
-        run: |
-          cd frontend
-          npm run build
+    - name: 빌드 테스트
+      run: |
+        cd frontend && npm run build
+        cd ../server-backend && npm run build
 
-      - name: Build Docker image
-        run: |
-          docker build -f Dockerfile.production -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} .
+    - name: 배포 결정
+      id: decision
+      run: |
+        if [[ "${{ github.event_name }}" == "workflow_dispatch" ]] || [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+          echo "should-deploy=true" >> $GITHUB_OUTPUT
+        else
+          echo "should-deploy=false" >> $GITHUB_OUTPUT
+        fi
 
-  # Security Scan
-  security-scan:
+  # Docker 이미지 빌드 및 푸시
+  build-and-push:
+    needs: security-and-test
+    if: needs.security-and-test.outputs.should-deploy == 'true'
     runs-on: ubuntu-latest
-    needs: test-and-build
+    
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+    - name: 코드 체크아웃
+      uses: actions/checkout@v4
 
-      - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@master
-        with:
-          image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
-          format: 'sarif'
-          output: 'trivy-results.sarif'
+    - name: Docker 로그인
+      uses: docker/login-action@v3
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Upload Trivy scan results
-        uses: github/codeql-action/upload-sarif@v2
-        with:
-          sarif_file: 'trivy-results.sarif'
+    - name: 메타데이터 추출
+      id: meta
+      uses: docker/metadata-action@v5
+      with:
+        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+        tags: |
+          type=ref,event=branch
+          type=ref,event=pr
+          type=sha,prefix={{branch}}-
+          type=raw,value=latest,enable={{is_default_branch}}
 
-      - name: Run npm audit
-        run: |
-          npm audit --audit-level=moderate
-          cd frontend && npm audit --audit-level=moderate
-          cd ../server-backend && npm audit --audit-level=moderate
+    - name: 백엔드 이미지 빌드 및 푸시
+      uses: docker/build-push-action@v5
+      with:
+        context: ./server-backend
+        file: ./server-backend/Dockerfile
+        push: true
+        tags: ${{ steps.meta.outputs.tags }}-backend
+        labels: ${{ steps.meta.outputs.labels }}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+        platforms: linux/amd64,linux/arm64
 
-  # Deploy to Staging
-  deploy-staging:
+    - name: 프론트엔드 이미지 빌드 및 푸시
+      uses: docker/build-push-action@v5
+      with:
+        context: ./frontend
+        file: ./frontend/Dockerfile
+        push: true
+        tags: ${{ steps.meta.outputs.tags }}-frontend
+        labels: ${{ steps.meta.outputs.labels }}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+        platforms: linux/amd64,linux/arm64
+
+    - name: Docker 보안 스캔
+      uses: aquasecurity/trivy-action@master
+      with:
+        image-ref: ${{ steps.meta.outputs.tags }}-backend
+        format: 'sarif'
+        output: 'trivy-results.sarif'
+
+    - name: Trivy 결과 업로드
+      uses: github/codeql-action/upload-sarif@v2
+      if: always()
+      with:
+        sarif_file: 'trivy-results.sarif'
+
+  # 배포 (실제 배포 로직은 환경에 따라 수정 필요)
+  deploy:
+    needs: [security-and-test, build-and-push]
+    if: needs.security-and-test.outputs.should-deploy == 'true'
     runs-on: ubuntu-latest
-    needs: [test-and-build, security-scan]
-    if: github.event_name == 'pull_request'
-    environment: staging
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Deploy to staging
-        run: |
-          echo "Deploying to staging environment..."
-          # Add staging deployment commands here
-
-  # Deploy to Production
-  deploy-production:
-    runs-on: ubuntu-latest
-    needs: [test-and-build, security-scan]
-    if: github.ref == 'refs/heads/main'
     environment: production
+    
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+    - name: 코드 체크아웃
+      uses: actions/checkout@v4
 
-      - name: Login to Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Push Docker image
-        run: |
-          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
-          docker tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
-          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
-
-      - name: Deploy to production
-        run: |
-          echo "Deploying to production environment..."
-          # Add production deployment commands here
-
-  # Performance Test
-  performance-test:
-    runs-on: ubuntu-latest
-    needs: deploy-staging
-    if: github.event_name == 'pull_request'
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-
-      - name: Install Lighthouse CI
-        run: npm install -g @lhci/cli@0.12.x
-
-      - name: Run Lighthouse CI
-        run: |
-          lhci autorun
-        env:
-          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
-
-  # Notification
-  notify:
-    runs-on: ubuntu-latest
-    needs: [deploy-production, performance-test]
-    if: always()
-    steps:
-      - name: Notify deployment status
-        run: |
-          if [ "${{ needs.deploy-production.result }}" == "success" ]; then
-            echo "✅ Production deployment successful!"
-          else
-            echo "❌ Production deployment failed!"
-          fi
+    - name: 배포 알림
+      run: |
+        echo "🚀 배포 준비 완료!"
+        echo "백엔드 이미지: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest-backend"
+        echo "프론트엔드 이미지: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest-frontend"
+        echo "배포 환경: production"
+        
+    # 실제 배포 스크립트는 여기에 추가
+    # 예: Kubernetes, Docker Swarm, 또는 클라우드 서비스 배포

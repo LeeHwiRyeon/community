@@ -171,7 +171,7 @@ const typingAnimation = keyframes`
 `;
 
 // 스타일드 컴포넌트
-const CollaborationPanel = styled(Paper)(({ theme }) => ({
+const StyledCollaborationPanel = styled(Paper)(({ theme }) => ({
     position: 'fixed',
     top: theme.spacing(8),
     right: theme.spacing(2),
@@ -179,7 +179,7 @@ const CollaborationPanel = styled(Paper)(({ theme }) => ({
     maxHeight: '70vh',
     overflow: 'auto',
     zIndex: 1300,
-    boxShadow: theme.shadows?.[8] || '0px 4px 8px rgba(0,0,0,0.12)'
+    boxShadow: '0px 8px 16px rgba(0,0,0,0.12)'
 }));
 
 const UserCursor = styled(Box)<{ color: string }>(({ theme, color }) => ({
@@ -642,7 +642,7 @@ export const CollaborationPanel: React.FC<{ open: boolean; onClose: () => void }
     if (!open) return null;
 
     return (
-        <CollaborationPanel>
+        <StyledCollaborationPanel>
             <CardContent>
                 {/* 헤더 */}
                 <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
@@ -904,7 +904,7 @@ export const CollaborationPanel: React.FC<{ open: boolean; onClose: () => void }
                     <Button onClick={() => setShowShareDialog(false)}>닫기</Button>
                 </DialogActions>
             </Dialog>
-        </CollaborationPanel>
+        </StyledCollaborationPanel>
     );
 };
 

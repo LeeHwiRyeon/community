@@ -41,7 +41,7 @@ import {
 import { styled, keyframes, alpha, createTheme, ThemeProvider } from '@mui/material/styles';
 import {
     Palette as PaletteIcon,
-    Typography as TypographyIcon,
+    TextFields as TypographyIcon,
     SpaceBar as SpaceIcon,
     Animation as AnimationIcon,
     TouchApp as TouchIcon,
@@ -186,97 +186,24 @@ interface DynamicButtonProps {
     onClick?: () => void;
     animation?: 'morphing' | 'floating' | 'pulse' | 'none';
     gradient?: boolean;
+    as?: React.ElementType;
 }
 
-const DynamicButton = styled(Button)<DynamicButtonProps>(({ theme, variant = 'primary', size = 'md', animation = 'none', gradient = false }) => {
-    const getVariantStyles = () => {
-        switch (variant) {
-            case 'primary':
-                return {
-                    background: gradient
-                        ? `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`
-                        : theme.palette.primary.main,
-                    color: theme.palette.primary.contrastText,
-                    boxShadow: `0 4px 15px ${alpha(theme.palette.primary.main, 0.3)}`,
-                    '&:hover': {
-                        background: gradient
-                            ? `linear-gradient(135deg, ${theme.palette.primary.dark} 0%, ${theme.palette.primary.main} 100%)`
-                            : theme.palette.primary.dark,
-                        boxShadow: `0 6px 20px ${alpha(theme.palette.primary.main, 0.4)}`,
-                        transform: 'translateY(-2px)',
-                    },
-                };
-            case 'gradient':
-                return {
-                    background: `linear-gradient(45deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
-                    backgroundSize: '200% 200%',
-                    color: theme.palette.primary.contrastText,
-                    animation: `${gradientShift} 3s ease infinite`,
-                    '&:hover': {
-                        animation: `${gradientShift} 1s ease infinite`,
-                        transform: 'translateY(-2px)',
-                    },
-                };
-            default:
-                return {};
-        }
-    };
-
-    const getSizeStyles = () => {
-        switch (size) {
-            case 'xs':
-                return { padding: '4px 8px', fontSize: '0.75rem', minHeight: '24px' };
-            case 'sm':
-                return { padding: '6px 12px', fontSize: '0.875rem', minHeight: '32px' };
-            case 'md':
-                return { padding: '8px 16px', fontSize: '1rem', minHeight: '40px' };
-            case 'lg':
-                return { padding: '12px 24px', fontSize: '1.125rem', minHeight: '48px' };
-            case 'xl':
-                return { padding: '16px 32px', fontSize: '1.25rem', minHeight: '56px' };
-            default:
-                return {};
-        }
-    };
-
-    const getAnimationStyles = () => {
-        switch (animation) {
-            case 'morphing':
-                return {
-                    animation: `${morphingAnimation} 4s ease-in-out infinite`,
-                };
-            case 'floating':
-                return {
-                    animation: `${floatingAnimation} 3s ease-in-out infinite`,
-                };
-            case 'pulse':
-                return {
-                    animation: `${pulseGlow} 2s ease-in-out infinite`,
-                };
-            default:
-                return {};
-        }
-    };
-
-    return {
-        borderRadius: '12px',
-        fontWeight: 600,
-        textTransform: 'none',
-        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-        position: 'relative',
-        overflow: 'hidden',
-        ...getVariantStyles(),
-        ...getSizeStyles(),
-        ...getAnimationStyles(),
-        '&:active': {
-            transform: 'translateY(0px)',
-        },
-        '&:focus': {
-            outline: `2px solid ${theme.palette.primary.main}`,
-            outlineOffset: '2px',
-        },
-    };
-});
+const DynamicButton = styled(Button)(({ theme }) => ({
+    borderRadius: '12px',
+    fontWeight: 600,
+    textTransform: 'none',
+    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+    position: 'relative',
+    overflow: 'hidden',
+    '&:active': {
+        transform: 'translateY(0px)',
+    },
+    '&:focus': {
+        outline: `2px solid ${theme.palette.primary.main}`,
+        outlineOffset: '2px',
+    },
+}));
 
 // ============================================================================
 // 적응형 카드 컴포넌트
@@ -555,12 +482,12 @@ const UIUXV2DesignSystem: React.FC = () => {
                 </Typography>
 
                 {/* 컨트롤 패널 */}
-                <AdaptiveCard variant="glass" padding="lg" sx={{ mb: 4 }}>
+                <AdaptiveCard variant="outlined" padding="lg" sx={{ mb: 4 }}>
                     <Typography variant="h5" gutterBottom sx={{ mb: 3 }}>
                         ⚙️ Design Controls
                     </Typography>
-                    <Grid container spacing={3}>
-                        <Grid item xs={12} md={4}>
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
+                        <Box sx={{ flex: '1 1 300px', minWidth: 300 }}>
                             <FormControlLabel
                                 control={
                                     <Switch
@@ -578,8 +505,8 @@ const UIUXV2DesignSystem: React.FC = () => {
                                 }
                                 label={darkMode ? <DarkModeIcon /> : <LightModeIcon />}
                             />
-                        </Grid>
-                        <Grid item xs={12} md={4}>
+                        </Box>
+                        <Box sx={{ flex: '1 1 300px', minWidth: 300 }}>
                             <FormControl fullWidth>
                                 <InputLabel>Primary Color</InputLabel>
                                 <Select
@@ -605,24 +532,22 @@ const UIUXV2DesignSystem: React.FC = () => {
                                     ))}
                                 </Select>
                             </FormControl>
-                        </Grid>
-                        <Grid item xs={12} md={4}>
-                            <Box>
-                                <Typography variant="body2" gutterBottom>
-                                    Font Size: {fontSize}px
-                                </Typography>
-                                <Slider
-                                    value={fontSize}
-                                    onChange={(_, value) => setFontSize(value as number)}
-                                    min={12}
-                                    max={24}
-                                    step={1}
-                                    marks
-                                    valueLabelDisplay="auto"
-                                />
-                            </Box>
-                        </Grid>
-                    </Grid>
+                        </Box>
+                        <Box sx={{ flex: '1 1 300px', minWidth: 300 }}>
+                            <Typography variant="body2" gutterBottom>
+                                Font Size: {fontSize}px
+                            </Typography>
+                            <Slider
+                                value={fontSize}
+                                onChange={(_, value) => setFontSize(value as number)}
+                                min={12}
+                                max={24}
+                                step={1}
+                                marks
+                                valueLabelDisplay="auto"
+                            />
+                        </Box>
+                    </Box>
                 </AdaptiveCard>
 
                 {/* 동적 버튼 섹션 */}
@@ -630,40 +555,40 @@ const UIUXV2DesignSystem: React.FC = () => {
                     <Typography variant="h3" gutterBottom sx={{ mb: 3 }}>
                         ✨ Dynamic Buttons
                     </Typography>
-                    <Grid container spacing={3}>
-                        <Grid item xs={12} md={6}>
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
+                        <Box sx={{ flex: '1 1 400px', minWidth: 400 }}>
                             <Stack spacing={2}>
-                                <DynamicButton variant="primary" size="lg" animation="morphing">
+                                <DynamicButton variant="contained" size="large" onClick={() => { }}>
                                     Morphing Button
                                 </DynamicButton>
-                                <DynamicButton variant="gradient" size="md" animation="floating">
+                                <DynamicButton variant="contained" size="medium" onClick={() => { }}>
                                     Gradient Floating
                                 </DynamicButton>
-                                <DynamicButton variant="primary" size="sm" animation="pulse">
+                                <DynamicButton variant="contained" size="small" onClick={() => { }}>
                                     Pulse Glow
                                 </DynamicButton>
-                                <DynamicButton variant="outline" size="xs">
+                                <DynamicButton variant="outlined" size="small" onClick={() => { }}>
                                     Outline Button
                                 </DynamicButton>
-                                <DynamicButton variant="primary" loading={loading} onClick={simulateLoading}>
+                                <DynamicButton variant="contained" disabled={loading} onClick={simulateLoading}>
                                     {loading ? 'Loading...' : 'Loading Demo'}
                                 </DynamicButton>
                             </Stack>
-                        </Grid>
-                        <Grid item xs={12} md={6}>
+                        </Box>
+                        <Box sx={{ flex: '1 1 400px', minWidth: 400 }}>
                             <Stack spacing={2}>
-                                <DynamicButton variant="primary" icon={<SearchIcon />}>
+                                <DynamicButton variant="contained" startIcon={<SearchIcon />} onClick={() => { }}>
                                     With Icon
                                 </DynamicButton>
-                                <DynamicButton variant="secondary" disabled>
+                                <DynamicButton variant="contained" disabled onClick={() => { }}>
                                     Disabled Button
                                 </DynamicButton>
-                                <DynamicButton variant="gradient" size="xl">
+                                <DynamicButton variant="contained" size="large" onClick={() => { }}>
                                     Extra Large Gradient
                                 </DynamicButton>
                             </Stack>
-                        </Grid>
-                    </Grid>
+                        </Box>
+                    </Box>
                 </Box>
 
                 {/* 적응형 카드 섹션 */}
@@ -671,9 +596,9 @@ const UIUXV2DesignSystem: React.FC = () => {
                     <Typography variant="h3" gutterBottom sx={{ mb: 3 }}>
                         🃏 Adaptive Cards
                     </Typography>
-                    <Grid container spacing={3}>
-                        <Grid item xs={12} md={6} lg={3}>
-                            <AdaptiveCard variant="default" hover>
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
+                        <Box sx={{ flex: '1 1 250px', minWidth: 250 }}>
+                            <AdaptiveCard variant="outlined" hover>
                                 <Typography variant="h6" gutterBottom>
                                     Default Card
                                 </Typography>
@@ -681,9 +606,9 @@ const UIUXV2DesignSystem: React.FC = () => {
                                     Standard card with hover effects.
                                 </Typography>
                             </AdaptiveCard>
-                        </Grid>
-                        <Grid item xs={12} md={6} lg={3}>
-                            <AdaptiveCard variant="glass" glassmorphism hover>
+                        </Box>
+                        <Box sx={{ flex: '1 1 250px', minWidth: 250 }}>
+                            <AdaptiveCard variant="outlined" glassmorphism hover>
                                 <Typography variant="h6" gutterBottom>
                                     Glass Card
                                 </Typography>
@@ -691,9 +616,9 @@ const UIUXV2DesignSystem: React.FC = () => {
                                     Glassmorphism effect with blur.
                                 </Typography>
                             </AdaptiveCard>
-                        </Grid>
-                        <Grid item xs={12} md={6} lg={3}>
-                            <AdaptiveCard variant="neon" hover>
+                        </Box>
+                        <Box sx={{ flex: '1 1 250px', minWidth: 250 }}>
+                            <AdaptiveCard variant="outlined" hover>
                                 <Typography variant="h6" gutterBottom>
                                     Neon Card
                                 </Typography>
@@ -701,9 +626,9 @@ const UIUXV2DesignSystem: React.FC = () => {
                                     Neon glow effect.
                                 </Typography>
                             </AdaptiveCard>
-                        </Grid>
-                        <Grid item xs={12} md={6} lg={3}>
-                            <AdaptiveCard variant="glass" loading>
+                        </Box>
+                        <Box sx={{ flex: '1 1 250px', minWidth: 250 }}>
+                            <AdaptiveCard variant="outlined" loading>
                                 <Typography variant="h6" gutterBottom>
                                     Loading Card
                                 </Typography>
@@ -711,8 +636,8 @@ const UIUXV2DesignSystem: React.FC = () => {
                                     Shimmer loading effect.
                                 </Typography>
                             </AdaptiveCard>
-                        </Grid>
-                    </Grid>
+                        </Box>
+                    </Box>
                 </Box>
 
                 {/* 스마트 입력 섹션 */}
@@ -720,8 +645,8 @@ const UIUXV2DesignSystem: React.FC = () => {
                     <Typography variant="h3" gutterBottom sx={{ mb: 3 }}>
                         🧠 Smart Input Fields
                     </Typography>
-                    <Grid container spacing={3}>
-                        <Grid item xs={12} md={6}>
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
+                        <Box sx={{ flex: '1 1 400px', minWidth: 400 }}>
                             <SmartInput
                                 label="Search with Suggestions"
                                 placeholder="Type to see suggestions..."
@@ -731,16 +656,16 @@ const UIUXV2DesignSystem: React.FC = () => {
                                 suggestions={suggestions}
                                 onSuggestionClick={(suggestion) => setSearchValue(suggestion)}
                             />
-                        </Grid>
-                        <Grid item xs={12} md={6}>
+                        </Box>
+                        <Box sx={{ flex: '1 1 400px', minWidth: 400 }}>
                             <SmartInput
                                 label="Loading Input"
                                 placeholder="Loading state demo..."
                                 loading={loading}
                                 icon={<RefreshIcon />}
                             />
-                        </Grid>
-                    </Grid>
+                        </Box>
+                    </Box>
                 </Box>
 
                 {/* 인터랙티브 액션 섹션 */}
@@ -748,7 +673,7 @@ const UIUXV2DesignSystem: React.FC = () => {
                     <Typography variant="h3" gutterBottom sx={{ mb: 3 }}>
                         🎯 Interactive Actions
                     </Typography>
-                    <AdaptiveCard variant="glass" padding="lg">
+                    <AdaptiveCard variant="outlined" padding="lg">
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
                             <Avatar sx={{ bgcolor: 'primary.main' }}>U</Avatar>
                             <Box>
@@ -822,9 +747,9 @@ const UIUXV2DesignSystem: React.FC = () => {
                     <Typography variant="h3" gutterBottom sx={{ mb: 3 }}>
                         🎮 Feature Demos
                     </Typography>
-                    <Grid container spacing={3}>
-                        <Grid item xs={12} md={4}>
-                            <AdaptiveCard variant="glass" padding="md">
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
+                        <Box sx={{ flex: '1 1 300px', minWidth: 300 }}>
+                            <AdaptiveCard variant="outlined" padding="md">
                                 <Box sx={{ textAlign: 'center' }}>
                                     <PaletteIcon sx={{ fontSize: 40, color: 'primary.main', mb: 1 }} />
                                     <Typography variant="h6">Dynamic Colors</Typography>
@@ -833,9 +758,9 @@ const UIUXV2DesignSystem: React.FC = () => {
                                     </Typography>
                                 </Box>
                             </AdaptiveCard>
-                        </Grid>
-                        <Grid item xs={12} md={4}>
-                            <AdaptiveCard variant="glass" padding="md">
+                        </Box>
+                        <Box sx={{ flex: '1 1 300px', minWidth: 300 }}>
+                            <AdaptiveCard variant="outlined" padding="md">
                                 <Box sx={{ textAlign: 'center' }}>
                                     <TextFieldsIcon sx={{ fontSize: 40, color: 'secondary.main', mb: 1 }} />
                                     <Typography variant="h6">Adaptive Typography</Typography>
@@ -844,9 +769,9 @@ const UIUXV2DesignSystem: React.FC = () => {
                                     </Typography>
                                 </Box>
                             </AdaptiveCard>
-                        </Grid>
-                        <Grid item xs={12} md={4}>
-                            <AdaptiveCard variant="glass" padding="md">
+                        </Box>
+                        <Box sx={{ flex: '1 1 300px', minWidth: 300 }}>
+                            <AdaptiveCard variant="outlined" padding="md">
                                 <Box sx={{ textAlign: 'center' }}>
                                     <AnimationIcon sx={{ fontSize: 40, color: 'success.main', mb: 1 }} />
                                     <Typography variant="h6">Advanced Animations</Typography>
@@ -855,8 +780,8 @@ const UIUXV2DesignSystem: React.FC = () => {
                                     </Typography>
                                 </Box>
                             </AdaptiveCard>
-                        </Grid>
-                    </Grid>
+                        </Box>
+                    </Box>
                 </Box>
 
                 {/* 스크롤 투 탑 버튼 */}

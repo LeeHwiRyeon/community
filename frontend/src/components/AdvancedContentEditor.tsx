@@ -81,7 +81,7 @@ import {
     Edit as EditIcon
 } from '@mui/icons-material';
 import { styled } from '@mui/system';
-import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
+// import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 
 // 에디터 타입 정의
 export interface ContentBlock {
@@ -203,7 +203,7 @@ const BlockContainer = styled(Box)<{ isDragging?: boolean }>(({ theme, isDraggin
     ...(isDragging && {
         opacity: 0.8,
         transform: 'rotate(5deg)',
-        boxShadow: theme.shadows[8]
+        boxShadow: (theme.shadows as any)?.[8] || '0px 8px 16px rgba(0,0,0,0.1)'
     })
 }));
 
@@ -251,7 +251,7 @@ const CommentBubble = styled(Box)(({ theme }) => ({
     borderRadius: theme.shape.borderRadius,
     padding: theme.spacing(1),
     fontSize: '0.8rem',
-    boxShadow: theme.shadows[2],
+    boxShadow: (theme.shadows as any)?.[2] || '0px 2px 4px rgba(0,0,0,0.1)',
     zIndex: 5
 }));
 
@@ -441,75 +441,67 @@ const Block: React.FC<BlockProps> = ({
     };
 
     return (
-        <Draggable draggableId={block.id} index={index}>
-            {(provided, snapshot) => (
-                <BlockContainer
-                    ref={provided.innerRef}
-                    {...provided.draggableProps}
-                    className="block-container"
-                    isDragging={snapshot.isDragging}
-                    onClick={onSelect}
-                    sx={{
-                        border: isSelected ? '2px solid primary.main' : '2px solid transparent'
-                    }}
+        <BlockContainer
+            className="block-container"
+            onClick={onSelect}
+            sx={{
+                border: isSelected ? '2px solid primary.main' : '2px solid transparent'
+            }}
+        >
+            <BlockControls>
+                <IconButton
+                    size="small"
+                    sx={{ cursor: 'grab' }}
                 >
-                    <BlockControls>
-                        <IconButton
-                            size="small"
-                            {...provided.dragHandleProps}
-                            sx={{ cursor: 'grab' }}
-                        >
-                            <DragIcon />
-                        </IconButton>
-                        <IconButton
-                            size="small"
-                            onClick={() => setShowComments(!showComments)}
-                        >
-                            <Badge badgeContent={blockComments.length} color="warning">
-                                <CommentIcon />
-                            </Badge>
-                        </IconButton>
-                        <IconButton
-                            size="small"
-                            onClick={() => deleteBlock(block.id)}
-                            color="error"
-                        >
-                            <DeleteIcon />
-                        </IconButton>
-                    </BlockControls>
+                    <DragIcon />
+                </IconButton>
+                <IconButton
+                    size="small"
+                    onClick={() => setShowComments(!showComments)}
+                >
+                    <Badge badgeContent={blockComments.length} color="warning">
+                        <CommentIcon />
+                    </Badge>
+                </IconButton>
+                <IconButton
+                    size="small"
+                    onClick={() => deleteBlock(block.id)}
+                    color="error"
+                >
+                    <DeleteIcon />
+                </IconButton>
+            </BlockControls>
 
-                    {/* 협업자 커서 */}
-                    {activeCursors.map(collaborator => (
-                        <CollaboratorCursor
-                            key={collaborator.id}
-                            color={collaborator.color}
-                            sx={{
-                                left: `${(collaborator.cursor?.position || 0) * 10}px`
-                            }}
-                        />
+            {/* 협업자 커서 */}
+            {activeCursors.map(collaborator => (
+                <CollaboratorCursor
+                    key={collaborator.id}
+                    color={collaborator.color}
+                    sx={{
+                        left: `${(collaborator.cursor?.position || 0) * 10}px`
+                    }}
+                />
+            ))}
+
+            {/* 블록 내용 */}
+            {renderBlockContent()}
+
+            {/* 댓글 */}
+            {showComments && blockComments.length > 0 && (
+                <CommentBubble>
+                    {blockComments.map(comment => (
+                        <Box key={comment.id} sx={{ mb: 1 }}>
+                            <Typography variant="caption" fontWeight="bold">
+                                {comment.author}
+                            </Typography>
+                            <Typography variant="body2">
+                                {comment.content}
+                            </Typography>
+                        </Box>
                     ))}
-
-                    {/* 블록 내용 */}
-                    {renderBlockContent()}
-
-                    {/* 댓글 */}
-                    {showComments && blockComments.length > 0 && (
-                        <CommentBubble>
-                            {blockComments.map(comment => (
-                                <Box key={comment.id} sx={{ mb: 1 }}>
-                                    <Typography variant="caption" fontWeight="bold">
-                                        {comment.author}
-                                    </Typography>
-                                    <Typography variant="body2">
-                                        {comment.content}
-                                    </Typography>
-                                </Box>
-                            ))}
-                        </CommentBubble>
-                    )}
-                </BlockContainer>
+                </CommentBubble>
             )}
-        </Draggable>
+        </BlockContainer>
     );
 };
 
@@ -712,12 +704,11 @@ export const AdvancedContentEditor: React.FC = () => {
 
     const theme = useTheme();
 
-    // 드래그 앤 드롭 핸들러
-    const handleDragEnd = (result: DropResult) => {
-        if (!result.destination) return;
-
-        moveBlock(result.source.index, result.destination.index);
-    };
+    // 드래그 앤 드롭 핸들러 (비활성화)
+    // const handleDragEnd = (result: DropResult) => {
+    //     if (!result.destination) return;
+    //     moveBlock(result.source.index, result.destination.index);
+    // };
 
     // 블록 타입 메뉴
     const [blockTypeMenu, setBlockTypeMenu] = useState<null | HTMLElement>(null);
@@ -813,30 +804,21 @@ export const AdvancedContentEditor: React.FC = () => {
 
             {/* 에디터 내용 */}
             <EditorContent>
-                <DragDropContext onDragEnd={handleDragEnd}>
-                    <Droppable droppableId="editor-blocks">
-                        {(provided) => (
-                            <Box
-                                ref={provided.innerRef}
-                                {...provided.droppableProps}
-                                sx={{ minHeight: '400px' }}
-                            >
-                                {blocks.map((block, index) => (
-                                    <Block
-                                        key={block.id}
-                                        block={block}
-                                        index={index}
-                                        isSelected={selectedBlockId === block.id}
-                                        onSelect={() => setSelectedBlockId(block.id)}
-                                        collaborators={collaborators}
-                                        comments={comments}
-                                    />
-                                ))}
-                                {provided.placeholder}
-                            </Box>
-                        )}
-                    </Droppable>
-                </DragDropContext>
+                <Box
+                    sx={{ minHeight: '400px' }}
+                >
+                    {blocks.map((block, index) => (
+                        <Block
+                            key={block.id}
+                            block={block}
+                            index={index}
+                            isSelected={selectedBlockId === block.id}
+                            onSelect={() => setSelectedBlockId(block.id)}
+                            collaborators={collaborators}
+                            comments={comments}
+                        />
+                    ))}
+                </Box>
             </EditorContent>
 
             {/* 상태바 */}
@@ -861,7 +843,7 @@ export const AdvancedContentEditor: React.FC = () => {
                     {/* 자동 저장 상태 */}
                     {isAutoSaving && (
                         <Box display="flex" alignItems="center" gap={1}>
-                            <LinearProgress size={16} />
+                            <LinearProgress />
                             <Typography variant="caption">자동 저장 중...</Typography>
                         </Box>
                     )}

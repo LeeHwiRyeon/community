@@ -1,0 +1,12 @@
+{
+  "type": "high_memory_usage",
+  "severity": "critical",
+  "message": "메모리 사용률이 높습니다: 99.15%",
+  "metrics": {
+    "cpu": 57.07798360763896,
+    "memory": 99.14729190493641,
+    "disk": 66.97035751968599,
+    "responseTime": 69.43932520237561
+  },
+  "id": "high_memory_usage_1759664141518_ohd7c25mx"
+}

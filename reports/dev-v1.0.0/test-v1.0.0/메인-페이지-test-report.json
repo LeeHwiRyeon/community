@@ -1,0 +1,90 @@
+{
+  "version": "1.0.0",
+  "timestamp": "2025-10-04T09-15-44-411Z",
+  "type": "feature_test",
+  "feature": "메인 페이지",
+  "testData": {
+    "status": "success",
+    "success": true,
+    "screenshots": {
+      "before": "메인-페이지-before-1.png",
+      "after": "메인-페이지-after-2.png",
+      "comparison": "메인-페이지-comparison-success-3.png"
+    },
+    "logs": [
+      {
+        "timestamp": "2025-10-04T09:15:44.421Z",
+        "level": "info",
+        "message": "메인 페이지 테스트 시작",
+        "data": {}
+      },
+      {
+        "timestamp": "2025-10-04T09:15:44.423Z",
+        "level": "info",
+        "message": "사용 전 스크린샷 생성 완료",
+        "data": {}
+      },
+      {
+        "timestamp": "2025-10-04T09:15:45.934Z",
+        "level": "info",
+        "message": "사용 후 스크린샷 생성 완료",
+        "data": {}
+      },
+      {
+        "timestamp": "2025-10-04T09:15:45.935Z",
+        "level": "success",
+        "message": "테스트 성공 - 비교 분석 완료",
+        "data": {}
+      },
+      {
+        "timestamp": "2025-10-04T09:15:45.935Z",
+        "level": "info",
+        "message": "메인 페이지 테스트 완료",
+        "data": {
+          "duration": 1514,
+          "success": true
+        }
+      }
+    ],
+    "performance": {
+      "응답 시간": "1514ms",
+      "메모리 사용량": "85MB",
+      "CPU 사용률": "29%",
+      "네트워크 요청": "12개"
+    },
+    "accessibility": {
+      "접근성 점수": "91/100",
+      "키보드 네비게이션": "✅ 지원",
+      "스크린 리더": "✅ 호환",
+      "색상 대비": "✅ 적합"
+    },
+    "compatibility": {
+      "Chrome": "✅ 지원",
+      "Firefox": "✅ 지원",
+      "Safari": "✅ 지원",
+      "Edge": "✅ 지원"
+    },
+    "intendedBehavior": "현대적인 메인 페이지가 로드되고 실시간 통계가 표시되어야 함",
+    "actualBehavior": "메인 페이지가 정상적으로 로드되고 모든 요소가 표시됨",
+    "issues": [],
+    "recommendations": [
+      {
+        "priority": "low",
+        "description": "애니메이션 성능 최적화 고려"
+      }
+    ]
+  },
+  "summary": {
+    "status": "success",
+    "success": true,
+    "intendedBehavior": "현대적인 메인 페이지가 로드되고 실시간 통계가 표시되어야 함",
+    "actualBehavior": "메인 페이지가 정상적으로 로드되고 모든 요소가 표시됨",
+    "issues": [],
+    "recommendations": [
+      {
+        "priority": "low",
+        "description": "애니메이션 성능 최적화 고려"
+      }
+    ]
+  }
+}

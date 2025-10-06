@@ -1,0 +1,90 @@
+{
+  "version": "1.0.0",
+  "timestamp": "2025-10-04T09-15-44-411Z",
+  "type": "feature_test",
+  "feature": "HTTPS 보안",
+  "testData": {
+    "status": "success",
+    "success": true,
+    "screenshots": {
+      "before": "https-보안-before-31.png",
+      "after": "https-보안-after-32.png",
+      "comparison": "https-보안-comparison-success-33.png"
+    },
+    "logs": [
+      {
+        "timestamp": "2025-10-04T09:15:58.706Z",
+        "level": "info",
+        "message": "HTTPS 보안 테스트 시작",
+        "data": {}
+      },
+      {
+        "timestamp": "2025-10-04T09:15:58.707Z",
+        "level": "info",
+        "message": "사용 전 스크린샷 생성 완료",
+        "data": {}
+      },
+      {
+        "timestamp": "2025-10-04T09:15:59.610Z",
+        "level": "info",
+        "message": "사용 후 스크린샷 생성 완료",
+        "data": {}
+      },
+      {
+        "timestamp": "2025-10-04T09:15:59.611Z",
+        "level": "success",
+        "message": "테스트 성공 - 비교 분석 완료",
+        "data": {}
+      },
+      {
+        "timestamp": "2025-10-04T09:15:59.611Z",
+        "level": "info",
+        "message": "HTTPS 보안 테스트 완료",
+        "data": {
+          "duration": 905,
+          "success": true
+        }
+      }
+    ],
+    "performance": {
+      "응답 시간": "905ms",
+      "메모리 사용량": "66MB",
+      "CPU 사용률": "25%",
+      "네트워크 요청": "10개"
+    },
+    "accessibility": {
+      "접근성 점수": "94/100",
+      "키보드 네비게이션": "✅ 지원",
+      "스크린 리더": "✅ 호환",
+      "색상 대비": "✅ 적합"
+    },
+    "compatibility": {
+      "Chrome": "✅ 지원",
+      "Firefox": "✅ 지원",
+      "Safari": "✅ 지원",
+      "Edge": "✅ 지원"
+    },
+    "intendedBehavior": "HTTPS 연결이 정상적으로 작동하고 보안이 유지되어야 함",
+    "actualBehavior": "HTTPS 연결이 정상적으로 작동하고 보안 인증서가 유효함",
+    "issues": [],
+    "recommendations": [
+      {
+        "priority": "high",
+        "description": "보안 헤더 강화"
+      }
+    ]
+  },
+  "summary": {
+    "status": "success",
+    "success": true,
+    "intendedBehavior": "HTTPS 연결이 정상적으로 작동하고 보안이 유지되어야 함",
+    "actualBehavior": "HTTPS 연결이 정상적으로 작동하고 보안 인증서가 유효함",
+    "issues": [],
+    "recommendations": [
+      {
+        "priority": "high",
+        "description": "보안 헤더 강화"
+      }
+    ]
+  }
+}

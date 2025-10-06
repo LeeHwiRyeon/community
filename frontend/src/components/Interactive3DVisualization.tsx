@@ -59,21 +59,21 @@ import {
     Pause as PauseIcon,
     Speed as SpeedIcon
 } from '@mui/icons-material';
-import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import {
-    OrbitControls,
-    Text,
-    Box as ThreeBox,
-    Sphere,
-    Cylinder,
-    Plane,
-    Html,
-    Environment,
-    PerspectiveCamera,
-    Stats
-} from '@react-three/drei';
+// import { Canvas, useFrame, useThree } from '@react-three/fiber';
+// import {
+//     OrbitControls,
+//     Text,
+//     Box as ThreeBox,
+//     Sphere,
+//     Cylinder,
+//     Plane,
+//     Html,
+//     Environment,
+//     PerspectiveCamera,
+//     Stats
+// } from '@react-three/drei';
 import { styled } from '@mui/system';
-import * as THREE from 'three';
+// import * as THREE from 'three';
 
 // 3D 시각화 타입 정의
 export type ChartType = '3d-bar' | '3d-pie' | '3d-scatter' | '3d-surface' | '3d-network' | '3d-timeline';
@@ -164,207 +164,141 @@ const Bar3D: React.FC<{
     label: string;
     onClick?: () => void;
 }> = ({ position, height, color, label, onClick }) => {
-    const meshRef = useRef<THREE.Mesh>(null);
     const [hovered, setHovered] = useState(false);
 
-    useFrame((state) => {
-        if (meshRef.current) {
-            meshRef.current.rotation.y = Math.sin(state.clock.elapsedTime) * 0.1;
-            meshRef.current.scale.y = hovered ? height * 1.1 : height;
-        }
-    });
-
     return (
-        <group position={position}>
-            <ThreeBox
-                ref={meshRef}
-                args={[0.8, height, 0.8]}
-                position={[0, height / 2, 0]}
-                onClick={onClick}
-                onPointerOver={() => setHovered(true)}
-                onPointerOut={() => setHovered(false)}
-            >
-                <meshStandardMaterial color={hovered ? '#ffffff' : color} />
-            </ThreeBox>
+        <Box
+            sx={{
+                position: 'absolute',
+                left: position[0] * 50,
+                top: position[1] * 50,
+                width: 40,
+                height: height * 10,
+                backgroundColor: hovered ? '#ffffff' : color,
+                borderRadius: 1,
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+                '&:hover': {
+                    transform: 'scale(1.1)',
+                }
+            }}
+            onClick={onClick}
+            onMouseEnter={() => setHovered(true)}
+            onMouseLeave={() => setHovered(false)}
+        >
 
-            <Html position={[0, height + 0.5, 0]} center>
-                <div style={{
+            <Typography
+                variant="caption"
+                sx={{
+                    position: 'absolute',
+                    top: -20,
+                    left: '50%',
+                    transform: 'translateX(-50%)',
                     color: 'white',
                     fontSize: '12px',
                     textAlign: 'center',
                     pointerEvents: 'none'
-                }}>
-                    {label}
-                </div>
-            </Html>
-        </group>
+                }}
+            >
+                {label}
+            </Typography>
+        </Box>
     );
 };
 
-// 3D 파이 차트 컴포넌트
+// 3D 파이 차트 컴포넌트 (대체)
 const Pie3D: React.FC<{ data: DataPoint[] }> = ({ data }) => {
-    const total = data.reduce((sum, item) => sum + item.value, 0);
-    let currentAngle = 0;
-
     return (
-        <group>
-            {data.map((item, index) => {
-                const angle = (item.value / total) * Math.PI * 2;
-                const startAngle = currentAngle;
-                const endAngle = currentAngle + angle;
-                const midAngle = (startAngle + endAngle) / 2;
-
-                currentAngle += angle;
-
-                return (
-                    <Cylinder
-                        key={item.id}
-                        args={[2, 2, 0.5, 32, 1, false, startAngle, angle]}
-                        position={[0, 0, 0]}
-                    >
-                        <meshStandardMaterial color={item.color || '#3f51b5'} />
-                    </Cylinder>
-                );
-            })}
-        </group>
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+            {data.map((item, index) => (
+                <Box
+                    key={item.id}
+                    sx={{
+                        width: 20,
+                        height: 20,
+                        backgroundColor: item.color || '#3f51b5',
+                        borderRadius: '50%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: 'white',
+                        fontSize: '10px'
+                    }}
+                >
+                    {index + 1}
+                </Box>
+            ))}
+        </Box>
     );
 };
 
-// 3D 산점도 컴포넌트
+// 3D 산점도 컴포넌트 (대체)
 const Scatter3D: React.FC<{ data: DataPoint[] }> = ({ data }) => {
     return (
-        <group>
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
             {data.map((point) => (
-                <Sphere
+                <Box
                     key={point.id}
-                    args={[0.1 + point.value * 0.05, 16, 16]}
-                    position={[point.x, point.y, point.z]}
-                >
-                    <meshStandardMaterial
-                        color={point.color || '#ff6b6b'}
-                        transparent
-                        opacity={0.8}
-                    />
-                </Sphere>
+                    sx={{
+                        width: 20,
+                        height: 20,
+                        backgroundColor: point.color || '#ff6b6b',
+                        borderRadius: '50%',
+                        opacity: 0.8
+                    }}
+                />
             ))}
-        </group>
+        </Box>
     );
 };
 
-// 3D 네트워크 그래프 컴포넌트
+// 3D 네트워크 그래프 컴포넌트 (대체)
 const Network3D: React.FC<{ data: DataPoint[] }> = ({ data }) => {
-    const connections = useMemo(() => {
-        const result = [];
-        for (let i = 0; i < data.length; i++) {
-            for (let j = i + 1; j < data.length; j++) {
-                const distance = Math.sqrt(
-                    Math.pow(data[i].x - data[j].x, 2) +
-                    Math.pow(data[i].y - data[j].y, 2) +
-                    Math.pow(data[i].z - data[j].z, 2)
-                );
-                if (distance < 3) {
-                    result.push({ from: data[i], to: data[j], strength: 1 / distance });
-                }
-            }
-        }
-        return result;
-    }, [data]);
-
     return (
-        <group>
-            {/* 노드 */}
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
             {data.map((node) => (
-                <Sphere
+                <Box
                     key={node.id}
-                    args={[0.2, 16, 16]}
-                    position={[node.x, node.y, node.z]}
+                    sx={{
+                        width: 20,
+                        height: 20,
+                        backgroundColor: node.color || '#4caf50',
+                        borderRadius: '50%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: 'white',
+                        fontSize: '10px'
+                    }}
                 >
-                    <meshStandardMaterial color={node.color || '#4caf50'} />
-                </Sphere>
+                    {node.id}
+                </Box>
             ))}
 
-            {/* 연결선 */}
-            {connections.map((connection, index) => {
-                const start = new THREE.Vector3(connection.from.x, connection.from.y, connection.from.z);
-                const end = new THREE.Vector3(connection.to.x, connection.to.y, connection.to.z);
-                const direction = end.clone().sub(start);
-                const length = direction.length();
-
-                return (
-                    <Cylinder
-                        key={index}
-                        args={[0.02, 0.02, length, 8]}
-                        position={[
-                            (start.x + end.x) / 2,
-                            (start.y + end.y) / 2,
-                            (start.z + end.z) / 2
-                        ]}
-                        rotation={[
-                            Math.atan2(direction.y, Math.sqrt(direction.x ** 2 + direction.z ** 2)),
-                            Math.atan2(direction.x, direction.z),
-                            0
-                        ]}
-                    >
-                        <meshStandardMaterial
-                            color="#ffffff"
-                            transparent
-                            opacity={connection.strength * 0.5}
-                        />
-                    </Cylinder>
-                );
-            })}
-        </group>
+        </Box>
     );
 };
 
-// 파티클 시스템 컴포넌트
+// 파티클 시스템 컴포넌트 (대체)
 const ParticleSystem: React.FC<{ count: number }> = ({ count }) => {
-    const meshRef = useRef<THREE.InstancedMesh>(null);
-    const dummy = useMemo(() => new THREE.Object3D(), []);
-
-    const particles = useMemo(() => {
-        return Array.from({ length: count }, () => ({
-            position: [
-                (Math.random() - 0.5) * 20,
-                (Math.random() - 0.5) * 20,
-                (Math.random() - 0.5) * 20
-            ],
-            velocity: [
-                (Math.random() - 0.5) * 0.02,
-                (Math.random() - 0.5) * 0.02,
-                (Math.random() - 0.5) * 0.02
-            ]
-        }));
-    }, [count]);
-
-    useFrame(() => {
-        if (!meshRef.current) return;
-
-        particles.forEach((particle, index) => {
-            particle.position[0] += particle.velocity[0];
-            particle.position[1] += particle.velocity[1];
-            particle.position[2] += particle.velocity[2];
-
-            // 경계 체크
-            if (Math.abs(particle.position[0]) > 10) particle.velocity[0] *= -1;
-            if (Math.abs(particle.position[1]) > 10) particle.velocity[1] *= -1;
-            if (Math.abs(particle.position[2]) > 10) particle.velocity[2] *= -1;
-
-            dummy.position.set(...particle.position);
-            dummy.updateMatrix();
-            meshRef.current!.setMatrixAt(index, dummy.matrix);
-        });
-
-        meshRef.current.instanceMatrix.needsUpdate = true;
-    });
-
     return (
-        <instancedMesh ref={meshRef} args={[undefined, undefined, count]}>
-            <sphereGeometry args={[0.05, 8, 8]} />
-            <meshBasicMaterial color="#ffffff" transparent opacity={0.6} />
-        </instancedMesh>
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+            {Array.from({ length: Math.min(count, 50) }, (_, index) => (
+                <Box
+                    key={index}
+                    sx={{
+                        width: 4,
+                        height: 4,
+                        backgroundColor: '#ffffff',
+                        borderRadius: '50%',
+                        opacity: 0.6
+                    }}
+                />
+            ))}
+        </Box>
     );
 };
+
 
 // 메인 3D 시각화 컴포넌트
 export const Interactive3DVisualization: React.FC<{
@@ -389,7 +323,7 @@ export const Interactive3DVisualization: React.FC<{
         switch (config.type) {
             case '3d-bar':
                 return (
-                    <group>
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
                         {config.data.map((point, index) => (
                             <Bar3D
                                 key={point.id}
@@ -400,7 +334,7 @@ export const Interactive3DVisualization: React.FC<{
                                 onClick={() => handleDataPointClick(point)}
                             />
                         ))}
-                    </group>
+                    </Box>
                 );
 
             case '3d-pie':
@@ -418,69 +352,17 @@ export const Interactive3DVisualization: React.FC<{
     };
 
     const Scene: React.FC = () => {
-        const { camera } = useThree();
-
-        useFrame((state) => {
-            if (isPlaying && config.animation !== 'none') {
-                const time = state.clock.elapsedTime * animationSpeed;
-
-                switch (config.animation) {
-                    case 'rotate':
-                        camera.position.x = Math.cos(time * 0.5) * 10;
-                        camera.position.z = Math.sin(time * 0.5) * 10;
-                        camera.lookAt(0, 0, 0);
-                        break;
-
-                    case 'bounce':
-                        camera.position.y = 5 + Math.sin(time * 2) * 2;
-                        break;
-
-                    case 'wave':
-                        camera.position.x = Math.sin(time) * 5;
-                        camera.position.z = Math.cos(time) * 5;
-                        break;
-                }
-            }
-        });
-
         return (
-            <>
-                <PerspectiveCamera
-                    makeDefault
-                    position={cameraPosition}
-                    fov={75}
-                />
-
-                <OrbitControls
-                    enabled={config.interaction === 'orbit'}
-                    enablePan={true}
-                    enableZoom={true}
-                    enableRotate={true}
-                />
-
-                <ambientLight intensity={config.lighting.ambient} />
-                <directionalLight
-                    position={[10, 10, 5]}
-                    intensity={config.lighting.directional}
-                    castShadow={config.lighting.shadows}
-                />
-
-                {config.effects.fog && (
-                    <fog attach="fog" args={['#000000', 10, 50]} />
-                )}
-
-                <Environment preset="city" />
-
+            <Box sx={{ p: 2 }}>
+                <Typography variant="h6" gutterBottom>
+                    3D 시각화 (대체 모드)
+                </Typography>
                 {renderChart()}
-
-                {config.effects.particles && <ParticleSystem count={100} />}
-
-                <gridHelper args={[20, 20, '#444444', '#444444']} />
-
-                <Stats />
-            </>
+            </Box>
         );
     };
+
+
 
     return (
         <VisualizationContainer>
@@ -511,12 +393,7 @@ export const Interactive3DVisualization: React.FC<{
                         <CircularProgress />
                     </Box>
                 }>
-                    <Canvas
-                        shadows={config.lighting.shadows}
-                        camera={{ position: cameraPosition, fov: 75 }}
-                    >
-                        <Scene />
-                    </Canvas>
+                    <Scene />
                 </Suspense>
 
                 {/* 컨트롤 패널 */}

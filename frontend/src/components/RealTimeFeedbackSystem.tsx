@@ -64,7 +64,7 @@ import { styled, keyframes } from '@mui/system';
 export type FeedbackType = 'success' | 'error' | 'warning' | 'info' | 'loading' | 'progress';
 export type NotificationType = 'system' | 'user' | 'achievement' | 'reminder' | 'social';
 export type FeedbackPosition = 'top' | 'bottom' | 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right' | 'center';
-export type AnimationType = 'slide' | 'fade' | 'grow' | 'zoom' | 'bounce' | 'shake';
+export type AnimationType = 'slide' | 'fade' | 'grow' | 'zoom' | 'bounce' | 'shake' | 'pulse';
 
 export interface FeedbackMessage {
     id: string;
@@ -214,17 +214,19 @@ const FeedbackContainer = styled(Box)<{ position: FeedbackPosition }>(({ theme, 
     };
 });
 
-const AnimatedAlert = styled(Alert)<{ animationType: AnimationType }>(({ animationType }) => ({
-    ...(animationType === 'bounce' && {
-        animation: `${bounceAnimation} 0.6s ease-in-out`
-    }),
-    ...(animationType === 'shake' && {
-        animation: `${shakeAnimation} 0.5s ease-in-out`
-    }),
-    ...(animationType === 'pulse' && {
-        animation: `${pulseAnimation} 0.3s ease-in-out`
-    })
-}));
+const AnimatedAlert = styled(Alert)<{ animationType: AnimationType }>(({ animationType }) => {
+    let animation = '';
+    if (animationType === 'bounce') {
+        animation = `${bounceAnimation} 0.6s ease-in-out`;
+    } else if (animationType === 'shake') {
+        animation = `${shakeAnimation} 0.5s ease-in-out`;
+    } else if (animationType === 'pulse') {
+        animation = `${pulseAnimation} 0.3s ease-in-out`;
+    }
+    return {
+        ...(animation && { animation })
+    };
+});
 
 const NotificationPanel = styled(Card)(({ theme }) => ({
     position: 'fixed',
@@ -234,7 +236,7 @@ const NotificationPanel = styled(Card)(({ theme }) => ({
     maxHeight: 500,
     overflow: 'auto',
     zIndex: 1300,
-    boxShadow: theme.shadows?.[8] || '0px 4px 8px rgba(0,0,0,0.12)'
+    boxShadow: '0px 8px 16px rgba(0,0,0,0.12)'
 }));
 
 const QuickFeedbackContainer = styled(Box)(({ theme }) => ({
@@ -251,7 +253,7 @@ const QuickFeedbackContainer = styled(Box)(({ theme }) => ({
     minHeight: 100,
     backgroundColor: 'rgba(0, 0, 0, 0.8)',
     color: 'white',
-    borderRadius: theme.shape.borderRadius * 2,
+    borderRadius: typeof theme.shape.borderRadius === 'number' ? theme.shape.borderRadius * 2 : 8,
     padding: theme.spacing(3),
     backdropFilter: 'blur(10px)'
 }));

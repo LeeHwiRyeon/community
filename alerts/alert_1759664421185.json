@@ -1,0 +1,12 @@
+{
+  "type": "high_memory_usage",
+  "severity": "critical",
+  "message": "메모리 사용률이 높습니다: 94.92%",
+  "metrics": {
+    "cpu": 25.105245830791656,
+    "memory": 94.91962148819741,
+    "disk": 17.058165048565087,
+    "responseTime": 164.26741487653084
+  },
+  "id": "high_memory_usage_1759664421185_romljx55n"
+}

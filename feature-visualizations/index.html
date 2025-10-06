@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Community Platform v2.0.0 기능 시각화</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 2.5em;
+            font-weight: 300;
+        }
+        .header p {
+            margin: 10px 0 0 0;
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+        .content {
+            padding: 30px;
+        }
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+        .feature-card {
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background: white;
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        .feature-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-bottom: 1px solid #e0e0e0;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        .feature-image:hover {
+            transform: scale(1.05);
+        }
+        .feature-info {
+            padding: 20px;
+        }
+        .feature-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+        .feature-description {
+            color: #666;
+            margin: 0 0 15px 0;
+            line-height: 1.5;
+        }
+        .feature-url {
+            background: #f5f5f5;
+            padding: 8px 12px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #555;
+            margin: 0 0 15px 0;
+        }
+        .feature-link {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: 500;
+            transition: opacity 0.3s ease;
+            margin-right: 10px;
+        }
+        .feature-link:hover {
+            opacity: 0.9;
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            margin: 0;
+        }
+        .stat-label {
+            margin: 5px 0 0 0;
+            opacity: 0.9;
+        }
+        .status-banner {
+            background: #28a745;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            margin-bottom: 20px;
+            border-radius: 10px;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+        }
+        .modal-content {
+            position: relative;
+            margin: auto;
+            padding: 20px;
+            width: 90%;
+            max-width: 1200px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .modal-image {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+        }
+        .close {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close:hover {
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎬 Community Platform v2.0.0</h1>
+            <p>기능 시각화 및 테스트 결과</p>
+        </div>
+        <div class="content">
+            <div class="status-banner">
+                ✅ PNG 변환 완료! 클릭하여 큰 이미지로 보기
+            </div>
+            
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-number">13</div>
+                    <div class="stat-label">총 기능 수</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">2025. 10. 4.</div>
+                    <div class="stat-label">테스트 날짜</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">v2.0.0</div>
+                    <div class="stat-label">플랫폼 버전</div>
+                </div>
+            </div>
+            
+            <div class="feature-grid">
+                
+                <div class="feature-card">
+                    <img src="main-page.png" alt="메인 페이지" class="feature-image" onclick="openModal('main-page.png', '메인 페이지')">
+                    <div class="feature-info">
+                        <h3 class="feature-title">1. 메인 페이지</h3>
+                        <p class="feature-description">커뮤니티 플랫폼 메인 페이지</p>
+                        <div class="feature-url">/</div>
+                        <a href="/" class="feature-link" target="_blank">기능 테스트하기</a>
+                        <a href="main-page.svg" class="feature-link" target="_blank">SVG 보기</a>
+                    </div>
+                </div>
+                
+                <div class="feature-card">
+                    <img src="community-hub.png" alt="커뮤니티 허브" class="feature-image" onclick="openModal('community-hub.png', '커뮤니티 허브')">
+                    <div class="feature-info">
+                        <h3 class="feature-title">2. 커뮤니티 허브</h3>
+                        <p class="feature-description">커뮤니티 목록 및 관리</p>
+                        <div class="feature-url">/communities</div>
+                        <a href="/communities" class="feature-link" target="_blank">기능 테스트하기</a>
+                        <a href="community-hub.svg" class="feature-link" target="_blank">SVG 보기</a>
+                    </div>
+                </div>
+                
+                <div class="feature-card">
+                    <img src="dashboard.png" alt="대시보드" class="feature-image" onclick="openModal('dashboard.png', '대시보드')">
+                    <div class="feature-info">
+                        <h3 class="feature-title">3. 대시보드</h3>
+                        <p class="feature-description">사용자 대시보드</p>
+                        <div class="feature-url">/dashboard</div>
+                        <a href="/dashboard" class="feature-link" target="_blank">기능 테스트하기</a>
+                        <a href="dashboard.svg" class="feature-link" target="_blank">SVG 보기</a>
+                    </div>
+                </div>
+                
+                <div class="feature-card">
+                    <img src="game-center.png" alt="게임 센터" class="feature-image" onclick="openModal('game-center.png', '게임 센터')">
+                    <div class="feature-info">
+                        <h3 class="feature-title">4. 게임 센터</h3>
+                        <p class="feature-description">게임 시스템 및 리더보드</p>
+                        <div class="feature-url">/games</div>
+                        <a href="/games" class="feature-link" target="_blank">기능 테스트하기</a>
+                        <a href="game-center.svg" class="feature-link" target="_blank">SVG 보기</a>
+                    </div>
+                </div>
+                
+                <div class="feature-card">
+                    <img src="vip-dashboard.png" alt="VIP 대시보드" class="feature-image" onclick="openModal('vip-dashboard.png', 'VIP 대시보드')">
+                    <div class="feature-info">
+                        <h3 class="feature-title">5. VIP 대시보드</h3>
+                        <p class="feature-description">VIP 사용자 전용 기능</p>
+                        <div class="feature-url">/vip</div>
+                        <a href="/vip" class="feature-link" target="_blank">기능 테스트하기</a>
+                        <a href="vip-dashboard.svg" class="feature-link" target="_blank">SVG 보기</a>
+                    </div>
+                </div>
+                
+                <div class="feature-card">
+                    <img src="cosplay-shop.png" alt="코스프레 상점" class="feature-image" onclick="openModal('cosplay-shop.png', '코스프레 상점')">
+                    <div class="feature-info">
+                        <h3 class="feature-title">6. 코스프레 상점</h3>
+                        <p class="feature-description">코스프레 의상 및 액세서리</p>
+                        <div class="feature-url">/cosplay</div>
+                        <a href="/cosplay" class="feature-link" target="_blank">기능 테스트하기</a>
+                        <a href="cosplay-shop.svg" class="feature-link" target="_blank">SVG 보기</a>
+                    </div>
+                </div>
+                
+                <div class="feature-card">
+                    <img src="streaming-station.png" alt="스트리밍 스테이션" class="feature-image" onclick="openModal('streaming-station.png', '스트리밍 스테이션')">
+                    <div class="feature-info">
+                        <h3 class="feature-title">7. 스트리밍 스테이션</h3>
+                        <p class="feature-description">실시간 스트리밍 기능</p>
+                        <div class="feature-url">/streaming</div>
+                        <a href="/streaming" class="feature-link" target="_blank">기능 테스트하기</a>
+                        <a href="streaming-station.svg" class="feature-link" target="_blank">SVG 보기</a>
+                    </div>
+                </div>
+                
+                <div class="feature-card">
+                    <img src="community-analytics.png" alt="커뮤니티 분석" class="feature-image" onclick="openModal('community-analytics.png', '커뮤니티 분석')">
+                    <div class="feature-info">
+                        <h3 class="feature-title">8. 커뮤니티 분석</h3>
+                        <p class="feature-description">사용자 행동 분석 및 인사이트</p>
+                        <div class="feature-url">/analytics</div>
+                        <a href="/analytics" class="feature-link" target="_blank">기능 테스트하기</a>
+                        <a href="community-analytics.svg" class="feature-link" target="_blank">SVG 보기</a>
+                    </div>
+                </div>
+                
+                <div class="feature-card">
+                    <img src="performance-metrics.png" alt="성과 지표" class="feature-image" onclick="openModal('performance-metrics.png', '성과 지표')">
+                    <div class="feature-info">
+                        <h3 class="feature-title">9. 성과 지표</h3>
+                        <p class="feature-description">KPI 및 성과 지표 대시보드</p>
+                        <div class="feature-url">/metrics</div>
+                        <a href="/metrics" class="feature-link" target="_blank">기능 테스트하기</a>
+                        <a href="performance-metrics.svg" class="feature-link" target="_blank">SVG 보기</a>
+                    </div>
+                </div>
+                
+                <div class="feature-card">
+                    <img src="spam-prevention.png" alt="스팸 방지" class="feature-image" onclick="openModal('spam-prevention.png', '스팸 방지')">
+                    <div class="feature-info">
+                        <h3 class="feature-title">10. 스팸 방지</h3>
+                        <p class="feature-description">스팸 방지 및 보안 시스템</p>
+                        <div class="feature-url">/spam-prevention</div>
+                        <a href="/spam-prevention" class="feature-link" target="_blank">기능 테스트하기</a>
+                        <a href="spam-prevention.svg" class="feature-link" target="_blank">SVG 보기</a>
+                    </div>
+                </div>
+                
+                <div class="feature-card">
+                    <img src="report-management.png" alt="신고 관리" class="feature-image" onclick="openModal('report-management.png', '신고 관리')">
+                    <div class="feature-info">
+                        <h3 class="feature-title">11. 신고 관리</h3>
+                        <p class="feature-description">사용자 신고 및 처리 시스템</p>
+                        <div class="feature-url">/report-management</div>
+                        <a href="/report-management" class="feature-link" target="_blank">기능 테스트하기</a>
+                        <a href="report-management.svg" class="feature-link" target="_blank">SVG 보기</a>
+                    </div>
+                </div>
+                
+                <div class="feature-card">
+                    <img src="auto-moderation.png" alt="자동 모더레이션" class="feature-image" onclick="openModal('auto-moderation.png', '자동 모더레이션')">
+                    <div class="feature-info">
+                        <h3 class="feature-title">12. 자동 모더레이션</h3>
+                        <p class="feature-description">AI 기반 자동 콘텐츠 검토</p>
+                        <div class="feature-url">/auto-moderation</div>
+                        <a href="/auto-moderation" class="feature-link" target="_blank">기능 테스트하기</a>
+                        <a href="auto-moderation.svg" class="feature-link" target="_blank">SVG 보기</a>
+                    </div>
+                </div>
+                
+                <div class="feature-card">
+                    <img src="internationalization.png" alt="국제화" class="feature-image" onclick="openModal('internationalization.png', '국제화')">
+                    <div class="feature-info">
+                        <h3 class="feature-title">13. 국제화</h3>
+                        <p class="feature-description">다국어 지원 및 현지화</p>
+                        <div class="feature-url">/internationalization</div>
+                        <a href="/internationalization" class="feature-link" target="_blank">기능 테스트하기</a>
+                        <a href="internationalization.svg" class="feature-link" target="_blank">SVG 보기</a>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+
+    <!-- 모달 -->
+    <div id="imageModal" class="modal">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <div class="modal-content">
+            <img id="modalImage" class="modal-image" src="" alt="">
+        </div>
+    </div>
+
+    <script>
+        function openModal(imageSrc, title) {
+            const modal = document.getElementById('imageModal');
+            const modalImage = document.getElementById('modalImage');
+            modal.style.display = 'block';
+            modalImage.src = imageSrc;
+            modalImage.alt = title;
+        }
+
+        function closeModal() {
+            document.getElementById('imageModal').style.display = 'none';
+        }
+
+        // ESC 키로 모달 닫기
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        // 모달 배경 클릭으로 닫기
+        document.getElementById('imageModal').addEventListener('click', function(event) {
+            if (event.target === this) {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>

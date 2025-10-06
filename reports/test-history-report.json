@@ -1,0 +1,21 @@
+{
+  "version": "1.0.0",
+  "timestamp": "2025-10-04T09-12-49-364Z",
+  "type": "test_history",
+  "totalTests": 1,
+  "history": [
+    {
+      "testNumber": 1,
+      "timestamp": "2025-10-04T09-12-49-364Z",
+      "summary": {
+        "total": 12,
+        "passed": 12,
+        "failed": 0,
+        "error": 0,
+        "successRate": 100
+      },
+      "reportPath": "reports\\testing\\1.0.0\\automated_feature-test-report-2025-10-04T09-12-49-364Z.json",
+      "reportLink": "reports\\testing\\1.0.0\\automated_feature-test-report-2025-10-04T09-12-49-364Z.html"
+    }
+  ]
+}

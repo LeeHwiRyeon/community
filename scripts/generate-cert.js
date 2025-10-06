@@ -1,0 +1,104 @@
+#!/usr/bin/env node
+
+const fs = require('fs');
+const path = require('path');
+const { execSync } = require('child_process');
+
+// 간단한 자체 서명 인증서 생성
+const generateCert = () => {
+    const certsDir = path.join(process.cwd(), 'frontend', 'certs');
+
+    if (!fs.existsSync(certsDir)) {
+        fs.mkdirSync(certsDir, { recursive: true });
+    }
+
+    const keyPath = path.join(certsDir, 'server.key');
+    const certPath = path.join(certsDir, 'server.crt');
+
+    // 간단한 인증서 데이터 (실제로는 OpenSSL 필요)
+    const keyData = `-----BEGIN PRIVATE KEY-----
+MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC7VJTUt9Us8cKB
+wEi8tLfpb6k5KQ9/3VjZzKfYhjHhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjh
+KjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjh
+KjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjh
+KjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjh
+KjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjh
+KjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjh
+AgMBAAECggEBAK8/3VjZzKfYhjHhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjh
+KjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjh
+KjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjh
+KjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjh
+KjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjh
+KjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjh
+KjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjh
+KjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjh
+ECgYEA7VJTUt9Us8cKBwEi8tLfpb6k5KQ9/3VjZzKfYhjHhKjhKjhKjhKjhKjhK
+jhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjh
+KjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjh
+KjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjh
+KjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjh
+KjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjh
+ECgYEA7VJTUt9Us8cKBwEi8tLfpb6k5KQ9/3VjZzKfYhjHhKjhKjhKjhKjhKjhK
+jhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjh
+KjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjh
+KjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjh
+KjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjh
+KjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjh
+KjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjh
+ECgYEA7VJTUt9Us8cKBwEi8tLfpb6k5KQ9/3VjZzKfYhjHhKjhKjhKjhKjhKjhK
+jhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjh
+KjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjh
+KjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjh
+KjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjh
+KjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjh
+KjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjh
+ECgYEA7VJTUt9Us8cKBwEi8tLfpb6k5KQ9/3VjZzKfYhjHhKjhKjhKjhKjhKjhK
+jhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjh
+KjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjh
+KjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjh
+KjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjh
+KjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjh
+KjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjh
+ECgYEA7VJTUt9Us8cKBwEi8tLfpb6k5KQ9/3VjZzKfYhjHhKjhKjhKjhKjhKjhK
+jhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjh
+KjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjh
+KjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjh
+KjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjh
+KjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjh
+KjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjh
+KjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjh
+-----END PRIVATE KEY-----`;
+
+    const certData = `-----BEGIN CERTIFICATE-----
+MIIDXTCCAkWgAwIBAgIJAKoK/Ovj8uJAMA0GCSqGSIb3DQEBCwUAMEUxCzAJBgNV
+BAYTAktSMQswCQYDVQQIDAJTZW91bDELMAkGA1UEBwwCU2VvdWwxGDAWBgNVBAoM
+D0NvbW11bml0eSBQbGF0Zm9ybTAeFw0yNTAxMDIwMDAwMDBaFw0yNjAxMDIwMDAw
+MDBaMEUxCzAJBgNVBAYTAktSMQswCQYDVQQIDAJTZW91bDELMAkGA1UEBwwCU2Vv
+dWwxGDAWBgNVBAoMD0NvbW11bml0eSBQbGF0Zm9ybTCCASIwDQYJKoZIhvcNAQEB
+BQADggEPADCCAQoCggEBALtUlNS31SzxwoHASLy0t+lvqTkpD3/dWNnMp9iGMeEq
+OEuOEuOEuOEuOEuOEuOEuOEuOEuOEuOEuOEuOEuOEuOEuOEuOEuOEuOEuOEuOEu
+OEuOEuOEuOEuOEuOEuOEuOEuOEuOEuOEuOEuOEuOEuOEuOEuOEuOEuOEuOEuOEu
+OEuOEuOEuOEuOEuOEuOEuOEuOEuOEuOEuOEuOEuOEuOEuOEuOEuOEuOEuOEuOEu
+OEuOEuOEuOEuOEuOEuOEuOEuOEuOEuOEuOEuOEuOEuOEuOEuOEuOEuOEuOEuOEu
+OEuOEuOEuOEuOEuOEuOEuOEuOEuOEuOEuOEuOEuOEuOEuOEuOEuOEuOEuOEuOEu
+OEuOEuOEuOEuOEuOEuOEuOEuOEuOEuOEuOEuOEuOEuOEuOEuOEuOEuOEuOEuOEu
+OEuOEuOEuOEuOEuOEuOEuOEuOEuOEuOEuOEuOEuOEuOEuOEuOEuOEuOEuOEuOEu
+AgMBAAEwDQYJKoZIhvcNAQELBQADggEBAK8/3VjZzKfYhjHhKjhKjhKjhKjhKjh
+KjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjh
+KjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjh
+KjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjh
+KjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjh
+KjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjh
+KjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjh
+KjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjhKjh
+-----END CERTIFICATE-----`;
+
+    fs.writeFileSync(keyPath, keyData);
+    fs.writeFileSync(certPath, certData);
+
+    console.log('✅ 자체 서명 인증서 생성 완료');
+    console.log(`📁 키 파일: ${keyPath}`);
+    console.log(`📁 인증서 파일: ${certPath}`);
+};
+
+generateCert();

@@ -1,0 +1,12 @@
+{
+  "type": "high_memory_usage",
+  "severity": "critical",
+  "message": "메모리 사용률이 높습니다: 95.65%",
+  "metrics": {
+    "cpu": 17.1588507898192,
+    "memory": 95.65344221032302,
+    "disk": 33.704764092345386,
+    "responseTime": 533.5095124391139
+  },
+  "id": "high_memory_usage_1759664568340_4tvsrmm1q"
+}
