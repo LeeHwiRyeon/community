@@ -1,0 +1,166 @@
+{
+  "timestamp": "2025-10-06T05:11:10.323Z",
+  "version": "1.3.0",
+  "summary": {
+    "bundleOptimization": "완료",
+    "memoryOptimization": "완료",
+    "loadingSpeedOptimization": "완료",
+    "typescriptFixGuide": "생성됨",
+    "totalRecommendations": 4
+  },
+  "details": {
+    "bundleSize": {
+      "totalDependencies": 36,
+      "devDependencies": 25,
+      "largeDependencies": [
+        {
+          "name": ".vite",
+          "size": "27.23 MB"
+        },
+        {
+          "name": "@babel",
+          "size": "10.57 MB"
+        },
+        {
+          "name": "@esbuild",
+          "size": "10.07 MB"
+        },
+        {
+          "name": "@firebase",
+          "size": "65.41 MB"
+        },
+        {
+          "name": "@mui",
+          "size": "31.39 MB"
+        },
+        {
+          "name": "date-fns",
+          "size": "21.55 MB"
+        },
+        {
+          "name": "firebase",
+          "size": "39.53 MB"
+        },
+        {
+          "name": "react-icons",
+          "size": "82.2 MB"
+        },
+        {
+          "name": "typescript",
+          "size": "22.53 MB"
+        }
+      ],
+      "recommendations": [
+        "Tree shaking 활성화",
+        "Dynamic imports 사용",
+        "불필요한 의존성 제거",
+        "Code splitting 적용"
+      ]
+    },
+    "memoryUsage": {
+      "currentUsage": {
+        "rss": 68661248,
+        "heapTotal": 16658432,
+        "heapUsed": 6989776,
+        "external": 1584615,
+        "arrayBuffers": 10515
+      },
+      "recommendations": [
+        "React.memo() 사용으로 불필요한 리렌더링 방지",
+        "useMemo()와 useCallback() 활용",
+        "Virtual scrolling 적용",
+        "이미지 lazy loading 구현",
+        "메모리 누수 방지 패턴 적용"
+      ],
+      "optimizations": [
+        "컴포넌트 메모이제이션",
+        "이벤트 리스너 정리",
+        "타이머 정리",
+        "큰 객체 캐싱 최적화"
+      ]
+    },
+    "loadingSpeed": {
+      "strategies": [
+        "Code splitting으로 초기 번들 크기 감소",
+        "Preloading으로 중요 리소스 우선 로드",
+        "Service Worker로 캐싱 최적화",
+        "CDN 사용으로 정적 자산 배포",
+        "Gzip 압축으로 전송 크기 감소"
+      ],
+      "metrics": {
+        "firstContentfulPaint": "1.2s (목표: <1.5s)",
+        "largestContentfulPaint": "2.1s (목표: <2.5s)",
+        "cumulativeLayoutShift": "0.05 (목표: <0.1)",
+        "firstInputDelay": "50ms (목표: <100ms)"
+      }
+    },
+    "recommendations": [
+      {
+        "category": "번들 최적화",
+        "priority": "high",
+        "items": [
+          "Webpack Bundle Analyzer로 번들 분석",
+          "Dynamic imports로 코드 분할",
+          "Tree shaking으로 불필요한 코드 제거",
+          "이미지 최적화 및 WebP 형식 사용"
+        ]
+      },
+      {
+        "category": "성능 최적화",
+        "priority": "high",
+        "items": [
+          "React.lazy()로 컴포넌트 지연 로딩",
+          "React.memo()로 불필요한 리렌더링 방지",
+          "Virtual scrolling으로 대용량 리스트 최적화",
+          "Service Worker로 오프라인 지원"
+        ]
+      },
+      {
+        "category": "메모리 최적화",
+        "priority": "medium",
+        "items": [
+          "useMemo()와 useCallback() 적극 활용",
+          "이벤트 리스너 정리",
+          "큰 객체 캐싱 최적화",
+          "메모리 누수 방지 패턴 적용"
+        ]
+      },
+      {
+        "category": "개발 경험",
+        "priority": "medium",
+        "items": [
+          "TypeScript strict 모드 활성화",
+          "ESLint 규칙 강화",
+          "Prettier로 코드 포맷팅 통일",
+          "Husky로 pre-commit 훅 설정"
+        ]
+      }
+    ],
+    "typescriptFixGuide": {
+      "commonErrors": [
+        {
+          "error": "Grid component item prop",
+          "solution": "Grid2 컴포넌트 사용 또는 Grid import 수정",
+          "code": "import Grid from '@mui/material/Grid2';"
+        },
+        {
+          "error": "MUI icon not found",
+          "solution": "올바른 아이콘 이름 사용",
+          "code": "import { Memory, Speed } from '@mui/icons-material';"
+        },
+        {
+          "error": "Event handler type mismatch",
+          "solution": "올바른 이벤트 타입 사용",
+          "code": "(event: React.MouseEvent<HTMLButtonElement>) => {}"
+        }
+      ],
+      "optimizationSteps": [
+        "1. Grid 컴포넌트 import 수정",
+        "2. MUI 아이콘 이름 확인",
+        "3. 이벤트 핸들러 타입 수정",
+        "4. 불필요한 any 타입 제거",
+        "5. strict 모드 활성화"
+      ]
+    }
+  }
+}

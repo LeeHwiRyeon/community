@@ -132,7 +132,7 @@ const GestureHintContainer = styled(Box)(({ theme }) => ({
     padding: theme.spacing(2),
     backgroundColor: 'rgba(0, 0, 0, 0.8)',
     color: 'white',
-    borderRadius: theme.shape.borderRadius * 2,
+    borderRadius: (theme.shape.borderRadius as number) * 2,
     backdropFilter: 'blur(10px)',
     animation: 'gestureHintFadeIn 0.3s ease-out',
 
@@ -215,14 +215,14 @@ class GestureDetector {
 
     private attachEventListeners(): void {
         // 터치 이벤트
-        this.element.addEventListener('touchstart', this.handleTouchStart.bind(this), { passive: false });
-        this.element.addEventListener('touchmove', this.handleTouchMove.bind(this), { passive: false });
-        this.element.addEventListener('touchend', this.handleTouchEnd.bind(this), { passive: false });
+        this.element.addEventListener('touchstart', this.handleTouchStart.bind(this) as any, { passive: false });
+        this.element.addEventListener('touchmove', this.handleTouchMove.bind(this) as any, { passive: false });
+        this.element.addEventListener('touchend', this.handleTouchEnd.bind(this) as any, { passive: false });
 
         // 마우스 이벤트 (데스크톱 지원)
-        this.element.addEventListener('mousedown', this.handleMouseDown.bind(this));
-        this.element.addEventListener('mousemove', this.handleMouseMove.bind(this));
-        this.element.addEventListener('mouseup', this.handleMouseUp.bind(this));
+        this.element.addEventListener('mousedown', this.handleMouseDown.bind(this) as any);
+        this.element.addEventListener('mousemove', this.handleMouseMove.bind(this) as any);
+        this.element.addEventListener('mouseup', this.handleMouseUp.bind(this) as any);
 
         // 휠 이벤트 (핀치 줌 시뮬레이션)
         this.element.addEventListener('wheel', this.handleWheel.bind(this), { passive: false });
@@ -241,8 +241,8 @@ class GestureDetector {
         if (event.touches.length === 2) {
             const touch1 = event.touches[0];
             const touch2 = event.touches[1];
-            this.initialDistance = this.getDistance(touch1, touch2);
-            this.initialRotation = this.getRotation(touch1, touch2);
+            this.initialDistance = this.getDistance(touch1 as any, touch2 as any);
+            this.initialRotation = this.getRotation(touch1 as any, touch2 as any);
         }
 
         // 롱 프레스 타이머 시작
@@ -269,8 +269,8 @@ class GestureDetector {
         if (event.touches.length === 2) {
             const touch1 = event.touches[0];
             const touch2 = event.touches[1];
-            const currentDistance = this.getDistance(touch1, touch2);
-            const currentRotation = this.getRotation(touch1, touch2);
+            const currentDistance = this.getDistance(touch1 as any, touch2 as any);
+            const currentRotation = this.getRotation(touch1 as any, touch2 as any);
 
             const scale = currentDistance / this.initialDistance;
             const rotation = currentRotation - this.initialRotation;
@@ -451,12 +451,12 @@ class GestureDetector {
     }
 
     public destroy(): void {
-        this.element.removeEventListener('touchstart', this.handleTouchStart.bind(this));
-        this.element.removeEventListener('touchmove', this.handleTouchMove.bind(this));
-        this.element.removeEventListener('touchend', this.handleTouchEnd.bind(this));
-        this.element.removeEventListener('mousedown', this.handleMouseDown.bind(this));
-        this.element.removeEventListener('mousemove', this.handleMouseMove.bind(this));
-        this.element.removeEventListener('mouseup', this.handleMouseUp.bind(this));
+        this.element.removeEventListener('touchstart', this.handleTouchStart.bind(this) as any);
+        this.element.removeEventListener('touchmove', this.handleTouchMove.bind(this) as any);
+        this.element.removeEventListener('touchend', this.handleTouchEnd.bind(this) as any);
+        this.element.removeEventListener('mousedown', this.handleMouseDown.bind(this) as any);
+        this.element.removeEventListener('mousemove', this.handleMouseMove.bind(this) as any);
+        this.element.removeEventListener('mouseup', this.handleMouseUp.bind(this) as any);
         this.element.removeEventListener('wheel', this.handleWheel.bind(this));
 
         if (this.longPressTimer) {

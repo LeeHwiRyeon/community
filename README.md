@@ -2,7 +2,7 @@
 
 **Community Platform v3.0.0**는 React 19 + TypeScript + Express.js 기반의 **AUTOAGENTS 자동화 시스템**이 완전히 통합된 차세대 커뮤니티 플랫폼입니다. 현대적 UI/UX, HTTPS 보안, 실시간 상호작용, AI 기반 추천 등 **혁신적인 커뮤니티 기능**을 완전 통합한 세계 최고 수준의 플랫폼입니다.
 
-## 🎉 **v3.0.0 릴리즈 완성 (2025-01-02)**
+## 🎉 **v1.3 릴리즈 완성 (2024-10-06)**
 - ✅ **고급 커뮤니티 관리**: 다중 커뮤니티, 계층 구조, 권한 관리
 - ✅ **실시간 상호작용**: WebSocket 기반 채팅, 알림, 사용자 상태
 - ✅ **AI 추천 시스템**: 개인화된 콘텐츠 추천, 스마트 필터링
@@ -40,9 +40,10 @@ node scripts/project-manager.js start --no-https
 ```
 
 ### 🌐 접속 URL
-- **🔒 HTTPS (보안)**: https://localhost:3000
-- **🔓 HTTP (기존)**: http://localhost:3000
+- **🔓 HTTP (개발)**: http://localhost:3000
+- **🔧 백엔드 API**: http://localhost:3001
 - **📊 기능 시각화**: feature-visualizations/index.html
+- **📋 상태**: ✅ 정상 운영 중 (v1.3)
 
 ### 🛠️ 프로젝트 관리
 ```bash

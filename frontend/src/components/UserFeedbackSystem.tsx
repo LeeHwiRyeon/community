@@ -9,7 +9,6 @@ import {
     Typography,
     Card,
     CardContent,
-    Grid,
     Button,
     TextField,
     Rating,
@@ -550,8 +549,8 @@ const UserFeedbackSystem: React.FC = () => {
             </Box>
 
             {/* 통계 카드 */}
-            <Grid container spacing={3} sx={{ mb: 3 }}>
-                <Grid item xs={12} sm={6} md={3}>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mb: 3 }}>
+                <Box sx={{ width: { xs: '100%', sm: '50%', md: '25%' }, p: 1 }}>
                     <Card>
                         <CardContent>
                             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -567,9 +566,9 @@ const UserFeedbackSystem: React.FC = () => {
                             </Box>
                         </CardContent>
                     </Card>
-                </Grid>
+                </Box>
 
-                <Grid item xs={12} sm={6} md={3}>
+                <Box sx={{ width: { xs: '100%', sm: '50%', md: '25%' }, p: 1 }}>
                     <Card>
                         <CardContent>
                             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -585,9 +584,9 @@ const UserFeedbackSystem: React.FC = () => {
                             </Box>
                         </CardContent>
                     </Card>
-                </Grid>
+                </Box>
 
-                <Grid item xs={12} sm={6} md={3}>
+                <Box sx={{ width: { xs: '100%', sm: '50%', md: '25%' }, p: 1 }}>
                     <Card>
                         <CardContent>
                             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -603,9 +602,9 @@ const UserFeedbackSystem: React.FC = () => {
                             </Box>
                         </CardContent>
                     </Card>
-                </Grid>
+                </Box>
 
-                <Grid item xs={12} sm={6} md={3}>
+                <Box sx={{ width: { xs: '100%', sm: '50%', md: '25%' }, p: 1 }}>
                     <Card>
                         <CardContent>
                             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -621,8 +620,8 @@ const UserFeedbackSystem: React.FC = () => {
                             </Box>
                         </CardContent>
                     </Card>
-                </Grid>
-            </Grid>
+                </Box>
+            </Box>
 
             {/* 필터 및 검색 */}
             <Card sx={{ mb: 3 }}>
@@ -631,8 +630,8 @@ const UserFeedbackSystem: React.FC = () => {
                         🔍 필터 및 검색
                     </Typography>
 
-                    <Grid container spacing={2}>
-                        <Grid item xs={12} md={3}>
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
+                        <Box sx={{ width: { xs: '100%', md: '25%' }, p: 1 }}>
                             <TextField
                                 fullWidth
                                 placeholder="피드백 검색..."
@@ -642,9 +641,9 @@ const UserFeedbackSystem: React.FC = () => {
                                     startAdornment: <Search sx={{ mr: 1, color: 'text.secondary' }} />
                                 }}
                             />
-                        </Grid>
+                        </Box>
 
-                        <Grid item xs={12} md={2}>
+                        <Box sx={{ width: { xs: '100%', md: '16.66%' }, p: 1 }}>
                             <FormControl fullWidth>
                                 <InputLabel>타입</InputLabel>
                                 <Select
@@ -661,9 +660,9 @@ const UserFeedbackSystem: React.FC = () => {
                                     <MenuItem value="accessibility">접근성</MenuItem>
                                 </Select>
                             </FormControl>
-                        </Grid>
+                        </Box>
 
-                        <Grid item xs={12} md={2}>
+                        <Box sx={{ width: { xs: '100%', md: '16.66%' }, p: 1 }}>
                             <FormControl fullWidth>
                                 <InputLabel>우선순위</InputLabel>
                                 <Select
@@ -678,9 +677,9 @@ const UserFeedbackSystem: React.FC = () => {
                                     <MenuItem value="low">Low</MenuItem>
                                 </Select>
                             </FormControl>
-                        </Grid>
+                        </Box>
 
-                        <Grid item xs={12} md={2}>
+                        <Box sx={{ width: { xs: '100%', md: '16.66%' }, p: 1 }}>
                             <FormControl fullWidth>
                                 <InputLabel>상태</InputLabel>
                                 <Select
@@ -696,9 +695,9 @@ const UserFeedbackSystem: React.FC = () => {
                                     <MenuItem value="duplicate">중복</MenuItem>
                                 </Select>
                             </FormControl>
-                        </Grid>
+                        </Box>
 
-                        <Grid item xs={12} md={2}>
+                        <Box sx={{ width: { xs: '100%', md: '16.66%' }, p: 1 }}>
                             <FormControl fullWidth>
                                 <InputLabel>감정</InputLabel>
                                 <Select
@@ -714,9 +713,9 @@ const UserFeedbackSystem: React.FC = () => {
                                     <MenuItem value="very_negative">매우 부정</MenuItem>
                                 </Select>
                             </FormControl>
-                        </Grid>
+                        </Box>
 
-                        <Grid item xs={12} md={1}>
+                        <Box sx={{ width: { xs: '100%', md: '8.33%' }, p: 1 }}>
                             <FormControl fullWidth>
                                 <InputLabel>정렬</InputLabel>
                                 <Select
@@ -730,8 +729,8 @@ const UserFeedbackSystem: React.FC = () => {
                                     <MenuItem value="priority">우선순위순</MenuItem>
                                 </Select>
                             </FormControl>
-                        </Grid>
-                    </Grid>
+                        </Box>
+                    </Box>
                 </CardContent>
             </Card>
 
@@ -867,8 +866,8 @@ const UserFeedbackSystem: React.FC = () => {
             >
                 <DialogTitle>새 피드백 작성</DialogTitle>
                 <DialogContent>
-                    <Grid container spacing={2} sx={{ mt: 1 }}>
-                        <Grid item xs={12} md={6}>
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mt: 1 }}>
+                        <Box sx={{ width: { xs: '100%', md: '50%' }, p: 1 }}>
                             <FormControl fullWidth>
                                 <InputLabel>타입</InputLabel>
                                 <Select
@@ -884,27 +883,27 @@ const UserFeedbackSystem: React.FC = () => {
                                     <MenuItem value="accessibility">접근성</MenuItem>
                                 </Select>
                             </FormControl>
-                        </Grid>
+                        </Box>
 
-                        <Grid item xs={12} md={6}>
+                        <Box sx={{ width: { xs: '100%', md: '50%' }, p: 1 }}>
                             <TextField
                                 fullWidth
                                 label="카테고리"
                                 value={newFeedback.category}
                                 onChange={(e) => setNewFeedback(prev => ({ ...prev, category: e.target.value }))}
                             />
-                        </Grid>
+                        </Box>
 
-                        <Grid item xs={12}>
+                        <Box sx={{ width: '100%', p: 1 }}>
                             <TextField
                                 fullWidth
                                 label="제목"
                                 value={newFeedback.title}
                                 onChange={(e) => setNewFeedback(prev => ({ ...prev, title: e.target.value }))}
                             />
-                        </Grid>
+                        </Box>
 
-                        <Grid item xs={12}>
+                        <Box sx={{ width: '100%', p: 1 }}>
                             <TextField
                                 fullWidth
                                 label="설명"
@@ -913,9 +912,9 @@ const UserFeedbackSystem: React.FC = () => {
                                 value={newFeedback.description}
                                 onChange={(e) => setNewFeedback(prev => ({ ...prev, description: e.target.value }))}
                             />
-                        </Grid>
+                        </Box>
 
-                        <Grid item xs={12} md={6}>
+                        <Box sx={{ width: { xs: '100%', md: '50%' }, p: 1 }}>
                             <Typography variant="subtitle2" gutterBottom>
                                 평점
                             </Typography>
@@ -923,9 +922,9 @@ const UserFeedbackSystem: React.FC = () => {
                                 value={newFeedback.rating}
                                 onChange={(e, newValue) => setNewFeedback(prev => ({ ...prev, rating: newValue || 5 }))}
                             />
-                        </Grid>
+                        </Box>
 
-                        <Grid item xs={12} md={6}>
+                        <Box sx={{ width: { xs: '100%', md: '50%' }, p: 1 }}>
                             <FormControl fullWidth>
                                 <InputLabel>우선순위</InputLabel>
                                 <Select
@@ -939,8 +938,8 @@ const UserFeedbackSystem: React.FC = () => {
                                     <MenuItem value="critical">Critical</MenuItem>
                                 </Select>
                             </FormControl>
-                        </Grid>
-                    </Grid>
+                        </Box>
+                    </Box>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={() => setShowFeedbackDialog(false)}>
@@ -966,8 +965,8 @@ const UserFeedbackSystem: React.FC = () => {
                 <DialogTitle>피드백 분석</DialogTitle>
                 <DialogContent>
                     {analytics && (
-                        <Grid container spacing={3}>
-                            <Grid item xs={12} md={6}>
+                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
+                            <Box sx={{ width: { xs: '100%', md: '50%' }, p: 1 }}>
                                 <Card>
                                     <CardContent>
                                         <Typography variant="h6" gutterBottom>
@@ -985,9 +984,9 @@ const UserFeedbackSystem: React.FC = () => {
                                         </Box>
                                     </CardContent>
                                 </Card>
-                            </Grid>
+                            </Box>
 
-                            <Grid item xs={12} md={6}>
+                            <Box sx={{ width: { xs: '100%', md: '50%' }, p: 1 }}>
                                 <Card>
                                     <CardContent>
                                         <Typography variant="h6" gutterBottom>
@@ -1004,8 +1003,8 @@ const UserFeedbackSystem: React.FC = () => {
                                         </Box>
                                     </CardContent>
                                 </Card>
-                            </Grid>
-                        </Grid>
+                            </Box>
+                        </Box>
                     )}
                 </DialogContent>
                 <DialogActions>

@@ -95,11 +95,8 @@ export default defineConfig({
         hmr: {
             overlay: true
         },
-        // HTTPS 설정
-        https: {
-            key: fs.readFileSync(path.join(__dirname, 'certs/server.key')),
-            cert: fs.readFileSync(path.join(__dirname, 'certs/server.crt'))
-        },
+        // HTTP 설정 (개발용)
+        https: false,
         // 프록시 설정 (백엔드 API)
         proxy: {
             '/api': {

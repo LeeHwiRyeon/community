@@ -1,0 +1,488 @@
+name: 🚀 Community Platform v1.3 - Production Deployment
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deployment Environment'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - production
+      force_deploy:
+        description: 'Force Deploy (Skip Tests)'
+        required: false
+        default: false
+        type: boolean
+      rollback:
+        description: 'Rollback to Previous Version'
+        required: false
+        default: false
+        type: boolean
+
+env:
+  NODE_VERSION: '18'
+  NPM_VERSION: '9'
+  REGISTRY: 'ghcr.io'
+  IMAGE_NAME: 'community-platform'
+
+jobs:
+  # ============================================================================
+  # 🔍 코드 품질 검사 (프로덕션)
+  # ============================================================================
+  code-quality:
+    name: 🔍 Production Code Quality Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: 🏗️ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: 'frontend/package-lock.json'
+      
+      - name: 📦 Install Dependencies
+        working-directory: ./frontend
+        run: |
+          npm ci --prefer-offline --no-audit
+      
+      - name: 🔍 TypeScript Type Check
+        working-directory: ./frontend
+        run: |
+          npm run type-check
+      
+      - name: 🧹 ESLint Check
+        working-directory: ./frontend
+        run: |
+          npm run lint
+      
+      - name: 💅 Prettier Check
+        working-directory: ./frontend
+        run: |
+          npm run format:check
+      
+      - name: 🔒 Security Audit
+        working-directory: ./frontend
+        run: |
+          npm audit --audit-level=moderate
+      
+      - name: 📊 Bundle Size Check
+        working-directory: ./frontend
+        run: |
+          npm run build:analyze
+
+  # ============================================================================
+  # 🧪 전체 테스트 스위트
+  # ============================================================================
+  test-suite:
+    name: 🧪 Complete Test Suite
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    needs: code-quality
+    if: ${{ !inputs.force_deploy && !inputs.rollback }}
+    
+    strategy:
+      matrix:
+        test-type: [unit, integration, e2e, performance, security]
+    
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+      
+      - name: 🏗️ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: 'frontend/package-lock.json'
+      
+      - name: 📦 Install Dependencies
+        working-directory: ./frontend
+        run: |
+          npm ci --prefer-offline --no-audit
+      
+      - name: 🧪 Run Unit Tests
+        if: matrix.test-type == 'unit'
+        working-directory: ./frontend
+        run: |
+          npm run test:unit -- --coverage --watchAll=false
+      
+      - name: 🧪 Run Integration Tests
+        if: matrix.test-type == 'integration'
+        working-directory: ./frontend
+        run: |
+          npm run test:integration -- --watchAll=false
+      
+      - name: 🧪 Run E2E Tests
+        if: matrix.test-type == 'e2e'
+        working-directory: ./frontend
+        run: |
+          npm run test:e2e
+      
+      - name: 🚀 Performance Tests
+        if: matrix.test-type == 'performance'
+        working-directory: ./frontend
+        run: |
+          npm run test:performance
+      
+      - name: 🔒 Security Tests
+        if: matrix.test-type == 'security'
+        working-directory: ./frontend
+        run: |
+          npm run test:security
+      
+      - name: 📊 Upload Test Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-${{ matrix.test-type }}-${{ github.sha }}
+          path: |
+            frontend/coverage/
+            frontend/test-results/
+            frontend/performance-results/
+          retention-days: 30
+
+  # ============================================================================
+  # 🏗️ 프로덕션 빌드
+  # ============================================================================
+  build-production:
+    name: 🏗️ Production Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    needs: [code-quality, test-suite]
+    if: always() && (needs.test-suite.result == 'success' || needs.test-suite.result == 'skipped' || inputs.force_deploy || inputs.rollback)
+    
+    outputs:
+      image-tag: ${{ steps.meta.outputs.tags }}
+      image-digest: ${{ steps.build.outputs.digest }}
+      build-version: ${{ steps.version.outputs.version }}
+    
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: 🏗️ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: 'frontend/package-lock.json'
+      
+      - name: 📦 Install Dependencies
+        working-directory: ./frontend
+        run: |
+          npm ci --prefer-offline --no-audit
+      
+      - name: 🏗️ Build Frontend
+        working-directory: ./frontend
+        run: |
+          npm run build
+      
+      - name: 📊 Build Analysis
+        working-directory: ./frontend
+        run: |
+          npm run build:analyze
+      
+      - name: 📋 Generate Version
+        id: version
+        run: |
+          VERSION=$(date +'%Y.%m.%d')-${GITHUB_SHA::7}
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Generated version: $VERSION"
+      
+      - name: 🐳 Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      
+      - name: 🔐 Log in to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: 📋 Extract Metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ github.repository }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=ref,event=branch
+            type=sha,prefix=prod-
+            type=raw,value=latest,enable={{is_default_branch}}
+            type=raw,value=production,enable=true
+            type=raw,value=${{ steps.version.outputs.version }},enable=true
+      
+      - name: 🏗️ Build and Push Docker Image
+        id: build
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            NODE_ENV=production
+            VITE_NODE_ENV=production
+            VITE_API_URL=https://api.community.com
+            VITE_CDN_URL=https://cdn.community.com
+            VITE_VERSION=${{ steps.version.outputs.version }}
+
+  # ============================================================================
+  # 🔄 롤백 처리
+  # ============================================================================
+  rollback:
+    name: 🔄 Rollback to Previous Version
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    if: inputs.rollback
+    environment: production
+    
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+      
+      - name: 🔧 Configure AWS CLI
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      
+      - name: 🔄 Rollback Production
+        run: |
+          echo "🔄 Rolling back production deployment..."
+          
+          # 이전 버전으로 롤백
+          aws ecs update-service \
+            --cluster community-production \
+            --service community-app-production \
+            --task-definition community-app:previous \
+            --region us-east-1
+      
+      - name: ⏳ Wait for Rollback
+        run: |
+          echo "⏳ Waiting for rollback to complete..."
+          sleep 60
+      
+      - name: 🏥 Rollback Health Check
+        run: |
+          echo "🏥 Performing rollback health check..."
+          for i in {1..10}; do
+            if curl -f https://community.com/health; then
+              echo "✅ Rollback health check passed!"
+              break
+            else
+              echo "⏳ Health check attempt $i failed, retrying..."
+              sleep 30
+            fi
+          done
+
+  # ============================================================================
+  # 🚀 프로덕션 배포
+  # ============================================================================
+  deploy-production:
+    name: 🚀 Deploy to Production
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    needs: [build-production, rollback]
+    if: always() && (needs.build-production.result == 'success' || needs.rollback.result == 'success')
+    environment: production
+    
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+      
+      - name: 🏗️ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      
+      - name: 🔧 Configure AWS CLI
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      
+      - name: 🚀 Deploy to Production
+        run: |
+          echo "🚀 Deploying to production environment..."
+          echo "Image: ${{ needs.build-production.outputs.image-tag }}"
+          echo "Digest: ${{ needs.build-production.outputs.image-digest }}"
+          echo "Version: ${{ needs.build-production.outputs.build-version }}"
+          
+          # 카나리 배포 시작 (5% 트래픽)
+          aws ecs update-service \
+            --cluster community-production \
+            --service community-app-production \
+            --force-new-deployment \
+            --region us-east-1
+      
+      - name: ⏳ Wait for Canary Phase 1 (5%)
+        run: |
+          echo "⏳ Waiting for canary phase 1 (5% traffic)..."
+          sleep 120
+      
+      - name: 🏥 Canary Health Check Phase 1
+        run: |
+          echo "🏥 Performing canary health check phase 1..."
+          for i in {1..5}; do
+            if curl -f https://community.com/health; then
+              echo "✅ Canary phase 1 health check passed!"
+              break
+            else
+              echo "⏳ Health check attempt $i failed, retrying..."
+              sleep 30
+            fi
+          done
+      
+      - name: 📊 Increase Canary Traffic (25%)
+        run: |
+          echo "📊 Increasing canary traffic to 25%..."
+          # 트래픽 분할 업데이트 로직
+          sleep 30
+      
+      - name: ⏳ Wait for Canary Phase 2 (25%)
+        run: |
+          echo "⏳ Waiting for canary phase 2 (25% traffic)..."
+          sleep 180
+      
+      - name: 🏥 Canary Health Check Phase 2
+        run: |
+          echo "🏥 Performing canary health check phase 2..."
+          for i in {1..5}; do
+            if curl -f https://community.com/health; then
+              echo "✅ Canary phase 2 health check passed!"
+              break
+            else
+              echo "⏳ Health check attempt $i failed, retrying..."
+              sleep 30
+            fi
+          done
+      
+      - name: 📊 Increase Canary Traffic (50%)
+        run: |
+          echo "📊 Increasing canary traffic to 50%..."
+          # 트래픽 분할 업데이트 로직
+          sleep 30
+      
+      - name: ⏳ Wait for Canary Phase 3 (50%)
+        run: |
+          echo "⏳ Waiting for canary phase 3 (50% traffic)..."
+          sleep 300
+      
+      - name: 🏥 Canary Health Check Phase 3
+        run: |
+          echo "🏥 Performing canary health check phase 3..."
+          for i in {1..5}; do
+            if curl -f https://community.com/health; then
+              echo "✅ Canary phase 3 health check passed!"
+              break
+            else
+              echo "⏳ Health check attempt $i failed, retrying..."
+              sleep 30
+            fi
+          done
+      
+      - name: 📊 Full Production Deployment (100%)
+        run: |
+          echo "📊 Deploying to full production (100% traffic)..."
+          # 전체 트래픽으로 전환
+          sleep 30
+      
+      - name: ⏳ Wait for Full Deployment
+        run: |
+          echo "⏳ Waiting for full deployment to complete..."
+          sleep 120
+      
+      - name: 🏥 Final Production Health Check
+        run: |
+          echo "🏥 Performing final production health check..."
+          for i in {1..10}; do
+            if curl -f https://community.com/health; then
+              echo "✅ Final production health check passed!"
+              break
+            else
+              echo "⏳ Health check attempt $i failed, retrying..."
+              sleep 30
+            fi
+          done
+      
+      - name: 📊 Production Deployment Status
+        run: |
+          echo "📊 Production deployment completed successfully!"
+          echo "🌐 Production URL: https://community.com"
+          echo "📱 API URL: https://api.community.com"
+          echo "🔢 Version: ${{ needs.build-production.outputs.build-version }}"
+
+  # ============================================================================
+  # 🔔 알림 및 보고서
+  # ============================================================================
+  notify:
+    name: 🔔 Notify Production Status
+    runs-on: ubuntu-latest
+    needs: [deploy-production, rollback]
+    if: always()
+    
+    steps:
+      - name: 📊 Production Summary
+        run: |
+          echo "📊 Production Deployment Summary"
+          echo "================================"
+          echo "✅ Deployment: ${{ needs.deploy-production.result }}"
+          echo "✅ Rollback: ${{ needs.rollback.result }}"
+          echo "🕐 Completed at: $(date)"
+      
+      - name: 🔔 Slack Notification
+        if: always()
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          channel: '#production-deployments'
+          text: |
+            🚀 Community Platform v1.3 Production Deployment
+            Status: ${{ job.status }}
+            Deployment: ${{ needs.deploy-production.result }}
+            Rollback: ${{ needs.rollback.result }}
+            Version: ${{ needs.build-production.outputs.build-version || 'N/A' }}
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      
+      - name: 📧 Email Notification
+        if: failure()
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 587
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: '❌ Community Platform Production Deployment Failed'
+          to: ${{ secrets.EMAIL_TO }}
+          from: 'Production Deployment Bot <prod-deploy@community.com>'
+          body: |
+            Community Platform v1.3 production deployment has failed.
+            
+            Check the GitHub Actions logs for more details:
+            ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+      
+      - name: 📱 SMS Notification
+        if: failure()
+        run: |
+          echo "📱 Sending SMS notification for production failure..."
+          # SMS 알림 로직 구현

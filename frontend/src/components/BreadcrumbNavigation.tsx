@@ -55,7 +55,7 @@ const BreadcrumbNavigation: React.FC = () => {
     const boardInfo: Record<string, string> = {
         'notice': '공지사항',
         'live-news': '실시간 뉴스',
-        'discussion': '뉴스 토론',
+        'news-discussion': '뉴스 토론',
         'newsletter': '뉴스레터',
         'settings': '알림 설정',
         'news': '게임 뉴스',

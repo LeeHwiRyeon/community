@@ -68,7 +68,7 @@ const realtimeStreamingRoutes = require('./routes/realtime-streaming'); // Added
 const contentMonitoringRoutes = require('./routes/content-monitoring'); // Added for COMMUNITY_CONTENT_005
 const downloadManagementRoutes = require('./routes/download-management'); // Added for RELEASE_SITE_003
 const releaseNotesManagementRoutes = require('./routes/release-notes-management'); // Added for RELEASE_SITE_004
-const userFeedbackRoutes = require('./routes/user-feedback'); // Added for RELEASE_SITE_005
+// const userFeedbackRoutes = require('./routes/user-feedback'); // Added for RELEASE_SITE_005 - 중복 제거
 const aiOptimizationRoutes = require('./routes/ai-optimization'); // Added for ADVANCED_OPTIMIZATION_001
 const advancedMonitoringRoutes = require('./routes/advanced-monitoring'); // Added for ADVANCED_OPTIMIZATION_002
 const communityGamesRoutes = require('./routes/community-games'); // Added for COMMUNITY_GAMES_001
@@ -80,7 +80,7 @@ const autoAgentsManagementRoutes = require('./routes/autoagents-management'); //
 const autoAgentsManagementV1Routes = require('./routes/autoagents-management-v1'); // Added for AUTOAGENT_V1_RELEASE
 const bugManagementEnhancedRoutes = require('./routes/bug-management-enhanced'); // Added for BUG_LOOP_PREVENTION
 const cosplayerStreamerIntegrationRoutes = require('./routes/cosplayer-streamer-integration'); // Added for COMMUNITY_INTEGRATION
-const userFeedbackRoutes = require('../../routes/user-feedback'); // Added for RELEASE_PREP_008
+// const userFeedbackRoutes = require('../../routes/user-feedback'); // Added for RELEASE_PREP_008 - 중복 제거
 const monitoringDashboardRoutes = require('../../routes/monitoring-dashboard'); // Added for RELEASE_PREP_009
 const { metricsMiddleware } = require('./middleware/metricsMiddleware');
 const performanceMonitoringService = require('./services/performanceMonitoringService');
@@ -253,7 +253,7 @@ app.use('/api/realtime-streaming', realtimeStreamingRoutes); // Added for COMMUN
 app.use('/api/content-monitoring', contentMonitoringRoutes); // Added for COMMUNITY_CONTENT_005
 app.use('/api/download-management', downloadManagementRoutes); // Added for RELEASE_SITE_003
 app.use('/api/release-notes', releaseNotesManagementRoutes); // Added for RELEASE_SITE_004
-app.use('/api/user-feedback', userFeedbackRoutes); // Added for RELEASE_SITE_005
+// app.use('/api/user-feedback', userFeedbackRoutes); // Added for RELEASE_SITE_005 - 중복 제거
 app.use('/api/ai-optimization', aiOptimizationRoutes); // Added for ADVANCED_OPTIMIZATION_001
 app.use('/api/advanced-monitoring', advancedMonitoringRoutes); // Added for ADVANCED_OPTIMIZATION_002
 app.use('/api/community-games', communityGamesRoutes); // Added for COMMUNITY_GAMES_001
@@ -265,7 +265,7 @@ app.use('/api/autoagents-management', autoAgentsManagementRoutes); // Added for 
 app.use('/api/autoagents-management/v1', autoAgentsManagementV1Routes); // Added for AUTOAGENT_V1_RELEASE
 app.use('/api/bug-management', bugManagementEnhancedRoutes); // Added for BUG_LOOP_PREVENTION
 app.use('/api/community-integration', cosplayerStreamerIntegrationRoutes); // Added for COMMUNITY_INTEGRATION
-app.use('/api/user-feedback', userFeedbackRoutes); // Added for RELEASE_PREP_008
+// app.use('/api/user-feedback', userFeedbackRoutes); // Added for RELEASE_PREP_008 - 중복 제거
 app.use('/api/monitoring', monitoringDashboardRoutes); // Added for RELEASE_PREP_009
 
 // Health check 엔드포인트 (간단한 버전)

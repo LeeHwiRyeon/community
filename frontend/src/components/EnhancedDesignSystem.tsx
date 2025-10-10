@@ -409,7 +409,7 @@ const EnhancedDesignSystem: React.FC = () => {
                     ✨ Enhanced Buttons
                 </Typography>
                 <Grid container spacing={3}>
-                    <Grid item xs={12} md={6}>
+                    <Box sx={{ width: { xs: '100%', md: '50%' }, p: 1 }}>
                         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                             <EnhancedButton variant="primary" size="lg" animation="pulse">
                                 Primary Pulse
@@ -427,8 +427,8 @@ const EnhancedDesignSystem: React.FC = () => {
                                 {loading ? 'Loading...' : 'Danger Button'}
                             </EnhancedButton>
                         </Box>
-                    </Grid>
-                    <Grid item xs={12} md={6}>
+                    </Box>
+                    <Box sx={{ width: { xs: '100%', md: '50%' }, p: 1 }}>
                         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                             <EnhancedButton variant="primary" icon={<SearchIcon />}>
                                 With Icon
@@ -440,7 +440,7 @@ const EnhancedDesignSystem: React.FC = () => {
                                 Extra Large
                             </EnhancedButton>
                         </Box>
-                    </Grid>
+                    </Box>
                 </Grid>
             </Box>
 
@@ -450,7 +450,7 @@ const EnhancedDesignSystem: React.FC = () => {
                     🃏 Enhanced Cards
                 </Typography>
                 <Grid container spacing={3}>
-                    <Grid item xs={12} md={4}>
+                    <Box sx={{ width: { xs: '100%', md: '33.33%' }, p: 1 }}>
                         <EnhancedCard variant="elevated" hover>
                             <Typography variant="h6" gutterBottom>
                                 Elevated Card
@@ -459,8 +459,8 @@ const EnhancedDesignSystem: React.FC = () => {
                                 This card has enhanced elevation and hover effects.
                             </Typography>
                         </EnhancedCard>
-                    </Grid>
-                    <Grid item xs={12} md={4}>
+                    </Box>
+                    <Box sx={{ width: { xs: '100%', md: '33.33%' }, p: 1 }}>
                         <EnhancedCard variant="outlined" hover>
                             <Typography variant="h6" gutterBottom>
                                 Outlined Card
@@ -469,8 +469,8 @@ const EnhancedDesignSystem: React.FC = () => {
                                 This card has a subtle border and hover effects.
                             </Typography>
                         </EnhancedCard>
-                    </Grid>
-                    <Grid item xs={12} md={4}>
+                    </Box>
+                    <Box sx={{ width: { xs: '100%', md: '33.33%' }, p: 1 }}>
                         <EnhancedCard variant="filled" hover>
                             <Typography variant="h6" gutterBottom>
                                 Filled Card
@@ -479,7 +479,7 @@ const EnhancedDesignSystem: React.FC = () => {
                                 This card has a filled background with primary color.
                             </Typography>
                         </EnhancedCard>
-                    </Grid>
+                    </Box>
                 </Grid>
             </Box>
 
@@ -542,7 +542,7 @@ const EnhancedDesignSystem: React.FC = () => {
                     ⏳ Loading Skeletons
                 </Typography>
                 <Grid container spacing={3}>
-                    <Grid item xs={12} md={6}>
+                    <Box sx={{ width: { xs: '100%', md: '50%' }, p: 1 }}>
                         <EnhancedCard variant="outlined" padding="md">
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
                                 <LoadingSkeleton variant="circular" width={40} height={40} />
@@ -555,8 +555,8 @@ const EnhancedDesignSystem: React.FC = () => {
                             <LoadingSkeleton variant="text" width="100%" height={16} />
                             <LoadingSkeleton variant="text" width="80%" height={16} />
                         </EnhancedCard>
-                    </Grid>
-                    <Grid item xs={12} md={6}>
+                    </Box>
+                    <Box sx={{ width: { xs: '100%', md: '50%' }, p: 1 }}>
                         <EnhancedCard variant="filled" padding="md">
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
                                 <LoadingSkeleton variant="circular" width={40} height={40} />
@@ -569,7 +569,7 @@ const EnhancedDesignSystem: React.FC = () => {
                             <LoadingSkeleton variant="text" width="100%" height={16} />
                             <LoadingSkeleton variant="text" width="80%" height={16} />
                         </EnhancedCard>
-                    </Grid>
+                    </Box>
                 </Grid>
             </Box>
 

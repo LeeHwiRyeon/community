@@ -370,9 +370,11 @@ const IntelligentContentFeed: React.FC = () => {
                 low: 0
             };
 
-            filtered = filtered.filter(post =>
-                post.content_analysis.engagement_potential >= engagementThresholds[filters.engagement]
-            );
+            if (filters.engagement !== 'all') {
+                filtered = filtered.filter(post =>
+                    post.content_analysis.engagement_potential >= engagementThresholds[filters.engagement as keyof typeof engagementThresholds]
+                );
+            }
         }
 
         // 품질 점수 필터
@@ -462,7 +464,7 @@ const IntelligentContentFeed: React.FC = () => {
                 <Card sx={{ mb: 3 }}>
                     <CardContent>
                         <Grid container spacing={2}>
-                            <Grid item xs={12} sm={6} md={3}>
+                            <Box sx={{ width: { xs: '100%', sm: '50%', md: '25%' }, p: 1 }}>
                                 <Box sx={{ textAlign: 'center' }}>
                                     <Typography variant="h6" color="primary">
                                         {feedStats.filteredPosts.toLocaleString()}
@@ -471,8 +473,8 @@ const IntelligentContentFeed: React.FC = () => {
                                         필터된 포스트
                                     </Typography>
                                 </Box>
-                            </Grid>
-                            <Grid item xs={12} sm={6} md={3}>
+                            </Box>
+                            <Box sx={{ width: { xs: '100%', sm: '50%', md: '25%' }, p: 1 }}>
                                 <Box sx={{ textAlign: 'center' }}>
                                     <Typography variant="h6" color="success.main">
                                         {Math.round(feedStats.avgQualityScore * 100)}%
@@ -481,8 +483,8 @@ const IntelligentContentFeed: React.FC = () => {
                                         평균 품질 점수
                                     </Typography>
                                 </Box>
-                            </Grid>
-                            <Grid item xs={12} sm={6} md={3}>
+                            </Box>
+                            <Box sx={{ width: { xs: '100%', sm: '50%', md: '25%' }, p: 1 }}>
                                 <Box sx={{ textAlign: 'center' }}>
                                     <Typography variant="h6" color="warning.main">
                                         {Math.round(feedStats.avgEngagement * 100)}%
@@ -491,8 +493,8 @@ const IntelligentContentFeed: React.FC = () => {
                                         평균 참여도
                                     </Typography>
                                 </Box>
-                            </Grid>
-                            <Grid item xs={12} sm={6} md={3}>
+                            </Box>
+                            <Box sx={{ width: { xs: '100%', sm: '50%', md: '25%' }, p: 1 }}>
                                 <Box sx={{ textAlign: 'center' }}>
                                     <Typography variant="h6" color="info.main">
                                         {Math.round(feedStats.personalizedScore * 100)}%
@@ -501,7 +503,7 @@ const IntelligentContentFeed: React.FC = () => {
                                         개인화 점수
                                     </Typography>
                                 </Box>
-                            </Grid>
+                            </Box>
                         </Grid>
                     </CardContent>
                 </Card>

@@ -4,13 +4,13 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import { Grid } from '@mui/material';
 import {
   Box,
   Typography,
   Card,
   CardContent,
   Button,
-  Grid,
   TextField,
   Switch,
   FormControlLabel,
@@ -79,7 +79,7 @@ const QuantumSecuritySystem: React.FC = () => {
     threatsBlocked: 0,
     systemHealth: 0
   });
-  
+
   const [securityEvents, setSecurityEvents] = useState<SecurityEvent[]>([]);
   const [loading, setLoading] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
@@ -94,7 +94,7 @@ const QuantumSecuritySystem: React.FC = () => {
     try {
       // 양자 보안 시스템 초기화
       await new Promise(resolve => setTimeout(resolve, 2000));
-      
+
       setSecurityStatus({
         isActive: true,
         keyStrength: 256,
@@ -168,21 +168,21 @@ const QuantumSecuritySystem: React.FC = () => {
       <Typography variant="h4" component="h1" gutterBottom>
         🔐 양자 암호화 보안 시스템
       </Typography>
-      
+
       <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
         차세대 양자 암호화 기술로 최고 수준의 보안을 제공합니다
       </Typography>
 
       {/* 보안 상태 카드 */}
-      <Grid container spacing={3} sx={{ mb: 3 }}>
-        <Grid item xs={12} md={6}>
+      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mb: 3 }}>
+        <Box sx={{ width: { xs: '100%', md: '50%' }, p: 1 }}>
           <Card>
             <CardContent>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                 <Security sx={{ mr: 1, color: 'primary.main' }} />
                 <Typography variant="h6">보안 상태</Typography>
               </Box>
-              
+
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                 <FormControlLabel
                   control={
@@ -224,9 +224,9 @@ const QuantumSecuritySystem: React.FC = () => {
               </Box>
             </CardContent>
           </Card>
-        </Grid>
+        </Box>
 
-        <Grid item xs={12} md={6}>
+        <Box sx={{ width: { xs: '100%', md: '50%' }, p: 1 }}>
           <Card>
             <CardContent>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
@@ -258,8 +258,8 @@ const QuantumSecuritySystem: React.FC = () => {
               </Typography>
             </CardContent>
           </Card>
-        </Grid>
-      </Grid>
+        </Box>
+      </Box>
 
       {/* 보안 이벤트 */}
       <Card sx={{ mb: 3 }}>
@@ -303,7 +303,7 @@ const QuantumSecuritySystem: React.FC = () => {
           </Typography>
 
           <Grid container spacing={2}>
-            <Grid item xs={12} sm={6} md={3}>
+            <Box sx={{ width: { xs: '100%', sm: '50%', md: '25%' }, p: 1 }}>
               <Paper sx={{ p: 2, textAlign: 'center' }}>
                 <VpnKey sx={{ fontSize: 40, color: 'primary.main', mb: 1 }} />
                 <Typography variant="h6">양자 키 분배</Typography>
@@ -311,9 +311,9 @@ const QuantumSecuritySystem: React.FC = () => {
                   QKD 기반 100% 안전한 키 교환
                 </Typography>
               </Paper>
-            </Grid>
+            </Box>
 
-            <Grid item xs={12} sm={6} md={3}>
+            <Box sx={{ width: { xs: '100%', sm: '50%', md: '25%' }, p: 1 }}>
               <Paper sx={{ p: 2, textAlign: 'center' }}>
                 <Lock sx={{ fontSize: 40, color: 'success.main', mb: 1 }} />
                 <Typography variant="h6">양자 내성 암호화</Typography>
@@ -321,9 +321,9 @@ const QuantumSecuritySystem: React.FC = () => {
                   양자 컴퓨터 공격에 안전
                 </Typography>
               </Paper>
-            </Grid>
+            </Box>
 
-            <Grid item xs={12} sm={6} md={3}>
+            <Box sx={{ width: { xs: '100%', sm: '50%', md: '25%' }, p: 1 }}>
               <Paper sx={{ p: 2, textAlign: 'center' }}>
                 <Speed sx={{ fontSize: 40, color: 'warning.main', mb: 1 }} />
                 <Typography variant="h6">실시간 모니터링</Typography>
@@ -331,9 +331,9 @@ const QuantumSecuritySystem: React.FC = () => {
                   24/7 보안 상태 감시
                 </Typography>
               </Paper>
-            </Grid>
+            </Box>
 
-            <Grid item xs={12} sm={6} md={3}>
+            <Box sx={{ width: { xs: '100%', sm: '50%', md: '25%' }, p: 1 }}>
               <Paper sx={{ p: 2, textAlign: 'center' }}>
                 <Shield sx={{ fontSize: 40, color: 'error.main', mb: 1 }} />
                 <Typography variant="h6">자동 대응</Typography>
@@ -341,7 +341,7 @@ const QuantumSecuritySystem: React.FC = () => {
                   위협 탐지 시 즉시 차단
                 </Typography>
               </Paper>
-            </Grid>
+            </Box>
           </Grid>
         </CardContent>
       </Card>

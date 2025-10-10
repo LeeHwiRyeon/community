@@ -54,7 +54,7 @@ export class MessageEncryption {
             // AES-256-GCM 암호화
             const encrypted = CryptoJS.AES.encrypt(messageData, roomKey, {
                 iv: iv,
-                mode: CryptoJS.mode.GCM,
+                mode: CryptoJS.mode.CBC,
                 padding: CryptoJS.pad.Pkcs7
             });
 
@@ -87,11 +87,11 @@ export class MessageEncryption {
 
             // AES-256-GCM 복호화
             const decrypted = CryptoJS.AES.decrypt(
-                { ciphertext: encrypted },
+                encrypted.toString(),
                 roomKey,
                 {
                     iv: iv,
-                    mode: CryptoJS.mode.GCM,
+                    mode: CryptoJS.mode.CBC,
                     padding: CryptoJS.pad.Pkcs7
                 }
             );

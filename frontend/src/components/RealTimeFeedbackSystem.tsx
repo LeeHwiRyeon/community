@@ -542,7 +542,7 @@ export const FeedbackProvider: React.FC<FeedbackProviderProps> = ({ children }) 
                 const AnimationComponent = getAnimationComponent(feedback.animation!);
 
                 return (
-                    <FeedbackContainer key={feedback.id} position={feedback.position!}>
+                    <FeedbackContainer key={feedback.id} position={feedback.position! as any}>
                         <AnimationComponent in={true} timeout={300}>
                             <AnimatedAlert
                                 severity={feedback.type === 'loading' || feedback.type === 'progress' ? 'info' : feedback.type}

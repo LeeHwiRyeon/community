@@ -132,7 +132,7 @@ import {
     Battery6Bar,
     Thermostat,
     Performance,
-    Optimization,
+    TrendingUp,
     AutoAwesome,
     Rocket,
     Psychology,

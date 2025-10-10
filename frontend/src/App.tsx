@@ -47,6 +47,9 @@ import RPGProfileSystem from './components/RPGProfileSystem';
 import RichTextEditor from './components/RichTextEditor';
 import FollowSystem from './components/FollowSystem';
 import AdminDashboard from './components/AdminDashboard';
+import CoreModulesIntegration from './components/CoreModulesIntegration';
+import AdvancedManagementSystem from './components/AdvancedManagementSystem';
+import IntegratedDashboard from './components/IntegratedDashboard';
 import { AuthProvider } from './components/Auth/AuthProvider';
 import LoginForm from './components/Auth/LoginForm';
 import UserProfile from './components/Auth/UserProfile';
@@ -134,8 +137,9 @@ const App: React.FC = () => {
                         <Box component="main" sx={{ flexGrow: 1 }}>
                             <Routes>
                                 {/* Public Routes */}
-                                <Route path="/" element={<ModernMainPage />} />
+                                <Route path="/" element={<IntegratedDashboard />} />
                                 <Route path="/classic" element={<MainPage />} />
+                                <Route path="/modern" element={<ModernMainPage />} />
                                 <Route path="/home" element={<Home />} />
                                 <Route path="/login" element={<Login />} />
                                 <Route path="/register" element={<Register />} />
@@ -187,13 +191,18 @@ const App: React.FC = () => {
                                 <Route path="/rich-editor" element={<RichTextEditor />} />
                                 <Route path="/follow-system" element={<FollowSystem currentUserId="1" />} />
                                 <Route path="/admin-dashboard" element={<AdminDashboard />} />
+                                <Route path="/core-modules" element={<CoreModulesIntegration />} />
+                                <Route path="/advanced-management" element={<AdvancedManagementSystem />} />
                                 <Route path="/login" element={<LoginForm />} />
                                 <Route path="/profile" element={<UserProfile />} />
 
                                 {/* 404 */}
                                 <Route path="/404" element={<NotFound />} />
                                 <Route path="*" element={<Navigate to="/404" replace />} />
-                            </Routes>
+                            
+        <Route path="/news" element={<NewsPagePage />} />
+        <Route path="/games" element={<GamePagePage />} />
+      </Routes>
                         </Box>
                         <Footer />
 

@@ -67,7 +67,7 @@ export class PerformanceOptimizer {
         // 동적 import를 위한 유틸리티 함수들
         window.dynamicImport = async (modulePath: string) => {
             try {
-                const module = await import(modulePath);
+                const module = await import(/* @vite-ignore */ modulePath);
                 return module;
             } catch (error) {
                 console.error(`동적 import 실패: ${modulePath}`, error);

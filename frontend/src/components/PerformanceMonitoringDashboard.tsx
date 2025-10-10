@@ -4,12 +4,12 @@
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
+import { Grid } from '@mui/material';
 import {
     Box,
     Typography,
     Card,
     CardContent,
-    Grid,
     Button,
     LinearProgress,
     CircularProgress,
@@ -65,7 +65,7 @@ import {
     Computer,
     Cloud,
     Storage,
-    Cpu,
+    MonitorHeart,
     Wifi,
     SignalCellular4Bar,
     Battery6Bar,
@@ -73,8 +73,6 @@ import {
     Security,
     Shield,
     BugReport,
-    Performance,
-    Optimization
 } from '@mui/icons-material';
 
 // 타입 정의
@@ -251,7 +249,7 @@ const PerformanceMonitoringDashboard: React.FC = () => {
             case 'good': return 'success';
             case 'warning': return 'warning';
             case 'critical': return 'error';
-            default: return 'default';
+            default: return 'primary';
         }
     };
 
@@ -340,8 +338,8 @@ const PerformanceMonitoringDashboard: React.FC = () => {
                         🖥️ 시스템 상태 개요
                     </Typography>
 
-                    <Grid container spacing={3}>
-                        <Grid item xs={12} md={3}>
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
+                        <Box sx={{ width: { xs: '100%', md: '25%' }, p: 1 }}>
                             <Box sx={{ textAlign: 'center' }}>
                                 <Typography variant="h3" color={systemHealth?.overall === 'healthy' ? 'success.main' : 'error.main'}>
                                     {systemHealth?.overall === 'healthy' ? '✅' : '⚠️'}
@@ -353,11 +351,11 @@ const PerformanceMonitoringDashboard: React.FC = () => {
                                     전체 시스템 상태
                                 </Typography>
                             </Box>
-                        </Grid>
+                        </Box>
 
-                        <Grid item xs={12} md={3}>
+                        <Box sx={{ width: { xs: '100%', md: '25%' }, p: 1 }}>
                             <Box sx={{ textAlign: 'center' }}>
-                                <Cpu sx={{ fontSize: 40, color: 'primary.main' }} />
+                                <MonitorHeart sx={{ fontSize: 40, color: 'primary.main' }} />
                                 <Typography variant="h6">
                                     {systemHealth?.cpu}%
                                 </Typography>
@@ -365,9 +363,9 @@ const PerformanceMonitoringDashboard: React.FC = () => {
                                     CPU 사용률
                                 </Typography>
                             </Box>
-                        </Grid>
+                        </Box>
 
-                        <Grid item xs={12} md={3}>
+                        <Box sx={{ width: { xs: '100%', md: '25%' }, p: 1 }}>
                             <Box sx={{ textAlign: 'center' }}>
                                 <Memory sx={{ fontSize: 40, color: 'info.main' }} />
                                 <Typography variant="h6">
@@ -377,9 +375,9 @@ const PerformanceMonitoringDashboard: React.FC = () => {
                                     메모리 사용량
                                 </Typography>
                             </Box>
-                        </Grid>
+                        </Box>
 
-                        <Grid item xs={12} md={3}>
+                        <Box sx={{ width: { xs: '100%', md: '25%' }, p: 1 }}>
                             <Box sx={{ textAlign: 'center' }}>
                                 <NetworkCheck sx={{ fontSize: 40, color: 'success.main' }} />
                                 <Typography variant="h6">
@@ -389,8 +387,8 @@ const PerformanceMonitoringDashboard: React.FC = () => {
                                     가동률
                                 </Typography>
                             </Box>
-                        </Grid>
-                    </Grid>
+                        </Box>
+                    </Box>
                 </CardContent>
             </Card>
 
@@ -401,9 +399,9 @@ const PerformanceMonitoringDashboard: React.FC = () => {
                         📈 실시간 성능 메트릭
                     </Typography>
 
-                    <Grid container spacing={3}>
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
                         {metrics.map((metric) => (
-                            <Grid item xs={12} sm={6} md={4} key={metric.id}>
+                            <Box sx={{ width: { xs: '100%', sm: '50%', md: '33.33%' }, p: 1 }} key={metric.id}>
                                 <Card variant="outlined">
                                     <CardContent>
                                         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
@@ -440,9 +438,9 @@ const PerformanceMonitoringDashboard: React.FC = () => {
                                         </Typography>
                                     </CardContent>
                                 </Card>
-                            </Grid>
+                            </Box>
                         ))}
-                    </Grid>
+                    </Box>
                 </CardContent>
             </Card>
 
@@ -515,35 +513,35 @@ const PerformanceMonitoringDashboard: React.FC = () => {
                         💡 성능 최적화 추천사항
                     </Typography>
 
-                    <Grid container spacing={2}>
-                        <Grid item xs={12} md={6}>
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
+                        <Box sx={{ width: { xs: '100%', md: '50%' }, p: 1 }}>
                             <Alert severity="info">
                                 <AlertTitle>메모리 최적화</AlertTitle>
                                 이미지 지연 로딩을 활성화하여 초기 로딩 시간을 단축할 수 있습니다.
                             </Alert>
-                        </Grid>
+                        </Box>
 
-                        <Grid item xs={12} md={6}>
+                        <Box sx={{ width: { xs: '100%', md: '50%' }, p: 1 }}>
                             <Alert severity="success">
                                 <AlertTitle>캐싱 개선</AlertTitle>
                                 API 응답 캐싱을 통해 네트워크 요청을 줄일 수 있습니다.
                             </Alert>
-                        </Grid>
+                        </Box>
 
-                        <Grid item xs={12} md={6}>
+                        <Box sx={{ width: { xs: '100%', md: '50%' }, p: 1 }}>
                             <Alert severity="warning">
                                 <AlertTitle>번들 크기</AlertTitle>
                                 코드 스플리팅을 적용하여 초기 번들 크기를 줄일 수 있습니다.
                             </Alert>
-                        </Grid>
+                        </Box>
 
-                        <Grid item xs={12} md={6}>
+                        <Box sx={{ width: { xs: '100%', md: '50%' }, p: 1 }}>
                             <Alert severity="info">
                                 <AlertTitle>CDN 활용</AlertTitle>
                                 정적 자원을 CDN에 배포하여 로딩 속도를 개선할 수 있습니다.
                             </Alert>
-                        </Grid>
-                    </Grid>
+                        </Box>
+                    </Box>
                 </CardContent>
             </Card>
         </Box>

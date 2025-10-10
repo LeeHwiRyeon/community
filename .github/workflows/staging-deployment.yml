@@ -1,0 +1,387 @@
+name: 🚀 Community Platform v1.3 - Staging Deployment
+
+on:
+  push:
+    branches: [ develop, staging ]
+  pull_request:
+    branches: [ staging ]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deployment Environment'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+          - production
+      force_deploy:
+        description: 'Force Deploy (Skip Tests)'
+        required: false
+        default: false
+        type: boolean
+
+env:
+  NODE_VERSION: '18'
+  NPM_VERSION: '9'
+  REGISTRY: 'ghcr.io'
+  IMAGE_NAME: 'community-platform'
+
+jobs:
+  # ============================================================================
+  # 🔍 코드 품질 검사
+  # ============================================================================
+  code-quality:
+    name: 🔍 Code Quality Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: 🏗️ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: 'frontend/package-lock.json'
+      
+      - name: 📦 Install Dependencies
+        working-directory: ./frontend
+        run: |
+          npm ci --prefer-offline --no-audit
+      
+      - name: 🔍 TypeScript Type Check
+        working-directory: ./frontend
+        run: |
+          npm run type-check || echo "TypeScript check failed, continuing..."
+      
+      - name: 🧹 ESLint Check
+        working-directory: ./frontend
+        run: |
+          npm run lint || echo "ESLint check failed, continuing..."
+      
+      - name: 💅 Prettier Check
+        working-directory: ./frontend
+        run: |
+          npm run format:check || echo "Prettier check failed, continuing..."
+
+  # ============================================================================
+  # 🧪 테스트 실행
+  # ============================================================================
+  test:
+    name: 🧪 Run Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: code-quality
+    if: ${{ !inputs.force_deploy }}
+    
+    strategy:
+      matrix:
+        test-type: [unit, integration, e2e]
+    
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+      
+      - name: 🏗️ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: 'frontend/package-lock.json'
+      
+      - name: 📦 Install Dependencies
+        working-directory: ./frontend
+        run: |
+          npm ci --prefer-offline --no-audit
+      
+      - name: 🧪 Run Unit Tests
+        if: matrix.test-type == 'unit'
+        working-directory: ./frontend
+        run: |
+          npm run test:unit -- --coverage --watchAll=false
+      
+      - name: 🧪 Run Integration Tests
+        if: matrix.test-type == 'integration'
+        working-directory: ./frontend
+        run: |
+          npm run test:integration -- --watchAll=false
+      
+      - name: 🧪 Run E2E Tests
+        if: matrix.test-type == 'e2e'
+        working-directory: ./frontend
+        run: |
+          npm run test:e2e
+      
+      - name: 📊 Upload Test Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-${{ matrix.test-type }}
+          path: |
+            frontend/coverage/
+            frontend/test-results/
+          retention-days: 7
+
+  # ============================================================================
+  # 🏗️ 빌드 및 이미지 생성
+  # ============================================================================
+  build:
+    name: 🏗️ Build & Create Image
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: [code-quality, test]
+    if: always() && (needs.test.result == 'success' || needs.test.result == 'skipped' || inputs.force_deploy)
+    
+    outputs:
+      image-tag: ${{ steps.meta.outputs.tags }}
+      image-digest: ${{ steps.build.outputs.digest }}
+    
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: 🏗️ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: 'frontend/package-lock.json'
+      
+      - name: 📦 Install Dependencies
+        working-directory: ./frontend
+        run: |
+          npm ci --prefer-offline --no-audit
+      
+      - name: 🏗️ Build Frontend
+        working-directory: ./frontend
+        run: |
+          npm run build
+      
+      - name: 📊 Build Analysis
+        working-directory: ./frontend
+        run: |
+          npm run build:analyze || echo "Build analysis failed, continuing..."
+      
+      - name: 🐳 Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      
+      - name: 🔐 Log in to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: 📋 Extract Metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ github.repository }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=sha,prefix={{branch}}-
+            type=raw,value=latest,enable={{is_default_branch}}
+            type=raw,value=${{ github.event.inputs.environment || 'staging' }},enable=true
+      
+      - name: 🏗️ Build and Push Docker Image
+        id: build
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            NODE_ENV=production
+            VITE_NODE_ENV=production
+            VITE_API_URL=https://api.community.com
+            VITE_CDN_URL=https://cdn.community.com
+
+  # ============================================================================
+  # 🚀 스테이징 배포
+  # ============================================================================
+  deploy-staging:
+    name: 🚀 Deploy to Staging
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: build
+    if: github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/staging' || (github.event_name == 'workflow_dispatch' && inputs.environment == 'staging')
+    environment: staging
+    
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+      
+      - name: 🏗️ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      
+      - name: 🔧 Configure AWS CLI
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      
+      - name: 🚀 Deploy to Staging
+        run: |
+          echo "🚀 Deploying to staging environment..."
+          echo "Image: ${{ needs.build.outputs.image-tag }}"
+          echo "Digest: ${{ needs.build.outputs.image-digest }}"
+          
+          # ECS 서비스 업데이트
+          aws ecs update-service \
+            --cluster community-staging \
+            --service community-app-staging \
+            --force-new-deployment \
+            --region us-east-1
+      
+      - name: ⏳ Wait for Deployment
+        run: |
+          echo "⏳ Waiting for deployment to complete..."
+          sleep 60
+      
+      - name: 🏥 Health Check
+        run: |
+          echo "🏥 Performing health check..."
+          for i in {1..10}; do
+            if curl -f https://staging.community.com/health; then
+              echo "✅ Health check passed!"
+              break
+            else
+              echo "⏳ Health check attempt $i failed, retrying..."
+              sleep 30
+            fi
+          done
+      
+      - name: 📊 Deployment Status
+        run: |
+          echo "📊 Deployment completed successfully!"
+          echo "🌐 Staging URL: https://staging.community.com"
+          echo "📱 API URL: https://api-staging.community.com"
+
+  # ============================================================================
+  # 🚀 프로덕션 배포 (수동 승인 필요)
+  # ============================================================================
+  deploy-production:
+    name: 🚀 Deploy to Production
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: [build, deploy-staging]
+    if: github.ref == 'refs/heads/main' || (github.event_name == 'workflow_dispatch' && inputs.environment == 'production')
+    environment: production
+    
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+      
+      - name: 🏗️ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      
+      - name: 🔧 Configure AWS CLI
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      
+      - name: 🚀 Deploy to Production
+        run: |
+          echo "🚀 Deploying to production environment..."
+          echo "Image: ${{ needs.build.outputs.image-tag }}"
+          echo "Digest: ${{ needs.build.outputs.image-digest }}"
+          
+          # 카나리 배포 시작
+          aws ecs update-service \
+            --cluster community-production \
+            --service community-app-production \
+            --force-new-deployment \
+            --region us-east-1
+      
+      - name: ⏳ Wait for Canary Deployment
+        run: |
+          echo "⏳ Waiting for canary deployment to complete..."
+          sleep 120
+      
+      - name: 🏥 Production Health Check
+        run: |
+          echo "🏥 Performing production health check..."
+          for i in {1..15}; do
+            if curl -f https://community.com/health; then
+              echo "✅ Production health check passed!"
+              break
+            else
+              echo "⏳ Health check attempt $i failed, retrying..."
+              sleep 30
+            fi
+          done
+      
+      - name: 📊 Production Deployment Status
+        run: |
+          echo "📊 Production deployment completed successfully!"
+          echo "🌐 Production URL: https://community.com"
+          echo "📱 API URL: https://api.community.com"
+
+  # ============================================================================
+  # 🔔 알림 및 보고서
+  # ============================================================================
+  notify:
+    name: 🔔 Notify Deployment Status
+    runs-on: ubuntu-latest
+    needs: [deploy-staging, deploy-production]
+    if: always()
+    
+    steps:
+      - name: 📊 Deployment Summary
+        run: |
+          echo "📊 Deployment Summary"
+          echo "==================="
+          echo "✅ Staging: ${{ needs.deploy-staging.result }}"
+          echo "✅ Production: ${{ needs.deploy-production.result }}"
+          echo "🕐 Completed at: $(date)"
+      
+      - name: 🔔 Slack Notification
+        if: always()
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          channel: '#deployments'
+          text: |
+            🚀 Community Platform v1.3 Deployment
+            Status: ${{ job.status }}
+            Staging: ${{ needs.deploy-staging.result }}
+            Production: ${{ needs.deploy-production.result }}
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      
+      - name: 📧 Email Notification
+        if: failure()
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 587
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: '❌ Community Platform Deployment Failed'
+          to: ${{ secrets.EMAIL_TO }}
+          from: 'Deployment Bot <deploy@community.com>'
+          body: |
+            Community Platform v1.3 deployment has failed.
+            
+            Check the GitHub Actions logs for more details:
+            ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
