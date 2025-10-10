@@ -212,9 +212,9 @@ const AdvancedAIIntegration: React.FC = () => {
             </Box>
 
             <TabPanel value={value} index={0}>
-                <Grid container spacing={3}>
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
                     {aiFeatures.map((feature) => (
-                        <Grid item xs={12} md={6} lg={4} key={feature.id}>
+                        <Box sx={{ width: { xs: '100%', md: '33.33%', lg: '25%' }, p: 1 }} key={feature.id}>
                             <Card
                                 sx={{
                                     height: '100%',
@@ -267,14 +267,14 @@ const AdvancedAIIntegration: React.FC = () => {
                                     </Box>
                                 </CardContent>
                             </Card>
-                        </Grid>
+                        </Box>
                     ))}
-                </Grid>
+                </Box>
             </TabPanel>
 
             <TabPanel value={value} index={1}>
-                <Grid container spacing={3}>
-                    <Grid item xs={12} md={6}>
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
+                    <Box sx={{ width: { xs: '100%', md: '50%' }, p: 1 }}>
                         <Card>
                             <CardContent>
                                 <Typography variant="h6" gutterBottom>
@@ -293,9 +293,9 @@ const AdvancedAIIntegration: React.FC = () => {
                                 />
                             </CardContent>
                         </Card>
-                    </Grid>
+                    </Box>
 
-                    <Grid item xs={12} md={6}>
+                    <Box sx={{ width: { xs: '100%', md: '50%' }, p: 1 }}>
                         <Card>
                             <CardContent>
                                 <Typography variant="h6" gutterBottom>
@@ -316,8 +316,8 @@ const AdvancedAIIntegration: React.FC = () => {
                                 </List>
                             </CardContent>
                         </Card>
-                    </Grid>
-                </Grid>
+                    </Box>
+                </Box>
             </TabPanel>
 
             <TabPanel value={value} index={2}>
