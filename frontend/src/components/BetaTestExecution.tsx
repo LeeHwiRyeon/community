@@ -49,7 +49,9 @@ import {
     Badge,
     Avatar,
     Stack,
-    Rating,
+    Rating
+} from '@mui/material';
+import {
     Timeline,
     TimelineItem,
     TimelineSeparator,
@@ -57,7 +59,7 @@ import {
     TimelineContent,
     TimelineDot,
     TimelineOppositeContent
-} from '@mui/material';
+} from '@mui/lab';
 import {
     PlayArrow,
     Pause,
@@ -70,7 +72,6 @@ import {
     Error,
     Warning,
     Info,
-    Timeline,
     BarChart,
     PieChart,
     ExpandMore,
@@ -126,13 +127,10 @@ import {
     Computer,
     Cloud,
     Storage,
-    Cpu,
     Wifi,
     SignalCellular4Bar,
     Battery6Bar,
     Thermostat,
-    Performance,
-    TrendingUp,
     AutoAwesome,
     Rocket,
     Psychology,
@@ -142,11 +140,10 @@ import {
     Construction,
     Build,
     Handyman,
-    Precision,
     Tune,
     Adjust,
     SettingsApplications,
-    TuneIcon
+    AccessibilityNew
 } from '@mui/icons-material';
 
 // 타입 정의
@@ -784,7 +781,7 @@ const BetaTestExecution: React.FC = () => {
                                         {scenario.category === 'ui_ux' && <Assessment color="info" />}
                                         {scenario.category === 'performance' && <Speed color="warning" />}
                                         {scenario.category === 'security' && <Security color="error" />}
-                                        {scenario.category === 'accessibility' && <Accessibility color="success" />}
+                                        {scenario.category === 'accessibility' && <AccessibilityNew color="success" />}
                                     </ListItemIcon>
 
                                     <ListItemText

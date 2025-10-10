@@ -347,79 +347,71 @@ const BetaTestManagement: React.FC = () => {
             </Box>
 
             {/* 통계 카드 */}
-            <Grid container spacing={3} sx={{ mb: 3 }}>
-                <Grid item xs={12} sm={6} md={3}>
-                    <Card>
-                        <CardContent>
-                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                <Box>
-                                    <Typography color="textSecondary" gutterBottom>
-                                        베타 테스터
-                                    </Typography>
-                                    <Typography variant="h4" component="div">
-                                        {betaUsers.length}
-                                    </Typography>
-                                </Box>
-                                <Assessment sx={{ fontSize: 40, color: 'primary.main' }} />
+            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' }, gap: 3, mb: 3 }}>
+                <Card>
+                    <CardContent>
+                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                            <Box>
+                                <Typography color="textSecondary" gutterBottom>
+                                    베타 테스터
+                                </Typography>
+                                <Typography variant="h4" component="div">
+                                    {betaUsers.length}
+                                </Typography>
                             </Box>
-                        </CardContent>
-                    </Card>
-                </Grid>
+                            <Assessment sx={{ fontSize: 40, color: 'primary.main' }} />
+                        </Box>
+                    </CardContent>
+                </Card>
 
-                <Grid item xs={12} sm={6} md={3}>
-                    <Card>
-                        <CardContent>
-                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                <Box>
-                                    <Typography color="textSecondary" gutterBottom>
-                                        총 피드백
-                                    </Typography>
-                                    <Typography variant="h4" component="div">
-                                        {feedbacks.length}
-                                    </Typography>
-                                </Box>
-                                <Feedback sx={{ fontSize: 40, color: 'info.main' }} />
+                <Card>
+                    <CardContent>
+                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                            <Box>
+                                <Typography color="textSecondary" gutterBottom>
+                                    총 피드백
+                                </Typography>
+                                <Typography variant="h4" component="div">
+                                    {feedbacks.length}
+                                </Typography>
                             </Box>
-                        </CardContent>
-                    </Card>
-                </Grid>
+                            <Feedback sx={{ fontSize: 40, color: 'info.main' }} />
+                        </Box>
+                    </CardContent>
+                </Card>
 
-                <Grid item xs={12} sm={6} md={3}>
-                    <Card>
-                        <CardContent>
-                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                <Box>
-                                    <Typography color="textSecondary" gutterBottom>
-                                        버그 리포트
-                                    </Typography>
-                                    <Typography variant="h4" component="div">
-                                        {feedbacks.filter(f => f.type === 'bug_report').length}
-                                    </Typography>
-                                </Box>
-                                <BugReport sx={{ fontSize: 40, color: 'error.main' }} />
+                <Card>
+                    <CardContent>
+                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                            <Box>
+                                <Typography color="textSecondary" gutterBottom>
+                                    버그 리포트
+                                </Typography>
+                                <Typography variant="h4" component="div">
+                                    {feedbacks.filter(f => f.type === 'bug_report').length}
+                                </Typography>
                             </Box>
-                        </CardContent>
-                    </Card>
-                </Grid>
+                            <BugReport sx={{ fontSize: 40, color: 'error.main' }} />
+                        </Box>
+                    </CardContent>
+                </Card>
 
-                <Grid item xs={12} sm={6} md={3}>
-                    <Card>
-                        <CardContent>
-                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                <Box>
-                                    <Typography color="textSecondary" gutterBottom>
-                                        기능 요청
-                                    </Typography>
-                                    <Typography variant="h4" component="div">
-                                        {feedbacks.filter(f => f.type === 'feature_request').length}
-                                    </Typography>
-                                </Box>
-                                <Lightbulb sx={{ fontSize: 40, color: 'warning.main' }} />
+                <Card>
+                    <CardContent>
+                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                            <Box>
+                                <Typography color="textSecondary" gutterBottom>
+                                    기능 요청
+                                </Typography>
+                                <Typography variant="h4" component="div">
+                                    {feedbacks.filter(f => f.type === 'feature_request').length}
+                                </Typography>
                             </Box>
-                        </CardContent>
-                    </Card>
-                </Grid>
-            </Grid>
+                            <Lightbulb sx={{ fontSize: 40, color: 'warning.main' }} />
+                        </Box>
+                    </CardContent>
+                </Card>
+            </Box>
 
             {/* 성능 메트릭 */}
             <Card sx={{ mb: 3 }}>

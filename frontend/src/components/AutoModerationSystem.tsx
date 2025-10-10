@@ -10,7 +10,6 @@ import {
     Card,
     CardContent,
     Button,
-    Grid,
     Switch,
     FormControlLabel,
     Alert,
@@ -19,6 +18,7 @@ import {
     List,
     ListItem,
     ListItemText,
+    Grid,
     ListItemSecondaryAction,
     IconButton,
     Dialog,
@@ -336,79 +336,71 @@ const AutoModerationSystem: React.FC = () => {
             </Box>
 
             {/* 통계 카드 */}
-            <Grid container spacing={3} sx={{ mb: 3 }}>
-                <Grid item xs={12} sm={6} md={3}>
-                    <Card>
-                        <CardContent>
-                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                <Box>
-                                    <Typography color="textSecondary" gutterBottom>
-                                        총 처리량
-                                    </Typography>
-                                    <Typography variant="h4" component="div">
-                                        {stats.totalProcessed.toLocaleString()}
-                                    </Typography>
-                                </Box>
-                                <SmartToy sx={{ fontSize: 40, color: 'primary.main' }} />
+            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' }, gap: 3, mb: 3 }}>
+                <Card>
+                    <CardContent>
+                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                            <Box>
+                                <Typography color="textSecondary" gutterBottom>
+                                    총 처리량
+                                </Typography>
+                                <Typography variant="h4" component="div">
+                                    {stats.totalProcessed.toLocaleString()}
+                                </Typography>
                             </Box>
-                        </CardContent>
-                    </Card>
-                </Grid>
+                            <SmartToy sx={{ fontSize: 40, color: 'primary.main' }} />
+                        </Box>
+                    </CardContent>
+                </Card>
 
-                <Grid item xs={12} sm={6} md={3}>
-                    <Card>
-                        <CardContent>
-                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                <Box>
-                                    <Typography color="textSecondary" gutterBottom>
-                                        자동 승인
-                                    </Typography>
-                                    <Typography variant="h4" component="div">
-                                        {stats.autoApproved.toLocaleString()}
-                                    </Typography>
-                                </Box>
-                                <CheckCircle sx={{ fontSize: 40, color: 'success.main' }} />
+                <Card>
+                    <CardContent>
+                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                            <Box>
+                                <Typography color="textSecondary" gutterBottom>
+                                    자동 승인
+                                </Typography>
+                                <Typography variant="h4" component="div">
+                                    {stats.autoApproved.toLocaleString()}
+                                </Typography>
                             </Box>
-                        </CardContent>
-                    </Card>
-                </Grid>
+                            <CheckCircle sx={{ fontSize: 40, color: 'success.main' }} />
+                        </Box>
+                    </CardContent>
+                </Card>
 
-                <Grid item xs={12} sm={6} md={3}>
-                    <Card>
-                        <CardContent>
-                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                <Box>
-                                    <Typography color="textSecondary" gutterBottom>
-                                        정확도
-                                    </Typography>
-                                    <Typography variant="h4" component="div">
-                                        {stats.accuracy}%
-                                    </Typography>
-                                </Box>
-                                <Assessment sx={{ fontSize: 40, color: 'info.main' }} />
+                <Card>
+                    <CardContent>
+                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                            <Box>
+                                <Typography color="textSecondary" gutterBottom>
+                                    정확도
+                                </Typography>
+                                <Typography variant="h4" component="div">
+                                    {stats.accuracy}%
+                                </Typography>
                             </Box>
-                        </CardContent>
-                    </Card>
-                </Grid>
+                            <Assessment sx={{ fontSize: 40, color: 'info.main' }} />
+                        </Box>
+                    </CardContent>
+                </Card>
 
-                <Grid item xs={12} sm={6} md={3}>
-                    <Card>
-                        <CardContent>
-                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                <Box>
-                                    <Typography color="textSecondary" gutterBottom>
-                                        처리 속도
-                                    </Typography>
-                                    <Typography variant="h4" component="div">
-                                        {stats.performanceMetrics.processingSpeed}/s
-                                    </Typography>
-                                </Box>
-                                <Speed sx={{ fontSize: 40, color: 'warning.main' }} />
+                <Card>
+                    <CardContent>
+                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                            <Box>
+                                <Typography color="textSecondary" gutterBottom>
+                                    처리 속도
+                                </Typography>
+                                <Typography variant="h4" component="div">
+                                    {stats.performanceMetrics.processingSpeed}/s
+                                </Typography>
                             </Box>
-                        </CardContent>
-                    </Card>
-                </Grid>
-            </Grid>
+                            <Speed sx={{ fontSize: 40, color: 'warning.main' }} />
+                        </Box>
+                    </CardContent>
+                </Card>
+            </Box>
 
             {/* 설정 패널 */}
             <Card sx={{ mb: 3 }}>
@@ -416,8 +408,8 @@ const AutoModerationSystem: React.FC = () => {
                     <Typography variant="h6" gutterBottom>
                         ⚙️ 자동 모더레이션 설정
                     </Typography>
-                    <Grid container spacing={3}>
-                        <Grid item xs={12} md={6}>
+                    <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'repeat(2, 1fr)' }, gap: 3 }}>
+                        <Box>
                             <FormControlLabel
                                 control={
                                     <Switch
@@ -438,8 +430,8 @@ const AutoModerationSystem: React.FC = () => {
                                 }
                                 label="엄격 모드"
                             />
-                        </Grid>
-                        <Grid item xs={12} md={6}>
+                        </Box>
+                        <Box>
                             <FormControlLabel
                                 control={
                                     <Switch
@@ -460,8 +452,8 @@ const AutoModerationSystem: React.FC = () => {
                                 }
                                 label="알림 활성화"
                             />
-                        </Grid>
-                    </Grid>
+                        </Box>
+                    </Box>
                 </CardContent>
             </Card>
 

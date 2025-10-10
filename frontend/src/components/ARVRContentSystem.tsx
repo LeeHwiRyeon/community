@@ -10,7 +10,6 @@ import {
   Card,
   CardContent,
   Button,
-  Grid,
   TextField,
   Select,
   MenuItem,
@@ -42,7 +41,6 @@ import {
 } from '@mui/material';
 import {
   ViewInAr,
-  ViewInCar,
   PlayArrow,
   Pause,
   Stop,
@@ -196,13 +194,13 @@ const ARVRContentSystem: React.FC = () => {
   };
 
   const handleLikeContent = (contentId: string) => {
-    setContents(prev => prev.map(content => 
-      content.id === contentId 
-        ? { 
-            ...content, 
-            isLiked: !content.isLiked,
-            likes: content.isLiked ? content.likes - 1 : content.likes + 1
-          }
+    setContents(prev => prev.map(content =>
+      content.id === contentId
+        ? {
+          ...content,
+          isLiked: !content.isLiked,
+          likes: content.isLiked ? content.likes - 1 : content.likes + 1
+        }
         : content
     ));
   };
@@ -210,7 +208,7 @@ const ARVRContentSystem: React.FC = () => {
   const getTypeIcon = (type: string) => {
     switch (type) {
       case 'ar': return <ViewInAr color="primary" />;
-      case 'vr': return <ViewInCar color="secondary" />;
+      case 'vr': return <ViewInAr color="secondary" />;
       case 'mixed': return <ViewInAr color="success" />;
       default: return <ViewInAr />;
     }
@@ -241,69 +239,61 @@ const ARVRContentSystem: React.FC = () => {
       <Typography variant="h4" component="h1" gutterBottom>
         🥽 AR/VR 콘텐츠 시스템
       </Typography>
-      
+
       <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
         WebXR 기반 몰입형 경험을 제공하는 AR/VR 콘텐츠 플랫폼
       </Typography>
 
       {/* 통계 카드 */}
-      <Grid container spacing={3} sx={{ mb: 3 }}>
-        <Grid item xs={12} sm={6} md={3}>
-          <Card>
-            <CardContent>
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                <ViewInAr sx={{ mr: 1, color: 'primary.main' }} />
-                <Typography variant="h6">전체 콘텐츠</Typography>
-              </Box>
-              <Typography variant="h4" color="primary.main">
-                {stats.totalContent}
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
+      <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' }, gap: 3, mb: 3 }}>
+        <Card>
+          <CardContent>
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+              <ViewInAr sx={{ mr: 1, color: 'primary.main' }} />
+              <Typography variant="h6">전체 콘텐츠</Typography>
+            </Box>
+            <Typography variant="h4" color="primary.main">
+              {stats.totalContent}
+            </Typography>
+          </CardContent>
+        </Card>
 
-        <Grid item xs={12} sm={6} md={3}>
-          <Card>
-            <CardContent>
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                <ViewInAr sx={{ mr: 1, color: 'success.main' }} />
-                <Typography variant="h6">AR 콘텐츠</Typography>
-              </Box>
-              <Typography variant="h4" color="success.main">
-                {stats.arContent}
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
+        <Card>
+          <CardContent>
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+              <ViewInAr sx={{ mr: 1, color: 'success.main' }} />
+              <Typography variant="h6">AR 콘텐츠</Typography>
+            </Box>
+            <Typography variant="h4" color="success.main">
+              {stats.arContent}
+            </Typography>
+          </CardContent>
+        </Card>
 
-        <Grid item xs={12} sm={6} md={3}>
-          <Card>
-            <CardContent>
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                <ViewInCar sx={{ mr: 1, color: 'secondary.main' }} />
-                <Typography variant="h6">VR 콘텐츠</Typography>
-              </Box>
-              <Typography variant="h4" color="secondary.main">
-                {stats.vrContent}
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
+        <Card>
+          <CardContent>
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+              <ViewInAr sx={{ mr: 1, color: 'secondary.main' }} />
+              <Typography variant="h6">VR 콘텐츠</Typography>
+            </Box>
+            <Typography variant="h4" color="secondary.main">
+              {stats.vrContent}
+            </Typography>
+          </CardContent>
+        </Card>
 
-        <Grid item xs={12} sm={6} md={3}>
-          <Card>
-            <CardContent>
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                <ViewInAr sx={{ mr: 1, color: 'warning.main' }} />
-                <Typography variant="h6">혼합현실</Typography>
-              </Box>
-              <Typography variant="h4" color="warning.main">
-                {stats.mixedContent}
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
+        <Card>
+          <CardContent>
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+              <ViewInAr sx={{ mr: 1, color: 'warning.main' }} />
+              <Typography variant="h6">혼합현실</Typography>
+            </Box>
+            <Typography variant="h4" color="warning.main">
+              {stats.mixedContent}
+            </Typography>
+          </CardContent>
+        </Card>
+      </Box>
 
       {/* 필터 및 액션 */}
       <Box sx={{ mb: 3, display: 'flex', gap: 2, alignItems: 'center' }}>
@@ -332,88 +322,87 @@ const ARVRContentSystem: React.FC = () => {
           <CircularProgress />
         </Box>
       ) : (
-        <Grid container spacing={3}>
+        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' }, gap: 3 }}>
           {filteredContents.map((content) => (
-            <Grid item xs={12} sm={6} md={4} key={content.id}>
-              <Card
+            <Card
+              key={content.id}
+              sx={{
+                height: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+                transition: 'transform 0.2s',
+                '&:hover': {
+                  transform: 'translateY(-4px)',
+                  boxShadow: 3
+                }
+              }}
+            >
+              <Box
+                component="img"
+                src={content.thumbnail}
+                alt={content.title}
                 sx={{
-                  height: '100%',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  transition: 'transform 0.2s',
-                  '&:hover': {
-                    transform: 'translateY(-4px)',
-                    boxShadow: 3
-                  }
+                  width: '100%',
+                  height: 200,
+                  objectFit: 'cover'
                 }}
-              >
-                <Box
-                  component="img"
-                  src={content.thumbnail}
-                  alt={content.title}
-                  sx={{
-                    width: '100%',
-                    height: 200,
-                    objectFit: 'cover'
-                  }}
-                />
-                
-                <CardContent sx={{ flexGrow: 1 }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                    {getTypeIcon(content.type)}
-                    <Typography variant="h6" component="h2" sx={{ ml: 1, flexGrow: 1 }}>
-                      {content.title}
-                    </Typography>
-                  </Box>
-                  
-                  <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                    {content.description}
+              />
+
+              <CardContent sx={{ flexGrow: 1 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                  {getTypeIcon(content.type)}
+                  <Typography variant="h6" component="h2" sx={{ ml: 1, flexGrow: 1 }}>
+                    {content.title}
+                  </Typography>
+                </Box>
+
+                <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                  {content.description}
+                </Typography>
+
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+                  <Chip
+                    label={content.type.toUpperCase()}
+                    color={getTypeColor(content.type)}
+                    size="small"
+                  />
+                  <Chip
+                    label={content.category}
+                    size="small"
+                    variant="outlined"
+                  />
+                </Box>
+
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <Typography variant="body2" color="text.secondary">
+                    {formatDuration(content.duration)}
                   </Typography>
 
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
-                    <Chip
-                      label={content.type.toUpperCase()}
-                      color={getTypeColor(content.type)}
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <IconButton
                       size="small"
-                    />
-                    <Chip
-                      label={content.category}
-                      size="small"
-                      variant="outlined"
-                    />
+                      onClick={() => handleLikeContent(content.id)}
+                      color={content.isLiked ? 'error' : 'default'}
+                    >
+                      {content.isLiked ? <Favorite /> : <FavoriteBorder />}
+                    </IconButton>
+                    <Typography variant="body2">{content.likes}</Typography>
                   </Box>
+                </Box>
 
-                  <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <Typography variant="body2" color="text.secondary">
-                      {formatDuration(content.duration)}
-                    </Typography>
-                    
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <IconButton
-                        size="small"
-                        onClick={() => handleLikeContent(content.id)}
-                        color={content.isLiked ? 'error' : 'default'}
-                      >
-                        {content.isLiked ? <Favorite /> : <FavoriteBorder />}
-                      </IconButton>
-                      <Typography variant="body2">{content.likes}</Typography>
-                    </Box>
-                  </Box>
-
-                  <Button
-                    fullWidth
-                    variant="contained"
-                    startIcon={<PlayArrow />}
-                    onClick={() => handlePlayContent(content)}
-                    sx={{ mt: 2 }}
-                  >
-                    재생
-                  </Button>
-                </CardContent>
-              </Card>
-            </Grid>
+                <Button
+                  fullWidth
+                  variant="contained"
+                  startIcon={<PlayArrow />}
+                  onClick={() => handlePlayContent(content)}
+                  sx={{ mt: 2 }}
+                >
+                  재생
+                </Button>
+              </CardContent>
+            </Card>
           ))}
-        </Grid>
+        </Box>
       )}
 
       {/* AR/VR 플레이어 다이얼로그 */}
@@ -441,13 +430,13 @@ const ARVRContentSystem: React.FC = () => {
               <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
                 WebXR 기반 몰입형 경험을 시작합니다
               </Typography>
-              
-              <Box sx={{ 
-                width: '100%', 
-                height: 400, 
-                bgcolor: 'grey.100', 
-                display: 'flex', 
-                alignItems: 'center', 
+
+              <Box sx={{
+                width: '100%',
+                height: 400,
+                bgcolor: 'grey.100',
+                display: 'flex',
+                alignItems: 'center',
                 justifyContent: 'center',
                 borderRadius: 2,
                 mb: 2

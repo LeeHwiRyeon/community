@@ -36,7 +36,7 @@ import {
     MoreVert as MoreIcon,
     Circle as CircleIcon,
     Image as ImageIcon,
-    FileText as FileTextIcon,
+    Description as FileTextIcon,
     Download as DownloadIcon,
     Delete as DeleteIcon
 } from '@mui/icons-material';

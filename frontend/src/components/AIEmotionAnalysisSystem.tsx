@@ -10,7 +10,6 @@ import {
   Card,
   CardContent,
   Button,
-  Grid,
   TextField,
   Select,
   MenuItem,
@@ -207,7 +206,7 @@ const AIEmotionAnalysisSystem: React.FC = () => {
       <Typography variant="h4" component="h1" gutterBottom>
         😊 AI 감정 분석 시스템
       </Typography>
-      
+
       <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
         실시간 감정 분석 및 대응 시스템으로 사용자의 감정을 이해하고 적절한 응답을 제공합니다
       </Typography>
@@ -240,75 +239,67 @@ const AIEmotionAnalysisSystem: React.FC = () => {
       </Card>
 
       {/* 감정 통계 */}
-      <Grid container spacing={3} sx={{ mb: 3 }}>
-        <Grid item xs={12} md={3}>
-          <Card>
-            <CardContent>
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                <SentimentSatisfied sx={{ mr: 1, color: 'success.main' }} />
-                <Typography variant="h6">긍정적</Typography>
-              </Box>
-              <Typography variant="h4" color="success.main">
-                {stats.positiveCount}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                {stats.totalAnalyzed > 0 ? Math.round((stats.positiveCount / stats.totalAnalyzed) * 100) : 0}%
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
+      <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'repeat(4, 1fr)' }, gap: 3, mb: 3 }}>
+        <Card>
+          <CardContent>
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+              <SentimentSatisfied sx={{ mr: 1, color: 'success.main' }} />
+              <Typography variant="h6">긍정적</Typography>
+            </Box>
+            <Typography variant="h4" color="success.main">
+              {stats.positiveCount}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              {stats.totalAnalyzed > 0 ? Math.round((stats.positiveCount / stats.totalAnalyzed) * 100) : 0}%
+            </Typography>
+          </CardContent>
+        </Card>
 
-        <Grid item xs={12} md={3}>
-          <Card>
-            <CardContent>
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                <SentimentDissatisfied sx={{ mr: 1, color: 'error.main' }} />
-                <Typography variant="h6">부정적</Typography>
-              </Box>
-              <Typography variant="h4" color="error.main">
-                {stats.negativeCount}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                {stats.totalAnalyzed > 0 ? Math.round((stats.negativeCount / stats.totalAnalyzed) * 100) : 0}%
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
+        <Card>
+          <CardContent>
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+              <SentimentDissatisfied sx={{ mr: 1, color: 'error.main' }} />
+              <Typography variant="h6">부정적</Typography>
+            </Box>
+            <Typography variant="h4" color="error.main">
+              {stats.negativeCount}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              {stats.totalAnalyzed > 0 ? Math.round((stats.negativeCount / stats.totalAnalyzed) * 100) : 0}%
+            </Typography>
+          </CardContent>
+        </Card>
 
-        <Grid item xs={12} md={3}>
-          <Card>
-            <CardContent>
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                <SentimentNeutral sx={{ mr: 1, color: 'info.main' }} />
-                <Typography variant="h6">중립적</Typography>
-              </Box>
-              <Typography variant="h4" color="info.main">
-                {stats.neutralCount}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                {stats.totalAnalyzed > 0 ? Math.round((stats.neutralCount / stats.totalAnalyzed) * 100) : 0}%
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
+        <Card>
+          <CardContent>
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+              <SentimentNeutral sx={{ mr: 1, color: 'info.main' }} />
+              <Typography variant="h6">중립적</Typography>
+            </Box>
+            <Typography variant="h4" color="info.main">
+              {stats.neutralCount}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              {stats.totalAnalyzed > 0 ? Math.round((stats.neutralCount / stats.totalAnalyzed) * 100) : 0}%
+            </Typography>
+          </CardContent>
+        </Card>
 
-        <Grid item xs={12} md={3}>
-          <Card>
-            <CardContent>
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                <Analytics sx={{ mr: 1, color: 'primary.main' }} />
-                <Typography variant="h6">평균 신뢰도</Typography>
-              </Box>
-              <Typography variant="h4" color="primary.main">
-                {Math.round(stats.averageConfidence * 100)}%
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                분석 정확도
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
+        <Card>
+          <CardContent>
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+              <Analytics sx={{ mr: 1, color: 'primary.main' }} />
+              <Typography variant="h6">평균 신뢰도</Typography>
+            </Box>
+            <Typography variant="h4" color="primary.main">
+              {Math.round(stats.averageConfidence * 100)}%
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              분석 정확도
+            </Typography>
+          </CardContent>
+        </Card>
+      </Box>
 
       {/* 감정 분석 결과 */}
       <Card>

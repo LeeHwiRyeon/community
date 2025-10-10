@@ -10,7 +10,6 @@ import {
     Card,
     CardContent,
     Button,
-    Grid,
     Tabs,
     Tab,
     Chip,
@@ -277,75 +276,67 @@ const AdvancedManagementSystem: React.FC = () => {
 
             {/* 통계 카드 */}
             {stats && (
-                <Grid container spacing={3} sx={{ mb: 3 }}>
-                    <Grid item xs={12} sm={6} md={3}>
-                        <Card>
-                            <CardContent>
-                                <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                                    <People sx={{ mr: 1, color: 'primary.main' }} />
-                                    <Typography variant="h6">총 사용자</Typography>
-                                </Box>
-                                <Typography variant="h4" color="primary.main">
-                                    {stats.totalUsers.toLocaleString()}
-                                </Typography>
-                                <Typography variant="body2" color="text.secondary">
-                                    등록된 사용자
-                                </Typography>
-                            </CardContent>
-                        </Card>
-                    </Grid>
+                <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' }, gap: 3, mb: 3 }}>
+                    <Card>
+                        <CardContent>
+                            <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                                <People sx={{ mr: 1, color: 'primary.main' }} />
+                                <Typography variant="h6">총 사용자</Typography>
+                            </Box>
+                            <Typography variant="h4" color="primary.main">
+                                {stats.totalUsers.toLocaleString()}
+                            </Typography>
+                            <Typography variant="body2" color="text.secondary">
+                                등록된 사용자
+                            </Typography>
+                        </CardContent>
+                    </Card>
 
-                    <Grid item xs={12} sm={6} md={3}>
-                        <Card>
-                            <CardContent>
-                                <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                                    <CheckCircle sx={{ mr: 1, color: 'success.main' }} />
-                                    <Typography variant="h6">활성 사용자</Typography>
-                                </Box>
-                                <Typography variant="h4" color="success.main">
-                                    {stats.activeUsers.toLocaleString()}
-                                </Typography>
-                                <Typography variant="body2" color="text.secondary">
-                                    현재 활성 상태
-                                </Typography>
-                            </CardContent>
-                        </Card>
-                    </Grid>
+                    <Card>
+                        <CardContent>
+                            <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                                <CheckCircle sx={{ mr: 1, color: 'success.main' }} />
+                                <Typography variant="h6">활성 사용자</Typography>
+                            </Box>
+                            <Typography variant="h4" color="success.main">
+                                {stats.activeUsers.toLocaleString()}
+                            </Typography>
+                            <Typography variant="body2" color="text.secondary">
+                                현재 활성 상태
+                            </Typography>
+                        </CardContent>
+                    </Card>
 
-                    <Grid item xs={12} sm={6} md={3}>
-                        <Card>
-                            <CardContent>
-                                <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                                    <TrendingUp sx={{ mr: 1, color: 'warning.main' }} />
-                                    <Typography variant="h6">신규 사용자</Typography>
-                                </Box>
-                                <Typography variant="h4" color="warning.main">
-                                    +{stats.newUsers}
-                                </Typography>
-                                <Typography variant="body2" color="text.secondary">
-                                    이번 주 신규
-                                </Typography>
-                            </CardContent>
-                        </Card>
-                    </Grid>
+                    <Card>
+                        <CardContent>
+                            <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                                <TrendingUp sx={{ mr: 1, color: 'warning.main' }} />
+                                <Typography variant="h6">신규 사용자</Typography>
+                            </Box>
+                            <Typography variant="h4" color="warning.main">
+                                +{stats.newUsers}
+                            </Typography>
+                            <Typography variant="body2" color="text.secondary">
+                                이번 주 신규
+                            </Typography>
+                        </CardContent>
+                    </Card>
 
-                    <Grid item xs={12} sm={6} md={3}>
-                        <Card>
-                            <CardContent>
-                                <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                                    <Speed sx={{ mr: 1, color: 'info.main' }} />
-                                    <Typography variant="h6">평균 참여도</Typography>
-                                </Box>
-                                <Typography variant="h4" color="info.main">
-                                    {stats.engagement}%
-                                </Typography>
-                                <Typography variant="body2" color="text.secondary">
-                                    사용자 참여율
-                                </Typography>
-                            </CardContent>
-                        </Card>
-                    </Grid>
-                </Grid>
+                    <Card>
+                        <CardContent>
+                            <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                                <Speed sx={{ mr: 1, color: 'info.main' }} />
+                                <Typography variant="h6">평균 참여도</Typography>
+                            </Box>
+                            <Typography variant="h4" color="info.main">
+                                {stats.engagement}%
+                            </Typography>
+                            <Typography variant="body2" color="text.secondary">
+                                사용자 참여율
+                            </Typography>
+                        </CardContent>
+                    </Card>
+                </Box>
             )}
 
             {/* 사용자 타입 탭 */}
@@ -543,22 +534,20 @@ const AdvancedManagementSystem: React.FC = () => {
                 </DialogTitle>
                 <DialogContent>
                     {selectedUser && (
-                        <Grid container spacing={3}>
-                            <Grid item xs={12} md={4}>
-                                <Box sx={{ textAlign: 'center' }}>
-                                    <Avatar
-                                        src={selectedUser.avatar}
-                                        sx={{ width: 100, height: 100, mx: 'auto', mb: 2 }}
-                                    >
-                                        {selectedUser.name[0]}
-                                    </Avatar>
-                                    <Typography variant="h6">{selectedUser.name}</Typography>
-                                    <Typography variant="body2" color="text.secondary">
-                                        {selectedUser.email}
-                                    </Typography>
-                                </Box>
-                            </Grid>
-                            <Grid item xs={12} md={8}>
+                        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 2fr' }, gap: 3 }}>
+                            <Box sx={{ textAlign: 'center' }}>
+                                <Avatar
+                                    src={selectedUser.avatar}
+                                    sx={{ width: 100, height: 100, mx: 'auto', mb: 2 }}
+                                >
+                                    {selectedUser.name[0]}
+                                </Avatar>
+                                <Typography variant="h6">{selectedUser.name}</Typography>
+                                <Typography variant="body2" color="text.secondary">
+                                    {selectedUser.email}
+                                </Typography>
+                            </Box>
+                            <Box>
                                 <Typography variant="h6" gutterBottom>
                                     기본 정보
                                 </Typography>
@@ -577,42 +566,42 @@ const AdvancedManagementSystem: React.FC = () => {
                                 <Typography variant="h6" gutterBottom>
                                     통계
                                 </Typography>
-                                <Grid container spacing={2}>
-                                    <Grid item xs={6}>
+                                <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 2 }}>
+                                    <Box>
                                         <Typography variant="body2" color="text.secondary">
                                             게시물
                                         </Typography>
                                         <Typography variant="h6">
                                             {selectedUser.stats.posts}
                                         </Typography>
-                                    </Grid>
-                                    <Grid item xs={6}>
+                                    </Box>
+                                    <Box>
                                         <Typography variant="body2" color="text.secondary">
                                             팔로워
                                         </Typography>
                                         <Typography variant="h6">
                                             {selectedUser.stats.followers}
                                         </Typography>
-                                    </Grid>
-                                    <Grid item xs={6}>
+                                    </Box>
+                                    <Box>
                                         <Typography variant="body2" color="text.secondary">
                                             참여도
                                         </Typography>
                                         <Typography variant="h6">
                                             {selectedUser.stats.engagement}%
                                         </Typography>
-                                    </Grid>
+                                    </Box>
                                     {selectedUser.stats.revenue && (
-                                        <Grid item xs={6}>
+                                        <Box>
                                             <Typography variant="body2" color="text.secondary">
                                                 수익
                                             </Typography>
                                             <Typography variant="h6">
                                                 ₩{selectedUser.stats.revenue.toLocaleString()}
                                             </Typography>
-                                        </Grid>
+                                        </Box>
                                     )}
-                                </Grid>
+                                </Box>
 
                                 <Typography variant="h6" gutterBottom sx={{ mt: 2 }}>
                                     권한
@@ -628,8 +617,8 @@ const AdvancedManagementSystem: React.FC = () => {
                                         />
                                     ))}
                                 </Box>
-                            </Grid>
-                        </Grid>
+                            </Box>
+                        </Box>
                     )}
                 </DialogContent>
                 <DialogActions>

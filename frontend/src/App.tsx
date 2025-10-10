@@ -199,10 +199,10 @@ const App: React.FC = () => {
                                 {/* 404 */}
                                 <Route path="/404" element={<NotFound />} />
                                 <Route path="*" element={<Navigate to="/404" replace />} />
-                            
-        <Route path="/news" element={<NewsPagePage />} />
-        <Route path="/games" element={<GamePagePage />} />
-      </Routes>
+
+                                <Route path="/news" element={<div>News Page</div>} />
+                                <Route path="/games" element={<div>Games Page</div>} />
+                            </Routes>
                         </Box>
                         <Footer />
 

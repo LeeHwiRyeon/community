@@ -46,13 +46,6 @@ import {
     Avatar,
     Stack,
     Rating,
-    Timeline,
-    TimelineItem,
-    TimelineSeparator,
-    TimelineConnector,
-    TimelineContent,
-    TimelineDot,
-    TimelineOppositeContent,
     Dialog,
     DialogTitle,
     DialogContent,
@@ -63,6 +56,15 @@ import {
     Radio,
     FormControlLabel as MuiFormControlLabel
 } from '@mui/material';
+import {
+    Timeline,
+    TimelineItem,
+    TimelineSeparator,
+    TimelineConnector,
+    TimelineContent,
+    TimelineDot,
+    TimelineOppositeContent
+} from '@mui/lab';
 import {
     Speed,
     Memory,
@@ -76,7 +78,6 @@ import {
     Info,
     Refresh,
     Settings,
-    Timeline,
     BarChart,
     PieChart,
     ExpandMore,
@@ -86,7 +87,6 @@ import {
     Computer,
     Cloud,
     Storage,
-    Cpu,
     Wifi,
     SignalCellular4Bar,
     Battery6Bar,
@@ -94,8 +94,6 @@ import {
     Security,
     Shield,
     BugReport,
-    Performance,
-    Optimization,
     AutoAwesome,
     Rocket,
     Psychology,
@@ -105,17 +103,13 @@ import {
     Construction,
     Build,
     Handyman,
-    Precision,
     Tune,
     Adjust,
     SettingsApplications,
-    TuneIcon,
     FlashOn,
     Bolt,
-    Zap,
     Thunderstorm,
     EnergySavingsLeaf,
-    Eco,
     Recycling,
     Compress,
     Expand,
@@ -132,7 +126,6 @@ import {
     Share,
     GetApp,
     Publish,
-    Deploy,
     Launch,
     PlayArrow,
     Pause,
@@ -175,7 +168,6 @@ import {
     DirectionsTransit,
     DirectionsRailway,
     DirectionsBoat,
-    DirectionsPlane,
     Flight,
     Train,
     Directions,
@@ -198,18 +190,13 @@ import {
     CloudUpload,
     CloudSync,
     CloudCircle,
-    CloudDoneIcon,
-    CloudOffIcon,
-    CloudDownloadIcon,
-    CloudUploadIcon,
-    CloudSyncIcon,
-    CloudCircleIcon,
     CloudDoneOutlined,
     CloudOffOutlined,
     CloudDownloadOutlined,
     CloudUploadOutlined,
     CloudSyncOutlined,
-    CloudCircleOutlined
+    CloudCircleOutlined,
+    ScheduleOutlined
 } from '@mui/icons-material';
 
 // 타입 정의
@@ -631,7 +618,7 @@ const AdvancedPerformanceOptimization: React.FC = () => {
             case 'api_latency': return <NetworkCheck color="warning" />;
             case 'rendering': return <Monitor color="primary" />;
             case 'network': return <Wifi color="info" />;
-            default: return <Performance color="default" />;
+            default: return <Tune color="inherit" />;
         }
     };
 
@@ -705,79 +692,71 @@ const AdvancedPerformanceOptimization: React.FC = () => {
             )}
 
             {/* 성능 메트릭 개요 */}
-            <Grid container spacing={3} sx={{ mb: 3 }}>
-                <Grid item xs={12} sm={6} md={3}>
-                    <Card>
-                        <CardContent>
-                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                <Box>
-                                    <Typography color="textSecondary" gutterBottom>
-                                        번들 크기
-                                    </Typography>
-                                    <Typography variant="h4" component="div">
-                                        {metrics?.bundleSize || 0}MB
-                                    </Typography>
-                                </Box>
-                                <Storage sx={{ fontSize: 40, color: 'warning.main' }} />
+            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' }, gap: 3, mb: 3 }}>
+                <Card>
+                    <CardContent>
+                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                            <Box>
+                                <Typography color="textSecondary" gutterBottom>
+                                    번들 크기
+                                </Typography>
+                                <Typography variant="h4" component="div">
+                                    {metrics?.bundleSize || 0}MB
+                                </Typography>
                             </Box>
-                        </CardContent>
-                    </Card>
-                </Grid>
+                            <Storage sx={{ fontSize: 40, color: 'warning.main' }} />
+                        </Box>
+                    </CardContent>
+                </Card>
 
-                <Grid item xs={12} sm={6} md={3}>
-                    <Card>
-                        <CardContent>
-                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                <Box>
-                                    <Typography color="textSecondary" gutterBottom>
-                                        로딩 시간
-                                    </Typography>
-                                    <Typography variant="h4" component="div">
-                                        {metrics?.firstContentfulPaint || 0}초
-                                    </Typography>
-                                </Box>
-                                <Speed sx={{ fontSize: 40, color: 'error.main' }} />
+                <Card>
+                    <CardContent>
+                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                            <Box>
+                                <Typography color="textSecondary" gutterBottom>
+                                    로딩 시간
+                                </Typography>
+                                <Typography variant="h4" component="div">
+                                    {metrics?.firstContentfulPaint || 0}초
+                                </Typography>
                             </Box>
-                        </CardContent>
-                    </Card>
-                </Grid>
+                            <Speed sx={{ fontSize: 40, color: 'error.main' }} />
+                        </Box>
+                    </CardContent>
+                </Card>
 
-                <Grid item xs={12} sm={6} md={3}>
-                    <Card>
-                        <CardContent>
-                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                <Box>
-                                    <Typography color="textSecondary" gutterBottom>
-                                        메모리 사용량
-                                    </Typography>
-                                    <Typography variant="h4" component="div">
-                                        {metrics?.memoryUsage || 0}MB
-                                    </Typography>
-                                </Box>
-                                <Memory sx={{ fontSize: 40, color: 'info.main' }} />
+                <Card>
+                    <CardContent>
+                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                            <Box>
+                                <Typography color="textSecondary" gutterBottom>
+                                    메모리 사용량
+                                </Typography>
+                                <Typography variant="h4" component="div">
+                                    {metrics?.memoryUsage || 0}MB
+                                </Typography>
                             </Box>
-                        </CardContent>
-                    </Card>
-                </Grid>
+                            <Memory sx={{ fontSize: 40, color: 'info.main' }} />
+                        </Box>
+                    </CardContent>
+                </Card>
 
-                <Grid item xs={12} sm={6} md={3}>
-                    <Card>
-                        <CardContent>
-                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                <Box>
-                                    <Typography color="textSecondary" gutterBottom>
-                                        API 응답 시간
-                                    </Typography>
-                                    <Typography variant="h4" component="div">
-                                        {metrics?.apiResponseTime || 0}초
-                                    </Typography>
-                                </Box>
-                                <NetworkCheck sx={{ fontSize: 40, color: 'success.main' }} />
+                <Card>
+                    <CardContent>
+                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                            <Box>
+                                <Typography color="textSecondary" gutterBottom>
+                                    API 응답 시간
+                                </Typography>
+                                <Typography variant="h4" component="div">
+                                    {metrics?.apiResponseTime || 0}초
+                                </Typography>
                             </Box>
-                        </CardContent>
-                    </Card>
-                </Grid>
-            </Grid>
+                            <NetworkCheck sx={{ fontSize: 40, color: 'success.main' }} />
+                        </Box>
+                    </CardContent>
+                </Card>
+            </Box>
 
             {/* 탭 네비게이션 */}
             <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
@@ -910,7 +889,7 @@ const AdvancedPerformanceOptimization: React.FC = () => {
                                                 {result.status === 'completed' && <CheckCircle color="success" />}
                                                 {result.status === 'running' && <CircularProgress size={24} />}
                                                 {result.status === 'failed' && <Error color="error" />}
-                                                {result.status === 'pending' && <Schedule color="info" />}
+                                                {result.status === 'pending' && <ScheduleOutlined color="info" />}
                                             </ListItemIcon>
 
                                             <ListItemText
@@ -973,173 +952,167 @@ const AdvancedPerformanceOptimization: React.FC = () => {
                             ⚙️ 최적화 프로필 ({profiles.length}개)
                         </Typography>
 
-                        <Grid container spacing={3}>
+                        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'repeat(2, 1fr)' }, gap: 3 }}>
                             {profiles.map((profile) => (
-                                <Grid item xs={12} md={6} key={profile.id}>
-                                    <Card variant="outlined">
-                                        <CardContent>
-                                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
-                                                <Typography variant="subtitle1">
-                                                    {profile.name}
-                                                </Typography>
-                                                <Box sx={{ display: 'flex', gap: 0.5 }}>
-                                                    <Chip
-                                                        label={profile.priority}
-                                                        size="small"
-                                                        color={profile.priority === 'high' ? 'warning' : 'info'}
-                                                    />
-                                                    <Chip
-                                                        label={profile.category}
-                                                        size="small"
-                                                        variant="outlined"
-                                                    />
-                                                </Box>
-                                            </Box>
-
-                                            <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                                                {profile.description}
+                                <Card variant="outlined" key={profile.id}>
+                                    <CardContent>
+                                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+                                            <Typography variant="subtitle1">
+                                                {profile.name}
                                             </Typography>
-
-                                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                                <Box>
-                                                    <Typography variant="caption" color="text.secondary">
-                                                        성공률: {profile.successRate}%
-                                                    </Typography>
-                                                    <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
-                                                        적용 횟수: {profile.appliedCount}회
-                                                    </Typography>
-                                                </Box>
-
-                                                <Box sx={{ display: 'flex', gap: 0.5 }}>
-                                                    <FormControlLabel
-                                                        control={
-                                                            <Switch
-                                                                checked={profile.enabled}
-                                                                size="small"
-                                                            />
-                                                        }
-                                                        label="활성화"
-                                                    />
-                                                </Box>
+                                            <Box sx={{ display: 'flex', gap: 0.5 }}>
+                                                <Chip
+                                                    label={profile.priority}
+                                                    size="small"
+                                                    color={profile.priority === 'high' ? 'warning' : 'info'}
+                                                />
+                                                <Chip
+                                                    label={profile.category}
+                                                    size="small"
+                                                    variant="outlined"
+                                                />
                                             </Box>
-                                        </CardContent>
-                                    </Card>
-                                </Grid>
+                                        </Box>
+
+                                        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                                            {profile.description}
+                                        </Typography>
+
+                                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                            <Box>
+                                                <Typography variant="caption" color="text.secondary">
+                                                    성공률: {profile.successRate}%
+                                                </Typography>
+                                                <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
+                                                    적용 횟수: {profile.appliedCount}회
+                                                </Typography>
+                                            </Box>
+
+                                            <Box sx={{ display: 'flex', gap: 0.5 }}>
+                                                <FormControlLabel
+                                                    control={
+                                                        <Switch
+                                                            checked={profile.enabled}
+                                                            size="small"
+                                                        />
+                                                    }
+                                                    label="활성화"
+                                                />
+                                            </Box>
+                                        </Box>
+                                    </CardContent>
+                                </Card>
                             ))}
-                        </Grid>
+                        </Box>
                     </CardContent>
                 </Card>
             )}
 
             {/* 성능 분석 탭 */}
             {selectedTab === 3 && (
-                <Grid container spacing={3}>
-                    <Grid item xs={12} md={6}>
-                        <Card>
-                            <CardContent>
-                                <Typography variant="h6" gutterBottom>
-                                    📈 성능 지표
-                                </Typography>
+                <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'repeat(2, 1fr)' }, gap: 3 }}>
+                    <Card>
+                        <CardContent>
+                            <Typography variant="h6" gutterBottom>
+                                📈 성능 지표
+                            </Typography>
 
-                                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                                    <Box>
-                                        <Typography variant="subtitle2">Core Web Vitals</Typography>
-                                        <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}>
-                                            <Typography variant="body2">FCP</Typography>
-                                            <Typography variant="body2">{metrics?.firstContentfulPaint}초</Typography>
-                                        </Box>
-                                        <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                                            <Typography variant="body2">LCP</Typography>
-                                            <Typography variant="body2">{metrics?.largestContentfulPaint}초</Typography>
-                                        </Box>
-                                        <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                                            <Typography variant="body2">CLS</Typography>
-                                            <Typography variant="body2">{metrics?.cumulativeLayoutShift}</Typography>
-                                        </Box>
-                                        <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                                            <Typography variant="body2">FID</Typography>
-                                            <Typography variant="body2">{metrics?.firstInputDelay}ms</Typography>
-                                        </Box>
+                            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                                <Box>
+                                    <Typography variant="subtitle2">Core Web Vitals</Typography>
+                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}>
+                                        <Typography variant="body2">FCP</Typography>
+                                        <Typography variant="body2">{metrics?.firstContentfulPaint}초</Typography>
                                     </Box>
-
-                                    <Divider />
-
-                                    <Box>
-                                        <Typography variant="subtitle2">최적화 지표</Typography>
-                                        <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}>
-                                            <Typography variant="body2">캐시 적중률</Typography>
-                                            <Typography variant="body2">{metrics?.cacheHitRate}%</Typography>
-                                        </Box>
-                                        <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                                            <Typography variant="body2">압축률</Typography>
-                                            <Typography variant="body2">{metrics?.compressionRatio}%</Typography>
-                                        </Box>
-                                        <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                                            <Typography variant="body2">이미지 최적화</Typography>
-                                            <Typography variant="body2">{metrics?.imageOptimization}%</Typography>
-                                        </Box>
-                                        <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                                            <Typography variant="body2">코드 스플리팅</Typography>
-                                            <Typography variant="body2">{metrics?.codeSplitting}%</Typography>
-                                        </Box>
+                                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                                        <Typography variant="body2">LCP</Typography>
+                                        <Typography variant="body2">{metrics?.largestContentfulPaint}초</Typography>
+                                    </Box>
+                                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                                        <Typography variant="body2">CLS</Typography>
+                                        <Typography variant="body2">{metrics?.cumulativeLayoutShift}</Typography>
+                                    </Box>
+                                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                                        <Typography variant="body2">FID</Typography>
+                                        <Typography variant="body2">{metrics?.firstInputDelay}ms</Typography>
                                     </Box>
                                 </Box>
-                            </CardContent>
-                        </Card>
-                    </Grid>
 
-                    <Grid item xs={12} md={6}>
-                        <Card>
-                            <CardContent>
-                                <Typography variant="h6" gutterBottom>
-                                    💡 최적화 추천사항
-                                </Typography>
+                                <Divider />
 
-                                <List>
-                                    <ListItem>
-                                        <ListItemIcon>
-                                            <AutoAwesome color="primary" />
-                                        </ListItemIcon>
-                                        <ListItemText
-                                            primary="번들 크기 최적화"
-                                            secondary="코드 스플리팅과 Tree shaking을 적용하여 번들 크기를 줄이세요."
-                                        />
-                                    </ListItem>
+                                <Box>
+                                    <Typography variant="subtitle2">최적화 지표</Typography>
+                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}>
+                                        <Typography variant="body2">캐시 적중률</Typography>
+                                        <Typography variant="body2">{metrics?.cacheHitRate}%</Typography>
+                                    </Box>
+                                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                                        <Typography variant="body2">압축률</Typography>
+                                        <Typography variant="body2">{metrics?.compressionRatio}%</Typography>
+                                    </Box>
+                                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                                        <Typography variant="body2">이미지 최적화</Typography>
+                                        <Typography variant="body2">{metrics?.imageOptimization}%</Typography>
+                                    </Box>
+                                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                                        <Typography variant="body2">코드 스플리팅</Typography>
+                                        <Typography variant="body2">{metrics?.codeSplitting}%</Typography>
+                                    </Box>
+                                </Box>
+                            </Box>
+                        </CardContent>
+                    </Card>
 
-                                    <ListItem>
-                                        <ListItemIcon>
-                                            <Speed color="warning" />
-                                        </ListItemIcon>
-                                        <ListItemText
-                                            primary="로딩 시간 개선"
-                                            secondary="Critical CSS 인라인화와 이미지 지연 로딩을 적용하세요."
-                                        />
-                                    </ListItem>
+                    <Card>
+                        <CardContent>
+                            <Typography variant="h6" gutterBottom>
+                                💡 최적화 추천사항
+                            </Typography>
 
-                                    <ListItem>
-                                        <ListItemIcon>
-                                            <Memory color="info" />
-                                        </ListItemIcon>
-                                        <ListItemText
-                                            primary="메모리 사용량 최적화"
-                                            secondary="메모리 누수를 방지하고 가비지 컬렉션을 최적화하세요."
-                                        />
-                                    </ListItem>
+                            <List>
+                                <ListItem>
+                                    <ListItemIcon>
+                                        <AutoAwesome color="primary" />
+                                    </ListItemIcon>
+                                    <ListItemText
+                                        primary="번들 크기 최적화"
+                                        secondary="코드 스플리팅과 Tree shaking을 적용하여 번들 크기를 줄이세요."
+                                    />
+                                </ListItem>
 
-                                    <ListItem>
-                                        <ListItemIcon>
-                                            <NetworkCheck color="success" />
-                                        </ListItemIcon>
-                                        <ListItemText
-                                            primary="네트워크 최적화"
-                                            secondary="CDN 활용과 압축을 통해 네트워크 성능을 개선하세요."
-                                        />
-                                    </ListItem>
-                                </List>
-                            </CardContent>
-                        </Card>
-                    </Grid>
-                </Grid>
+                                <ListItem>
+                                    <ListItemIcon>
+                                        <Speed color="warning" />
+                                    </ListItemIcon>
+                                    <ListItemText
+                                        primary="로딩 시간 개선"
+                                        secondary="Critical CSS 인라인화와 이미지 지연 로딩을 적용하세요."
+                                    />
+                                </ListItem>
+
+                                <ListItem>
+                                    <ListItemIcon>
+                                        <Memory color="info" />
+                                    </ListItemIcon>
+                                    <ListItemText
+                                        primary="메모리 사용량 최적화"
+                                        secondary="메모리 누수를 방지하고 가비지 컬렉션을 최적화하세요."
+                                    />
+                                </ListItem>
+
+                                <ListItem>
+                                    <ListItemIcon>
+                                        <NetworkCheck color="success" />
+                                    </ListItemIcon>
+                                    <ListItemText
+                                        primary="네트워크 최적화"
+                                        secondary="CDN 활용과 압축을 통해 네트워크 성능을 개선하세요."
+                                    />
+                                </ListItem>
+                            </List>
+                        </CardContent>
+                    </Card>
+                </Box>
             )}
         </Box>
     );

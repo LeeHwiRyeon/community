@@ -11,13 +11,14 @@
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
-    Box, Typography, Grid, Card, CardContent, CardActions, Button,
+    Box, Typography, Card, CardContent, CardActions, Button,
     Avatar, Badge, Chip, LinearProgress, Alert, Snackbar, Tooltip,
     Tabs, Tab, List, ListItem, ListItemText, ListItemAvatar, ListItemSecondaryAction,
     Dialog, DialogTitle, DialogContent, DialogActions, TextField,
     FormControl, InputLabel, Select, MenuItem, Switch, FormControlLabel,
     Accordion, AccordionSummary, AccordionDetails, Paper, Stack,
     IconButton, Divider, Rating, Skeleton, CircularProgress, Fab,
+    Grid,
     Table, TableBody, TableCell, TableContainer, TableHead, TableRow
 } from '@mui/material';
 import {
@@ -508,23 +509,21 @@ const CommunityGameSystem: React.FC<CommunityGameSystemProps> = ({
                 <Typography variant="h6" gutterBottom>
                     플레이어 정보
                 </Typography>
-                <Grid container spacing={2}>
-                    <Grid item xs={12} sm={6} md={3}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                            <Avatar src={currentPlayer.avatar} sx={{ width: 48, height: 48 }}>
-                                {currentPlayer.name.charAt(0)}
-                            </Avatar>
-                            <Box>
-                                <Typography variant="h6">
-                                    {currentPlayer.name}
-                                </Typography>
-                                <Typography variant="body2" color="text.secondary">
-                                    레벨 {currentPlayer.level}
-                                </Typography>
-                            </Box>
+                <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' }, gap: 2 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Avatar src={currentPlayer.avatar} sx={{ width: 48, height: 48 }}>
+                            {currentPlayer.name.charAt(0)}
+                        </Avatar>
+                        <Box>
+                            <Typography variant="h6">
+                                {currentPlayer.name}
+                            </Typography>
+                            <Typography variant="body2" color="text.secondary">
+                                레벨 {currentPlayer.level}
+                            </Typography>
                         </Box>
-                    </Grid>
-                    <Grid item xs={12} sm={6} md={3}>
+                    </Box>
+                    <Box>
                         <Typography variant="body2" color="text.secondary">
                             경험치
                         </Typography>
@@ -536,24 +535,24 @@ const CommunityGameSystem: React.FC<CommunityGameSystemProps> = ({
                         <Typography variant="body2">
                             {currentPlayer.experience} XP
                         </Typography>
-                    </Grid>
-                    <Grid item xs={12} sm={6} md={3}>
+                    </Box>
+                    <Box>
                         <Typography variant="body2" color="text.secondary">
                             총 점수
                         </Typography>
                         <Typography variant="h6">
                             {currentPlayer.totalScore.toLocaleString()}
                         </Typography>
-                    </Grid>
-                    <Grid item xs={12} sm={6} md={3}>
+                    </Box>
+                    <Box>
                         <Typography variant="body2" color="text.secondary">
                             승률
                         </Typography>
                         <Typography variant="h6">
                             {(currentPlayer.winRate * 100).toFixed(1)}%
                         </Typography>
-                    </Grid>
-                </Grid>
+                    </Box>
+                </Box>
             </Paper>
 
             {/* 탭 네비게이션 */}
@@ -568,13 +567,11 @@ const CommunityGameSystem: React.FC<CommunityGameSystemProps> = ({
 
             {/* 탭 컨텐츠 */}
             {selectedTab === 0 && (
-                <Grid container spacing={3}>
+                <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' }, gap: 3 }}>
                     {games.map((game) => (
-                        <Grid item xs={12} sm={6} md={4} key={game.id}>
-                            <GameCard game={game} />
-                        </Grid>
+                        <GameCard key={game.id} game={game} />
                     ))}
-                </Grid>
+                </Box>
             )}
 
             {selectedTab === 1 && (
@@ -591,13 +588,11 @@ const CommunityGameSystem: React.FC<CommunityGameSystemProps> = ({
                     <Typography variant="h5" gutterBottom>
                         업적 시스템
                     </Typography>
-                    <Grid container spacing={3}>
+                    <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' }, gap: 3 }}>
                         {achievements.map((achievement) => (
-                            <Grid item xs={12} sm={6} md={4} key={achievement.id}>
-                                <AchievementCard achievement={achievement} />
-                            </Grid>
+                            <AchievementCard key={achievement.id} achievement={achievement} />
                         ))}
-                    </Grid>
+                    </Box>
                 </Box>
             )}
 

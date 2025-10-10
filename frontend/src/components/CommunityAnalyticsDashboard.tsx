@@ -344,102 +344,94 @@ const CommunityAnalyticsDashboard: React.FC = () => {
             </Box>
 
             {/* 주요 지표 카드 */}
-            <Grid container spacing={3} sx={{ mb: 3 }}>
-                <Grid item xs={12} sm={6} md={3}>
-                    <Card>
-                        <CardContent>
-                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                <Box>
-                                    <Typography color="textSecondary" gutterBottom>
-                                        총 사용자
+            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' }, gap: 3, mb: 3 }}>
+                <Card>
+                    <CardContent>
+                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                            <Box>
+                                <Typography color="textSecondary" gutterBottom>
+                                    총 사용자
+                                </Typography>
+                                <Typography variant="h4" component="div">
+                                    {formatNumber(analyticsData.totalUsers)}
+                                </Typography>
+                                <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
+                                    {getTrendIcon(analyticsData.growthRate)}
+                                    <Typography variant="body2" color={`${getTrendColor(analyticsData.growthRate)}.main`} sx={{ ml: 1 }}>
+                                        +{analyticsData.growthRate}%
                                     </Typography>
-                                    <Typography variant="h4" component="div">
-                                        {formatNumber(analyticsData.totalUsers)}
-                                    </Typography>
-                                    <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
-                                        {getTrendIcon(analyticsData.growthRate)}
-                                        <Typography variant="body2" color={`${getTrendColor(analyticsData.growthRate)}.main`} sx={{ ml: 1 }}>
-                                            +{analyticsData.growthRate}%
-                                        </Typography>
-                                    </Box>
                                 </Box>
-                                <People sx={{ fontSize: 40, color: 'primary.main' }} />
                             </Box>
-                        </CardContent>
-                    </Card>
-                </Grid>
+                            <People sx={{ fontSize: 40, color: 'primary.main' }} />
+                        </Box>
+                    </CardContent>
+                </Card>
 
-                <Grid item xs={12} sm={6} md={3}>
-                    <Card>
-                        <CardContent>
-                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                <Box>
-                                    <Typography color="textSecondary" gutterBottom>
-                                        활성 사용자
+                <Card>
+                    <CardContent>
+                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                            <Box>
+                                <Typography color="textSecondary" gutterBottom>
+                                    활성 사용자
+                                </Typography>
+                                <Typography variant="h4" component="div">
+                                    {formatNumber(analyticsData.activeUsers)}
+                                </Typography>
+                                <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
+                                    <Typography variant="body2" color="textSecondary">
+                                        {((analyticsData.activeUsers / analyticsData.totalUsers) * 100).toFixed(1)}% 활성률
                                     </Typography>
-                                    <Typography variant="h4" component="div">
-                                        {formatNumber(analyticsData.activeUsers)}
-                                    </Typography>
-                                    <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
-                                        <Typography variant="body2" color="textSecondary">
-                                            {((analyticsData.activeUsers / analyticsData.totalUsers) * 100).toFixed(1)}% 활성률
-                                        </Typography>
-                                    </Box>
                                 </Box>
-                                <Visibility sx={{ fontSize: 40, color: 'success.main' }} />
                             </Box>
-                        </CardContent>
-                    </Card>
-                </Grid>
+                            <Visibility sx={{ fontSize: 40, color: 'success.main' }} />
+                        </Box>
+                    </CardContent>
+                </Card>
 
-                <Grid item xs={12} sm={6} md={3}>
-                    <Card>
-                        <CardContent>
-                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                <Box>
-                                    <Typography color="textSecondary" gutterBottom>
-                                        총 게시물
+                <Card>
+                    <CardContent>
+                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                            <Box>
+                                <Typography color="textSecondary" gutterBottom>
+                                    총 게시물
+                                </Typography>
+                                <Typography variant="h4" component="div">
+                                    {formatNumber(analyticsData.totalPosts)}
+                                </Typography>
+                                <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
+                                    <Typography variant="body2" color="textSecondary">
+                                        일평균 {formatNumber(Math.round(analyticsData.totalPosts / 30))}개
                                     </Typography>
-                                    <Typography variant="h4" component="div">
-                                        {formatNumber(analyticsData.totalPosts)}
-                                    </Typography>
-                                    <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
-                                        <Typography variant="body2" color="textSecondary">
-                                            일평균 {formatNumber(Math.round(analyticsData.totalPosts / 30))}개
-                                        </Typography>
-                                    </Box>
                                 </Box>
-                                <Message sx={{ fontSize: 40, color: 'info.main' }} />
                             </Box>
-                        </CardContent>
-                    </Card>
-                </Grid>
+                            <Message sx={{ fontSize: 40, color: 'info.main' }} />
+                        </Box>
+                    </CardContent>
+                </Card>
 
-                <Grid item xs={12} sm={6} md={3}>
-                    <Card>
-                        <CardContent>
-                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                <Box>
-                                    <Typography color="textSecondary" gutterBottom>
-                                        참여율
-                                    </Typography>
-                                    <Typography variant="h4" component="div">
-                                        {analyticsData.engagementRate}%
-                                    </Typography>
-                                    <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
-                                        <LinearProgress
-                                            variant="determinate"
-                                            value={analyticsData.engagementRate}
-                                            sx={{ width: 60, height: 6, borderRadius: 3 }}
-                                        />
-                                    </Box>
+                <Card>
+                    <CardContent>
+                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                            <Box>
+                                <Typography color="textSecondary" gutterBottom>
+                                    참여율
+                                </Typography>
+                                <Typography variant="h4" component="div">
+                                    {analyticsData.engagementRate}%
+                                </Typography>
+                                <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
+                                    <LinearProgress
+                                        variant="determinate"
+                                        value={analyticsData.engagementRate}
+                                        sx={{ width: 60, height: 6, borderRadius: 3 }}
+                                    />
                                 </Box>
-                                <ThumbUp sx={{ fontSize: 40, color: 'warning.main' }} />
                             </Box>
-                        </CardContent>
-                    </Card>
-                </Grid>
-            </Grid>
+                            <ThumbUp sx={{ fontSize: 40, color: 'warning.main' }} />
+                        </Box>
+                    </CardContent>
+                </Card>
+            </Box>
 
             {/* 차트 섹션 */}
             <Grid container spacing={3} sx={{ mb: 3 }}>

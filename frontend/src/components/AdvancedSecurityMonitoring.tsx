@@ -9,7 +9,6 @@ import {
     Typography,
     Card,
     CardContent,
-    Grid,
     Alert,
     AlertTitle,
     Chip,
@@ -322,79 +321,71 @@ const AdvancedSecurityMonitoring: React.FC = () => {
             </Box>
 
             {/* 보안 메트릭 */}
-            <Grid container spacing={3} sx={{ mb: 3 }}>
-                <Grid item xs={12} sm={6} md={3}>
-                    <Card>
-                        <CardContent>
-                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                <Box>
-                                    <Typography color="textSecondary" gutterBottom>
-                                        총 보안 이벤트
-                                    </Typography>
-                                    <Typography variant="h4" component="div">
-                                        {metrics.totalEvents}
-                                    </Typography>
-                                </Box>
-                                <Security sx={{ fontSize: 40, color: 'primary.main' }} />
+            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' }, gap: 3, mb: 3 }}>
+                <Card>
+                    <CardContent>
+                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                            <Box>
+                                <Typography color="textSecondary" gutterBottom>
+                                    총 보안 이벤트
+                                </Typography>
+                                <Typography variant="h4" component="div">
+                                    {metrics.totalEvents}
+                                </Typography>
                             </Box>
-                        </CardContent>
-                    </Card>
-                </Grid>
+                            <Security sx={{ fontSize: 40, color: 'primary.main' }} />
+                        </Box>
+                    </CardContent>
+                </Card>
 
-                <Grid item xs={12} sm={6} md={3}>
-                    <Card>
-                        <CardContent>
-                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                <Box>
-                                    <Typography color="textSecondary" gutterBottom>
-                                        차단된 공격
-                                    </Typography>
-                                    <Typography variant="h4" component="div">
-                                        {metrics.blockedAttacks}
-                                    </Typography>
-                                </Box>
-                                <Block sx={{ fontSize: 40, color: 'success.main' }} />
+                <Card>
+                    <CardContent>
+                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                            <Box>
+                                <Typography color="textSecondary" gutterBottom>
+                                    차단된 공격
+                                </Typography>
+                                <Typography variant="h4" component="div">
+                                    {metrics.blockedAttacks}
+                                </Typography>
                             </Box>
-                        </CardContent>
-                    </Card>
-                </Grid>
+                            <Block sx={{ fontSize: 40, color: 'success.main' }} />
+                        </Box>
+                    </CardContent>
+                </Card>
 
-                <Grid item xs={12} sm={6} md={3}>
-                    <Card>
-                        <CardContent>
-                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                <Box>
-                                    <Typography color="textSecondary" gutterBottom>
-                                        활성 위협
-                                    </Typography>
-                                    <Typography variant="h4" component="div">
-                                        {metrics.activeThreats}
-                                    </Typography>
-                                </Box>
-                                <Warning sx={{ fontSize: 40, color: 'warning.main' }} />
+                <Card>
+                    <CardContent>
+                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                            <Box>
+                                <Typography color="textSecondary" gutterBottom>
+                                    활성 위협
+                                </Typography>
+                                <Typography variant="h4" component="div">
+                                    {metrics.activeThreats}
+                                </Typography>
                             </Box>
-                        </CardContent>
-                    </Card>
-                </Grid>
+                            <Warning sx={{ fontSize: 40, color: 'warning.main' }} />
+                        </Box>
+                    </CardContent>
+                </Card>
 
-                <Grid item xs={12} sm={6} md={3}>
-                    <Card>
-                        <CardContent>
-                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                <Box>
-                                    <Typography color="textSecondary" gutterBottom>
-                                        시스템 건강도
-                                    </Typography>
-                                    <Typography variant="h4" component="div">
-                                        {metrics.systemHealth}%
-                                    </Typography>
-                                </Box>
-                                <CheckCircle sx={{ fontSize: 40, color: 'success.main' }} />
+                <Card>
+                    <CardContent>
+                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                            <Box>
+                                <Typography color="textSecondary" gutterBottom>
+                                    시스템 건강도
+                                </Typography>
+                                <Typography variant="h4" component="div">
+                                    {metrics.systemHealth}%
+                                </Typography>
                             </Box>
-                        </CardContent>
-                    </Card>
-                </Grid>
-            </Grid>
+                            <CheckCircle sx={{ fontSize: 40, color: 'success.main' }} />
+                        </Box>
+                    </CardContent>
+                </Card>
+            </Box>
 
             {/* 보안 상태 알림 */}
             {metrics.activeThreats > 0 && (
@@ -528,8 +519,8 @@ const AdvancedSecurityMonitoring: React.FC = () => {
                         🕵️ 위협 인텔리전스
                     </Typography>
 
-                    <Grid container spacing={3}>
-                        <Grid item xs={12} md={6}>
+                    <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'repeat(2, 1fr)' }, gap: 3 }}>
+                        <Box>
                             <Typography variant="subtitle1" gutterBottom>
                                 악성 IP 주소
                             </Typography>
@@ -548,9 +539,9 @@ const AdvancedSecurityMonitoring: React.FC = () => {
                                     </ListItem>
                                 ))}
                             </List>
-                        </Grid>
+                        </Box>
 
-                        <Grid item xs={12} md={6}>
+                        <Box>
                             <Typography variant="subtitle1" gutterBottom>
                                 의심스러운 도메인
                             </Typography>
@@ -569,8 +560,8 @@ const AdvancedSecurityMonitoring: React.FC = () => {
                                     </ListItem>
                                 ))}
                             </List>
-                        </Grid>
-                    </Grid>
+                        </Box>
+                    </Box>
                 </CardContent>
             </Card>
 
@@ -583,8 +574,8 @@ const AdvancedSecurityMonitoring: React.FC = () => {
             >
                 <DialogTitle>보안 설정</DialogTitle>
                 <DialogContent>
-                    <Grid container spacing={3} sx={{ mt: 1 }}>
-                        <Grid item xs={12} md={6}>
+                    <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'repeat(2, 1fr)' }, gap: 3, mt: 1 }}>
+                        <Box>
                             <FormControlLabel
                                 control={
                                     <Switch
@@ -605,8 +596,8 @@ const AdvancedSecurityMonitoring: React.FC = () => {
                                 }
                                 label="자동 차단"
                             />
-                        </Grid>
-                        <Grid item xs={12} md={6}>
+                        </Box>
+                        <Box>
                             <FormControlLabel
                                 control={
                                     <Switch
@@ -627,8 +618,8 @@ const AdvancedSecurityMonitoring: React.FC = () => {
                                 }
                                 label="지역 차단"
                             />
-                        </Grid>
-                    </Grid>
+                        </Box>
+                    </Box>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={() => setShowConfigDialog(false)}>
@@ -651,56 +642,56 @@ const AdvancedSecurityMonitoring: React.FC = () => {
                     <>
                         <DialogTitle>보안 이벤트 상세 정보</DialogTitle>
                         <DialogContent>
-                            <Grid container spacing={2}>
-                                <Grid item xs={12} md={6}>
+                            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'repeat(2, 1fr)' }, gap: 2 }}>
+                                <Box>
                                     <Typography variant="subtitle2">이벤트 ID</Typography>
                                     <Typography variant="body2">{selectedEvent.id}</Typography>
-                                </Grid>
-                                <Grid item xs={12} md={6}>
+                                </Box>
+                                <Box>
                                     <Typography variant="subtitle2">타입</Typography>
                                     <Typography variant="body2">{selectedEvent.type}</Typography>
-                                </Grid>
-                                <Grid item xs={12} md={6}>
+                                </Box>
+                                <Box>
                                     <Typography variant="subtitle2">심각도</Typography>
                                     <Chip
                                         label={selectedEvent.severity}
                                         color={getSeverityColor(selectedEvent.severity)}
                                         size="small"
                                     />
-                                </Grid>
-                                <Grid item xs={12} md={6}>
+                                </Box>
+                                <Box>
                                     <Typography variant="subtitle2">상태</Typography>
                                     <Chip
                                         label={selectedEvent.status}
                                         color={getStatusColor(selectedEvent.status)}
                                         size="small"
                                     />
-                                </Grid>
-                                <Grid item xs={12}>
+                                </Box>
+                                <Box sx={{ gridColumn: '1 / -1' }}>
                                     <Typography variant="subtitle2">설명</Typography>
                                     <Typography variant="body2">{selectedEvent.description}</Typography>
-                                </Grid>
-                                <Grid item xs={12} md={6}>
+                                </Box>
+                                <Box>
                                     <Typography variant="subtitle2">IP 주소</Typography>
                                     <Typography variant="body2">{selectedEvent.ipAddress}</Typography>
-                                </Grid>
-                                <Grid item xs={12} md={6}>
+                                </Box>
+                                <Box>
                                     <Typography variant="subtitle2">위치</Typography>
                                     <Typography variant="body2">{selectedEvent.location || 'Unknown'}</Typography>
-                                </Grid>
-                                <Grid item xs={12}>
+                                </Box>
+                                <Box sx={{ gridColumn: '1 / -1' }}>
                                     <Typography variant="subtitle2">User Agent</Typography>
                                     <Typography variant="body2" sx={{ wordBreak: 'break-all' }}>
                                         {selectedEvent.userAgent}
                                     </Typography>
-                                </Grid>
+                                </Box>
                                 {selectedEvent.action && (
-                                    <Grid item xs={12}>
+                                    <Box sx={{ gridColumn: '1 / -1' }}>
                                         <Typography variant="subtitle2">조치</Typography>
                                         <Typography variant="body2">{selectedEvent.action}</Typography>
-                                    </Grid>
+                                    </Box>
                                 )}
-                            </Grid>
+                            </Box>
                         </DialogContent>
                         <DialogActions>
                             <Button onClick={() => setSelectedEvent(null)}>

@@ -62,6 +62,7 @@ import {
     Person as PersonIcon,
     ShoppingCart as CartIcon,
     PhotoCamera as CameraIcon,
+    CameraAlt,
     Edit as EditIcon,
     Delete as DeleteIcon,
     Add as AddIcon,
@@ -357,7 +358,7 @@ const CosplayerItemCreatorSystem: React.FC = () => {
                     <Tab label="아이템제작자" icon={<BuildIcon />} />
                     <Tab label="모델 관리" icon={<CameraIcon />} />
                     <Tab label="주문 관리" icon={<CartIcon />} />
-                    <Tab label="포트폴리오" icon={<PhotoCamera />} />
+                    <Tab label="포트폴리오" icon={<CameraAlt />} />
                 </Tabs>
             </Paper>
 

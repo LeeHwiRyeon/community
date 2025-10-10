@@ -10,7 +10,6 @@ import {
   Card,
   CardContent,
   Button,
-  Grid,
   TextField,
   Select,
   MenuItem,
@@ -19,6 +18,7 @@ import {
   Chip,
   LinearProgress,
   CircularProgress,
+  Grid,
   Alert,
   List,
   ListItem,
@@ -250,81 +250,73 @@ const AIPredictiveAnalytics: React.FC = () => {
       <Typography variant="h4" component="h1" gutterBottom>
         🔮 AI 예측 분석 시스템
       </Typography>
-      
+
       <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
         AI 기반 사용자 행동 및 트렌드 예측으로 데이터 기반 의사결정을 지원합니다
       </Typography>
 
       {/* 통계 카드 */}
-      <Grid container spacing={3} sx={{ mb: 3 }}>
-        <Grid item xs={12} sm={6} md={3}>
-          <Card>
-            <CardContent>
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                <Analytics sx={{ mr: 1, color: 'primary.main' }} />
-                <Typography variant="h6">전체 예측</Typography>
-              </Box>
-              <Typography variant="h4" color="primary.main">
-                {stats.totalPredictions}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                활성: {stats.activePredictions}
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
+      <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' }, gap: 3, mb: 3 }}>
+        <Card>
+          <CardContent>
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+              <Analytics sx={{ mr: 1, color: 'primary.main' }} />
+              <Typography variant="h6">전체 예측</Typography>
+            </Box>
+            <Typography variant="h4" color="primary.main">
+              {stats.totalPredictions}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              활성: {stats.activePredictions}
+            </Typography>
+          </CardContent>
+        </Card>
 
-        <Grid item xs={12} sm={6} md={3}>
-          <Card>
-            <CardContent>
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                <Timeline sx={{ mr: 1, color: 'success.main' }} />
-                <Typography variant="h6">평균 신뢰도</Typography>
-              </Box>
-              <Typography variant="h4" color="success.main">
-                {Math.round(stats.averageConfidence * 100)}%
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                예측 정확도
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
+        <Card>
+          <CardContent>
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+              <Timeline sx={{ mr: 1, color: 'success.main' }} />
+              <Typography variant="h6">평균 신뢰도</Typography>
+            </Box>
+            <Typography variant="h4" color="success.main">
+              {Math.round(stats.averageConfidence * 100)}%
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              예측 정확도
+            </Typography>
+          </CardContent>
+        </Card>
 
-        <Grid item xs={12} sm={6} md={3}>
-          <Card>
-            <CardContent>
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                <Warning sx={{ mr: 1, color: 'warning.main' }} />
-                <Typography variant="h6">고위험 예측</Typography>
-              </Box>
-              <Typography variant="h4" color="warning.main">
-                {stats.highImpactPredictions}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                주의 필요
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
+        <Card>
+          <CardContent>
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+              <Warning sx={{ mr: 1, color: 'warning.main' }} />
+              <Typography variant="h6">고위험 예측</Typography>
+            </Box>
+            <Typography variant="h4" color="warning.main">
+              {stats.highImpactPredictions}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              주의 필요
+            </Typography>
+          </CardContent>
+        </Card>
 
-        <Grid item xs={12} sm={6} md={3}>
-          <Card>
-            <CardContent>
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                <Assessment sx={{ mr: 1, color: 'info.main' }} />
-                <Typography variant="h6">모델 정확도</Typography>
-              </Box>
-              <Typography variant="h4" color="info.main">
-                {Math.round(stats.accuracy * 100)}%
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                AI 모델 성능
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
+        <Card>
+          <CardContent>
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+              <Assessment sx={{ mr: 1, color: 'info.main' }} />
+              <Typography variant="h6">모델 정확도</Typography>
+            </Box>
+            <Typography variant="h4" color="info.main">
+              {Math.round(stats.accuracy * 100)}%
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              AI 모델 성능
+            </Typography>
+          </CardContent>
+        </Card>
+      </Box>
 
       {/* 필터 */}
       <Box sx={{ mb: 3, display: 'flex', gap: 2, alignItems: 'center' }}>
@@ -401,21 +393,21 @@ const AIPredictiveAnalytics: React.FC = () => {
                   <Typography variant="subtitle2" gutterBottom>
                     예측 지표
                   </Typography>
-                  
+
                   {prediction.predictions.map((item, index) => (
                     <Box key={index} sx={{ mb: 2 }}>
                       <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
                         <Typography variant="body2" fontWeight="medium">
                           {item.metric}
                         </Typography>
-                        <Typography 
-                          variant="body2" 
+                        <Typography
+                          variant="body2"
                           color={item.change >= 0 ? 'success.main' : 'error.main'}
                         >
                           {item.change >= 0 ? '+' : ''}{item.changePercent.toFixed(1)}%
                         </Typography>
                       </Box>
-                      
+
                       <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
                         <Typography variant="body2" color="text.secondary">
                           현재: {item.currentValue}
@@ -424,7 +416,7 @@ const AIPredictiveAnalytics: React.FC = () => {
                           예측: {item.predictedValue}
                         </Typography>
                       </Box>
-                      
+
                       <LinearProgress
                         variant="determinate"
                         value={(item.predictedValue / (item.currentValue + item.predictedValue)) * 100}
