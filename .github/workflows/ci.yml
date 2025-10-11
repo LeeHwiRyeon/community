@@ -193,3 +193,37 @@ jobs:
       if: always()
       with:
         sarif_file: 'trivy-results-backend.sarif,trivy-results-frontend.sarif'
+
+  # ============================================================================
+  # 📢 Slack 알림
+  # ============================================================================
+  slack-notification:
+    name: Slack 알림
+    runs-on: ubuntu-latest
+    needs: [security-audit, build-test, integration-test, performance-test, security-scan]
+    if: always()
+    
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+        
+      - name: 📢 Slack CI Success Notification
+        if: needs.security-audit.result == 'success' && needs.build-test.result == 'success' && needs.integration-test.result == 'success' && needs.performance-test.result == 'success' && needs.security-scan.result == 'success'
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+          echo "📢 Sending Slack CI success notification..."
+          node slack-notifications.js task "CI Pipeline 완료" \
+            --build=success \
+            --errors=0 \
+            --files=0
+
+      - name: 📢 Slack CI Failure Notification
+        if: needs.security-audit.result == 'failure' || needs.build-test.result == 'failure' || needs.integration-test.result == 'failure' || needs.performance-test.result == 'failure' || needs.security-scan.result == 'failure'
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+          echo "📢 Sending Slack CI failure notification..."
+          node slack-notifications.js error "CI Pipeline 실패" \
+            --file=ci.yml \
+            --count=1

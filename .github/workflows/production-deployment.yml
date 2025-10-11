@@ -493,3 +493,39 @@ jobs:
         run: |
           echo "📱 Sending SMS notification for production failure..."
           # SMS 알림 로직 구현
+
+      # ============================================================================
+      # 📢 Slack 알림 (성공/실패)
+      # ============================================================================
+      - name: 📢 Slack Success Notification
+        if: success()
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+          echo "📢 Sending Slack success notification..."
+          node slack-notifications.js deploy success \
+            --env=production \
+            --version=v1.3.0 \
+            --url=https://community.example.com \
+            --duration=${{ steps.deploy-duration.outputs.duration }}
+
+      - name: 📢 Slack Failure Notification
+        if: failure()
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+          echo "📢 Sending Slack failure notification..."
+          node slack-notifications.js error "Production deployment failed" \
+            --file=production-deployment.yml \
+            --count=${{ steps.error-count.outputs.count }}
+
+      # ============================================================================
+      # 📊 최종 상태 보고
+      # ============================================================================
+      - name: 📊 Final Status Report
+        if: always()
+        run: |
+          echo "📊 Final deployment status: ${{ job.status }}"
+          echo "⏱️ Total duration: ${{ steps.deploy-duration.outputs.duration }} seconds"
+          echo "🔧 Errors fixed: ${{ steps.error-count.outputs.fixed }}"
+          echo "❌ Remaining errors: ${{ steps.error-count.outputs.count }}"
