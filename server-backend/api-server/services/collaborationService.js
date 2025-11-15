@@ -1,6 +1,6 @@
-const WebSocket = require('ws');
-const EventEmitter = require('events');
-const jwt = require('jsonwebtoken');
+import WebSocket from 'ws';
+import { EventEmitter } from 'events';
+import jwt from 'jsonwebtoken';
 
 class CollaborationService extends EventEmitter {
     constructor() {
@@ -381,4 +381,5 @@ class CollaborationService extends EventEmitter {
     }
 }
 
-module.exports = new CollaborationService();
+const collaborationService = new CollaborationService();
+export default collaborationService;
