@@ -7,9 +7,13 @@
  * @date 2025-11-12
  */
 
-const multer = require('multer');
-const path = require('path');
-const fs = require('fs');
+import multer from 'multer';
+import path from 'path';
+import fs from 'fs';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // 업로드 디렉토리 생성
 const uploadDir = path.join(__dirname, '../uploads');
@@ -142,7 +146,17 @@ const handleUploadError = (err, req, res, next) => {
     next();
 };
 
-module.exports = {
+export {
+    upload,
+    imageUpload,
+    handleUploadError,
+    uploadDir,
+    imagesDir,
+    filesDir,
+    thumbnailsDir
+};
+
+export default {
     upload,
     imageUpload,
     handleUploadError,

@@ -8,6 +8,7 @@ import { useParams } from 'react-router-dom';
 import BadgeDisplay from './BadgeDisplay';
 import StatisticsCard from './StatisticsCard';
 import ProfileEditor from './ProfileEditor';
+import BlockUserButton from '../social/BlockUserButton';
 import type { FullProfile, ProfileUpdateData } from '../../types/profile';
 import * as profileService from '../../services/profileService';
 import './UserProfile.css';
@@ -129,14 +130,25 @@ const UserProfile: React.FC = () => {
                 <div className="profile-info">
                     <div className="profile-name-row">
                         <h1 className="profile-username">{profile.user.username}</h1>
-                        {isOwner && (
-                            <button
-                                className="edit-profile-btn"
-                                onClick={() => setIsEditing(true)}
-                            >
-                                ✏️ 프로필 수정
-                            </button>
-                        )}
+                        <div className="profile-action-buttons">
+                            {isOwner ? (
+                                <button
+                                    className="edit-profile-btn"
+                                    onClick={() => setIsEditing(true)}
+                                >
+                                    ✏️ 프로필 수정
+                                </button>
+                            ) : (
+                                <BlockUserButton
+                                    targetUserId={profile.user.id}
+                                    targetUsername={profile.user.username}
+                                    size="small"
+                                    variant="outlined"
+                                    showLabel={true}
+                                    showIcon={true}
+                                />
+                            )}
+                        </div>
                     </div>
 
                     {profile.user.bio && <p className="profile-bio">{profile.user.bio}</p>}

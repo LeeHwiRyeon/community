@@ -1,0 +1,34 @@
+/**
+ * BlockUserButton Styles
+ */
+
+.block-user-button {
+    transition: all 0.3s ease;
+}
+
+.block-user-button.not-blocked:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(244, 67, 54, 0.3);
+}
+
+.block-user-button.blocked:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 152, 0, 0.3);
+}
+
+.block-confirm-dialog .MuiDialog-paper {
+    border-radius: 12px;
+}
+
+.block-confirm-dialog .MuiDialogTitle-root {
+    padding: 20px 24px 16px;
+}
+
+.block-confirm-dialog .MuiDialogContent-root {
+    padding: 8px 24px;
+}
+
+.block-confirm-dialog .MuiDialogActions-root {
+    padding: 16px 24px;
+    gap: 8px;
+}

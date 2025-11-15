@@ -136,6 +136,11 @@
     margin-bottom: 0.75rem;
 }
 
+.profile-action-buttons {
+    display: flex;
+    gap: 0.5rem;
+}
+
 .profile-username {
     margin: 0;
     font-size: 2rem;
