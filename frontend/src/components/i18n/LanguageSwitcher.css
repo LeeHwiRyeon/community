@@ -103,6 +103,7 @@
 
 /* 다크 모드 */
 @media (prefers-color-scheme: dark) {
+
     .language-switcher-text-button,
     .language-switcher-both-button {
         border-color: rgba(255, 255, 255, 0.23);
@@ -166,6 +167,7 @@
         opacity: 0;
         transform: translateY(-10px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);

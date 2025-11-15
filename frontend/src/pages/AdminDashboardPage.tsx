@@ -39,8 +39,18 @@ import {
     Delete,
     Edit,
     Refresh,
+    TrendingUp,
+    Timeline,
+    Flag,
+    Psychology,
 } from '@mui/icons-material';
 import axios from 'axios';
+
+// 새 컴포넌트 import
+import RealTimeStats from '../components/admin/RealTimeStats';
+import ActivityLogViewer from '../components/admin/ActivityLogViewer';
+import ReportDashboard from '../components/admin/ReportDashboard';
+import AIModeration from '../components/admin/AIModeration';
 
 interface Stats {
     users: {
@@ -748,11 +758,14 @@ const AdminDashboardPage: React.FC = () => {
 
             <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
                 <Tabs value={tabValue} onChange={(_, newValue) => setTabValue(newValue)}>
-                    <Tab label="통계" />
-                    <Tab label="사용자 관리" />
-                    <Tab label="게시글 관리" />
-                    <Tab label="댓글 관리" />
-                    <Tab label="활동 로그" />
+                    <Tab label="통계" icon={<Article />} />
+                    <Tab label="사용자 관리" icon={<People />} />
+                    <Tab label="게시글 관리" icon={<Article />} />
+                    <Tab label="댓글 관리" icon={<Comment />} />
+                    <Tab label="활동 로그" icon={<Timeline />} />
+                    <Tab label="실시간 통계" icon={<TrendingUp />} />
+                    <Tab label="신고 관리" icon={<Flag />} />
+                    <Tab label="AI 모더레이션" icon={<Psychology />} />
                 </Tabs>
             </Box>
 
@@ -761,6 +774,9 @@ const AdminDashboardPage: React.FC = () => {
             {tabValue === 2 && renderPosts()}
             {tabValue === 3 && renderComments()}
             {tabValue === 4 && renderActivities()}
+            {tabValue === 5 && <RealTimeStats />}
+            {tabValue === 6 && <ReportDashboard />}
+            {tabValue === 7 && <AIModeration />}
 
             {/* 삭제 확인 다이얼로그 */}
             <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>

@@ -89,11 +89,11 @@ export const isRTL = (language: string): boolean => {
  */
 export const changeLanguage = async (language: string): Promise<void> => {
     await i18n.changeLanguage(language);
-    
+
     // HTML dir 속성 설정
     document.documentElement.dir = isRTL(language) ? 'rtl' : 'ltr';
     document.documentElement.lang = language;
-    
+
     // localStorage에 저장
     localStorage.setItem('i18nextLng', language);
 };
