@@ -15,7 +15,6 @@ import {
     Chip,
     Alert,
     Paper,
-    Grid,
     CircularProgress,
 } from '@mui/material';
 import {
@@ -174,112 +173,102 @@ const AIModeration: React.FC = () => {
                         분석 결과
                     </Typography>
 
-                    <Grid container spacing={3}>
+                    <Box display="grid" gridTemplateColumns="repeat(auto-fit, minmax(300px, 1fr))" gap={3}>
                         {/* 유해성 점수 */}
-                        <Grid item xs={12} md={6}>
-                            <Card variant="outlined">
-                                <CardContent>
-                                    <Typography variant="subtitle2" color="textSecondary" gutterBottom>
-                                        유해성 점수
+                        <Card variant="outlined">
+                            <CardContent>
+                                <Typography variant="subtitle2" color="textSecondary" gutterBottom>
+                                    유해성 점수
+                                </Typography>
+                                <Box display="flex" alignItems="center" gap={2} mb={1}>
+                                    <Typography variant="h3" color={getToxicityColor(result.toxicityScore)}>
+                                        {(result.toxicityScore * 100).toFixed(0)}%
                                     </Typography>
-                                    <Box display="flex" alignItems="center" gap={2} mb={1}>
-                                        <Typography variant="h3" color={getToxicityColor(result.toxicityScore)}>
-                                            {(result.toxicityScore * 100).toFixed(0)}%
-                                        </Typography>
-                                        <Chip
-                                            label={getToxicityLabel(result.toxicityScore)}
-                                            color={getToxicityColor(result.toxicityScore)}
-                                        />
-                                    </Box>
-                                    <LinearProgress
-                                        variant="determinate"
-                                        value={result.toxicityScore * 100}
+                                    <Chip
+                                        label={getToxicityLabel(result.toxicityScore)}
                                         color={getToxicityColor(result.toxicityScore)}
-                                        sx={{ height: 8, borderRadius: 4 }}
                                     />
-                                </CardContent>
-                            </Card>
-                        </Grid>
+                                </Box>
+                                <LinearProgress
+                                    variant="determinate"
+                                    value={result.toxicityScore * 100}
+                                    color={getToxicityColor(result.toxicityScore)}
+                                    sx={{ height: 8, borderRadius: 4 }}
+                                />
+                            </CardContent>
+                        </Card>
 
                         {/* 신뢰도 */}
-                        <Grid item xs={12} md={6}>
-                            <Card variant="outlined">
-                                <CardContent>
-                                    <Typography variant="subtitle2" color="textSecondary" gutterBottom>
-                                        분석 신뢰도
+                        <Card variant="outlined">
+                            <CardContent>
+                                <Typography variant="subtitle2" color="textSecondary" gutterBottom>
+                                    분석 신뢰도
+                                </Typography>
+                                <Box display="flex" alignItems="center" gap={2} mb={1}>
+                                    <Typography variant="h3" color="primary">
+                                        {(result.confidence * 100).toFixed(0)}%
                                     </Typography>
-                                    <Box display="flex" alignItems="center" gap={2} mb={1}>
-                                        <Typography variant="h3" color="primary">
-                                            {(result.confidence * 100).toFixed(0)}%
-                                        </Typography>
-                                        <Chip label="높음" color="primary" />
-                                    </Box>
-                                    <LinearProgress
-                                        variant="determinate"
-                                        value={result.confidence * 100}
-                                        sx={{ height: 8, borderRadius: 4 }}
-                                    />
-                                </CardContent>
-                            </Card>
-                        </Grid>
+                                    <Chip label="높음" color="primary" />
+                                </Box>
+                                <LinearProgress
+                                    variant="determinate"
+                                    value={result.confidence * 100}
+                                    sx={{ height: 8, borderRadius: 4 }}
+                                />
+                            </CardContent>
+                        </Card>
 
                         {/* 위반 카테고리 */}
-                        <Grid item xs={12} md={6}>
-                            <Card variant="outlined">
-                                <CardContent>
-                                    <Typography variant="subtitle2" color="textSecondary" gutterBottom>
-                                        감지된 카테고리
-                                    </Typography>
-                                    <Box display="flex" flexWrap="wrap" gap={1} mt={1}>
-                                        {result.categories.length > 0 ? (
-                                            result.categories.map((category) => (
-                                                <Chip
-                                                    key={category}
-                                                    label={getCategoryLabel(category)}
-                                                    color="warning"
-                                                    size="small"
-                                                />
-                                            ))
-                                        ) : (
-                                            <Chip label="없음" color="success" size="small" />
-                                        )}
-                                    </Box>
-                                </CardContent>
-                            </Card>
-                        </Grid>
+                        <Card variant="outlined">
+                            <CardContent>
+                                <Typography variant="subtitle2" color="textSecondary" gutterBottom>
+                                    감지된 카테고리
+                                </Typography>
+                                <Box display="flex" flexWrap="wrap" gap={1} mt={1}>
+                                    {result.categories.length > 0 ? (
+                                        result.categories.map((category) => (
+                                            <Chip
+                                                key={category}
+                                                label={getCategoryLabel(category)}
+                                                color="warning"
+                                                size="small"
+                                            />
+                                        ))
+                                    ) : (
+                                        <Chip label="없음" color="success" size="small" />
+                                    )}
+                                </Box>
+                            </CardContent>
+                        </Card>
 
                         {/* 권장 조치 */}
-                        <Grid item xs={12} md={6}>
-                            <Card variant="outlined">
-                                <CardContent>
-                                    <Typography variant="subtitle2" color="textSecondary" gutterBottom>
-                                        권장 조치
+                        <Card variant="outlined">
+                            <CardContent>
+                                <Typography variant="subtitle2" color="textSecondary" gutterBottom>
+                                    권장 조치
+                                </Typography>
+                                <Box display="flex" alignItems="center" gap={1} mt={2}>
+                                    {getActionIcon(result.suggestedAction)}
+                                    <Typography variant="h6">
+                                        {getActionLabel(result.suggestedAction)}
                                     </Typography>
-                                    <Box display="flex" alignItems="center" gap={1} mt={2}>
-                                        {getActionIcon(result.suggestedAction)}
-                                        <Typography variant="h6">
-                                            {getActionLabel(result.suggestedAction)}
-                                        </Typography>
-                                    </Box>
-                                </CardContent>
-                            </Card>
-                        </Grid>
+                                </Box>
+                            </CardContent>
+                        </Card>
+                    </Box>
 
-                        {/* 경고 메시지 */}
-                        {result.shouldFlag && (
-                            <Grid item xs={12}>
-                                <Alert severity="warning">
-                                    <Typography variant="subtitle2" gutterBottom>
-                                        ⚠️ 이 콘텐츠는 추가 검토가 필요합니다
-                                    </Typography>
-                                    <Typography variant="body2">
-                                        AI 분석 결과 부적절한 콘텐츠로 판단되었습니다.
-                                        관리자의 수동 검토를 권장합니다.
-                                    </Typography>
-                                </Alert>
-                            </Grid>
-                        )}
-                    </Grid>
+                    {/* 경고 메시지 */}
+                    {result.shouldFlag && (
+                        <Alert severity="warning" sx={{ mt: 3 }}>
+                            <Typography variant="subtitle2" gutterBottom>
+                                ⚠️ 이 콘텐츠는 추가 검토가 필요합니다
+                            </Typography>
+                            <Typography variant="body2">
+                                AI 분석 결과 부적절한 콘텐츠로 판단되었습니다.
+                                관리자의 수동 검토를 권장합니다.
+                            </Typography>
+                        </Alert>
+                    )}
 
                     <Box display="flex" gap={2} mt={3}>
                         <Button variant="contained" color="success" startIcon={<CheckCircle />}>

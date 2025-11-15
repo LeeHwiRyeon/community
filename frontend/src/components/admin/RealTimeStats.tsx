@@ -148,10 +148,8 @@ const RealTimeStats: React.FC = () => {
                         </Box>
                     </CardContent>
                 </Card>
-            </Grid>
 
-            {/* 최근 1시간 게시글 */}
-            <Grid item xs={12} sm={6} md={3}>
+                {/* 최근 1시간 게시글 */}
                 <Card>
                     <CardContent>
                         <Box display="flex" alignItems="center" justifyContent="space-between">
@@ -168,10 +166,8 @@ const RealTimeStats: React.FC = () => {
                         </Box>
                     </CardContent>
                 </Card>
-            </Grid>
 
-            {/* 최근 1시간 댓글 */}
-            <Grid item xs={12} sm={6} md={3}>
+                {/* 최근 1시간 댓글 */}
                 <Card>
                     <CardContent>
                         <Box display="flex" alignItems="center" justifyContent="space-between">
@@ -188,10 +184,8 @@ const RealTimeStats: React.FC = () => {
                         </Box>
                     </CardContent>
                 </Card>
-            </Grid>
 
-            {/* 신규 가입자 */}
-            <Grid item xs={12} sm={6} md={3}>
+                {/* 신규 가입자 */}
                 <Card>
                     <CardContent>
                         <Box display="flex" alignItems="center" justifyContent="space-between">
@@ -208,43 +202,40 @@ const RealTimeStats: React.FC = () => {
                         </Box>
                     </CardContent>
                 </Card>
-            </Grid>
+            </Box>
 
             {/* 시스템 상태 */}
-            <Grid item xs={12}>
-                <Card>
-                    <CardContent>
-                        <Typography variant="subtitle2" gutterBottom>
-                            시스템 상태
-                        </Typography>
-                        <Box display="flex" gap={2} flexWrap="wrap">
-                            <Box flex={1} minWidth={200}>
-                                <Typography variant="caption" color="textSecondary">
-                                    총 레코드 수
-                                </Typography>
-                                <Typography variant="h6">
-                                    {stats?.system.totalRecords.toLocaleString() || 0}
-                                </Typography>
-                                <LinearProgress
-                                    variant="determinate"
-                                    value={Math.min((stats?.system.totalRecords || 0) / 100000 * 100, 100)}
-                                    sx={{ mt: 1 }}
-                                />
-                            </Box>
-                            <Box flex={1} minWidth={200}>
-                                <Typography variant="caption" color="textSecondary">
-                                    데이터베이스 크기
-                                </Typography>
-                                <Typography variant="h6">
-                                    {stats?.system.dbSize || 'N/A'}
-                                </Typography>
-                            </Box>
+            <Card sx={{ mt: 2 }}>
+                <CardContent>
+                    <Typography variant="subtitle2" gutterBottom>
+                        시스템 상태
+                    </Typography>
+                    <Box display="flex" gap={2} flexWrap="wrap">
+                        <Box flex={1} minWidth={200}>
+                            <Typography variant="caption" color="textSecondary">
+                                총 레코드 수
+                            </Typography>
+                            <Typography variant="h6">
+                                {stats?.system.totalRecords.toLocaleString() || 0}
+                            </Typography>
+                            <LinearProgress
+                                variant="determinate"
+                                value={Math.min((stats?.system.totalRecords || 0) / 100000 * 100, 100)}
+                                sx={{ mt: 1 }}
+                            />
                         </Box>
-                    </CardContent>
-                </Card>
-            </Grid>
-        </Grid>
-        </Box >
+                        <Box flex={1} minWidth={200}>
+                            <Typography variant="caption" color="textSecondary">
+                                데이터베이스 크기
+                            </Typography>
+                            <Typography variant="h6">
+                                {stats?.system.dbSize || 'N/A'}
+                            </Typography>
+                        </Box>
+                    </Box>
+                </CardContent>
+            </Card>
+        </Box>
     );
 };
 
