@@ -1,7 +1,7 @@
-const { logger } = require('../utils/logger');
-const nodemailer = require('nodemailer');
-const webpush = require('web-push');
-const axios = require('axios');
+import { logger } from '../utils/logger.js';
+import nodemailer from 'nodemailer';
+import webpush from 'web-push';
+import axios from 'axios';
 
 /**
  * 고급 알림 시스템
@@ -803,4 +803,5 @@ class AdvancedNotificationService {
     }
 }
 
-module.exports = new AdvancedNotificationService();
+const advancedNotificationService = new AdvancedNotificationService();
+export default advancedNotificationService;
