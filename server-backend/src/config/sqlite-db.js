@@ -17,7 +17,7 @@ const DB_PATH = join(__dirname, '../../data/community.db');
 // Ensure data directory exists
 const dataDir = dirname(DB_PATH);
 if (!fs.existsSync(dataDir)) {
-    fs.mkdirSync(dataDir, { recursive: true });
+  fs.mkdirSync(dataDir, { recursive: true });
 }
 
 // Create database connection
@@ -28,7 +28,7 @@ db.pragma('foreign_keys = ON');
 
 // Initialize database schema
 function initializeSchema() {
-    db.exec(`
+  db.exec(`
     -- Users table
     CREATE TABLE IF NOT EXISTS users (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -93,17 +93,64 @@ function initializeSchema() {
       UNIQUE(follower_id, following_id)
     );
 
-    -- Direct messages table
+    -- DM Conversations table (대화방)
+    CREATE TABLE IF NOT EXISTS dm_conversations (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      participant1_id INTEGER NOT NULL,
+      participant2_id INTEGER NOT NULL,
+      last_message_id INTEGER DEFAULT NULL,
+      last_message_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (participant1_id) REFERENCES users(id) ON DELETE CASCADE,
+      FOREIGN KEY (participant2_id) REFERENCES users(id) ON DELETE CASCADE
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_dm_conv_participant1 ON dm_conversations(participant1_id);
+    CREATE INDEX IF NOT EXISTS idx_dm_conv_participant2 ON dm_conversations(participant2_id);
+    CREATE INDEX IF NOT EXISTS idx_dm_conv_pair ON dm_conversations(participant1_id, participant2_id);
+    CREATE INDEX IF NOT EXISTS idx_dm_conv_last_message ON dm_conversations(last_message_at DESC);
+
+    -- Direct messages table (advanced version for DM system)
     CREATE TABLE IF NOT EXISTS direct_messages (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
+      conversation_id INTEGER NOT NULL,
       sender_id INTEGER NOT NULL,
       receiver_id INTEGER NOT NULL,
-      message TEXT NOT NULL,
+      content TEXT NOT NULL,
+      message_type TEXT DEFAULT 'text' CHECK(message_type IN ('text', 'image', 'file', 'system')),
+      
+      -- 첨부파일 정보
+      attachment_url TEXT,
+      attachment_name TEXT,
+      attachment_size INTEGER,
+      attachment_type TEXT,
+      
+      -- 상태 정보
       is_read INTEGER DEFAULT 0,
+      read_at DATETIME,
+      is_deleted INTEGER DEFAULT 0,
+      deleted_at DATETIME,
+      deleted_by INTEGER,
+      
+      -- 메타데이터
+      reply_to_id INTEGER,
+      edited_at DATETIME,
+      
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY (sender_id) REFERENCES users(id),
-      FOREIGN KEY (receiver_id) REFERENCES users(id)
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      
+      FOREIGN KEY (conversation_id) REFERENCES dm_conversations(id) ON DELETE CASCADE,
+      FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE CASCADE,
+      FOREIGN KEY (receiver_id) REFERENCES users(id) ON DELETE CASCADE,
+      FOREIGN KEY (reply_to_id) REFERENCES direct_messages(id) ON DELETE SET NULL
     );
+
+    CREATE INDEX IF NOT EXISTS idx_dm_conversation ON direct_messages(conversation_id, created_at DESC);
+    CREATE INDEX IF NOT EXISTS idx_dm_sender ON direct_messages(sender_id);
+    CREATE INDEX IF NOT EXISTS idx_dm_receiver ON direct_messages(receiver_id);
+    CREATE INDEX IF NOT EXISTS idx_dm_read_status ON direct_messages(receiver_id, is_read);
+    CREATE INDEX IF NOT EXISTS idx_dm_deleted ON direct_messages(is_deleted);
 
     -- Notifications table
     CREATE TABLE IF NOT EXISTS notifications (
@@ -296,9 +343,6 @@ function initializeSchema() {
     CREATE INDEX IF NOT EXISTS idx_bookmarks_post_id ON bookmarks(post_id);
     CREATE INDEX IF NOT EXISTS idx_follows_follower ON follows(follower_id);
     CREATE INDEX IF NOT EXISTS idx_follows_following ON follows(following_id);
-    CREATE INDEX IF NOT EXISTS idx_dm_receiver ON direct_messages(receiver_id);
-    CREATE INDEX IF NOT EXISTS idx_dm_sender ON direct_messages(sender_id);
-    CREATE INDEX IF NOT EXISTS idx_dm_is_read ON direct_messages(is_read);
     CREATE INDEX IF NOT EXISTS idx_notifications_user ON notifications(user_id);
     CREATE INDEX IF NOT EXISTS idx_notifications_type ON notifications(type);
     CREATE INDEX IF NOT EXISTS idx_notifications_is_read ON notifications(is_read);
@@ -346,58 +390,58 @@ function initializeSchema() {
     CREATE INDEX IF NOT EXISTS idx_post_metadata_post ON post_metadata(post_id);
   `);
 
-    console.log('✓ SQLite database schema initialized');
+  console.log('✓ SQLite database schema initialized');
 }
 
 // MySQL-compatible query wrapper
 class SQLiteAdapter {
-    constructor(database) {
-        this.db = database;
-    }
+  constructor(database) {
+    this.db = database;
+  }
 
-    // Execute query (for INSERT, UPDATE, DELETE)
-    execute(sql, params = []) {
-        try {
-            const stmt = this.db.prepare(sql);
-            const result = stmt.run(...params);
-            return [result];
-        } catch (error) {
-            console.error('SQLite execute error:', error);
-            throw error;
-        }
+  // Execute query (for INSERT, UPDATE, DELETE)
+  execute(sql, params = []) {
+    try {
+      const stmt = this.db.prepare(sql);
+      const result = stmt.run(...params);
+      return [result];
+    } catch (error) {
+      console.error('SQLite execute error:', error);
+      throw error;
     }
+  }
 
-    // Query (for SELECT)
-    query(sql, params = []) {
-        try {
-            const stmt = this.db.prepare(sql);
-            const rows = stmt.all(...params);
-            return [rows];
-        } catch (error) {
-            console.error('SQLite query error:', error);
-            throw error;
-        }
+  // Query (for SELECT)
+  query(sql, params = []) {
+    try {
+      const stmt = this.db.prepare(sql);
+      const rows = stmt.all(...params);
+      return [rows];
+    } catch (error) {
+      console.error('SQLite query error:', error);
+      throw error;
     }
+  }
 
-    // Begin transaction
-    beginTransaction() {
-        this.db.exec('BEGIN TRANSACTION');
-    }
+  // Begin transaction
+  beginTransaction() {
+    this.db.exec('BEGIN TRANSACTION');
+  }
 
-    // Commit transaction
-    commit() {
-        this.db.exec('COMMIT');
-    }
+  // Commit transaction
+  commit() {
+    this.db.exec('COMMIT');
+  }
 
-    // Rollback transaction
-    rollback() {
-        this.db.exec('ROLLBACK');
-    }
+  // Rollback transaction
+  rollback() {
+    this.db.exec('ROLLBACK');
+  }
 
-    // Close connection
-    end() {
-        this.db.close();
-    }
+  // Close connection
+  end() {
+    this.db.close();
+  }
 }
 
 // Initialize schema on startup
