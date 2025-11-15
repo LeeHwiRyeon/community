@@ -8,10 +8,10 @@
  * @created 2025-10-02
  */
 
-const fs = require('fs').promises;
-const path = require('path');
-const { spawn, exec } = require('child_process');
-const util = require('util');
+import { promises as fs } from 'fs';
+import path from 'path';
+import { spawn, exec } from 'child_process';
+import util from 'util';
 const execAsync = util.promisify(exec);
 
 class AutoBugDetectionFix {
@@ -798,4 +798,4 @@ class QualityChecker {
     async check(filePath) { return { score: 85, issues: [] }; }
 }
 
-module.exports = AutoBugDetectionFix;
+export default AutoBugDetectionFix;
