@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     AppBar,
     Toolbar,
@@ -15,7 +15,9 @@ import {
     ListItemText,
     Divider,
     useTheme,
-    useMediaQuery
+    useMediaQuery,
+    TextField,
+    InputAdornment
 } from '@mui/material';
 import {
     Menu as MenuIcon,
@@ -30,18 +32,41 @@ import {
     Login as LoginIcon,
     Person as PersonIcon,
     Edit as EditIcon,
-    People as PeopleIcon
+    People as PeopleIcon,
+    Search as SearchIcon
 } from '@mui/icons-material';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import NotificationBell from './NotificationBell';
+import SimpleNotificationBell from './SimpleNotificationBell';
+import DMNotification from './DM/DMNotification';
+import ThemeToggleButton from './ThemeToggleButton';
+import LanguageSwitcher from './LanguageSwitcher';
 
 const Navbar: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+    const { t } = useTranslation();
 
     const [mobileOpen, setMobileOpen] = useState(false);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+    const [currentUserId, setCurrentUserId] = useState<number>(0);
+    const [searchQuery, setSearchQuery] = useState<string>('');
+
+    useEffect(() => {
+        // 현재 사용자 ID 가져오기
+        const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+        if (token) {
+            try {
+                const payload = JSON.parse(atob(token.split('.')[1]));
+                setCurrentUserId(payload.id || payload.userId);
+            } catch (error) {
+                console.error('Failed to parse token:', error);
+            }
+        }
+    }, []);
 
     const handleDrawerToggle = () => {
         setMobileOpen(!mobileOpen);
@@ -61,12 +86,25 @@ const Navbar: React.FC = () => {
         handleMenuClose();
     };
 
+    const handleSearch = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (searchQuery.trim()) {
+            navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+        }
+    };
+
+    const handleSearchKeyPress = (e: React.KeyboardEvent) => {
+        if (e.key === 'Enter') {
+            handleSearch(e as any);
+        }
+    };
+
     // 주요 4개 커뮤니티 (순서 고정)
     const mainCommunities = [
-        { id: 'news', name: '뉴스', icon: <NewsIcon />, path: '/communities/news', color: '#2196F3' },
-        { id: 'games', name: '게임', icon: <GamesIcon />, path: '/communities/games', color: '#9C27B0' },
-        { id: 'streaming', name: '방송국', icon: <StreamingIcon />, path: '/communities/streaming', color: '#FF5722' },
-        { id: 'cosplay', name: '코스프레', icon: <CosplayIcon />, path: '/communities/cosplay', color: '#E91E63' }
+        { id: 'news', name: t('navbar.news'), icon: <NewsIcon />, path: '/communities/news', color: '#2196F3' },
+        { id: 'games', name: t('navbar.games'), icon: <GamesIcon />, path: '/communities/games', color: '#9C27B0' },
+        { id: 'streaming', name: t('navbar.streaming'), icon: <StreamingIcon />, path: '/communities/streaming', color: '#FF5722' },
+        { id: 'cosplay', name: t('navbar.cosplay'), icon: <CosplayIcon />, path: '/communities/cosplay', color: '#E91E63' }
     ];
 
     const drawer = (
@@ -80,34 +118,38 @@ const Navbar: React.FC = () => {
             <List>
                 <ListItem onClick={() => handleNavigation('/')} sx={{ cursor: 'pointer', '&:hover': { backgroundColor: 'action.hover' } }}>
                     <ListItemIcon><HomeIcon /></ListItemIcon>
-                    <ListItemText primary="홈페이지" />
+                    <ListItemText primary={t('common.home')} />
+                </ListItem>
+                <ListItem onClick={() => handleNavigation('/search')} sx={{ cursor: 'pointer', '&:hover': { backgroundColor: 'action.hover' } }}>
+                    <ListItemIcon><SearchIcon /></ListItemIcon>
+                    <ListItemText primary={t('common.search')} />
                 </ListItem>
                 <ListItem onClick={() => handleNavigation('/communities')} sx={{ cursor: 'pointer', '&:hover': { backgroundColor: 'action.hover' } }}>
                     <ListItemIcon><CommunitiesIcon /></ListItemIcon>
-                    <ListItemText primary="커뮤니티 허브" />
+                    <ListItemText primary={t('navbar.communityHub')} />
                 </ListItem>
                 <ListItem onClick={() => handleNavigation('/rpg-profile')} sx={{ cursor: 'pointer', '&:hover': { backgroundColor: 'action.hover' } }}>
                     <ListItemIcon><PersonIcon /></ListItemIcon>
-                    <ListItemText primary="RPG 프로필" />
+                    <ListItemText primary={t('navbar.rpgProfile')} />
                 </ListItem>
                 <ListItem onClick={() => handleNavigation('/rich-editor')} sx={{ cursor: 'pointer', '&:hover': { backgroundColor: 'action.hover' } }}>
                     <ListItemIcon><EditIcon /></ListItemIcon>
-                    <ListItemText primary="리치 에디터" />
+                    <ListItemText primary={t('navbar.richEditor')} />
                 </ListItem>
                 <ListItem onClick={() => handleNavigation('/follow-system')} sx={{ cursor: 'pointer', '&:hover': { backgroundColor: 'action.hover' } }}>
                     <ListItemIcon><PeopleIcon /></ListItemIcon>
-                    <ListItemText primary="팔로우 시스템" />
+                    <ListItemText primary={t('navbar.followSystem')} />
                 </ListItem>
                 <ListItem onClick={() => handleNavigation('/admin-dashboard')} sx={{ cursor: 'pointer', '&:hover': { backgroundColor: 'action.hover' } }}>
                     <ListItemIcon><AdminIcon /></ListItemIcon>
-                    <ListItemText primary="관리자 대시보드" />
+                    <ListItemText primary={t('navbar.adminDashboard')} />
                 </ListItem>
             </List>
             <Divider />
             <List>
                 <ListItem>
                     <ListItemText
-                        primary="주요 커뮤니티"
+                        primary={t('navbar.communities')}
                         primaryTypographyProps={{ variant: 'subtitle2', color: 'text.secondary' }}
                     />
                 </ListItem>
@@ -161,48 +203,126 @@ const Navbar: React.FC = () => {
                     </Typography>
 
                     {!isMobile && (
-                        <Box sx={{ display: 'flex', gap: 1 }}>
+                        <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+                            <TextField
+                                size="small"
+                                placeholder="검색..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                onKeyPress={handleSearchKeyPress}
+                                InputProps={{
+                                    startAdornment: (
+                                        <InputAdornment position="start">
+                                            <SearchIcon sx={{ fontSize: 20 }} />
+                                        </InputAdornment>
+                                    )
+                                }}
+                                inputProps={{
+                                    'data-testid': 'search-bar'
+                                }}
+                                sx={{
+                                    width: '250px',
+                                    backgroundColor: 'rgba(255, 255, 255, 0.15)',
+                                    borderRadius: 1,
+                                    '& .MuiOutlinedInput-root': {
+                                        color: 'white',
+                                        '& fieldset': {
+                                            borderColor: 'rgba(255, 255, 255, 0.3)',
+                                        },
+                                        '&:hover fieldset': {
+                                            borderColor: 'rgba(255, 255, 255, 0.5)',
+                                        },
+                                        '&.Mui-focused fieldset': {
+                                            borderColor: 'rgba(255, 255, 255, 0.7)',
+                                        },
+                                    },
+                                    '& .MuiInputBase-input::placeholder': {
+                                        color: 'rgba(255, 255, 255, 0.7)',
+                                        opacity: 1,
+                                    },
+                                }}
+                            />
                             <Button
                                 color="inherit"
                                 onClick={() => navigate('/')}
                                 startIcon={<HomeIcon />}
                             >
-                                홈페이지
+                                {t('common.home')}
                             </Button>
                             <Button
                                 color="inherit"
                                 onClick={() => navigate('/communities')}
                                 startIcon={<CommunitiesIcon />}
                             >
-                                커뮤니티 허브
+                                {t('navbar.communityHub')}
                             </Button>
                             <Button
                                 color="inherit"
                                 onClick={handleMenuOpen}
                                 startIcon={<CommunitiesIcon />}
                             >
-                                커뮤니티
+                                {t('navbar.communities')}
                             </Button>
                             <Button
                                 color="inherit"
                                 onClick={() => navigate('/chat-community')}
                                 startIcon={<ChatIcon />}
                             >
-                                채팅 커뮤니티
+                                {t('navbar.chatCommunity')}
+                            </Button>
+                            <Button
+                                color="inherit"
+                                onClick={() => navigate('/search')}
+                                startIcon={<SearchIcon />}
+                            >
+                                {t('common.search')}
+                            </Button>
+                            <Button
+                                color="inherit"
+                                onClick={() => navigate('/bookmarks')}
+                                startIcon={<SearchIcon />}
+                            >
+                                {t('navbar.bookmarks')}
+                            </Button>
+                            <Button
+                                color="inherit"
+                                onClick={() => navigate('/follow/feed')}
+                                startIcon={<SearchIcon />}
+                            >
+                                {t('navbar.follow')}
                             </Button>
                             <Button
                                 color="inherit"
                                 onClick={handleMenuOpen}
                                 startIcon={<AdminIcon />}
                             >
-                                관리 시스템
+                                {t('navbar.management')}
                             </Button>
+                            <LanguageSwitcher size="medium" />
+                            <ThemeToggleButton size="medium" />
+                            <SimpleNotificationBell />
+                            {currentUserId > 0 && (
+                                <>
+                                    <DMNotification
+                                        userId={currentUserId}
+                                        onOpenInbox={() => navigate('/messages')}
+                                    />
+                                    <Button
+                                        color="inherit"
+                                        onClick={() => navigate('/group-chats')}
+                                        startIcon={<ChatIcon />}
+                                        sx={{ ml: 1 }}
+                                    >
+                                        {t('navbar.groupChats')}
+                                    </Button>
+                                </>
+                            )}
                             <Button
                                 color="inherit"
                                 onClick={() => navigate('/login')}
                                 startIcon={<LoginIcon />}
                             >
-                                로그인
+                                {t('common.login')}
                             </Button>
                         </Box>
                     )}
