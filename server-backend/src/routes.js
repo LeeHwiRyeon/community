@@ -17,6 +17,7 @@ import translationRouter from './routes/translation.js';
 import uploadRouter from './routes/upload.js';
 import mockDataRouter from './routes/mockData.js';
 import dmRouter from './routes/dm.js';
+import groupChatRouter from './routes/group-chat.js';
 // import notificationsRouter from './routes/notifications.js'; // TODO: Convert to ES Module
 // import translateRouter from './routes/translate.js'; // TODO: Convert to ES Module
 // import todosRouter from './routes/todos.js'; // TODO: Convert to ES Module
@@ -2457,6 +2458,9 @@ router.use('/translate', translationRouter);
 
 // DM (Direct Message) routes
 router.use('/dm', dmRouter);
+
+// Group Chat routes
+router.use('/group-chat', groupChatRouter);
 
 // Notifications routes
 // router.use('/notifications', notificationsRouter); // TODO: Convert to ES Module
