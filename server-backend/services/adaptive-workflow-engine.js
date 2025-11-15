@@ -9,8 +9,8 @@
  * - 예측적 실패 방지
  */
 
-const { logger } = require('../utils/logger');
-const { performanceMonitor } = require('../utils/performance-monitor');
+import { logger } from '../utils/logger.js';
+import { performanceMonitor } from '../utils/performance-monitor.js';
 
 class AdaptiveWorkflowEngine {
     constructor() {
@@ -731,4 +731,4 @@ class ParallelizationEngine {
     }
 }
 
-module.exports = AdaptiveWorkflowEngine;
+export default AdaptiveWorkflowEngine;
