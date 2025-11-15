@@ -1,0 +1,127 @@
+/**
+ * ShareButton Component Styles
+ */
+
+.share-button {
+    transition: all 0.2s ease-in-out;
+}
+
+.share-button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.share-dialog .MuiDialogTitle-root {
+    padding: 16px 24px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.share-dialog .MuiDialogTitle-root .MuiIconButton-root {
+    color: white;
+}
+
+.share-options-list {
+    padding: 0;
+}
+
+.share-option-item {
+    padding: 16px 24px;
+    transition: all 0.2s ease-in-out;
+    border-radius: 8px;
+}
+
+.share-option-item:hover {
+    transform: translateX(4px);
+}
+
+.share-option-item.twitter:hover {
+    background-color: rgba(29, 161, 242, 0.08);
+}
+
+.share-option-item.facebook:hover {
+    background-color: rgba(24, 119, 242, 0.08);
+}
+
+.share-option-item.linkedin:hover {
+    background-color: rgba(10, 102, 194, 0.08);
+}
+
+.share-option-item.clipboard:hover {
+    background-color: rgba(103, 126, 234, 0.08);
+}
+
+.share-option-item.reddit:hover {
+    background-color: rgba(255, 69, 0, 0.08);
+}
+
+.share-option-item.whatsapp:hover {
+    background-color: rgba(37, 211, 102, 0.08);
+}
+
+.share-option-item.telegram:hover {
+    background-color: rgba(0, 136, 204, 0.08);
+}
+
+/* 공유 미리보기 */
+.share-preview {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    .share-dialog .MuiDialogTitle-root {
+        background: linear-gradient(135deg, #7c91f0 0%, #9066b8 100%);
+    }
+
+    .share-option-item.twitter:hover {
+        background-color: rgba(29, 161, 242, 0.15);
+    }
+
+    .share-option-item.facebook:hover {
+        background-color: rgba(24, 119, 242, 0.15);
+    }
+
+    .share-option-item.linkedin:hover {
+        background-color: rgba(10, 102, 194, 0.15);
+    }
+
+    .share-option-item.clipboard:hover {
+        background-color: rgba(124, 145, 240, 0.15);
+    }
+
+    .share-option-item.reddit:hover {
+        background-color: rgba(255, 69, 0, 0.15);
+    }
+
+    .share-option-item.whatsapp:hover {
+        background-color: rgba(37, 211, 102, 0.15);
+    }
+
+    .share-option-item.telegram:hover {
+        background-color: rgba(0, 136, 204, 0.15);
+    }
+}
+
+/* Responsive design */
+@media (max-width: 600px) {
+    .share-dialog .MuiDialog-paper {
+        margin: 16px;
+    }
+
+    .share-option-item {
+        padding: 12px 16px;
+    }
+}

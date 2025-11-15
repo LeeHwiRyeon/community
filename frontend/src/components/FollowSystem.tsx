@@ -24,8 +24,7 @@ import {
     Badge,
     Tooltip,
     Divider,
-    Paper,
-    Grid
+    Paper
 } from '@mui/material';
 import {
     PersonAdd as FollowIcon,
@@ -265,12 +264,18 @@ const FollowSystem: React.FC<FollowSystemProps> = ({ currentUserId }) => {
             {filteredUsers(users).map((user, index) => (
                 <React.Fragment key={user.id}>
                     <ListItem
-                        button
+                        component="button"
                         onClick={() => handleUserClick(user)}
                         sx={{
                             '&:hover': {
                                 bgcolor: 'action.hover'
-                            }
+                            },
+                            border: 'none',
+                            background: 'transparent',
+                            cursor: 'pointer',
+                            textAlign: 'left',
+                            width: '100%',
+                            padding: '8px 16px'
                         }}
                     >
                         <ListItemAvatar>

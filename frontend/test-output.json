@@ -1,0 +1,3976 @@
+{
+  "config": {
+    "configFile": "C:\\Users\\hwi\\Desktop\\Projects\\community\\frontend\\playwright.config.ts",
+    "rootDir": "C:/Users/hwi/Desktop/Projects/community/frontend/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 5,
+    "metadata": {
+      "actualWorkers": 6
+    },
+    "preserveOutput": "always",
+    "reporter": [
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "quiet": false,
+    "projects": [
+      {
+        "outputDir": "C:/Users/hwi/Desktop/Projects/community/frontend/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 6
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "C:/Users/hwi/Desktop/Projects/community/frontend/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "shard": null,
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.56.0",
+    "workers": 6,
+    "webServer": {
+      "command": "npm run dev",
+      "url": "http://localhost:3000",
+      "reuseExistingServer": true,
+      "timeout": 120000
+    }
+  },
+  "suites": [
+    {
+      "title": "auth.spec.ts",
+      "file": "auth.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "?ъ슜???몄쬆 ?뚮줈??,
+          "file": "auth.spec.ts",
+          "line": 14,
+          "column": 6,
+          "specs": [
+            {
+              "title": "?뚯썝媛?낆씠 ?뺤긽?곸쑝濡??묐룞?댁빞 ??,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2619,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "?좑툘 ?뚯썝媛???쇱쓣 李얠쓣 ???놁뒿?덈떎.\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-11-13T15:10:55.355Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-3dbfdc5cc9cb08abb5ef",
+              "file": "auth.spec.ts",
+              "line": 23,
+              "column": 5
+            },
+            {
+              "title": "濡쒓렇?몄씠 ?뺤긽?곸쑝濡??묐룞?댁빞 ??,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "interrupted",
+                      "duration": 17927,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-11-13T15:10:54.773Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\hwi\\Desktop\\Projects\\community\\frontend\\test-results\\auth-?ъ슜???몄쬆-?뚮줈??濡쒓렇?몄씠-?뺤긽?곸쑝濡??묐룞?댁빞-??chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\hwi\\Desktop\\Projects\\community\\frontend\\test-results\\auth-?ъ슜???몄쬆-?뚮줈??濡쒓렇?몄씠-?뺤긽?곸쑝濡??묐룞?댁빞-??chromium\\video.webm"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-04f721bcc13ff28ee876",
+              "file": "auth.spec.ts",
+              "line": 65,
+              "column": 5
+            },
+            {
+              "title": "?섎せ???먭꺽利앸챸?쇰줈 濡쒓렇???ㅽ뙣?댁빞 ??,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 2,
+                      "status": "interrupted",
+                      "duration": 17143,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-11-13T15:10:55.321Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\hwi\\Desktop\\Projects\\community\\frontend\\test-results\\auth-?ъ슜???몄쬆-?뚮줈???섎せ???먭꺽利앸챸?쇰줈-濡쒓렇???ㅽ뙣?댁빞-??chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\hwi\\Desktop\\Projects\\community\\frontend\\test-results\\auth-?ъ슜???몄쬆-?뚮줈???섎せ???먭꺽利앸챸?쇰줈-濡쒓렇???ㅽ뙣?댁빞-??chromium\\video.webm"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-87b6d6d8c5ace2451ce4",
+              "file": "auth.spec.ts",
+              "line": 94,
+              "column": 5
+            },
+            {
+              "title": "濡쒓렇?꾩썐???뺤긽?곸쑝濡??묐룞?댁빞 ??,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 3,
+                      "status": "interrupted",
+                      "duration": 17853,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-11-13T15:10:54.742Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\hwi\\Desktop\\Projects\\community\\frontend\\test-results\\auth-?ъ슜???몄쬆-?뚮줈??濡쒓렇?꾩썐???뺤긽?곸쑝濡??묐룞?댁빞-??chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\hwi\\Desktop\\Projects\\community\\frontend\\test-results\\auth-?ъ슜???몄쬆-?뚮줈??濡쒓렇?꾩썐???뺤긽?곸쑝濡??묐룞?댁빞-??chromium\\video.webm"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-638dd453d63e3ca3aa8f",
+              "file": "auth.spec.ts",
+              "line": 118,
+              "column": 5
+            },
+            {
+              "title": "?몄쬆?섏? ?딆? ?ъ슜?먮뒗 蹂댄샇???섏씠吏???묎렐?????놁뼱????,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 4,
+                      "status": "passed",
+                      "duration": 7820,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "?좑툘 蹂댄샇???섏씠吏媛 由щ뵒?됱뀡?섏? ?딆븯?듬땲??\n"
+                        },
+                        {
+                          "text": "???몄쬆 媛???묐룞 ?뺤씤\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-11-13T15:10:55.240Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-44a990b426b0faa2121c",
+              "file": "auth.spec.ts",
+              "line": 148,
+              "column": 5
+            },
+            {
+              "title": "?좏겙 留뚮즺 ???먮룞 濡쒓렇?꾩썐?댁빞 ??,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 5,
+                      "parallelIndex": 5,
+                      "status": "interrupted",
+                      "duration": 17819,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-11-13T15:10:54.896Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\hwi\\Desktop\\Projects\\community\\frontend\\test-results\\auth-?ъ슜???몄쬆-?뚮줈???좏겙-留뚮즺-???먮룞-濡쒓렇?꾩썐?댁빞-??chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\hwi\\Desktop\\Projects\\community\\frontend\\test-results\\auth-?ъ슜???몄쬆-?뚮줈???좏겙-留뚮즺-???먮룞-濡쒓렇?꾩썐?댁빞-??chromium\\video.webm"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-59535a0cf07de3e3b7fa",
+              "file": "auth.spec.ts",
+              "line": 165,
+              "column": 5
+            }
+          ]
+        },
+        {
+          "title": "鍮꾨?踰덊샇 愿由?,
+          "file": "auth.spec.ts",
+          "line": 192,
+          "column": 6,
+          "specs": [
+            {
+              "title": "鍮꾨?踰덊샇 ?ъ꽕???붿껌???묐룞?댁빞 ??,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 793,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "?좑툘 鍮꾨?踰덊샇 ?ъ꽕???쇱쓣 李얠쓣 ???놁뒿?덈떎.\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-11-13T15:10:58.517Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-1bf16fdebfc2a3d0e25e",
+              "file": "auth.spec.ts",
+              "line": 193,
+              "column": 5
+            },
+            {
+              "title": "鍮꾨?踰덊샇 蹂寃쎌씠 ?묐룞?댁빞 ??,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "interrupted",
+                      "duration": 13277,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-11-13T15:10:59.334Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\hwi\\Desktop\\Projects\\community\\frontend\\test-results\\auth-鍮꾨?踰덊샇-愿由?鍮꾨?踰덊샇-蹂寃쎌씠-?묐룞?댁빞-??chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\hwi\\Desktop\\Projects\\community\\frontend\\test-results\\auth-鍮꾨?踰덊샇-愿由?鍮꾨?踰덊샇-蹂寃쎌씠-?묐룞?댁빞-??chromium\\video.webm"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-018ff500902196288772",
+              "file": "auth.spec.ts",
+              "line": 218,
+              "column": 5
+            }
+          ]
+        },
+        {
+          "title": "?뚯뀥 濡쒓렇??,
+          "file": "auth.spec.ts",
+          "line": 249,
+          "column": 6,
+          "specs": [
+            {
+              "title": "?뚯뀥 濡쒓렇??踰꾪듉???쒖떆?섏뼱????,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 4,
+                      "status": "passed",
+                      "duration": 728,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "?뱄툘 ?뚯뀥 濡쒓렇??湲곕뒫??援ы쁽?섏? ?딆븯?듬땲??\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-11-13T15:11:03.331Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-b1475b6e92c7e27e827c",
+              "file": "auth.spec.ts",
+              "line": 250,
+              "column": 5
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "basic.spec.ts",
+      "file": "basic.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "湲곕낯 ?뚯뒪??- ?섏씠吏 濡쒕뱶",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 4,
+                  "status": "passed",
+                  "duration": 551,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "???섏씠吏媛 ?뺤긽?곸쑝濡?濡쒕뱶?섏뿀?듬땲??\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2025-11-13T15:11:04.087Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8946741c555a0c4515d8-e203c97f7e86b9e83fa9",
+          "file": "basic.spec.ts",
+          "line": 3,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "bookmarks.spec.ts",
+      "file": "bookmarks.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "寃뚯떆臾?遺곷쭏??,
+          "file": "bookmarks.spec.ts",
+          "line": 41,
+          "column": 6,
+          "specs": [
+            {
+              "title": "寃뚯떆臾쇱쓣 遺곷쭏?ы븷 ???덉뼱????,
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 4,
+                      "status": "failed",
+                      "duration": 221,
+                      "error": {
+                        "message": "Error: page.evaluate: SecurityError: Failed to read the 'localStorage' property from 'Window': Access is denied for this document.\n    at UtilityScript.evaluate (<anonymous>:292:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)",
+                        "stack": "Error: page.evaluate: SecurityError: Failed to read the 'localStorage' property from 'Window': Access is denied for this document.\n    at UtilityScript.evaluate (<anonymous>:292:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at UtilityScript.evaluate (<anonymous>:292:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at C:\\Users\\hwi\\Desktop\\Projects\\community\\frontend\\tests\\e2e\\bookmarks.spec.ts:43:20",
+                        "location": {
+                          "file": "<anonymous>",
+                          "column": 16,
+                          "line": 292
+                        }
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "<anonymous>",
+                            "column": 16,
+                            "line": 292
+                          },
+                          "message": "Error: page.evaluate: SecurityError: Failed to read the 'localStorage' property from 'Window': Access is denied for this document.\n    at UtilityScript.evaluate (<anonymous>:292:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at UtilityScript.evaluate (<anonymous>:292:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at C:\\Users\\hwi\\Desktop\\Projects\\community\\frontend\\tests\\e2e\\bookmarks.spec.ts:43:20"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-11-13T15:11:04.681Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\hwi\\Desktop\\Projects\\community\\frontend\\test-results\\bookmarks-寃뚯떆臾?遺곷쭏??寃뚯떆臾쇱쓣-遺곷쭏?ы븷-???덉뼱????chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\hwi\\Desktop\\Projects\\community\\frontend\\test-results\\bookmarks-寃뚯떆臾?遺곷쭏??寃뚯떆臾쇱쓣-遺곷쭏?ы븷-???덉뼱????chromium\\video.webm"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "<anonymous>",
+                        "column": 16,
+                        "line": 292
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "7073e4a3dfdbe09d1202-5d70c0681641bacf1ea0",
+              "file": "bookmarks.spec.ts",
+              "line": 49,
+              "column": 5
+            },
+            {
+              "title": "遺곷쭏?ы븳 寃뚯떆臾쇱쓣 ?쒓굅?????덉뼱????,
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 6,
+                      "parallelIndex": 4,
+                      "status": "failed",
+                      "duration": 246,
+                      "error": {
+                        "message": "Error: page.evaluate: SecurityError: Failed to read the 'localStorage' property from 'Window': Access is denied for this document.\n    at UtilityScript.evaluate (<anonymous>:292:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)",
+                        "stack": "Error: page.evaluate: SecurityError: Failed to read the 'localStorage' property from 'Window': Access is denied for this document.\n    at UtilityScript.evaluate (<anonymous>:292:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at UtilityScript.evaluate (<anonymous>:292:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at C:\\Users\\hwi\\Desktop\\Projects\\community\\frontend\\tests\\e2e\\bookmarks.spec.ts:43:20",
+                        "location": {
+                          "file": "<anonymous>",
+                          "column": 16,
+                          "line": 292
+                        }
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "<anonymous>",
+                            "column": 16,
+                            "line": 292
+                          },
+                          "message": "Error: page.evaluate: SecurityError: Failed to read the 'localStorage' property from 'Window': Access is denied for this document.\n    at UtilityScript.evaluate (<anonymous>:292:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at UtilityScript.evaluate (<anonymous>:292:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at C:\\Users\\hwi\\Desktop\\Projects\\community\\frontend\\tests\\e2e\\bookmarks.spec.ts:43:20"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-11-13T15:11:06.170Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\hwi\\Desktop\\Projects\\community\\frontend\\test-results\\bookmarks-寃뚯떆臾?遺곷쭏??遺곷쭏?ы븳-寃뚯떆臾쇱쓣-?쒓굅?????덉뼱????chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\hwi\\Desktop\\Projects\\community\\frontend\\test-results\\bookmarks-寃뚯떆臾?遺곷쭏??遺곷쭏?ы븳-寃뚯떆臾쇱쓣-?쒓굅?????덉뼱????chromium\\video.webm"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "<anonymous>",
+                        "column": 16,
+                        "line": 292
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "7073e4a3dfdbe09d1202-47024b4773760968dcb3",
+              "file": "bookmarks.spec.ts",
+              "line": 83,
+              "column": 5
+            },
+            {
+              "title": "遺곷쭏??踰꾪듉 ?쒓컖???쇰뱶諛??뺤씤",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 7,
+                      "parallelIndex": 4,
+                      "status": "failed",
+                      "duration": 202,
+                      "error": {
+                        "message": "Error: page.evaluate: SecurityError: Failed to read the 'localStorage' property from 'Window': Access is denied for this document.\n    at UtilityScript.evaluate (<anonymous>:292:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)",
+                        "stack": "Error: page.evaluate: SecurityError: Failed to read the 'localStorage' property from 'Window': Access is denied for this document.\n    at UtilityScript.evaluate (<anonymous>:292:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at UtilityScript.evaluate (<anonymous>:292:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at C:\\Users\\hwi\\Desktop\\Projects\\community\\frontend\\tests\\e2e\\bookmarks.spec.ts:43:20",
+                        "location": {
+                          "file": "<anonymous>",
+                          "column": 16,
+                          "line": 292
+                        }
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "<anonymous>",
+                            "column": 16,
+                            "line": 292
+                          },
+                          "message": "Error: page.evaluate: SecurityError: Failed to read the 'localStorage' property from 'Window': Access is denied for this document.\n    at UtilityScript.evaluate (<anonymous>:292:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at UtilityScript.evaluate (<anonymous>:292:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at C:\\Users\\hwi\\Desktop\\Projects\\community\\frontend\\tests\\e2e\\bookmarks.spec.ts:43:20"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-11-13T15:11:07.652Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\hwi\\Desktop\\Projects\\community\\frontend\\test-results\\bookmarks-寃뚯떆臾?遺곷쭏??遺곷쭏??踰꾪듉-?쒓컖???쇰뱶諛??뺤씤-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\hwi\\Desktop\\Projects\\community\\frontend\\test-results\\bookmarks-寃뚯떆臾?遺곷쭏??遺곷쭏??踰꾪듉-?쒓컖???쇰뱶諛??뺤씤-chromium\\video.webm"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "<anonymous>",
+                        "column": 16,
+                        "line": 292
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "7073e4a3dfdbe09d1202-eace56c902d12efdfdb3",
+              "file": "bookmarks.spec.ts",
+              "line": 101,
+              "column": 5
+            }
+          ]
+        },
+        {
+          "title": "寃뚯떆??遺곷쭏??,
+          "file": "bookmarks.spec.ts",
+          "line": 130,
+          "column": 6,
+          "specs": [
+            {
+              "title": "寃뚯떆?먯쓣 遺곷쭏?ы븷 ???덉뼱????,
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 8,
+                      "parallelIndex": 4,
+                      "status": "failed",
+                      "duration": 208,
+                      "error": {
+                        "message": "Error: page.evaluate: SecurityError: Failed to read the 'localStorage' property from 'Window': Access is denied for this document.\n    at UtilityScript.evaluate (<anonymous>:292:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)",
+                        "stack": "Error: page.evaluate: SecurityError: Failed to read the 'localStorage' property from 'Window': Access is denied for this document.\n    at UtilityScript.evaluate (<anonymous>:292:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at UtilityScript.evaluate (<anonymous>:292:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at C:\\Users\\hwi\\Desktop\\Projects\\community\\frontend\\tests\\e2e\\bookmarks.spec.ts:132:20",
+                        "location": {
+                          "file": "<anonymous>",
+                          "column": 16,
+                          "line": 292
+                        }
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "<anonymous>",
+                            "column": 16,
+                            "line": 292
+                          },
+                          "message": "Error: page.evaluate: SecurityError: Failed to read the 'localStorage' property from 'Window': Access is denied for this document.\n    at UtilityScript.evaluate (<anonymous>:292:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at UtilityScript.evaluate (<anonymous>:292:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at C:\\Users\\hwi\\Desktop\\Projects\\community\\frontend\\tests\\e2e\\bookmarks.spec.ts:132:20"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-11-13T15:11:09.068Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\hwi\\Desktop\\Projects\\community\\frontend\\test-results\\bookmarks-寃뚯떆??遺곷쭏??寃뚯떆?먯쓣-遺곷쭏?ы븷-???덉뼱????chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\hwi\\Desktop\\Projects\\community\\frontend\\test-results\\bookmarks-寃뚯떆??遺곷쭏??寃뚯떆?먯쓣-遺곷쭏?ы븷-???덉뼱????chromium\\video.webm"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "<anonymous>",
+                        "column": 16,
+                        "line": 292
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "7073e4a3dfdbe09d1202-e90c93c0d092351f55d4",
+              "file": "bookmarks.spec.ts",
+              "line": 138,
+              "column": 5
+            },
+            {
+              "title": "遺곷쭏?ы븳 寃뚯떆?먯쓣 ?쒓굅?????덉뼱????,
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 9,
+                      "parallelIndex": 4,
+                      "status": "failed",
+                      "duration": 289,
+                      "error": {
+                        "message": "Error: page.evaluate: SecurityError: Failed to read the 'localStorage' property from 'Window': Access is denied for this document.\n    at UtilityScript.evaluate (<anonymous>:292:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)",
+                        "stack": "Error: page.evaluate: SecurityError: Failed to read the 'localStorage' property from 'Window': Access is denied for this document.\n    at UtilityScript.evaluate (<anonymous>:292:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at UtilityScript.evaluate (<anonymous>:292:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at C:\\Users\\hwi\\Desktop\\Projects\\community\\frontend\\tests\\e2e\\bookmarks.spec.ts:132:20",
+                        "location": {
+                          "file": "<anonymous>",
+                          "column": 16,
+                          "line": 292
+                        }
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "<anonymous>",
+                            "column": 16,
+                            "line": 292
+                          },
+                          "message": "Error: page.evaluate: SecurityError: Failed to read the 'localStorage' property from 'Window': Access is denied for this document.\n    at UtilityScript.evaluate (<anonymous>:292:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at UtilityScript.evaluate (<anonymous>:292:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at C:\\Users\\hwi\\Desktop\\Projects\\community\\frontend\\tests\\e2e\\bookmarks.spec.ts:132:20"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-11-13T15:11:10.498Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\hwi\\Desktop\\Projects\\community\\frontend\\test-results\\bookmarks-寃뚯떆??遺곷쭏??遺곷쭏?ы븳-寃뚯떆?먯쓣-?쒓굅?????덉뼱????chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\hwi\\Desktop\\Projects\\community\\frontend\\test-results\\bookmarks-寃뚯떆??遺곷쭏??遺곷쭏?ы븳-寃뚯떆?먯쓣-?쒓굅?????덉뼱????chromium\\video.webm"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "<anonymous>",
+                        "column": 16,
+                        "line": 292
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "7073e4a3dfdbe09d1202-4131c79a106cdcf67102",
+              "file": "bookmarks.spec.ts",
+              "line": 159,
+              "column": 5
+            }
+          ]
+        },
+        {
+          "title": "遺곷쭏??紐⑸줉 愿由?,
+          "file": "bookmarks.spec.ts",
+          "line": 177,
+          "column": 6,
+          "specs": [
+            {
+              "title": "遺곷쭏??紐⑸줉 ?섏씠吏濡??대룞?????덉뼱????,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "7073e4a3dfdbe09d1202-48ab209ea3c646ba9fba",
+              "file": "bookmarks.spec.ts",
+              "line": 185,
+              "column": 5
+            },
+            {
+              "title": "遺곷쭏????낅퀎 ?꾪꽣留곸씠 ?묐룞?댁빞 ??,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "7073e4a3dfdbe09d1202-fbff9f3f6ab61148b0bf",
+              "file": "bookmarks.spec.ts",
+              "line": 216,
+              "column": 5
+            },
+            {
+              "title": "遺곷쭏??寃?됱씠 ?묐룞?댁빞 ??,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "7073e4a3dfdbe09d1202-eb844f1301ed28c0e409",
+              "file": "bookmarks.spec.ts",
+              "line": 249,
+              "column": 5
+            },
+            {
+              "title": "遺곷쭏??紐⑸줉 ?섏씠吏?ㅼ씠?섏씠 ?묐룞?댁빞 ??,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "7073e4a3dfdbe09d1202-cd60c02b1dbd36183eae",
+              "file": "bookmarks.spec.ts",
+              "line": 270,
+              "column": 5
+            }
+          ]
+        },
+        {
+          "title": "遺곷쭏???대뜑 愿由?,
+          "file": "bookmarks.spec.ts",
+          "line": 298,
+          "column": 6,
+          "specs": [
+            {
+              "title": "??遺곷쭏???대뜑瑜??앹꽦?????덉뼱????,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "7073e4a3dfdbe09d1202-bb70ed889145f9dafd01",
+              "file": "bookmarks.spec.ts",
+              "line": 306,
+              "column": 5
+            },
+            {
+              "title": "遺곷쭏?щ? ?대뜑濡??대룞?????덉뼱????,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "7073e4a3dfdbe09d1202-ebe93847c094f958b541",
+              "file": "bookmarks.spec.ts",
+              "line": 340,
+              "column": 5
+            },
+            {
+              "title": "?대뜑瑜???젣?????덉뼱????,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "7073e4a3dfdbe09d1202-3e373183023221140256",
+              "file": "bookmarks.spec.ts",
+              "line": 371,
+              "column": 5
+            }
+          ]
+        },
+        {
+          "title": "遺곷쭏???듯빀 ?쒕굹由ъ삤",
+          "file": "bookmarks.spec.ts",
+          "line": 402,
+          "column": 6,
+          "specs": [
+            {
+              "title": "?꾩껜 遺곷쭏???뚰겕?뚮줈??,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "7073e4a3dfdbe09d1202-f4b1de55c064ae7662a3",
+              "file": "bookmarks.spec.ts",
+              "line": 403,
+              "column": 5
+            }
+          ]
+        },
+        {
+          "title": "遺곷쭏??API ?묐떟 ?뺤씤",
+          "file": "bookmarks.spec.ts",
+          "line": 454,
+          "column": 6,
+          "specs": [
+            {
+              "title": "遺곷쭏??異붽? API ?묐떟 ?뺤씤",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "7073e4a3dfdbe09d1202-6b5a3e6762b490ea4f5c",
+              "file": "bookmarks.spec.ts",
+              "line": 455,
+              "column": 5
+            },
+            {
+              "title": "遺곷쭏??紐⑸줉 議고쉶 API ?묐떟 ?뺤씤",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "7073e4a3dfdbe09d1202-d15d677dbd7cedafde6a",
+              "file": "bookmarks.spec.ts",
+              "line": 482,
+              "column": 5
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "dashboard.spec.ts",
+      "file": "dashboard.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "?쒕룞 遺꾩꽍 ??쒕낫??,
+          "file": "dashboard.spec.ts",
+          "line": 19,
+          "column": 6,
+          "specs": [
+            {
+              "title": "??쒕낫???섏씠吏媛 ?뺤긽?곸쑝濡??뚮뜑留곷릺?댁빞 ??,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "90cda532ab82d274b30b-6f282d71b6383842e326",
+              "file": "dashboard.spec.ts",
+              "line": 29,
+              "column": 5
+            },
+            {
+              "title": "媛쒖슂 移대뱶 4媛쒓? ?쒖떆?섏뼱????(議고쉶?? 醫뗭븘?? ?볤?, 怨듭쑀)",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "90cda532ab82d274b30b-5c2318cdaa667880ab9f",
+              "file": "dashboard.spec.ts",
+              "line": 50,
+              "column": 5
+            },
+            {
+              "title": "?쒕룞 異붿씠 李⑦듃媛 ?쒖떆?섏뼱????,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "90cda532ab82d274b30b-09bd4b7895ab7c605a95",
+              "file": "dashboard.spec.ts",
+              "line": 73,
+              "column": 5
+            },
+            {
+              "title": "移댄뀒怨좊━蹂??뚯씠 李⑦듃媛 ?쒖떆?섏뼱????,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "90cda532ab82d274b30b-aee2222cac2615a1d932",
+              "file": "dashboard.spec.ts",
+              "line": 92,
+              "column": 5
+            },
+            {
+              "title": "由щ뜑蹂대뱶媛 ?쒖떆?섏뼱????,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "90cda532ab82d274b30b-5f9b8d1069696e02d403",
+              "file": "dashboard.spec.ts",
+              "line": 109,
+              "column": 5
+            },
+            {
+              "title": "?ㅼ떆媛??쒕룞 ?쇰뱶媛 ?쒖떆?섏뼱????,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "90cda532ab82d274b30b-3c6fef4e97257da2a5aa",
+              "file": "dashboard.spec.ts",
+              "line": 139,
+              "column": 5
+            },
+            {
+              "title": "?좎쭨 ?꾪꽣瑜??곸슜?????덉뼱????,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "90cda532ab82d274b30b-f3178b75370a27626a3e",
+              "file": "dashboard.spec.ts",
+              "line": 166,
+              "column": 5
+            },
+            {
+              "title": "?덈줈怨좎묠 踰꾪듉???묐룞?댁빞 ??,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "90cda532ab82d274b30b-baf310d52c8975dc7e54",
+              "file": "dashboard.spec.ts",
+              "line": 200,
+              "column": 5
+            },
+            {
+              "title": "李⑦듃??留덉슦???몃쾭 ???댄똻???쒖떆?섏뼱????,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "90cda532ab82d274b30b-46acc07507aefb9c6e9f",
+              "file": "dashboard.spec.ts",
+              "line": 234,
+              "column": 5
+            },
+            {
+              "title": "諛섏쓳???덉씠?꾩썐???묐룞?댁빞 ??,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "90cda532ab82d274b30b-5a3b03653c12ac706a63",
+              "file": "dashboard.spec.ts",
+              "line": 268,
+              "column": 5
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "dm.spec.ts",
+      "file": "dm.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "DM System",
+          "file": "dm.spec.ts",
+          "line": 15,
+          "column": 6,
+          "specs": [
+            {
+              "title": "DM-01: ?ъ슜?먯뿉寃?DM ?꾩넚 ?깃났",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "3ae19ada82e5ec1a6198-04a223875be5c9ed1d3b",
+              "file": "dm.spec.ts",
+              "line": 34,
+              "column": 5
+            },
+            {
+              "title": "DM-02: ?ㅼ떆媛?硫붿떆吏 ?섏떊",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "3ae19ada82e5ec1a6198-6db7e4cea5639f40f0d2",
+              "file": "dm.spec.ts",
+              "line": 60,
+              "column": 5
+            },
+            {
+              "title": "DM-03: ?쎌쓬 ?뺤씤 湲곕뒫",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "3ae19ada82e5ec1a6198-b2a537156e7af720a6ad",
+              "file": "dm.spec.ts",
+              "line": 104,
+              "column": 5
+            },
+            {
+              "title": "DM-04: ?뚯씪 泥⑤? 諛??꾩넚",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "3ae19ada82e5ec1a6198-9902d731cec812c7b786",
+              "file": "dm.spec.ts",
+              "line": 124,
+              "column": 5
+            },
+            {
+              "title": "DM-05: 硫붿떆吏 寃??,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "3ae19ada82e5ec1a6198-d9cdfff0bb65937b917a",
+              "file": "dm.spec.ts",
+              "line": 154,
+              "column": 5
+            },
+            {
+              "title": "DM-06: 李⑤떒???ъ슜??DM 李⑤떒",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "3ae19ada82e5ec1a6198-f28862aa4d61c8fde447",
+              "file": "dm.spec.ts",
+              "line": 178,
+              "column": 5
+            },
+            {
+              "title": "DM-07: ??댄븨 ?몃뵒耳?댄꽣",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "3ae19ada82e5ec1a6198-af715816db4b67a91da5",
+              "file": "dm.spec.ts",
+              "line": 197,
+              "column": 5
+            },
+            {
+              "title": "DM-08: ??붾갑 ?섍?湲?,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "3ae19ada82e5ec1a6198-8da824dfaf50c4e8f612",
+              "file": "dm.spec.ts",
+              "line": 220,
+              "column": 5
+            }
+          ]
+        },
+        {
+          "title": "DM Performance",
+          "file": "dm.spec.ts",
+          "line": 245,
+          "column": 6,
+          "specs": [
+            {
+              "title": "DM-P01: 硫붿떆吏 濡쒕뵫 ?깅뒫 (100媛?硫붿떆吏)",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "3ae19ada82e5ec1a6198-d0d072da41da7c701d5c",
+              "file": "dm.spec.ts",
+              "line": 246,
+              "column": 5
+            },
+            {
+              "title": "DM-P02: ?ㅼ떆媛?硫붿떆吏 吏???쒓컙",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "3ae19ada82e5ec1a6198-69160794b83eb25dd7a9",
+              "file": "dm.spec.ts",
+              "line": 264,
+              "column": 5
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "group-chat.spec.ts",
+      "file": "group-chat.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Group Chat System",
+          "file": "group-chat.spec.ts",
+          "line": 14,
+          "column": 6,
+          "specs": [
+            {
+              "title": "GC-01: 洹몃９ ?앹꽦 ?깃났",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "80ff96c7a2a440e55783-0c2dbaee4aab38be7900",
+              "file": "group-chat.spec.ts",
+              "line": 31,
+              "column": 5
+            },
+            {
+              "title": "GC-02: 洹몃９ 梨꾪똿 硫붿떆吏 ?꾩넚 諛??섏떊",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "80ff96c7a2a440e55783-c91fd819ee671377ebce",
+              "file": "group-chat.spec.ts",
+              "line": 64,
+              "column": 5
+            },
+            {
+              "title": "GC-03: 硫ㅻ쾭 異붾갑 湲곕뒫",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "80ff96c7a2a440e55783-e8f9b4e73ede8c2ebd11",
+              "file": "group-chat.spec.ts",
+              "line": 106,
+              "column": 5
+            },
+            {
+              "title": "GC-04: 硫ㅻ쾭 沅뚰븳 蹂寃?,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "80ff96c7a2a440e55783-cbf53384811ee3b89901",
+              "file": "group-chat.spec.ts",
+              "line": 131,
+              "column": 5
+            },
+            {
+              "title": "GC-05: 洹몃９ ?ㅼ젙 蹂寃?,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "80ff96c7a2a440e55783-03d922ee62c72e0c68bc",
+              "file": "group-chat.spec.ts",
+              "line": 153,
+              "column": 5
+            },
+            {
+              "title": "GC-06: 怨듦컻 洹몃９ 寃??諛?李몄뿬",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "80ff96c7a2a440e55783-6d04a31442d0a1a1bd88",
+              "file": "group-chat.spec.ts",
+              "line": 182,
+              "column": 5
+            },
+            {
+              "title": "GC-07: ??댄븨 ?몃뵒耳?댄꽣 (洹몃９)",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "80ff96c7a2a440e55783-153d69f35b52433252f8",
+              "file": "group-chat.spec.ts",
+              "line": 208,
+              "column": 5
+            },
+            {
+              "title": "GC-08: 洹몃９ ?섍?湲?,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "80ff96c7a2a440e55783-a3eca858c8a3ceb3342e",
+              "file": "group-chat.spec.ts",
+              "line": 231,
+              "column": 5
+            },
+            {
+              "title": "GC-09: ?뚯씪 泥⑤? (洹몃９)",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "80ff96c7a2a440e55783-25e91e3b2dbbd6065491",
+              "file": "group-chat.spec.ts",
+              "line": 252,
+              "column": 5
+            }
+          ]
+        },
+        {
+          "title": "Group Chat Permissions",
+          "file": "group-chat.spec.ts",
+          "line": 282,
+          "column": 6,
+          "specs": [
+            {
+              "title": "GCP-01: ?쇰컲 硫ㅻ쾭???ㅻⅨ 硫ㅻ쾭瑜?異붾갑?????놁쓬",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "80ff96c7a2a440e55783-62023d5fb300ecb257ed",
+              "file": "group-chat.spec.ts",
+              "line": 283,
+              "column": 5
+            },
+            {
+              "title": "GCP-02: 愿由ъ옄留?洹몃９ ?ㅼ젙 蹂寃?媛??,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "80ff96c7a2a440e55783-491b553d44789478e9fd",
+              "file": "group-chat.spec.ts",
+              "line": 294,
+              "column": 5
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "homepage.spec.ts",
+      "file": "homepage.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "?덊럹?댁? 湲곕낯 湲곕뒫",
+          "file": "homepage.spec.ts",
+          "line": 13,
+          "column": 6,
+          "specs": [
+            {
+              "title": "?덊럹?댁?媛 ?뺤긽?곸쑝濡?濡쒕뱶?섏뼱????,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "84e7eb052e8cbae1c9f0-e1e40a919f5fa2b65780",
+              "file": "homepage.spec.ts",
+              "line": 18,
+              "column": 5
+            },
+            {
+              "title": "?ㅻ퉬寃뚯씠??硫붾돱媛 ?묐룞?댁빞 ??,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "84e7eb052e8cbae1c9f0-92d8f0e8999b0516a2fc",
+              "file": "homepage.spec.ts",
+              "line": 35,
+              "column": 5
+            },
+            {
+              "title": "諛섏쓳???붿옄??- 紐⑤컮??酉?,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "84e7eb052e8cbae1c9f0-de0954c65998f6bcff9a",
+              "file": "homepage.spec.ts",
+              "line": 54,
+              "column": 5
+            },
+            {
+              "title": "寃??湲곕뒫???묐룞?댁빞 ??,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "84e7eb052e8cbae1c9f0-ac81b7c2c92b33336c81",
+              "file": "homepage.spec.ts",
+              "line": 73,
+              "column": 5
+            },
+            {
+              "title": "?ㅽ겕 紐⑤뱶 ?좉????묐룞?댁빞 ??,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "84e7eb052e8cbae1c9f0-44da19b9ade9f78dd681",
+              "file": "homepage.spec.ts",
+              "line": 96,
+              "column": 5
+            },
+            {
+              "title": "?ㅽ겕濡???臾댄븳 ?ㅽ겕濡ㅼ씠 ?묐룞?댁빞 ??,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "84e7eb052e8cbae1c9f0-4ffc9fadd001edddbdfa",
+              "file": "homepage.spec.ts",
+              "line": 127,
+              "column": 5
+            }
+          ]
+        },
+        {
+          "title": "?깅뒫 諛??묎렐??,
+          "file": "homepage.spec.ts",
+          "line": 157,
+          "column": 6,
+          "specs": [
+            {
+              "title": "?섏씠吏 濡쒕뱶 ?깅뒫 ?뺤씤",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "84e7eb052e8cbae1c9f0-aac5765556fe7e69d77d",
+              "file": "homepage.spec.ts",
+              "line": 158,
+              "column": 5
+            },
+            {
+              "title": "湲곕낯 ?묎렐???뺤씤",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "84e7eb052e8cbae1c9f0-6ee3b5caa9de7941ffd1",
+              "file": "homepage.spec.ts",
+              "line": 168,
+              "column": 5
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "notification.spec.ts",
+      "file": "notification.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "?ㅼ떆媛??뚮┝ ?쒖뒪??,
+          "file": "notification.spec.ts",
+          "line": 17,
+          "column": 6,
+          "specs": [
+            {
+              "title": "?뚮┝ 踰??꾩씠肄섏씠 ?ㅻ뜑???쒖떆?섏뼱????,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "dfb18e5cc18e940859b3-e3964f620bc3b011b8f0",
+              "file": "notification.spec.ts",
+              "line": 27,
+              "column": 5
+            },
+            {
+              "title": "?뚮┝ 踰??대┃ ???뚮┝ ?쇳꽣媛 ?대젮????,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "dfb18e5cc18e940859b3-1b07ffe0c6ca5152a850",
+              "file": "notification.spec.ts",
+              "line": 40,
+              "column": 5
+            },
+            {
+              "title": "?쎌? ?딆? ?뚮┝ 媛쒖닔媛 諛곗????쒖떆?섏뼱????,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "dfb18e5cc18e940859b3-ac3adc457e8f9d590efb",
+              "file": "notification.spec.ts",
+              "line": 61,
+              "column": 5
+            },
+            {
+              "title": "?뚮┝ ??ぉ ?대┃ ???쎌쓬 泥섎━?섏뼱????,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "dfb18e5cc18e940859b3-130fe8000133bfd46421",
+              "file": "notification.spec.ts",
+              "line": 79,
+              "column": 5
+            },
+            {
+              "title": "?뚮┝ ??낅퀎 ?꾩씠肄섏씠 ?쒖떆?섏뼱????,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "dfb18e5cc18e940859b3-ba75d986afc40f4e2dab",
+              "file": "notification.spec.ts",
+              "line": 109,
+              "column": 5
+            },
+            {
+              "title": "紐⑤몢 ?쎌쓬 泥섎━ 踰꾪듉???묐룞?댁빞 ??,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "dfb18e5cc18e940859b3-c531c4da9785ce348694",
+              "file": "notification.spec.ts",
+              "line": 131,
+              "column": 5
+            },
+            {
+              "title": "?뚮┝ ??젣 踰꾪듉???묐룞?댁빞 ??,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "dfb18e5cc18e940859b3-e1040f22a55e724f217c",
+              "file": "notification.spec.ts",
+              "line": 167,
+              "column": 5
+            },
+            {
+              "title": "?ㅼ떆媛??뚮┝???섏떊?섏뼱????(WebSocket)",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "dfb18e5cc18e940859b3-84f894ff808761f6cd0c",
+              "file": "notification.spec.ts",
+              "line": 202,
+              "column": 5
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "posts.spec.ts",
+      "file": "posts.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "寃뚯떆臾?CRUD 湲곕뒫",
+          "file": "posts.spec.ts",
+          "line": 15,
+          "column": 6,
+          "specs": [
+            {
+              "title": "寃뚯떆臾??묒꽦???뺤긽?곸쑝濡??묐룞?댁빞 ??,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "b37e12cd73bb054e2a6c-537d673b0f17235e3558",
+              "file": "posts.spec.ts",
+              "line": 25,
+              "column": 5
+            },
+            {
+              "title": "寃뚯떆臾?紐⑸줉???쒖떆?섏뼱????,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "b37e12cd73bb054e2a6c-ae0561a68e1b76684ccc",
+              "file": "posts.spec.ts",
+              "line": 72,
+              "column": 5
+            },
+            {
+              "title": "寃뚯떆臾??곸꽭 ?섏씠吏媛 ?뺤긽?곸쑝濡?濡쒕뱶?섏뼱????,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "b37e12cd73bb054e2a6c-843d4227cd462dee1b99",
+              "file": "posts.spec.ts",
+              "line": 96,
+              "column": 5
+            },
+            {
+              "title": "寃뚯떆臾??섏젙???뺤긽?곸쑝濡??묐룞?댁빞 ??,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "b37e12cd73bb054e2a6c-3c00b812aa44c4f2ce1b",
+              "file": "posts.spec.ts",
+              "line": 119,
+              "column": 5
+            },
+            {
+              "title": "寃뚯떆臾???젣媛 ?뺤긽?곸쑝濡??묐룞?댁빞 ??,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "b37e12cd73bb054e2a6c-6d08faa46104598cbc58",
+              "file": "posts.spec.ts",
+              "line": 154,
+              "column": 5
+            }
+          ]
+        },
+        {
+          "title": "寃뚯떆臾??곹샇?묒슜",
+          "file": "posts.spec.ts",
+          "line": 190,
+          "column": 6,
+          "specs": [
+            {
+              "title": "寃뚯떆臾?醫뗭븘?붽? ?묐룞?댁빞 ??,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "b37e12cd73bb054e2a6c-ab0ae239f190049f2a23",
+              "file": "posts.spec.ts",
+              "line": 200,
+              "column": 5
+            },
+            {
+              "title": "?볤? ?묒꽦???묐룞?댁빞 ??,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "b37e12cd73bb054e2a6c-e599ef7f4ff378878f2b",
+              "file": "posts.spec.ts",
+              "line": 234,
+              "column": 5
+            },
+            {
+              "title": "?볤? ??젣媛 ?묐룞?댁빞 ??,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "b37e12cd73bb054e2a6c-4aedadd63956e8d3cb25",
+              "file": "posts.spec.ts",
+              "line": 269,
+              "column": 5
+            },
+            {
+              "title": "寃뚯떆臾?怨듭쑀媛 ?묐룞?댁빞 ??,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "b37e12cd73bb054e2a6c-5aabc6bac0bf949b3879",
+              "file": "posts.spec.ts",
+              "line": 291,
+              "column": 5
+            },
+            {
+              "title": "寃뚯떆臾?遺곷쭏?ш? ?묐룞?댁빞 ??,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "b37e12cd73bb054e2a6c-1c450c3c464003fe5b94",
+              "file": "posts.spec.ts",
+              "line": 316,
+              "column": 5
+            }
+          ]
+        },
+        {
+          "title": "寃뚯떆臾??꾪꽣留?諛??뺣젹",
+          "file": "posts.spec.ts",
+          "line": 336,
+          "column": 6,
+          "specs": [
+            {
+              "title": "寃뚯떆臾??뺣젹???묐룞?댁빞 ??,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "b37e12cd73bb054e2a6c-0b83f1ccb54f3b9b4a49",
+              "file": "posts.spec.ts",
+              "line": 341,
+              "column": 5
+            },
+            {
+              "title": "移댄뀒怨좊━ ?꾪꽣留곸씠 ?묐룞?댁빞 ??,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "b37e12cd73bb054e2a6c-6c0137cf80d46e25d854",
+              "file": "posts.spec.ts",
+              "line": 364,
+              "column": 5
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "profile-v2.spec.ts",
+      "file": "profile-v2.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "?ъ슜???꾨줈??v2",
+          "file": "profile-v2.spec.ts",
+          "line": 21,
+          "column": 6,
+          "specs": [
+            {
+              "title": "?꾨줈???섏씠吏媛 ?뺤긽?곸쑝濡??뚮뜑留곷릺?댁빞 ??,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "22d415a33df1fe5a6e0e-baee506120384e34a42a",
+              "file": "profile-v2.spec.ts",
+              "line": 31,
+              "column": 5
+            },
+            {
+              "title": "?듦퀎 移대뱶媛 ?쒖떆?섏뼱????(寃뚯떆臾? ?붾줈?? ?붾줈?? ?ъ씤??",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "22d415a33df1fe5a6e0e-d3708a1f935f0aa70fb9",
+              "file": "profile-v2.spec.ts",
+              "line": 53,
+              "column": 5
+            },
+            {
+              "title": "諛곗? 而щ젆?섏씠 ?쒖떆?섏뼱????,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "22d415a33df1fe5a6e0e-f6dacdae0a5f5b54c477",
+              "file": "profile-v2.spec.ts",
+              "line": 75,
+              "column": 5
+            },
+            {
+              "title": "?덈꺼怨?寃쏀뿕移?諛붽? ?쒖떆?섏뼱????,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "22d415a33df1fe5a6e0e-12d283294be571b14077",
+              "file": "profile-v2.spec.ts",
+              "line": 103,
+              "column": 5
+            },
+            {
+              "title": "?꾨줈???섏젙 踰꾪듉???대┃?????덉뼱????,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "22d415a33df1fe5a6e0e-db17cda9a4a1482c8518",
+              "file": "profile-v2.spec.ts",
+              "line": 131,
+              "column": 5
+            },
+            {
+              "title": "?꾨줈???몄쭛 紐⑤떖???대젮????,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "22d415a33df1fe5a6e0e-6e5e61722328a2a10dd9",
+              "file": "profile-v2.spec.ts",
+              "line": 152,
+              "column": 5
+            },
+            {
+              "title": "?꾨줈???뺣낫瑜??섏젙?????덉뼱????,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "22d415a33df1fe5a6e0e-6067d51ebdd11a51cce3",
+              "file": "profile-v2.spec.ts",
+              "line": 178,
+              "column": 5
+            },
+            {
+              "title": "?꾨줈???꾨컮?瑜??낅줈?쒗븷 ???덉뼱????,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "22d415a33df1fe5a6e0e-3c63fb22e6e0e889a7b1",
+              "file": "profile-v2.spec.ts",
+              "line": 237,
+              "column": 5
+            },
+            {
+              "title": "?뚯뀥 留곹겕瑜?異붽?/?섏젙?????덉뼱????,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "22d415a33df1fe5a6e0e-2e8972ae7c31bd6f5b20",
+              "file": "profile-v2.spec.ts",
+              "line": 257,
+              "column": 5
+            },
+            {
+              "title": "由щ뜑蹂대뱶 ?쒖쐞媛 ?쒖떆?섏뼱????,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "22d415a33df1fe5a6e0e-6d5d5cb0c630ac2bb149",
+              "file": "profile-v2.spec.ts",
+              "line": 296,
+              "column": 5
+            },
+            {
+              "title": "?붾줈???명뙏濡쒖슦 踰꾪듉???묐룞?댁빞 ??(?ㅻⅨ ?ъ슜???꾨줈??",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "22d415a33df1fe5a6e0e-e22c00b16f0d03702b18",
+              "file": "profile-v2.spec.ts",
+              "line": 316,
+              "column": 5
+            },
+            {
+              "title": "?ъ슜??寃뚯떆臾?紐⑸줉???쒖떆?섏뼱????,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "22d415a33df1fe5a6e0e-08e809a24c9fbaec76f1",
+              "file": "profile-v2.spec.ts",
+              "line": 349,
+              "column": 5
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "profile.spec.ts",
+      "file": "profile.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "?ъ슜???꾨줈??湲곕뒫",
+          "file": "profile.spec.ts",
+          "line": 14,
+          "column": 6,
+          "specs": [
+            {
+              "title": "?꾨줈???섏씠吏媛 ?뺤긽?곸쑝濡?濡쒕뱶?섏뼱????,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "e8b79b4ee550a37632f1-8e7d2475ba63addbe909",
+              "file": "profile.spec.ts",
+              "line": 24,
+              "column": 5
+            },
+            {
+              "title": "?꾨줈???뺣낫 ?섏젙???묐룞?댁빞 ??,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "e8b79b4ee550a37632f1-c1709b56a19a205ef3d9",
+              "file": "profile.spec.ts",
+              "line": 48,
+              "column": 5
+            },
+            {
+              "title": "?꾨줈???대?吏 ?낅줈??UI媛 ?쒖떆?섏뼱????,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "e8b79b4ee550a37632f1-2ca58ce1baf30dcd8d2d",
+              "file": "profile.spec.ts",
+              "line": 92,
+              "column": 5
+            },
+            {
+              "title": "?ъ슜?먯쓽 寃뚯떆臾?紐⑸줉???쒖떆?섏뼱????,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "e8b79b4ee550a37632f1-745854b96951ad4e1fa6",
+              "file": "profile.spec.ts",
+              "line": 108,
+              "column": 5
+            },
+            {
+              "title": "?듦퀎 ?뺣낫媛 ?쒖떆?섏뼱????,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "e8b79b4ee550a37632f1-e1022e130edd6f34d682",
+              "file": "profile.spec.ts",
+              "line": 133,
+              "column": 5
+            }
+          ]
+        },
+        {
+          "title": "?붾줈???쒖뒪??,
+          "file": "profile.spec.ts",
+          "line": 156,
+          "column": 6,
+          "specs": [
+            {
+              "title": "?ㅻⅨ ?ъ슜?먮? ?붾줈?고븷 ???덉뼱????,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "e8b79b4ee550a37632f1-1d130725eec05307eca5",
+              "file": "profile.spec.ts",
+              "line": 166,
+              "column": 5
+            },
+            {
+              "title": "?ъ슜?먮? ?명뙏濡쒖슦?????덉뼱????,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "e8b79b4ee550a37632f1-92582c726e96d4d0b9fb",
+              "file": "profile.spec.ts",
+              "line": 194,
+              "column": 5
+            },
+            {
+              "title": "?붾줈??紐⑸줉???쒖떆?섏뼱????,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "e8b79b4ee550a37632f1-5b9bc49c56871a651a6d",
+              "file": "profile.spec.ts",
+              "line": 216,
+              "column": 5
+            },
+            {
+              "title": "?붾줈??紐⑸줉???쒖떆?섏뼱????,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "e8b79b4ee550a37632f1-bab3e58f8d46cf007c54",
+              "file": "profile.spec.ts",
+              "line": 241,
+              "column": 5
+            }
+          ]
+        },
+        {
+          "title": "?ъ슜???ㅼ젙",
+          "file": "profile.spec.ts",
+          "line": 267,
+          "column": 6,
+          "specs": [
+            {
+              "title": "?ㅼ젙 ?섏씠吏???묎렐?????덉뼱????,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "e8b79b4ee550a37632f1-d7b8bae032e9a596f47d",
+              "file": "profile.spec.ts",
+              "line": 277,
+              "column": 5
+            },
+            {
+              "title": "?뚮┝ ?ㅼ젙??蹂寃쏀븷 ???덉뼱????,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "e8b79b4ee550a37632f1-bf31644865813d5edecb",
+              "file": "profile.spec.ts",
+              "line": 290,
+              "column": 5
+            },
+            {
+              "title": "?꾨씪?대쾭???ㅼ젙??蹂寃쏀븷 ???덉뼱????,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "e8b79b4ee550a37632f1-518437372e0c0e96181c",
+              "file": "profile.spec.ts",
+              "line": 308,
+              "column": 5
+            },
+            {
+              "title": "怨꾩젙 ??젣 ?듭뀡???덉뼱????,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "e8b79b4ee550a37632f1-d00d043f8ac76c986ece",
+              "file": "profile.spec.ts",
+              "line": 327,
+              "column": 5
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "recommendation.spec.ts",
+      "file": "recommendation.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "肄섑뀗痢?異붿쿇 ?붿쭊",
+          "file": "recommendation.spec.ts",
+          "line": 17,
+          "column": 6,
+          "specs": [
+            {
+              "title": "異붿쿇 ?뱀뀡???덊럹?댁????쒖떆?섏뼱????,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "0d5ea42766f4aba03698-ac35864b26ea106b46fc",
+              "file": "recommendation.spec.ts",
+              "line": 27,
+              "column": 5
+            },
+            {
+              "title": "留욎땄 異붿쿇 ??쓣 ?대┃?섎㈃ 媛쒖씤?붾맂 肄섑뀗痢좉? 濡쒕뵫?섏뼱????,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "0d5ea42766f4aba03698-098417bcc62308c6d9ef",
+              "file": "recommendation.spec.ts",
+              "line": 46,
+              "column": 5
+            },
+            {
+              "title": "?몃젋????쓣 ?대┃?섎㈃ ?멸린 肄섑뀗痢좉? 濡쒕뵫?섏뼱????,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "0d5ea42766f4aba03698-3b17a792dcde40273b05",
+              "file": "recommendation.spec.ts",
+              "line": 78,
+              "column": 5
+            },
+            {
+              "title": "異붿쿇 移대뱶 ?대┃ ???곸꽭 ?섏씠吏濡??대룞?댁빞 ??,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "0d5ea42766f4aba03698-2ef9c3924dcd46584630",
+              "file": "recommendation.spec.ts",
+              "line": 113,
+              "column": 5
+            },
+            {
+              "title": "?덈줈怨좎묠 踰꾪듉?쇰줈 異붿쿇??媛깆떊?????덉뼱????,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "0d5ea42766f4aba03698-c0c3844d16993c34c456",
+              "file": "recommendation.spec.ts",
+              "line": 139,
+              "column": 5
+            },
+            {
+              "title": "濡쒕뵫 以??ㅼ펷?덊넠???쒖떆?섏뼱????,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "0d5ea42766f4aba03698-b1146bf08696f88f4af8",
+              "file": "recommendation.spec.ts",
+              "line": 181,
+              "column": 5
+            },
+            {
+              "title": "異붿쿇 肄섑뀗痢좉? ?놁쓣 ??硫붿떆吏媛 ?쒖떆?섏뼱????,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "0d5ea42766f4aba03698-8219482a918ea0586543",
+              "file": "recommendation.spec.ts",
+              "line": 207,
+              "column": 5
+            },
+            {
+              "title": "?먮윭 ?곹깭媛 ?곸젅??泥섎━?섏뼱????,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "0d5ea42766f4aba03698-f69e4fb5696e380ad2f0",
+              "file": "recommendation.spec.ts",
+              "line": 232,
+              "column": 5
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "search.spec.ts",
+      "file": "search.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "怨좉툒 寃??湲곕뒫",
+          "file": "search.spec.ts",
+          "line": 19,
+          "column": 6,
+          "specs": [
+            {
+              "title": "寃?됰컮媛 ?ㅻ뜑???쒖떆?섏뼱????,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "a088064de9fe351eef5f-3f26a8a155c74ba74122",
+              "file": "search.spec.ts",
+              "line": 29,
+              "column": 5
+            },
+            {
+              "title": "寃?됱뼱 ?낅젰 ???먮룞?꾩꽦 ?쒖븞???쒖떆?섏뼱????,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "a088064de9fe351eef5f-fc818ea8e130e66d133c",
+              "file": "search.spec.ts",
+              "line": 42,
+              "column": 5
+            },
+            {
+              "title": "寃???ㅽ뻾 ??寃곌낵 ?섏씠吏濡??대룞?섍퀬 寃곌낵媛 ?쒖떆?섏뼱????,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "a088064de9fe351eef5f-ea67e8631d3eb22a96bc",
+              "file": "search.spec.ts",
+              "line": 68,
+              "column": 5
+            },
+            {
+              "title": "移댄뀒怨좊━ ?꾪꽣媛 ?묐룞?댁빞 ??,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "a088064de9fe351eef5f-607e2963c72a10ab674c",
+              "file": "search.spec.ts",
+              "line": 93,
+              "column": 5
+            },
+            {
+              "title": "?좎쭨 ?꾪꽣媛 ?묐룞?댁빞 ??,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "a088064de9fe351eef5f-0bf46f5e062282c41c4a",
+              "file": "search.spec.ts",
+              "line": 129,
+              "column": 5
+            },
+            {
+              "title": "?뺣젹 ?듭뀡???묐룞?댁빞 ??,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "a088064de9fe351eef5f-05effd514ed0544688e2",
+              "file": "search.spec.ts",
+              "line": 165,
+              "column": 5
+            },
+            {
+              "title": "?섏씠吏?ㅼ씠?섏씠 ?묐룞?댁빞 ??,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "a088064de9fe351eef5f-646ba5f9f2fb1c295c8d",
+              "file": "search.spec.ts",
+              "line": 201,
+              "column": 5
+            },
+            {
+              "title": "寃??寃곌낵媛 ?놁쓣 ??硫붿떆吏媛 ?쒖떆?섏뼱????,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "a088064de9fe351eef5f-1238cd3936948d16acfb",
+              "file": "search.spec.ts",
+              "line": 235,
+              "column": 5
+            },
+            {
+              "title": "怨좉툒 ?꾪꽣 ?듭뀡???닿퀬 ?ㅼ젙?????덉뼱????,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "a088064de9fe351eef5f-2d61c61076513d45044b",
+              "file": "search.spec.ts",
+              "line": 249,
+              "column": 5
+            },
+            {
+              "title": "寃???덉뒪?좊━媛 ??λ릺怨??쒖떆?섏뼱????,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "a088064de9fe351eef5f-c1c29d5f369f0bc0c4ba",
+              "file": "search.spec.ts",
+              "line": 287,
+              "column": 5
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "security-flow.spec.ts",
+      "file": "security-flow.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "蹂댁븞 湲곕뒫 ?듯빀 ?뚯뒪??,
+          "file": "security-flow.spec.ts",
+          "line": 14,
+          "column": 6,
+          "specs": [
+            {
+              "title": "?꾩껜 ?쒕굹由ъ삤: 濡쒓렇????梨꾪똿 ???뷀샇????濡쒓렇?꾩썐",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "c8d91504cdc8f3033ed1-8b5cb48a375db838f9c8",
+              "file": "security-flow.spec.ts",
+              "line": 24,
+              "column": 5
+            },
+            {
+              "title": "CSRF ?좏겙 ?먮룞 泥섎━ 寃利?,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "c8d91504cdc8f3033ed1-e8f3428d8f1cd55ae35f",
+              "file": "security-flow.spec.ts",
+              "line": 84,
+              "column": 5
+            },
+            {
+              "title": "401 ?먮룞 濡쒓렇?꾩썐 寃利?,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "c8d91504cdc8f3033ed1-8bb1245b7e453d1b4dc0",
+              "file": "security-flow.spec.ts",
+              "line": 123,
+              "column": 5
+            },
+            {
+              "title": "?뷀샇?붾맂 硫붿떆吏 ?꾩넚 諛?蹂듯샇??,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "c8d91504cdc8f3033ed1-4b46a8c757b07cd7cd60",
+              "file": "security-flow.spec.ts",
+              "line": 151,
+              "column": 5
+            },
+            {
+              "title": "?좏겙 釉붾옓由ъ뒪??寃利?,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "c8d91504cdc8f3033ed1-92004a8eb258de2f22e6",
+              "file": "security-flow.spec.ts",
+              "line": 190,
+              "column": 5
+            },
+            {
+              "title": "CSRF ?좏겙 罹먯떛 寃利?,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "c8d91504cdc8f3033ed1-2be29acb9aad24c7fda3",
+              "file": "security-flow.spec.ts",
+              "line": 226,
+              "column": 5
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "social-features.spec.ts",
+      "file": "social-features.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "?ъ슜???붾줈??湲곕뒫",
+          "file": "social-features.spec.ts",
+          "line": 48,
+          "column": 6,
+          "specs": [
+            {
+              "title": "?ㅻⅨ ?ъ슜?먮? ?붾줈?고븷 ???덉뼱????,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "b7f55f1f1c40e163bef8-31fc33264ca11dc34f66",
+              "file": "social-features.spec.ts",
+              "line": 56,
+              "column": 5
+            },
+            {
+              "title": "?붾줈?고븳 ?ъ슜?먮? ?명뙏濡쒖슦?????덉뼱????,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "b7f55f1f1c40e163bef8-eed4573da22f76db5e58",
+              "file": "social-features.spec.ts",
+              "line": 79,
+              "column": 5
+            },
+            {
+              "title": "?붾줈???붾줈??紐⑸줉???뺤씤?????덉뼱????,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "b7f55f1f1c40e163bef8-42d5240c1d0e02fa456f",
+              "file": "social-features.spec.ts",
+              "line": 105,
+              "column": 5
+            }
+          ]
+        },
+        {
+          "title": "寃뚯떆???붾줈??湲곕뒫",
+          "file": "social-features.spec.ts",
+          "line": 123,
+          "column": 6,
+          "specs": [
+            {
+              "title": "寃뚯떆?먯쓣 ?붾줈?고븷 ???덉뼱????,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "b7f55f1f1c40e163bef8-0628ef128f0abf3eeffe",
+              "file": "social-features.spec.ts",
+              "line": 131,
+              "column": 5
+            },
+            {
+              "title": "?붾줈?고븳 寃뚯떆?먯쓽 ?뚮┝??諛쏆쓣 ???덉뼱????,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "b7f55f1f1c40e163bef8-108ed4c00dd962a03d31",
+              "file": "social-features.spec.ts",
+              "line": 152,
+              "column": 5
+            }
+          ]
+        },
+        {
+          "title": "寃뚯떆臾?怨듭쑀 湲곕뒫",
+          "file": "social-features.spec.ts",
+          "line": 172,
+          "column": 6,
+          "specs": [
+            {
+              "title": "寃뚯떆臾?怨듭쑀 踰꾪듉???대┃?????덉뼱????,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "b7f55f1f1c40e163bef8-150383a21dc9e99c685d",
+              "file": "social-features.spec.ts",
+              "line": 180,
+              "column": 5
+            },
+            {
+              "title": "?뚯뀥 誘몃뵒???뚮옯?쇱씠 ?쒖떆?섏뼱????,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "b7f55f1f1c40e163bef8-e34c7af24f63ca736715",
+              "file": "social-features.spec.ts",
+              "line": 202,
+              "column": 5
+            },
+            {
+              "title": "留곹겕 蹂듭궗 湲곕뒫???묐룞?댁빞 ??,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "b7f55f1f1c40e163bef8-1587d4808eef4085e393",
+              "file": "social-features.spec.ts",
+              "line": 231,
+              "column": 5
+            },
+            {
+              "title": "怨듭쑀 誘몃━蹂닿린媛 ?쒖떆?섏뼱????,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "b7f55f1f1c40e163bef8-1c99a43120efe6328216",
+              "file": "social-features.spec.ts",
+              "line": 259,
+              "column": 5
+            }
+          ]
+        },
+        {
+          "title": "?ъ슜??李⑤떒 湲곕뒫",
+          "file": "social-features.spec.ts",
+          "line": 281,
+          "column": 6,
+          "specs": [
+            {
+              "title": "?ㅻⅨ ?ъ슜?먮? 李⑤떒?????덉뼱????,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "b7f55f1f1c40e163bef8-94dde9eb19da638416dd",
+              "file": "social-features.spec.ts",
+              "line": 289,
+              "column": 5
+            },
+            {
+              "title": "李⑤떒???ъ슜?먮? 李⑤떒 ?댁젣?????덉뼱????,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "b7f55f1f1c40e163bef8-73cc2b7fd386d66a29f5",
+              "file": "social-features.spec.ts",
+              "line": 331,
+              "column": 5
+            },
+            {
+              "title": "李⑤떒???ъ슜??紐⑸줉???뺤씤?????덉뼱????,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "b7f55f1f1c40e163bef8-37a1e27ecf8a8eb2c390",
+              "file": "social-features.spec.ts",
+              "line": 353,
+              "column": 5
+            },
+            {
+              "title": "李⑤떒???ъ슜?먯쓽 寃뚯떆臾쇱씠 ?④꺼?몄빞 ??,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "b7f55f1f1c40e163bef8-28d5286a929b23413aed",
+              "file": "social-features.spec.ts",
+              "line": 372,
+              "column": 5
+            }
+          ]
+        },
+        {
+          "title": "遺곷쭏??湲곕뒫",
+          "file": "social-features.spec.ts",
+          "line": 389,
+          "column": 6,
+          "specs": [
+            {
+              "title": "寃뚯떆臾쇱쓣 遺곷쭏?ы븷 ???덉뼱????,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "b7f55f1f1c40e163bef8-9de434d771a17911aec1",
+              "file": "social-features.spec.ts",
+              "line": 397,
+              "column": 5
+            },
+            {
+              "title": "遺곷쭏?ы븳 寃뚯떆臾?紐⑸줉???뺤씤?????덉뼱????,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "b7f55f1f1c40e163bef8-0432bc53faef28af10b4",
+              "file": "social-features.spec.ts",
+              "line": 417,
+              "column": 5
+            },
+            {
+              "title": "遺곷쭏?щ? ?댁젣?????덉뼱????,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "b7f55f1f1c40e163bef8-770cca6f54015b676c09",
+              "file": "social-features.spec.ts",
+              "line": 437,
+              "column": 5
+            }
+          ]
+        },
+        {
+          "title": "硫섏뀡 湲곕뒫",
+          "file": "social-features.spec.ts",
+          "line": 456,
+          "column": 6,
+          "specs": [
+            {
+              "title": "?볤??먯꽌 ?ъ슜?먮? 硫섏뀡?????덉뼱????,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "b7f55f1f1c40e163bef8-8b60d8ab37fc2289811e",
+              "file": "social-features.spec.ts",
+              "line": 464,
+              "column": 5
+            },
+            {
+              "title": "硫섏뀡???ъ슜?먯뿉寃??뚮┝??諛쒖넚?섏뼱????,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "b7f55f1f1c40e163bef8-ea90603edd06fc39f4a4",
+              "file": "social-features.spec.ts",
+              "line": 497,
+              "column": 5
+            }
+          ]
+        },
+        {
+          "title": "?뚯뀥 ?듯빀 ?쒕굹由ъ삤",
+          "file": "social-features.spec.ts",
+          "line": 521,
+          "column": 6,
+          "specs": [
+            {
+              "title": "?꾩껜 ?뚯뀥 ?명꽣?숈뀡 ?뚮줈??,
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "b7f55f1f1c40e163bef8-5ed7bbd39b57536e6b0b",
+              "file": "social-features.spec.ts",
+              "line": 522,
+              "column": 5
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "message": "\u001b[31mTesting stopped early after 5 maximum allowed failures.\u001b[39m"
+    }
+  ],
+  "stats": {
+    "startTime": "2025-11-13T15:10:51.034Z",
+    "duration": 22253.731,
+    "expected": 5,
+    "skipped": 142,
+    "unexpected": 5,
+    "flaky": 0
+  }
+}

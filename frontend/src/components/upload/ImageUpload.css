@@ -1,0 +1,265 @@
+/**
+ * ImageUpload Styles
+ * 이미지 업로드 컴포넌트 스타일
+ */
+
+.image-upload-container {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.image-upload-dropzone {
+    border: 2px dashed #cbd5e0;
+    border-radius: 8px;
+    padding: 40px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background-color: #f7fafc;
+}
+
+.image-upload-dropzone:hover {
+    border-color: #4299e1;
+    background-color: #ebf8ff;
+}
+
+.image-upload-dropzone.dragging {
+    border-color: #3182ce;
+    background-color: #bee3f8;
+}
+
+.image-preview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+    margin-top: 20px;
+}
+
+.image-preview-item {
+    position: relative;
+    aspect-ratio: 1;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: #f7fafc;
+}
+
+.image-preview-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.preview-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.image-preview-item:hover .preview-overlay {
+    opacity: 1;
+}
+
+.image-name {
+    color: white;
+    font-size: 14px;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.image-size {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 12px;
+}
+
+.remove-preview-button {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 18px;
+    transition: background-color 0.2s;
+}
+
+.remove-preview-button:hover {
+    background-color: rgba(229, 62, 62, 0.9);
+}
+
+.remove-preview-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.uploaded-images-gallery {
+    margin-top: 24px;
+    padding-top: 24px;
+    border-top: 1px solid #e2e8f0;
+}
+
+.uploaded-images-gallery h3 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: #2d3748;
+}
+
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.gallery-item {
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: white;
+    transition: box-shadow 0.3s ease;
+}
+
+.gallery-item:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.gallery-item img {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+}
+
+.gallery-item-info {
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.gallery-item-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: #2d3748;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.gallery-item-dimensions {
+    font-size: 12px;
+    color: #718096;
+}
+
+.gallery-item-link {
+    color: #3182ce;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+    margin-top: 4px;
+}
+
+.gallery-item-link:hover {
+    text-decoration: underline;
+}
+
+/* 재사용 가능한 공통 스타일 */
+.dropzone-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+.upload-icon {
+    width: 48px;
+    height: 48px;
+    color: #4299e1;
+}
+
+.dropzone-text {
+    font-size: 16px;
+    font-weight: 500;
+    color: #2d3748;
+    margin: 0;
+}
+
+.dropzone-hint {
+    font-size: 14px;
+    color: #718096;
+    margin: 0;
+}
+
+.upload-progress {
+    margin-top: 20px;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background-color: #e2e8f0;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 8px;
+}
+
+.progress-fill {
+    height: 100%;
+    background-color: #4299e1;
+    transition: width 0.3s ease;
+}
+
+.progress-text {
+    font-size: 14px;
+    font-weight: 500;
+    color: #4299e1;
+}
+
+.error-message {
+    margin-top: 16px;
+    padding: 12px 16px;
+    background-color: #fff5f5;
+    border: 1px solid #feb2b2;
+    border-radius: 6px;
+    color: #c53030;
+    font-size: 14px;
+}
+
+.upload-button {
+    width: 100%;
+    margin-top: 20px;
+    padding: 12px 24px;
+    background-color: #4299e1;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.upload-button:hover {
+    background-color: #3182ce;
+}
+
+.upload-button:disabled {
+    background-color: #cbd5e0;
+    cursor: not-allowed;
+}

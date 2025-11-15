@@ -1,4 +1,4 @@
-const logger = require('../../utils/logger');
+const logger = require('../utils/logger');
 const crypto = require('crypto');
 const fs = require('fs').promises;
 const path = require('path');

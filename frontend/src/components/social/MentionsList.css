@@ -1,0 +1,101 @@
+/**
+ * MentionsList Component Styles
+ */
+
+.mentions-list-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.mentions-list-card {
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.mentions-list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.mentions-list-actions {
+    display: flex;
+    align-items: center;
+}
+
+.mentions-list-loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 400px;
+}
+
+.mentions-list-empty {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 200px;
+}
+
+.mention-item {
+    border-radius: 8px;
+    margin-bottom: 8px;
+    padding: 12px;
+    transition: all 0.2s ease-in-out;
+}
+
+.mention-item.unread {
+    background-color: rgba(103, 126, 234, 0.05);
+    border-left: 3px solid #667eea;
+}
+
+.mention-item:hover {
+    background-color: rgba(103, 126, 234, 0.08);
+}
+
+.mentions-list-pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 24px;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    .mentions-list-card {
+        background-color: #2c2c2c;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .mention-item.unread {
+        background-color: rgba(124, 145, 240, 0.1);
+        border-left-color: #7c91f0;
+    }
+
+    .mention-item:hover {
+        background-color: rgba(124, 145, 240, 0.12);
+    }
+}
+
+/* Responsive design */
+@media (max-width: 600px) {
+    .mentions-list-container {
+        padding: 12px;
+    }
+
+    .mentions-list-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .mentions-list-actions {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .mention-item {
+        padding: 8px;
+    }
+}

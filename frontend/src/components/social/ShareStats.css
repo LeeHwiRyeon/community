@@ -1,0 +1,94 @@
+/**
+ * ShareStats Component Styles
+ */
+
+.share-stats-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+}
+
+.share-stats-chip {
+    transition: all 0.2s ease-in-out;
+}
+
+.share-stats-chip:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.share-stats-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.share-stats-total {
+    display: flex;
+    align-items: center;
+}
+
+.share-stats-breakdown {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.platform-chip {
+    transition: all 0.2s ease-in-out;
+}
+
+.platform-chip:hover {
+    transform: translateY(-1px);
+}
+
+.platform-chip.twitter:hover {
+    border-color: #1DA1F2;
+    background-color: rgba(29, 161, 242, 0.08);
+}
+
+.platform-chip.facebook:hover {
+    border-color: #1877F2;
+    background-color: rgba(24, 119, 242, 0.08);
+}
+
+.platform-chip.linkedin:hover {
+    border-color: #0A66C2;
+    background-color: rgba(10, 102, 194, 0.08);
+}
+
+.platform-chip.clipboard:hover {
+    border-color: #667eea;
+    background-color: rgba(103, 126, 234, 0.08);
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    .platform-chip.twitter:hover {
+        background-color: rgba(29, 161, 242, 0.15);
+    }
+
+    .platform-chip.facebook:hover {
+        background-color: rgba(24, 119, 242, 0.15);
+    }
+
+    .platform-chip.linkedin:hover {
+        background-color: rgba(10, 102, 194, 0.15);
+    }
+
+    .platform-chip.clipboard:hover {
+        background-color: rgba(124, 145, 240, 0.15);
+    }
+}
+
+/* Responsive design */
+@media (max-width: 600px) {
+    .share-stats-breakdown {
+        gap: 6px;
+    }
+
+    .platform-chip {
+        font-size: 0.75rem;
+    }
+}

@@ -1,5 +1,6 @@
 const WebSocket = require('ws');
 const EventEmitter = require('events');
+const jwt = require('jsonwebtoken');
 
 class CollaborationService extends EventEmitter {
     constructor() {
@@ -23,8 +24,22 @@ class CollaborationService extends EventEmitter {
     }
 
     verifyClient(info) {
-        // TODO: Implement JWT token verification
-        return true;
+        // JWT 토큰 검증
+        try {
+            const url = new URL(info.req.url, 'http://localhost');
+            const token = url.searchParams.get('token');
+
+            if (!token) {
+                return false;
+            }
+
+            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+            info.req.userId = decoded.userId;
+            return true;
+        } catch (error) {
+            console.error('WebSocket token verification failed:', error.message);
+            return false;
+        }
     }
 
     handleConnection(ws, req) {

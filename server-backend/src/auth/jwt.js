@@ -1,24 +1,49 @@
 import jwt from 'jsonwebtoken';
 import { storeRefresh, loadRefresh, deleteRefresh, isRedisEnabled } from '../redis.js';
+import { isAccessTokenBlacklisted, isRefreshTokenBlacklisted, isUserBlacklisted } from '../services/token-blacklist.js';
 
 const ACCESS_TTL_SEC = parseInt(process.env.JWT_ACCESS_TTL_SEC || '900', 10); // 15m
 const REFRESH_TTL_SEC = parseInt(process.env.JWT_REFRESH_TTL_SEC || '1209600', 10); // 14d
-const SECRET = process.env.JWT_SECRET || (() => {
-    console.error('⚠️  JWT_SECRET not set! Using insecure default. Set JWT_SECRET environment variable.');
-    return 'dev_insecure_secret_change_me';
-})();
+
+// JWT Secret - MUST be set in environment variables
+const SECRET = process.env.JWT_SECRET;
+
+if (!SECRET) {
+    console.error('❌ FATAL: JWT_SECRET environment variable is not set!');
+    console.error('Please set JWT_SECRET in your .env file');
+    console.error('Generate a secure secret using: node scripts/generate-jwt-secret.js');
+    console.error('Example: JWT_SECRET=$(openssl rand -base64 64)');
+    process.exit(1); // Exit immediately - cannot run without JWT_SECRET
+}
+
+// Validate JWT Secret strength
+if (SECRET.length < 32) {
+    console.error('❌ FATAL: JWT_SECRET must be at least 32 characters long');
+    console.error(`Current length: ${SECRET.length} characters`);
+    console.error('Generate a secure secret using: node scripts/generate-jwt-secret.js');
+    process.exit(1);
+}
+
+console.log('✅ JWT_SECRET validated successfully');
+console.log(`   Secret length: ${SECRET.length} characters`);
+console.log(`   Access Token TTL: ${ACCESS_TTL_SEC} seconds (${Math.floor(ACCESS_TTL_SEC / 60)} minutes)`);
+console.log(`   Refresh Token TTL: ${REFRESH_TTL_SEC} seconds (${Math.floor(REFRESH_TTL_SEC / 86400)} days)`);
 
 // In-memory fallback refresh store when Redis disabled
 const refreshStore = new Map(); // jti -> { userId, exp }
 
 export async function issueTokens(user) {
     const now = Math.floor(Date.now() / 1000);
-    const jti = 'r_' + Math.random().toString(36).slice(2) + Date.now().toString(36);
+
+    // Generate unique JWT IDs for both access and refresh tokens
+    const accessJti = 'a_' + Math.random().toString(36).slice(2) + Date.now().toString(36);
+    const refreshJti = 'r_' + Math.random().toString(36).slice(2) + Date.now().toString(36);
 
     // Add additional security claims
     const accessPayload = {
         sub: String(user.id),
         role: user.role,
+        jti: accessJti, // Add JTI for blacklist support
         typ: 'access',
         iat: now,
         iss: process.env.JWT_ISSUER || 'community-platform',
@@ -27,7 +52,7 @@ export async function issueTokens(user) {
 
     const refreshPayload = {
         sub: String(user.id),
-        jti,
+        jti: refreshJti, // Changed from jti
         typ: 'refresh',
         iat: now,
         iss: process.env.JWT_ISSUER || 'community-platform',
@@ -49,9 +74,9 @@ export async function issueTokens(user) {
     });
 
     if (isRedisEnabled()) {
-        await storeRefresh(jti, { userId: user.id }, REFRESH_TTL_SEC);
+        await storeRefresh(refreshJti, { userId: user.id }, REFRESH_TTL_SEC);
     } else {
-        refreshStore.set(jti, { userId: user.id, exp: now + REFRESH_TTL_SEC });
+        refreshStore.set(refreshJti, { userId: user.id, exp: now + REFRESH_TTL_SEC });
     }
     return { access, refresh, access_expires_in: ACCESS_TTL_SEC, refresh_expires_in: REFRESH_TTL_SEC };
 }
@@ -109,6 +134,19 @@ export function buildAuthMiddleware(dbQuery) {
             const token = m[1];
             const payload = verifyToken(token, 'access');
             if (!payload) return next();
+
+            // Check if token is blacklisted
+            if (payload.jti && await isAccessTokenBlacklisted(payload.jti)) {
+                console.warn(`⚠️  Blacklisted access token used: ${payload.jti}`);
+                return next(); // Treat as unauthenticated
+            }
+
+            // Check if user is globally blacklisted
+            if (await isUserBlacklisted(payload.sub)) {
+                console.warn(`⚠️  Blacklisted user attempted access: ${payload.sub}`);
+                return next(); // Treat as unauthenticated
+            }
+
             const rows = await dbQuery('SELECT id, display_name, role FROM users WHERE id=? LIMIT 1', [payload.sub]);
             if (rows.length) req.user = rows[0];
         } catch (e) { /* ignore */ }
@@ -129,7 +167,7 @@ export function requireModOrAdmin(req, res, next) {
 }
 
 // Middleware for token authentication
-export function authenticateToken(req, res, next) {
+export async function authenticateToken(req, res, next) {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
 
@@ -140,6 +178,16 @@ export function authenticateToken(req, res, next) {
     const payload = verifyToken(token, 'access');
     if (!payload) {
         return res.status(403).json({ error: 'Invalid or expired token' });
+    }
+
+    // Check if token is blacklisted
+    if (payload.jti && await isAccessTokenBlacklisted(payload.jti)) {
+        return res.status(401).json({ error: 'Token has been revoked' });
+    }
+
+    // Check if user is globally blacklisted
+    if (await isUserBlacklisted(payload.sub)) {
+        return res.status(401).json({ error: 'User session has been revoked' });
     }
 
     req.user = { id: payload.sub, role: payload.role };

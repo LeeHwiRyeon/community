@@ -10,7 +10,6 @@ import {
     Card,
     CardContent,
     Button,
-    Grid,
     Tabs,
     Tab,
     Chip,
@@ -35,6 +34,7 @@ import {
     FormControl,
     InputLabel
 } from '@mui/material';
+
 import {
     Newspaper,
     Groups,
@@ -356,7 +356,7 @@ const CoreModulesIntegration: React.FC = () => {
                                     주요 기능
                                 </Typography>
                                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
-                                    {moduleArray[activeTab].features.map((feature, index) => (
+                                    {moduleArray[activeTab].features.map((feature: string, index: number) => (
                                         <Box sx={{ width: { xs: '100%', sm: '50%' }, p: 1 }} key={index}>
                                             <Box sx={{ display: 'flex', alignItems: 'center', p: 1 }}>
                                                 <Star sx={{ mr: 1, color: 'primary.main', fontSize: 20 }} />

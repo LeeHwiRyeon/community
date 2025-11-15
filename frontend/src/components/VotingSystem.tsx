@@ -36,6 +36,7 @@ import {
     Visibility as ViewIcon,
     BarChart as ResultsIcon
 } from '@mui/icons-material';
+import { useOptimisticVote } from '../hooks/useOptimisticUpdate';
 
 // 투표 데이터 타입 정의
 interface VotingOption {
@@ -92,6 +93,12 @@ const VotingSystem: React.FC<VotingSystemProps> = ({
     const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
     const [showResults, setShowResults] = useState(false);
     const [createDialogOpen, setCreateDialogOpen] = useState(false);
+
+    // 낙관적 업데이트 훅
+    const { voteCount, userVote, isOptimistic, handleVote } = useOptimisticVote(
+        (simpleVote?.upvotes || 0) - (simpleVote?.downvotes || 0),
+        simpleVote?.userVote || null
+    );
 
     // 새 투표 생성 폼
     const [newPoll, setNewPoll] = useState({
@@ -242,40 +249,52 @@ const VotingSystem: React.FC<VotingSystemProps> = ({
         }
     };
 
-    // 간단 투표 (좋아요/싫어요)
+    // 간단 투표 (좋아요/싫어요) - 낙관적 업데이트 적용
     const handleSimpleVote = async (voteType: 'up' | 'down') => {
         if (!simpleVote) return;
 
         try {
-            const response = await fetch(`/api/voting/posts/${postId}/vote`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ type: voteType })
-            });
+            await handleVote(voteType, async (vote) => {
+                const response = await fetch(`/api/voting/posts/${postId}/vote`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ type: vote })
+                });
 
-            if (response.ok) {
-                await loadSimpleVote();
-            } else {
-                // 모의 투표 처리
-                const newVote = { ...simpleVote };
-
-                // 기존 투표 취소
-                if (newVote.userVote === 'up') newVote.upvotes--;
-                if (newVote.userVote === 'down') newVote.downvotes--;
-
-                // 새 투표 적용
-                if (newVote.userVote === voteType) {
-                    newVote.userVote = null; // 같은 투표 클릭시 취소
+                if (response.ok) {
+                    const data = await response.json();
+                    return {
+                        voteCount: data.data.upvotes - data.data.downvotes,
+                        userVote: data.data.userVote
+                    };
                 } else {
-                    newVote.userVote = voteType;
-                    if (voteType === 'up') newVote.upvotes++;
-                    if (voteType === 'down') newVote.downvotes++;
-                }
+                    // 모의 응답 (실제 API 구현 시 제거)
+                    const newVote = { ...simpleVote };
 
-                setSimpleVote(newVote);
-            }
+                    // 기존 투표 취소
+                    if (newVote.userVote === 'up') newVote.upvotes--;
+                    if (newVote.userVote === 'down') newVote.downvotes--;
+
+                    // 새 투표 적용
+                    if (newVote.userVote === vote) {
+                        newVote.userVote = null; // 같은 투표 클릭시 취소
+                    } else {
+                        newVote.userVote = vote;
+                        if (vote === 'up') newVote.upvotes++;
+                        if (vote === 'down') newVote.downvotes++;
+                    }
+
+                    setSimpleVote(newVote);
+
+                    return {
+                        voteCount: newVote.upvotes - newVote.downvotes,
+                        userVote: newVote.userVote
+                    };
+                }
+            });
         } catch (err) {
             console.error('투표 처리 오류:', err);
+            setError('투표 처리 중 오류가 발생했습니다.');
         }
     };
 
@@ -363,8 +382,21 @@ const VotingSystem: React.FC<VotingSystemProps> = ({
 
     // 간단 투표 렌더링
     if (type === 'simple' && simpleVote) {
-        const total = simpleVote.upvotes + simpleVote.downvotes;
-        const upPercentage = total > 0 ? (simpleVote.upvotes / total) * 100 : 0;
+        // 낙관적 업데이트 값 사용
+        const displayUpvotes = userVote === 'up'
+            ? Math.max(0, simpleVote.upvotes + (simpleVote.userVote === 'up' ? 0 : 1) - (simpleVote.userVote === 'down' ? 1 : 0))
+            : userVote === null && simpleVote.userVote === 'up'
+                ? simpleVote.upvotes - 1
+                : simpleVote.upvotes;
+
+        const displayDownvotes = userVote === 'down'
+            ? Math.max(0, simpleVote.downvotes + (simpleVote.userVote === 'down' ? 0 : 1) - (simpleVote.userVote === 'up' ? 1 : 0))
+            : userVote === null && simpleVote.userVote === 'down'
+                ? simpleVote.downvotes - 1
+                : simpleVote.downvotes;
+
+        const total = displayUpvotes + displayDownvotes;
+        const upPercentage = total > 0 ? (displayUpvotes / total) * 100 : 0;
 
         return (
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -372,19 +404,29 @@ const VotingSystem: React.FC<VotingSystemProps> = ({
                     size="small"
                     startIcon={<ThumbUpIcon />}
                     onClick={() => handleSimpleVote('up')}
-                    color={simpleVote.userVote === 'up' ? 'primary' : 'inherit'}
-                    variant={simpleVote.userVote === 'up' ? 'contained' : 'outlined'}
+                    color={userVote === 'up' ? 'primary' : 'inherit'}
+                    variant={userVote === 'up' ? 'contained' : 'outlined'}
+                    disabled={isOptimistic}
+                    sx={{
+                        opacity: isOptimistic ? 0.7 : 1,
+                        transition: 'all 0.2s ease'
+                    }}
                 >
-                    {simpleVote.upvotes}
+                    {displayUpvotes}
                 </Button>
                 <Button
                     size="small"
                     startIcon={<ThumbDownIcon />}
                     onClick={() => handleSimpleVote('down')}
-                    color={simpleVote.userVote === 'down' ? 'error' : 'inherit'}
-                    variant={simpleVote.userVote === 'down' ? 'contained' : 'outlined'}
+                    color={userVote === 'down' ? 'error' : 'inherit'}
+                    variant={userVote === 'down' ? 'contained' : 'outlined'}
+                    disabled={isOptimistic}
+                    sx={{
+                        opacity: isOptimistic ? 0.7 : 1,
+                        transition: 'all 0.2s ease'
+                    }}
                 >
-                    {simpleVote.downvotes}
+                    {displayDownvotes}
                 </Button>
                 {total > 0 && (
                     <Typography variant="caption" color="text.secondary">

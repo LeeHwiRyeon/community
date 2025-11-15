@@ -8,8 +8,7 @@ import {
     LinearProgress,
     Chip,
     Button,
-    Grid,
-    Paper,
+        Paper,
     List,
     ListItem,
     ListItemIcon,
@@ -23,6 +22,7 @@ import {
     DialogContent,
     DialogActions
 } from '@mui/material';
+
 import {
     Star as StarIcon,
     EmojiEvents as TrophyIcon,

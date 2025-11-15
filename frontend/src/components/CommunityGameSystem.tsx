@@ -18,9 +18,9 @@ import {
     FormControl, InputLabel, Select, MenuItem, Switch, FormControlLabel,
     Accordion, AccordionSummary, AccordionDetails, Paper, Stack,
     IconButton, Divider, Rating, Skeleton, CircularProgress, Fab,
-    Grid,
     Table, TableBody, TableCell, TableContainer, TableHead, TableRow
 } from '@mui/material';
+
 import {
     SportsEsports as GameIcon, EmojiEvents as TrophyIcon,
     Leaderboard as LeaderboardIcon, Group as GroupIcon,
@@ -601,9 +601,9 @@ const CommunityGameSystem: React.FC<CommunityGameSystemProps> = ({
                     <Typography variant="h5" gutterBottom>
                         토너먼트
                     </Typography>
-                    <Grid container spacing={3}>
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
                         {tournaments.map((tournament) => (
-                            <Grid item xs={12} sm={6} md={4} key={tournament.id}>
+                            <Box sx={{ flex: { xs: '1 1 100%', sm: '1 1 calc(50% - 12px)', md: '1 1 calc(33.333% - 16px)' } }} key={tournament.id}>
                                 <Card>
                                     <CardContent>
                                         <Typography variant="h6" gutterBottom>
@@ -629,9 +629,9 @@ const CommunityGameSystem: React.FC<CommunityGameSystemProps> = ({
                                         </Button>
                                     </CardContent>
                                 </Card>
-                            </Grid>
+                            </Box>
                         ))}
-                    </Grid>
+                    </Box>
                 </Box>
             )}
 

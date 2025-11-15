@@ -10,10 +10,17 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=50000
+      # SQLite 사용 (MySQL 환경변수 제거)
       - NPM_CONFIG_AUDIT=false
       - NPM_CONFIG_FUND=false
+    volumes:
+      # SQLite 데이터베이스 파일 영속성
+      - backend_data:/app/data
     networks:
       - community-network
+    depends_on:
+      - redis
+      - elasticsearch
     restart: unless-stopped
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:50000/api/health" ]
@@ -30,14 +37,9 @@ services:
         reservations:
           memory: 256M
           cpus: '0.25'
-    # 보안을 위한 읽기 전용 루트 파일시스템
-    read_only: true
-    # 필요한 디렉토리만 쓰기 가능하도록 설정
+    # SQLite 사용 시 쓰기 권한 필요 (read_only 제거)
     tmpfs:
       - /tmp
-      - /var/cache/nginx
-    # 보안을 위한 사용자 설정
-    user: "1001:1001"
 
   frontend:
     build:
@@ -71,25 +73,75 @@ services:
       - /var/run/nginx.pid
     # 보안을 위한 사용자 설정
     user: "1001:1001"
-  # 향후 데이터베이스 추가 시 사용
-  # database:
-  #   image: mariadb:10.6
-  #   environment:
-  #     MYSQL_ROOT_PASSWORD: root
-  #     MYSQL_DATABASE: community
-  #     MYSQL_USER: app
-  #     MYSQL_PASSWORD: app
-  #   ports:
-  #     - "3306:3306"
-  #   volumes:
-  #     - db_data:/var/lib/mysql
-  #   networks:
-  #     - community-network
-  #   restart: unless-stopped
+
+  # Elasticsearch for Advanced Search
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - bootstrap.memory_lock=true
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - es_data:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+    networks:
+      - community-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: '0.5'
+        reservations:
+          memory: 512M
+          cpus: '0.25'
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    command: redis-server --appendonly yes --requirepass redis_password
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - community-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: '0.25'
+        reservations:
+          memory: 128M
+          cpus: '0.1'
 
 networks:
   community-network:
     driver: bridge
 
-# volumes:
-#   db_data:
+volumes:
+  backend_data:
+    driver: local
+  es_data:
+    driver: local
+  redis_data:
+    driver: local

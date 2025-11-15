@@ -2,6 +2,12 @@ const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { v4: uuidv4 } = require('uuid');
+const {
+    generateCSRFTokenMiddleware,
+    csrfTokenInfoMiddleware,
+    csrfRefreshHandler
+} = require('../src/middleware/csrf');
+const { clearCSRFToken } = require('../src/utils/csrf');
 
 /**
  * 인증 라우트
@@ -9,14 +15,19 @@ const { v4: uuidv4 } = require('uuid');
 module.exports = (db, redis) => {
     const router = express.Router();
 
-    // JWT 시크릿 키
-    const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
+    // JWT 시크릿 키 - Must be set in environment
+    const JWT_SECRET = process.env.JWT_SECRET;
     const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '24h';
+
+    if (!JWT_SECRET) {
+        console.error('❌ FATAL: JWT_SECRET not set in environment variables');
+        throw new Error('JWT_SECRET is required');
+    }
 
     /**
      * 회원가입
      */
-    router.post('/register', async (req, res) => {
+    router.post('/register', generateCSRFTokenMiddleware, async (req, res) => {
         try {
             const { email, password, username, displayName } = req.body;
 
@@ -88,7 +99,8 @@ module.exports = (db, redis) => {
                         username,
                         displayName: displayName || username
                     },
-                    token
+                    token,
+                    csrfToken: req.csrfToken  // CSRF 토큰 포함
                 }
             });
 
@@ -104,7 +116,7 @@ module.exports = (db, redis) => {
     /**
      * 로그인
      */
-    router.post('/login', async (req, res) => {
+    router.post('/login', generateCSRFTokenMiddleware, async (req, res) => {
         try {
             const { email, password } = req.body;
 
@@ -170,7 +182,8 @@ module.exports = (db, redis) => {
                         username: user.username,
                         displayName: user.display_name
                     },
-                    token
+                    token,
+                    csrfToken: req.csrfToken  // CSRF 토큰 포함
                 }
             });
 
@@ -248,6 +261,9 @@ module.exports = (db, redis) => {
                 }
             }
 
+            // CSRF 토큰 제거
+            clearCSRFToken(req, res);
+
             res.json({
                 success: true,
                 message: '로그아웃되었습니다.'
@@ -261,6 +277,47 @@ module.exports = (db, redis) => {
             });
         }
     });
+
+    /**
+     * CSRF 토큰 발급
+     * GET /api/auth/csrf-token
+     * 
+     * @description
+     * 클라이언트가 CSRF 토큰을 요청할 때 사용
+     * 로그인 후 또는 페이지 로드 시 호출
+     * 
+     * @returns {Object} { csrfToken: string }
+     */
+    router.get('/csrf-token', generateCSRFTokenMiddleware, (req, res) => {
+        res.json({
+            success: true,
+            data: {
+                csrfToken: req.csrfToken
+            }
+        });
+    });
+
+    /**
+     * CSRF 토큰 갱신
+     * POST /api/auth/csrf-refresh
+     * 
+     * @description
+     * 만료된 토큰을 새로운 토큰으로 갱신
+     * 
+     * @returns {Object} { csrfToken: string }
+     */
+    router.post('/csrf-refresh', csrfRefreshHandler);
+
+    /**
+     * CSRF 토큰 정보 조회
+     * GET /api/auth/csrf-info
+     * 
+     * @description
+     * 현재 CSRF 토큰의 상태 확인 (디버깅용)
+     * 
+     * @returns {Object} CSRF 토큰 정보
+     */
+    router.get('/csrf-info', csrfTokenInfoMiddleware);
 
     return router;
 };

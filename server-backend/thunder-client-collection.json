@@ -1,0 +1,760 @@
+{
+    "client": "Thunder Client",
+    "collectionName": "Community Platform - Phase 2 APIs",
+    "collectionId": "phase2-apis",
+    "dateExported": "2025-11-11",
+    "version": "1.2",
+    "folders": [
+        {
+            "id": "auth",
+            "name": "Authentication",
+            "description": "Login and authentication endpoints"
+        },
+        {
+            "id": "online-status",
+            "name": "Online Status",
+            "description": "User online status management"
+        },
+        {
+            "id": "moderator",
+            "name": "Moderator Tools",
+            "description": "Content moderation and user management"
+        },
+        {
+            "id": "follow",
+            "name": "Follow System",
+            "description": "User and board following"
+        },
+        {
+            "id": "bookmark",
+            "name": "Bookmark System",
+            "description": "Post bookmarking and folder management"
+        }
+    ],
+    "requests": [
+        {
+            "folderId": "auth",
+            "name": "Login",
+            "method": "POST",
+            "url": "{{baseUrl}}/api/auth/login",
+            "headers": [
+                {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                }
+            ],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "tests": [
+                {
+                    "type": "res-code",
+                    "value": "200"
+                },
+                {
+                    "type": "json-query",
+                    "value": "token"
+                }
+            ]
+        },
+        {
+            "folderId": "online-status",
+            "name": "Get Online Users",
+            "method": "GET",
+            "url": "{{baseUrl}}/api/online-status/users",
+            "headers": [
+                {
+                    "name": "Authorization",
+                    "value": "Bearer {{token}}"
+                }
+            ]
+        },
+        {
+            "folderId": "online-status",
+            "name": "Update Heartbeat",
+            "method": "POST",
+            "url": "{{baseUrl}}/api/online-status/heartbeat",
+            "headers": [
+                {
+                    "name": "Authorization",
+                    "value": "Bearer {{token}}"
+                },
+                {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                }
+            ],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"status\": \"online\",\n  \"deviceType\": \"web\"\n}"
+            }
+        },
+        {
+            "folderId": "online-status",
+            "name": "Get User Status",
+            "method": "GET",
+            "url": "{{baseUrl}}/api/online-status/user/:userId",
+            "headers": [
+                {
+                    "name": "Authorization",
+                    "value": "Bearer {{token}}"
+                }
+            ],
+            "pathVariables": [
+                {
+                    "name": "userId",
+                    "value": "1"
+                }
+            ]
+        },
+        {
+            "folderId": "online-status",
+            "name": "Get Bulk User Status",
+            "method": "POST",
+            "url": "{{baseUrl}}/api/online-status/bulk",
+            "headers": [
+                {
+                    "name": "Authorization",
+                    "value": "Bearer {{token}}"
+                },
+                {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                }
+            ],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"userIds\": [1, 2, 3, 4, 5]\n}"
+            }
+        },
+        {
+            "folderId": "online-status",
+            "name": "Get Online Statistics",
+            "method": "GET",
+            "url": "{{baseUrl}}/api/online-status/statistics",
+            "headers": [
+                {
+                    "name": "Authorization",
+                    "value": "Bearer {{token}}"
+                }
+            ]
+        },
+        {
+            "folderId": "moderator",
+            "name": "Assign Moderator Role",
+            "method": "POST",
+            "url": "{{baseUrl}}/api/moderator/roles",
+            "headers": [
+                {
+                    "name": "Authorization",
+                    "value": "Bearer {{token}}"
+                },
+                {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                }
+            ],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"userId\": 2,\n  \"role\": \"moderator\",\n  \"permissions\": {\n    \"delete_posts\": true,\n    \"ban_users\": true,\n    \"manage_reports\": true\n  }\n}"
+            }
+        },
+        {
+            "folderId": "moderator",
+            "name": "Issue Warning",
+            "method": "POST",
+            "url": "{{baseUrl}}/api/moderator/warnings",
+            "headers": [
+                {
+                    "name": "Authorization",
+                    "value": "Bearer {{token}}"
+                },
+                {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                }
+            ],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"userId\": 3,\n  \"reason\": \"Spam posting\",\n  \"severity\": \"medium\"\n}"
+            }
+        },
+        {
+            "folderId": "moderator",
+            "name": "Ban User",
+            "method": "POST",
+            "url": "{{baseUrl}}/api/moderator/bans-v2",
+            "headers": [
+                {
+                    "name": "Authorization",
+                    "value": "Bearer {{token}}"
+                },
+                {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                }
+            ],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"userId\": 3,\n  \"reason\": \"Repeated violations\",\n  \"banType\": \"temporary\",\n  \"duration\": 7\n}"
+            }
+        },
+        {
+            "folderId": "moderator",
+            "name": "Unban User",
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/moderator/bans-v2/:banId",
+            "headers": [
+                {
+                    "name": "Authorization",
+                    "value": "Bearer {{token}}"
+                }
+            ],
+            "pathVariables": [
+                {
+                    "name": "banId",
+                    "value": "1"
+                }
+            ]
+        },
+        {
+            "folderId": "moderator",
+            "name": "Report Content",
+            "method": "POST",
+            "url": "{{baseUrl}}/api/moderator/reports-v2",
+            "headers": [
+                {
+                    "name": "Authorization",
+                    "value": "Bearer {{token}}"
+                },
+                {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                }
+            ],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"contentType\": \"post\",\n  \"contentId\": 10,\n  \"reason\": \"Inappropriate content\",\n  \"description\": \"This post contains offensive language\"\n}"
+            }
+        },
+        {
+            "folderId": "moderator",
+            "name": "Get Reports",
+            "method": "GET",
+            "url": "{{baseUrl}}/api/moderator/reports-v2?status=pending",
+            "headers": [
+                {
+                    "name": "Authorization",
+                    "value": "Bearer {{token}}"
+                }
+            ]
+        },
+        {
+            "folderId": "moderator",
+            "name": "Resolve Report",
+            "method": "PUT",
+            "url": "{{baseUrl}}/api/moderator/reports-v2/:reportId",
+            "headers": [
+                {
+                    "name": "Authorization",
+                    "value": "Bearer {{token}}"
+                },
+                {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                }
+            ],
+            "pathVariables": [
+                {
+                    "name": "reportId",
+                    "value": "1"
+                }
+            ],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"action\": \"approved\",\n  \"notes\": \"Removed inappropriate content\"\n}"
+            }
+        },
+        {
+            "folderId": "moderator",
+            "name": "Get Moderator Statistics",
+            "method": "GET",
+            "url": "{{baseUrl}}/api/moderator/statistics",
+            "headers": [
+                {
+                    "name": "Authorization",
+                    "value": "Bearer {{token}}"
+                }
+            ]
+        },
+        {
+            "folderId": "follow",
+            "name": "Follow User",
+            "method": "POST",
+            "url": "{{baseUrl}}/api/follow/user/:userId",
+            "headers": [
+                {
+                    "name": "Authorization",
+                    "value": "Bearer {{token}}"
+                }
+            ],
+            "pathVariables": [
+                {
+                    "name": "userId",
+                    "value": "2"
+                }
+            ]
+        },
+        {
+            "folderId": "follow",
+            "name": "Unfollow User",
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/follow/user/:userId",
+            "headers": [
+                {
+                    "name": "Authorization",
+                    "value": "Bearer {{token}}"
+                }
+            ],
+            "pathVariables": [
+                {
+                    "name": "userId",
+                    "value": "2"
+                }
+            ]
+        },
+        {
+            "folderId": "follow",
+            "name": "Get User Followers",
+            "method": "GET",
+            "url": "{{baseUrl}}/api/follow/user/:userId/followers?page=1&limit=20",
+            "headers": [
+                {
+                    "name": "Authorization",
+                    "value": "Bearer {{token}}"
+                }
+            ],
+            "pathVariables": [
+                {
+                    "name": "userId",
+                    "value": "1"
+                }
+            ]
+        },
+        {
+            "folderId": "follow",
+            "name": "Get User Following",
+            "method": "GET",
+            "url": "{{baseUrl}}/api/follow/user/:userId/following?page=1&limit=20",
+            "headers": [
+                {
+                    "name": "Authorization",
+                    "value": "Bearer {{token}}"
+                }
+            ],
+            "pathVariables": [
+                {
+                    "name": "userId",
+                    "value": "1"
+                }
+            ]
+        },
+        {
+            "folderId": "follow",
+            "name": "Check If Following User",
+            "method": "GET",
+            "url": "{{baseUrl}}/api/follow/user/:userId/check",
+            "headers": [
+                {
+                    "name": "Authorization",
+                    "value": "Bearer {{token}}"
+                }
+            ],
+            "pathVariables": [
+                {
+                    "name": "userId",
+                    "value": "2"
+                }
+            ]
+        },
+        {
+            "folderId": "follow",
+            "name": "Get User Follow Stats",
+            "method": "GET",
+            "url": "{{baseUrl}}/api/follow/user/:userId/stats",
+            "headers": [
+                {
+                    "name": "Authorization",
+                    "value": "Bearer {{token}}"
+                }
+            ],
+            "pathVariables": [
+                {
+                    "name": "userId",
+                    "value": "1"
+                }
+            ]
+        },
+        {
+            "folderId": "follow",
+            "name": "Follow Board",
+            "method": "POST",
+            "url": "{{baseUrl}}/api/follow/board/:boardId",
+            "headers": [
+                {
+                    "name": "Authorization",
+                    "value": "Bearer {{token}}"
+                },
+                {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                }
+            ],
+            "pathVariables": [
+                {
+                    "name": "boardId",
+                    "value": "1"
+                }
+            ],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"notificationEnabled\": true\n}"
+            }
+        },
+        {
+            "folderId": "follow",
+            "name": "Unfollow Board",
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/follow/board/:boardId",
+            "headers": [
+                {
+                    "name": "Authorization",
+                    "value": "Bearer {{token}}"
+                }
+            ],
+            "pathVariables": [
+                {
+                    "name": "boardId",
+                    "value": "1"
+                }
+            ]
+        },
+        {
+            "folderId": "follow",
+            "name": "Get Followed Boards",
+            "method": "GET",
+            "url": "{{baseUrl}}/api/follow/boards",
+            "headers": [
+                {
+                    "name": "Authorization",
+                    "value": "Bearer {{token}}"
+                }
+            ]
+        },
+        {
+            "folderId": "follow",
+            "name": "Check If Following Board",
+            "method": "GET",
+            "url": "{{baseUrl}}/api/follow/board/:boardId/check",
+            "headers": [
+                {
+                    "name": "Authorization",
+                    "value": "Bearer {{token}}"
+                }
+            ],
+            "pathVariables": [
+                {
+                    "name": "boardId",
+                    "value": "1"
+                }
+            ]
+        },
+        {
+            "folderId": "follow",
+            "name": "Update Board Notification",
+            "method": "PUT",
+            "url": "{{baseUrl}}/api/follow/board/:boardId/notification",
+            "headers": [
+                {
+                    "name": "Authorization",
+                    "value": "Bearer {{token}}"
+                },
+                {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                }
+            ],
+            "pathVariables": [
+                {
+                    "name": "boardId",
+                    "value": "1"
+                }
+            ],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"enabled\": false\n}"
+            }
+        },
+        {
+            "folderId": "follow",
+            "name": "Get Popular Boards",
+            "method": "GET",
+            "url": "{{baseUrl}}/api/follow/boards/popular?limit=10",
+            "headers": [
+                {
+                    "name": "Authorization",
+                    "value": "Bearer {{token}}"
+                }
+            ]
+        },
+        {
+            "folderId": "follow",
+            "name": "Get User Follow Feed",
+            "method": "GET",
+            "url": "{{baseUrl}}/api/follow/feed/users?page=1&limit=20",
+            "headers": [
+                {
+                    "name": "Authorization",
+                    "value": "Bearer {{token}}"
+                }
+            ]
+        },
+        {
+            "folderId": "follow",
+            "name": "Get Board Follow Feed",
+            "method": "GET",
+            "url": "{{baseUrl}}/api/follow/feed/boards?page=1&limit=20",
+            "headers": [
+                {
+                    "name": "Authorization",
+                    "value": "Bearer {{token}}"
+                }
+            ]
+        },
+        {
+            "folderId": "bookmark",
+            "name": "Get Bookmark Folders",
+            "method": "GET",
+            "url": "{{baseUrl}}/api/bookmarks/folders",
+            "headers": [
+                {
+                    "name": "Authorization",
+                    "value": "Bearer {{token}}"
+                }
+            ]
+        },
+        {
+            "folderId": "bookmark",
+            "name": "Create Bookmark Folder",
+            "method": "POST",
+            "url": "{{baseUrl}}/api/bookmarks/folders",
+            "headers": [
+                {
+                    "name": "Authorization",
+                    "value": "Bearer {{token}}"
+                },
+                {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                }
+            ],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"name\": \"Tech Articles\",\n  \"description\": \"Technology and programming articles\",\n  \"color\": \"#3182CE\",\n  \"is_private\": false\n}"
+            }
+        },
+        {
+            "folderId": "bookmark",
+            "name": "Update Bookmark Folder",
+            "method": "PUT",
+            "url": "{{baseUrl}}/api/bookmarks/folders/:folderId",
+            "headers": [
+                {
+                    "name": "Authorization",
+                    "value": "Bearer {{token}}"
+                },
+                {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                }
+            ],
+            "pathVariables": [
+                {
+                    "name": "folderId",
+                    "value": "1"
+                }
+            ],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"name\": \"Tech & Programming\",\n  \"color\": \"#38A169\"\n}"
+            }
+        },
+        {
+            "folderId": "bookmark",
+            "name": "Delete Bookmark Folder",
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/bookmarks/folders/:folderId",
+            "headers": [
+                {
+                    "name": "Authorization",
+                    "value": "Bearer {{token}}"
+                }
+            ],
+            "pathVariables": [
+                {
+                    "name": "folderId",
+                    "value": "1"
+                }
+            ]
+        },
+        {
+            "folderId": "bookmark",
+            "name": "Add Bookmark",
+            "method": "POST",
+            "url": "{{baseUrl}}/api/bookmarks",
+            "headers": [
+                {
+                    "name": "Authorization",
+                    "value": "Bearer {{token}}"
+                },
+                {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                }
+            ],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"postId\": 10,\n  \"folder\": \"Tech Articles\",\n  \"notes\": \"Great article about React hooks\"\n}"
+            }
+        },
+        {
+            "folderId": "bookmark",
+            "name": "Get Bookmarks",
+            "method": "GET",
+            "url": "{{baseUrl}}/api/bookmarks?page=1&limit=20&folder=Tech Articles",
+            "headers": [
+                {
+                    "name": "Authorization",
+                    "value": "Bearer {{token}}"
+                }
+            ]
+        },
+        {
+            "folderId": "bookmark",
+            "name": "Check Bookmark Status",
+            "method": "GET",
+            "url": "{{baseUrl}}/api/bookmarks/check/:postId",
+            "headers": [
+                {
+                    "name": "Authorization",
+                    "value": "Bearer {{token}}"
+                }
+            ],
+            "pathVariables": [
+                {
+                    "name": "postId",
+                    "value": "10"
+                }
+            ]
+        },
+        {
+            "folderId": "bookmark",
+            "name": "Update Bookmark Notes",
+            "method": "PUT",
+            "url": "{{baseUrl}}/api/bookmarks/:bookmarkId/notes",
+            "headers": [
+                {
+                    "name": "Authorization",
+                    "value": "Bearer {{token}}"
+                },
+                {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                }
+            ],
+            "pathVariables": [
+                {
+                    "name": "bookmarkId",
+                    "value": "1"
+                }
+            ],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"notes\": \"Updated notes: Excellent explanation of useEffect\"\n}"
+            }
+        },
+        {
+            "folderId": "bookmark",
+            "name": "Move Bookmark to Folder",
+            "method": "PUT",
+            "url": "{{baseUrl}}/api/bookmarks/:bookmarkId/move",
+            "headers": [
+                {
+                    "name": "Authorization",
+                    "value": "Bearer {{token}}"
+                },
+                {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                }
+            ],
+            "pathVariables": [
+                {
+                    "name": "bookmarkId",
+                    "value": "1"
+                }
+            ],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"folder\": \"React Resources\"\n}"
+            }
+        },
+        {
+            "folderId": "bookmark",
+            "name": "Delete Bookmark",
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/bookmarks/:postId",
+            "headers": [
+                {
+                    "name": "Authorization",
+                    "value": "Bearer {{token}}"
+                }
+            ],
+            "pathVariables": [
+                {
+                    "name": "postId",
+                    "value": "10"
+                }
+            ]
+        }
+    ],
+    "environments": [
+        {
+            "name": "Development",
+            "variables": [
+                {
+                    "name": "baseUrl",
+                    "value": "http://localhost:50000"
+                },
+                {
+                    "name": "token",
+                    "value": ""
+                }
+            ]
+        },
+        {
+            "name": "Production",
+            "variables": [
+                {
+                    "name": "baseUrl",
+                    "value": "https://api.yourdomain.com"
+                },
+                {
+                    "name": "token",
+                    "value": ""
+                }
+            ]
+        }
+    ]
+}

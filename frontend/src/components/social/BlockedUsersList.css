@@ -1,0 +1,162 @@
+/**
+ * BlockedUsersList Styles
+ */
+
+.blocked-users-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 24px;
+}
+
+.blocked-users-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 48px;
+    min-height: 400px;
+}
+
+.blocked-users-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.blocked-users-empty {
+    text-align: center;
+    padding: 48px 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
+}
+
+.blocked-user-card {
+    transition: all 0.2s ease-in-out;
+    animation: slideIn 0.3s ease-out;
+    border-left: 4px solid transparent;
+}
+
+.blocked-user-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateX(4px);
+    border-left-color: #f44336;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.blocked-user-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+}
+
+.blocked-user-info {
+    display: flex;
+    gap: 16px;
+    flex: 1;
+}
+
+.blocked-user-details {
+    flex: 1;
+    min-width: 0;
+    /* For text truncation */
+}
+
+.blocked-user-meta {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.blocked-user-reason {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+    padding: 8px;
+    background-color: var(--bg-secondary, #f5f5f5);
+    border-radius: 8px;
+}
+
+.blocked-user-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    animation: fadeIn 0.3s ease-in;
+}
+
+.blocked-user-actions button {
+    transition: all 0.2s ease-in-out;
+    min-width: 120px;
+}
+
+.blocked-user-actions button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.blocked-users-pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 24px;
+    padding: 16px 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .blocked-users-container {
+        padding: 16px;
+    }
+
+    .blocked-user-content {
+        flex-direction: column;
+    }
+
+    .blocked-user-actions {
+        width: 100%;
+    }
+
+    .blocked-user-actions button {
+        width: 100%;
+    }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    .blocked-user-reason {
+        background-color: var(--bg-secondary-dark, #2a2a2a);
+    }
+
+    .blocked-user-card {
+        background-color: var(--card-bg-dark, #1e1e1e);
+    }
+
+    .blocked-user-card:hover {
+        box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
+    }
+}

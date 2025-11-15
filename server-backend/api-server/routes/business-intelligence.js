@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const logger = require('../../utils/logger');
+const logger = require('../utils/logger');
 const businessIntelligenceService = require('../services/businessIntelligenceService');
 
 // 대시보드 데이터 조회

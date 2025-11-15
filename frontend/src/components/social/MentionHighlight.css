@@ -1,0 +1,30 @@
+/**
+ * MentionHighlight Component Styles
+ */
+
+.mention-link {
+    color: #667eea;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s ease-in-out;
+    padding: 2px 4px;
+    border-radius: 4px;
+}
+
+.mention-link:hover {
+    color: #5568d3;
+    background-color: rgba(103, 126, 234, 0.08);
+    text-decoration: underline;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    .mention-link {
+        color: #7c91f0;
+    }
+
+    .mention-link:hover {
+        color: #9aa8f3;
+        background-color: rgba(124, 145, 240, 0.12);
+    }
+}

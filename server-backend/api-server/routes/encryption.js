@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const logger = require('../../utils/logger');
+const logger = require('../utils/logger');
 const encryptionService = require('../services/encryptionService');
 const privacyService = require('../services/privacyService');
 

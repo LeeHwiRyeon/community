@@ -1,5 +1,5 @@
 const advancedAuthService = require('../services/advancedAuthService');
-const logger = require('../../utils/logger');
+const logger = require('../utils/logger');
 
 // JWT 토큰 검증 미들웨어
 const authenticateToken = (req, res, next) => {

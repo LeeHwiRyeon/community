@@ -9,7 +9,6 @@ import {
     Typography,
     Card,
     CardContent,
-    Grid,
     Button,
     LinearProgress,
     CircularProgress,
@@ -39,6 +38,7 @@ import {
     Slider,
     Tabs,
     Tab,
+    Grid,
     Accordion,
     AccordionSummary,
     AccordionDetails,
@@ -56,6 +56,7 @@ import {
     Radio,
     FormControlLabel as MuiFormControlLabel
 } from '@mui/material';
+
 import {
     Timeline,
     TimelineItem,
@@ -66,7 +67,7 @@ import {
     TimelineOppositeContent
 } from '@mui/lab';
 import {
-    Deploy,
+    CloudUpload as Deploy,
     Launch,
     Rocket,
     CheckCircle,
@@ -108,17 +109,14 @@ import {
     Construction,
     Build,
     Handyman,
-    Precision,
+    Architecture as Precision,
     Tune,
     Adjust,
     SettingsApplications,
-    TuneIcon,
     FlashOn,
     Bolt,
-    Zap,
     Thunderstorm,
     EnergySavingsLeaf,
-    Eco,
     Recycling,
     Compress,
     Expand,
@@ -604,7 +602,19 @@ const FinalDeploymentSystem: React.FC = () => {
     };
 
     // 상태별 색상
-    const getStatusColor = (status: DeploymentStage['status']) => {
+    const getStatusColor = (status: DeploymentStage['status']): 'inherit' | 'grey' | 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning' => {
+        switch (status) {
+            case 'pending': return 'grey';
+            case 'running': return 'primary';
+            case 'completed': return 'success';
+            case 'failed': return 'error';
+            case 'skipped': return 'secondary';
+            default: return 'grey';
+        }
+    };
+
+    // Chip용 색상 (더 제한적)
+    const getChipColor = (status: DeploymentStage['status']): 'default' | 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning' => {
         switch (status) {
             case 'pending': return 'default';
             case 'running': return 'primary';
@@ -711,8 +721,8 @@ const FinalDeploymentSystem: React.FC = () => {
             )}
 
             {/* 메트릭 카드 */}
-            <Grid container spacing={3} sx={{ mb: 3 }}>
-                <Grid item xs={12} sm={6} md={3}>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3, mb: 3 }}>
+                <Box sx={{ flex: { xs: '1 1 100%', sm: '1 1 calc(50% - 12px)', md: '1 1 calc(25% - 18px)' } }}>
                     <Card>
                         <CardContent>
                             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -728,9 +738,9 @@ const FinalDeploymentSystem: React.FC = () => {
                             </Box>
                         </CardContent>
                     </Card>
-                </Grid>
+                </Box>
 
-                <Grid item xs={12} sm={6} md={3}>
+                <Box sx={{ flex: { xs: '1 1 100%', sm: '1 1 calc(50% - 12px)', md: '1 1 calc(25% - 18px)' } }}>
                     <Card>
                         <CardContent>
                             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -746,9 +756,9 @@ const FinalDeploymentSystem: React.FC = () => {
                             </Box>
                         </CardContent>
                     </Card>
-                </Grid>
+                </Box>
 
-                <Grid item xs={12} sm={6} md={3}>
+                <Box sx={{ flex: { xs: '1 1 100%', sm: '1 1 calc(50% - 12px)', md: '1 1 calc(25% - 18px)' } }}>
                     <Card>
                         <CardContent>
                             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -764,9 +774,9 @@ const FinalDeploymentSystem: React.FC = () => {
                             </Box>
                         </CardContent>
                     </Card>
-                </Grid>
+                </Box>
 
-                <Grid item xs={12} sm={6} md={3}>
+                <Box sx={{ flex: { xs: '1 1 100%', sm: '1 1 calc(50% - 12px)', md: '1 1 calc(25% - 18px)' } }}>
                     <Card>
                         <CardContent>
                             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -782,8 +792,8 @@ const FinalDeploymentSystem: React.FC = () => {
                             </Box>
                         </CardContent>
                     </Card>
-                </Grid>
-            </Grid>
+                </Box>
+            </Box>
 
             {/* 탭 네비게이션 */}
             <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
@@ -820,7 +830,7 @@ const FinalDeploymentSystem: React.FC = () => {
                                             <Chip
                                                 label={stage.status}
                                                 size="small"
-                                                color={getStatusColor(stage.status)}
+                                                color={getChipColor(stage.status)}
                                             />
                                             {stage.duration && (
                                                 <Chip
@@ -950,8 +960,8 @@ const FinalDeploymentSystem: React.FC = () => {
 
             {/* 모니터링 탭 */}
             {selectedTab === 2 && (
-                <Grid container spacing={3}>
-                    <Grid item xs={12} md={6}>
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
+                    <Box sx={{ flex: { xs: '1 1 100%', md: '1 1 calc(50% - 12px)' } }}>
                         <Card>
                             <CardContent>
                                 <Typography variant="h6" gutterBottom>
@@ -995,9 +1005,9 @@ const FinalDeploymentSystem: React.FC = () => {
                                 </Box>
                             </CardContent>
                         </Card>
-                    </Grid>
+                    </Box>
 
-                    <Grid item xs={12} md={6}>
+                    <Box sx={{ flex: { xs: '1 1 100%', md: '1 1 calc(50% - 12px)' } }}>
                         <Card>
                             <CardContent>
                                 <Typography variant="h6" gutterBottom>
@@ -1036,8 +1046,8 @@ const FinalDeploymentSystem: React.FC = () => {
                                 </List>
                             </CardContent>
                         </Card>
-                    </Grid>
-                </Grid>
+                    </Box>
+                </Box>
             )}
 
             {/* 배포 이력 탭 */}

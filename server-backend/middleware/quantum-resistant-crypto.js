@@ -1,5 +1,5 @@
 // Quantum-Resistant Cryptography System (2025년 10월 기준)
-const crypto = require('crypto');
+import crypto from 'crypto';
 
 // 양자 내성 암호화 설정
 const quantumResistantConfig = {
@@ -496,7 +496,7 @@ function quantumResistantCryptoMiddleware(req, res, next) {
     next();
 }
 
-module.exports = {
+export {
     QuantumResistantCrypto,
     quantumResistantCrypto,
     quantumResistantCryptoMiddleware,

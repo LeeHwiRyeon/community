@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const RecommendationEngine = require('../../services/recommendationEngine');
-const logger = require('../../utils/logger');
+const logger = require('../utils/logger');
 
 const recommendationEngine = new RecommendationEngine();
 

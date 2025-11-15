@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { Grid } from '@mui/material';
+
 import {
     Box,
     Typography,
@@ -43,6 +43,7 @@ import {
     AccordionSummary,
     AccordionDetails
 } from '@mui/material';
+
 import {
     Speed,
     Memory,

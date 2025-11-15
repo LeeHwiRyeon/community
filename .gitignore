@@ -116,6 +116,13 @@ dist/
 *.sqlite
 *.sqlite3
 
+# Python
+*.pyc
+__pycache__/
+venv/
+*.egg-info/
+.pytest_cache/
+
 # Secrets and keys
 secrets/
 keys/

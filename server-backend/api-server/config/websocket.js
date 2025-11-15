@@ -3,6 +3,12 @@ const jwt = require('jsonwebtoken');
 const { User } = require('../models/User');
 const logger = require('../utils/logger');
 
+// Validate JWT_SECRET
+if (!process.env.JWT_SECRET) {
+    console.error('❌ FATAL: JWT_SECRET not set in environment variables');
+    process.exit(1);
+}
+
 let io;
 
 // WebSocket 서버 초기화
@@ -22,7 +28,7 @@ const initializeWebSocket = (server) => {
                 return next(new Error('Authentication error'));
             }
 
-            const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback_secret');
+            const decoded = jwt.verify(token, process.env.JWT_SECRET);
             const user = await User.findByPk(decoded.userId);
 
             if (!user) {

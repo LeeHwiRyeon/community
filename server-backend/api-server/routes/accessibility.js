@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const logger = require('../../utils/logger');
+const logger = require('../utils/logger');
 
 // 접근성 설정 저장소 (실제로는 데이터베이스 사용)
 const accessibilitySettings = {

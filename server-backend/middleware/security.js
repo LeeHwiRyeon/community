@@ -1,5 +1,5 @@
-const rateLimit = require('express-rate-limit');
-const { body, validationResult } = require('express-validator');
+import rateLimit from 'express-rate-limit';
+import { body, validationResult } from 'express-validator';
 
 // Enhanced rate limiting
 const createRateLimit = (windowMs, max, message) => {
@@ -184,7 +184,7 @@ const commonValidationRules = {
     text: body('text').isLength({ min: 1, max: 1000 }).trim().escape()
 };
 
-module.exports = {
+export {
     createRateLimit,
     sanitizeInput,
     preventSQLInjection,

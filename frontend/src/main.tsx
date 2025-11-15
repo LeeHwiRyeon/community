@@ -4,6 +4,7 @@ import { Provider as ReduxProvider } from 'react-redux';
 import App from './App';
 import './index.css';
 import store from './store';
+import './i18n/config'; // i18n 초기화
 
 // React 앱 렌더링 - 전문가 팀 최적화 버전
 ReactDOM.createRoot(document.getElementById('root')!).render(

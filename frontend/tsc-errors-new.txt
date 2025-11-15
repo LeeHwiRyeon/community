@@ -1,0 +1,219 @@
+src/components/BetaTestManagement.tsx(494,26): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<...> & Omit<...>): Element | null', gave the following error.
+    Property 'component' is missing in type '{ children: Element; xs: number; md: number; }' but required in type '{ component: ElementType<any, keyof IntrinsicElements>; }'.
+  Overload 2 of 2, '(props: DefaultComponentProps<GridTypeMap<{}, "div">>): Element | null', gave the following error.
+    Type '{ children: Element; xs: number; md: number; }' is not assignable to type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+      Property 'xs' does not exist on type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+src/components/BetaTestManagement.tsx(511,26): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<...> & Omit<...>): Element | null', gave the following error.
+    Property 'component' is missing in type '{ children: Element; xs: number; md: number; }' but required in type '{ component: ElementType<any, keyof IntrinsicElements>; }'.
+  Overload 2 of 2, '(props: DefaultComponentProps<GridTypeMap<{}, "div">>): Element | null', gave the following error.
+    Type '{ children: Element; xs: number; md: number; }' is not assignable to type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+      Property 'xs' does not exist on type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+src/components/BetaTestManagement.tsx(650,34): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<...> & Omit<...>): Element | null', gave the following error.
+    Property 'component' is missing in type '{ children: Element[]; xs: number; md: number; }' but required in type '{ component: ElementType<any, keyof IntrinsicElements>; }'.
+  Overload 2 of 2, '(props: DefaultComponentProps<GridTypeMap<{}, "div">>): Element | null', gave the following error.
+    Type '{ children: Element[]; xs: number; md: number; }' is not assignable to type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+      Property 'xs' does not exist on type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+src/components/BetaTestManagement.tsx(654,34): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<...> & Omit<...>): Element | null', gave the following error.
+    Property 'component' is missing in type '{ children: Element[]; xs: number; md: number; }' but required in type '{ component: ElementType<any, keyof IntrinsicElements>; }'.
+  Overload 2 of 2, '(props: DefaultComponentProps<GridTypeMap<{}, "div">>): Element | null', gave the following error.
+    Type '{ children: Element[]; xs: number; md: number; }' is not assignable to type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+      Property 'xs' does not exist on type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+src/components/BetaTestManagement.tsx(658,34): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<...> & Omit<...>): Element | null', gave the following error.
+    Property 'component' is missing in type '{ children: Element[]; xs: number; md: number; }' but required in type '{ component: ElementType<any, keyof IntrinsicElements>; }'.
+  Overload 2 of 2, '(props: DefaultComponentProps<GridTypeMap<{}, "div">>): Element | null', gave the following error.
+    Type '{ children: Element[]; xs: number; md: number; }' is not assignable to type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+      Property 'xs' does not exist on type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+src/components/BetaTestManagement.tsx(666,34): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<...> & Omit<...>): Element | null', gave the following error.
+    Property 'component' is missing in type '{ children: Element[]; xs: number; md: number; }' but required in type '{ component: ElementType<any, keyof IntrinsicElements>; }'.
+  Overload 2 of 2, '(props: DefaultComponentProps<GridTypeMap<{}, "div">>): Element | null', gave the following error.
+    Type '{ children: Element[]; xs: number; md: number; }' is not assignable to type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+      Property 'xs' does not exist on type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+src/components/BetaTestManagement.tsx(674,34): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<...> & Omit<...>): Element | null', gave the following error.
+    Property 'component' is missing in type '{ children: Element[]; xs: number; }' but required in type '{ component: ElementType<any, keyof IntrinsicElements>; }'.
+  Overload 2 of 2, '(props: DefaultComponentProps<GridTypeMap<{}, "div">>): Element | null', gave the following error.
+    Type '{ children: Element[]; xs: number; }' is not assignable to type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+      Property 'xs' does not exist on type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+src/components/BetaTestManagement.tsx(678,34): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<...> & Omit<...>): Element | null', gave the following error.
+    Property 'component' is missing in type '{ children: Element[]; xs: number; }' but required in type '{ component: ElementType<any, keyof IntrinsicElements>; }'.
+  Overload 2 of 2, '(props: DefaultComponentProps<GridTypeMap<{}, "div">>): Element | null', gave the following error.
+    Type '{ children: Element[]; xs: number; }' is not assignable to type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+      Property 'xs' does not exist on type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+src/components/BetaTestManagement.tsx(682,34): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<...> & Omit<...>): Element | null', gave the following error.
+    Property 'component' is missing in type '{ children: Element[]; xs: number; }' but required in type '{ component: ElementType<any, keyof IntrinsicElements>; }'.
+  Overload 2 of 2, '(props: DefaultComponentProps<GridTypeMap<{}, "div">>): Element | null', gave the following error.
+    Type '{ children: Element[]; xs: number; }' is not assignable to type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+      Property 'xs' does not exist on type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+src/components/BlockchainNFTSystem.tsx(207,10): error TS2552: Cannot find name 'Grid'. Did you mean 'Grid2'?
+src/components/BlockchainNFTSystem.tsx(209,14): error TS2304: Cannot find name 'Grid'.
+src/components/BlockchainNFTSystem.tsx(282,15): error TS2304: Cannot find name 'Grid'.
+src/components/BlockchainNFTSystem.tsx(284,11): error TS2552: Cannot find name 'Grid'. Did you mean 'Grid2'?
+src/components/ChatBasedCommunity.tsx(187,25): error TS2322: Type 'string' is not assignable to type 'VIPLevel'.
+src/components/ChatBasedCommunity.tsx(197,25): error TS2322: Type 'string' is not assignable to type 'VIPLevel'.
+src/components/ChatBasedCommunity.tsx(207,25): error TS2322: Type 'string' is not assignable to type 'VIPLevel'.
+src/components/ChatBasedCommunity.tsx(226,25): error TS2322: Type 'string' is not assignable to type 'VIPLevel'.
+src/components/ChatBasedCommunity.tsx(236,25): error TS2322: Type 'string' is not assignable to type 'VIPLevel'.
+src/components/ChatBasedCommunity.tsx(254,21): error TS2322: Type 'string' is not assignable to type 'VIPLevel'.
+src/components/ChatBasedCommunity.tsx(419,112): error TS2339: Property 'toUpperCase' does not exist on type 'VIPLevel'.
+src/components/ChatBasedCommunity.tsx(437,108): error TS2345: Argument of type 'VIPLevel' is not assignable to parameter of type '"normal" | "vip" | "platinum" | "diamond" | "premium"'.
+src/components/ChatBasedCommunity.tsx(520,83): error TS2339: Property 'toUpperCase' does not exist on type 'VIPLevel'.
+src/components/CommunityAnalyticsDashboard.tsx(439,18): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<...> & Omit<...>): Element | null', gave the following error.
+    Property 'component' is missing in type '{ children: Element; xs: number; md: number; }' but required in type '{ component: ElementType<any, keyof IntrinsicElements>; }'.
+  Overload 2 of 2, '(props: DefaultComponentProps<GridTypeMap<{}, "div">>): Element | null', gave the following error.
+    Type '{ children: Element; xs: number; md: number; }' is not assignable to type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+      Property 'xs' does not exist on type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+src/components/CommunityAnalyticsDashboard.tsx(461,18): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<...> & Omit<...>): Element | null', gave the following error.
+    Property 'component' is missing in type '{ children: Element; xs: number; md: number; }' but required in type '{ component: ElementType<any, keyof IntrinsicElements>; }'.
+  Overload 2 of 2, '(props: DefaultComponentProps<GridTypeMap<{}, "div">>): Element | null', gave the following error.
+    Type '{ children: Element; xs: number; md: number; }' is not assignable to type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+      Property 'xs' does not exist on type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+src/components/CommunityAnalyticsDashboard.tsx(469,38): error TS2304: Cannot find name 'RechartsPie'.
+src/components/CommunityAnalyticsDashboard.tsx(475,51): error TS7031: Binding element 'age' implicitly has an 'any' type.
+src/components/CommunityAnalyticsDashboard.tsx(475,56): error TS7031: Binding element 'percentage' implicitly has an 'any' type.
+src/components/CommunityAnalyticsDashboard.tsx(480,39): error TS2304: Cannot find name 'RechartsPie'.
+src/components/CommunityAnalyticsDashboard.tsx(492,18): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<...> & Omit<...>): Element | null', gave the following error.
+    Property 'component' is missing in type '{ children: Element; xs: number; md: number; }' but required in type '{ component: ElementType<any, keyof IntrinsicElements>; }'.
+  Overload 2 of 2, '(props: DefaultComponentProps<GridTypeMap<{}, "div">>): Element | null', gave the following error.
+    Type '{ children: Element; xs: number; md: number; }' is not assignable to type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+      Property 'xs' does not exist on type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+src/components/CommunityAnalyticsDashboard.tsx(541,18): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<...> & Omit<...>): Element | null', gave the following error.
+    Property 'component' is missing in type '{ children: Element; xs: number; md: number; }' but required in type '{ component: ElementType<any, keyof IntrinsicElements>; }'.
+  Overload 2 of 2, '(props: DefaultComponentProps<GridTypeMap<{}, "div">>): Element | null', gave the following error.
+    Type '{ children: Element; xs: number; md: number; }' is not assignable to type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+      Property 'xs' does not exist on type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+src/components/CommunityGameSystem.tsx(604,22): error TS2304: Cannot find name 'Grid'.
+src/components/CommunityGameSystem.tsx(606,30): error TS2304: Cannot find name 'Grid'.
+src/components/CommunityGameSystem.tsx(632,31): error TS2304: Cannot find name 'Grid'.
+src/components/CommunityGameSystem.tsx(634,23): error TS2304: Cannot find name 'Grid'.
+src/components/CoreModulesIntegration.tsx(359,75): error TS7006: Parameter 'feature' implicitly has an 'any' type.
+src/components/CoreModulesIntegration.tsx(359,84): error TS7006: Parameter 'index' implicitly has an 'any' type.
+src/components/Dashboard/AdminDashboard.tsx(179,17): error TS2322: Type 'DashboardOverview | null' is not assignable to type 'DashboardOverview'.
+  Type 'null' is not assignable to type 'DashboardOverview'.
+src/components/EnhancedDesignSystem.tsx(411,18): error TS2304: Cannot find name 'Grid'.
+src/components/EnhancedDesignSystem.tsx(414,45): error TS2322: Type 'string' is not assignable to type 'undefined'.
+src/components/EnhancedDesignSystem.tsx(414,63): error TS2322: Type 'string' is not assignable to type 'undefined'.
+src/components/EnhancedDesignSystem.tsx(417,45): error TS2322: Type 'string' is not assignable to type 'undefined'.
+src/components/EnhancedDesignSystem.tsx(417,65): error TS2322: Type 'string' is not assignable to type 'undefined'.
+src/components/EnhancedDesignSystem.tsx(420,45): error TS2322: Type 'string' is not assignable to type 'undefined'.
+src/components/EnhancedDesignSystem.tsx(420,63): error TS2322: Type 'string' is not assignable to type 'undefined'.
+src/components/EnhancedDesignSystem.tsx(423,45): error TS2322: Type 'string' is not assignable to type 'undefined'.
+src/components/EnhancedDesignSystem.tsx(423,61): error TS2322: Type 'string' is not assignable to type 'undefined'.
+src/components/EnhancedDesignSystem.tsx(426,45): error TS2322: Type 'string' is not assignable to type 'undefined'.
+src/components/EnhancedDesignSystem.tsx(433,45): error TS2322: Type 'string' is not assignable to type 'undefined'.
+src/components/EnhancedDesignSystem.tsx(436,45): error TS2322: Type 'string' is not assignable to type 'undefined'.
+src/components/EnhancedDesignSystem.tsx(439,45): error TS2322: Type 'string' is not assignable to type 'undefined'.
+src/components/EnhancedDesignSystem.tsx(439,63): error TS2322: Type 'string' is not assignable to type 'undefined'.
+src/components/EnhancedDesignSystem.tsx(444,19): error TS2304: Cannot find name 'Grid'.
+src/components/EnhancedDesignSystem.tsx(452,18): error TS2304: Cannot find name 'Grid'.
+src/components/EnhancedDesignSystem.tsx(454,39): error TS2322: Type '"elevated"' is not assignable to type '"outlined"'.
+src/components/EnhancedDesignSystem.tsx(474,39): error TS2322: Type '"filled"' is not assignable to type '"outlined"'.
+src/components/EnhancedDesignSystem.tsx(483,19): error TS2304: Cannot find name 'Grid'.
+src/components/EnhancedDesignSystem.tsx(491,31): error TS2322: Type '"elevated"' is not assignable to type '"outlined"'.
+src/components/EnhancedDesignSystem.tsx(544,18): error TS2304: Cannot find name 'Grid'.
+src/components/EnhancedDesignSystem.tsx(560,39): error TS2322: Type '"filled"' is not assignable to type '"outlined"'.
+src/components/EnhancedDesignSystem.tsx(573,19): error TS2304: Cannot find name 'Grid'.
+src/components/EnhancedDesignSystem.tsx(581,31): error TS2322: Type '"elevated"' is not assignable to type '"outlined"'.
+src/components/FeedbackImplementationSystem.tsx(154,5): error TS2305: Module '"@mui/icons-material"' has no exported member 'Deploy'.
+src/components/FeedbackImplementationSystem.tsx(774,18): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<...> & Omit<...>): Element | null', gave the following error.
+    Property 'component' is missing in type '{ children: Element; xs: number; sm: number; md: number; }' but required in type '{ component: ElementType<any, keyof IntrinsicElements>; }'.
+  Overload 2 of 2, '(props: DefaultComponentProps<GridTypeMap<{}, "div">>): Element | null', gave the following error.
+    Type '{ children: Element; xs: number; sm: number; md: number; }' is not assignable to type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+      Property 'xs' does not exist on type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+src/components/FeedbackImplementationSystem.tsx(792,18): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<...> & Omit<...>): Element | null', gave the following error.
+    Property 'component' is missing in type '{ children: Element; xs: number; sm: number; md: number; }' but required in type '{ component: ElementType<any, keyof IntrinsicElements>; }'.
+  Overload 2 of 2, '(props: DefaultComponentProps<GridTypeMap<{}, "div">>): Element | null', gave the following error.
+    Type '{ children: Element; xs: number; sm: number; md: number; }' is not assignable to type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+      Property 'xs' does not exist on type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+src/components/FeedbackImplementationSystem.tsx(810,18): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<...> & Omit<...>): Element | null', gave the following error.
+    Property 'component' is missing in type '{ children: Element; xs: number; sm: number; md: number; }' but required in type '{ component: ElementType<any, keyof IntrinsicElements>; }'.
+  Overload 2 of 2, '(props: DefaultComponentProps<GridTypeMap<{}, "div">>): Element | null', gave the following error.
+    Type '{ children: Element; xs: number; sm: number; md: number; }' is not assignable to type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+      Property 'xs' does not exist on type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+src/components/FeedbackImplementationSystem.tsx(828,18): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<...> & Omit<...>): Element | null', gave the following error.
+    Property 'component' is missing in type '{ children: Element; xs: number; sm: number; md: number; }' but required in type '{ component: ElementType<any, keyof IntrinsicElements>; }'.
+  Overload 2 of 2, '(props: DefaultComponentProps<GridTypeMap<{}, "div">>): Element | null', gave the following error.
+    Type '{ children: Element; xs: number; sm: number; md: number; }' is not assignable to type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+      Property 'xs' does not exist on type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+src/components/FileSharing.tsx(200,55): error TS18046: 'error' is of type 'unknown'.
+src/components/FinalDeploymentSystem.tsx(70,5): error TS2305: Module '"@mui/icons-material"' has no exported member 'Deploy'.
+src/components/FinalDeploymentSystem.tsx(112,5): error TS2305: Module '"@mui/icons-material"' has no exported member 'Precision'.
+src/components/FinalDeploymentSystem.tsx(116,5): error TS2305: Module '"@mui/icons-material"' has no exported member 'TuneIcon'.
+src/components/FinalDeploymentSystem.tsx(119,5): error TS2305: Module '"@mui/icons-material"' has no exported member 'Zap'.
+src/components/FinalDeploymentSystem.tsx(122,5): error TS2305: Module '"@mui/icons-material"' has no exported member 'Eco'.
+src/components/FinalDeploymentSystem.tsx(716,18): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<...> & Omit<...>): Element | null', gave the following error.
+    Property 'component' is missing in type '{ children: Element; xs: number; sm: number; md: number; }' but required in type '{ component: ElementType<any, keyof IntrinsicElements>; }'.
+  Overload 2 of 2, '(props: DefaultComponentProps<GridTypeMap<{}, "div">>): Element | null', gave the following error.
+    Type '{ children: Element; xs: number; sm: number; md: number; }' is not assignable to type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+      Property 'xs' does not exist on type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+src/components/FinalDeploymentSystem.tsx(734,18): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<...> & Omit<...>): Element | null', gave the following error.
+    Property 'component' is missing in type '{ children: Element; xs: number; sm: number; md: number; }' but required in type '{ component: ElementType<any, keyof IntrinsicElements>; }'.
+  Overload 2 of 2, '(props: DefaultComponentProps<GridTypeMap<{}, "div">>): Element | null', gave the following error.
+    Type '{ children: Element; xs: number; sm: number; md: number; }' is not assignable to type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+      Property 'xs' does not exist on type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+src/components/FinalDeploymentSystem.tsx(752,18): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<...> & Omit<...>): Element | null', gave the following error.
+    Property 'component' is missing in type '{ children: Element; xs: number; sm: number; md: number; }' but required in type '{ component: ElementType<any, keyof IntrinsicElements>; }'.
+  Overload 2 of 2, '(props: DefaultComponentProps<GridTypeMap<{}, "div">>): Element | null', gave the following error.
+    Type '{ children: Element; xs: number; sm: number; md: number; }' is not assignable to type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+      Property 'xs' does not exist on type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+src/components/FinalDeploymentSystem.tsx(770,18): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<...> & Omit<...>): Element | null', gave the following error.
+    Property 'component' is missing in type '{ children: Element; xs: number; sm: number; md: number; }' but required in type '{ component: ElementType<any, keyof IntrinsicElements>; }'.
+  Overload 2 of 2, '(props: DefaultComponentProps<GridTypeMap<{}, "div">>): Element | null', gave the following error.
+    Type '{ children: Element; xs: number; sm: number; md: number; }' is not assignable to type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+      Property 'xs' does not exist on type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+src/components/FinalDeploymentSystem.tsx(811,54): error TS2322: Type '"error" | "default" | "primary" | "secondary" | "success"' is not assignable to type 'OverridableStringUnion<"error" | "inherit" | "grey" | "primary" | "secondary" | "info" | "success" | "warning", TimelineDotPropsColorOverrides> | undefined'.
+  Type '"default"' is not assignable to type 'OverridableStringUnion<"error" | "inherit" | "grey" | "primary" | "secondary" | "info" | "success" | "warning", TimelineDotPropsColorOverrides> | undefined'.
+src/components/FinalDeploymentSystem.tsx(955,22): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<...> & Omit<...>): Element | null', gave the following error.
+    Property 'component' is missing in type '{ children: Element; xs: number; md: number; }' but required in type '{ component: ElementType<any, keyof IntrinsicElements>; }'.
+  Overload 2 of 2, '(props: DefaultComponentProps<GridTypeMap<{}, "div">>): Element | null', gave the following error.
+    Type '{ children: Element; xs: number; md: number; }' is not assignable to type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+      Property 'xs' does not exist on type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+src/components/FinalDeploymentSystem.tsx(1001,22): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<...> & Omit<...>): Element | null', gave the following error.
+    Property 'component' is missing in type '{ children: Element; xs: number; md: number; }' but required in type '{ component: ElementType<any, keyof IntrinsicElements>; }'.
+  Overload 2 of 2, '(props: DefaultComponentProps<GridTypeMap<{}, "div">>): Element | null', gave the following error.
+    Type '{ children: Element; xs: number; md: number; }' is not assignable to type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+      Property 'xs' does not exist on type 'IntrinsicAttributes & GridBaseProps & { sx?: SxProps<Theme> | undefined; } & SystemProps<Theme> & Omit<...>'.
+src/components/FollowSystem.tsx(28,5): error TS2724: '"@mui/material"' has no exported member named 'Grid2'. Did you mean 'Grid'?
+src/components/FollowSystem.tsx(267,22): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & ListItemOwnProps & CommonProps & Omit<any, "children" | ... 15 more ... | "secondaryAction">): Element | null', gave the following error.
+    Property 'component' is missing in type '{ children: (false | Element)[]; button: true; onClick: () => void; sx: { '&:hover': { bgcolor: "action.hover"; }; }; }' but required in type '{ component: ElementType<any, keyof IntrinsicElements>; }'.
+  Overload 2 of 2, '(props: DefaultComponentProps<ListItemTypeMap<{}, "li">>): Element | null', gave the following error.
+    Type '{ children: (false | Element)[]; button: true; onClick: () => void; sx: { '&:hover': { bgcolor: "action.hover"; }; }; }' is not assignable to type 'IntrinsicAttributes & ListItemOwnProps & CommonProps & Omit<Omit<DetailedHTMLProps<LiHTMLAttributes<HTMLLIElement>, HTMLLIElement>, "ref"> & { ...; }, "children" | ... 15 more ... | "secondaryAction">'.
+      Property 'button' does not exist on type 'IntrinsicAttributes & ListItemOwnProps & CommonProps & Omit<Omit<DetailedHTMLProps<LiHTMLAttributes<HTMLLIElement>, HTMLLIElement>, "ref"> & { ...; }, "children" | ... 15 more ... | "secondaryAction">'.
+src/components/IntelligentContentFeed.tsx(374,17): error TS2367: This comparison appears to be unintentional because the types '"medium" | "high" | "low"' and '"all"' have no overlap.
+src/components/profile/UserProfile.tsx(304,45): error TS2304: Cannot find name 'ProfileUpdateData'.
+src/components/RealtimeCommunityInteraction.tsx(14,22): error TS2724: '"@mui/material"' has no exported member named 'Grid2'. Did you mean 'Grid'?
+src/components/social/BlockedUsersList.tsx(22,5): error TS2724: '"@mui/material"' has no exported member named 'Grid2'. Did you mean 'Grid'?
+src/components/social/BlockedUsersList.tsx(196,22): error TS2304: Cannot find name 'Grid'.
+src/components/social/BlockedUsersList.tsx(198,30): error TS2304: Cannot find name 'Grid'.
+src/components/social/BlockedUsersList.tsx(261,31): error TS2304: Cannot find name 'Grid'.
+src/components/social/BlockedUsersList.tsx(263,23): error TS2304: Cannot find name 'Grid'.
+src/components/social/MentionInput.tsx(205,34): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(props: { component: ElementType<any, keyof IntrinsicElements>; } & ListItemOwnProps & CommonProps & Omit<any, "children" | ... 15 more ... | "secondaryAction">): Element | null', gave the following error.
+    Property 'component' is missing in type '{ children: Element[]; key: number; selected: boolean; onClick: () => void; className: string; sx: { cursor: "pointer"; '&:hover': { bgcolor: "action.hover"; }; }; }' but required in type '{ component: ElementType<any, keyof IntrinsicElements>; }'.
+  Overload 2 of 2, '(props: DefaultComponentProps<ListItemTypeMap<{}, "li">>): Element | null', gave the following error.
+    Type '{ children: Element[]; key: number; selected: boolean; onClick: () => void; className: string; sx: { cursor: "pointer"; '&:hover': { bgcolor: "action.hover"; }; }; }' is not assignable to type 'IntrinsicAttributes & ListItemOwnProps & CommonProps & Omit<Omit<DetailedHTMLProps<LiHTMLAttributes<HTMLLIElement>, HTMLLIElement>, "ref"> & { ...; }, "children" | ... 15 more ... | "secondaryAction">'.
+      Property 'selected' does not exist on type 'IntrinsicAttributes & ListItemOwnProps & CommonProps & Omit<Omit<DetailedHTMLProps<LiHTMLAttributes<HTMLLIElement>, HTMLLIElement>, "ref"> & { ...; }, "children" | ... 15 more ... | "secondaryAction">'.
+src/pages/SearchPage.tsx(91,51): error TS2558: Expected 0 type arguments, but got 1.
+src/services/profileService.ts(5,8): error TS2613: Module '"C:/Users/hwi/Desktop/Projects/community/frontend/src/utils/apiClient"' has no default export. Did you mean to use 'import { apiClient } from "C:/Users/hwi/Desktop/Projects/community/frontend/src/utils/apiClient"' instead?

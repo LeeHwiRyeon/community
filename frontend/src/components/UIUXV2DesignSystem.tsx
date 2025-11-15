@@ -1,11 +1,20 @@
 /**
- * 🎨 UI/UX 2.0 Design System
+ * 🎨 Unified Design System v2.1
  * 
- * Community Platform v2.0을 위한 차세대 디자인 시스템
- * 동적 컬러, 적응형 타이포그래피, 스마트 스페이싱을 포함한 혁신적 UI
+ * Community Platform v2.0을 위한 통합 디자인 시스템
+ * Enhanced + UIUX v2 완전 통합 버전
+ * 
+ * 주요 기능:
+ * - 통합 버튼 (6 variants, 5 sizes, 3 animations, ripple)
+ * - 적응형 카드 (5 variants, glassmorphism, loading)
+ * - 액션 버튼 (Badge, Tooltip, Active state)
+ * - 커스텀 로딩 스켈레톤 (Shimmer animation)
+ * - 스마트 입력 필드 (자동완성, 로딩)
+ * - 동적 테마 시스템 (실시간 컬러 변경, 다크 모드)
  * 
  * @author AUTOAGENTS Manager
- * @version 2.0.0
+ * @version 2.1.0
+ * @updated 2025-11-10
  * @created 2025-10-02
  */
 
@@ -16,7 +25,6 @@ import {
     Button,
     Card,
     TextField,
-    Grid,
     Switch,
     FormControlLabel,
     IconButton,
@@ -173,36 +181,271 @@ const shimmerEffect = keyframes`
 `;
 
 // ============================================================================
-// 동적 버튼 컴포넌트
+// 통합 버튼 컴포넌트 (Enhanced + UIUX v2)
 // ============================================================================
 
-interface DynamicButtonProps {
-    variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'gradient';
+interface UnifiedButtonProps {
+    variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger' | 'gradient';
     size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
     loading?: boolean;
     disabled?: boolean;
     icon?: React.ReactNode;
     children: React.ReactNode;
     onClick?: () => void;
-    animation?: 'morphing' | 'floating' | 'pulse' | 'none';
+    animation?: 'pulse' | 'float' | 'morphing' | 'none';
+    ripple?: boolean;
     gradient?: boolean;
+    fullWidth?: boolean;
     as?: React.ElementType;
 }
 
-const DynamicButton = styled(Button)(({ theme }) => ({
-    borderRadius: '12px',
-    fontWeight: 600,
-    textTransform: 'none',
-    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-    position: 'relative',
-    overflow: 'hidden',
-    '&:active': {
-        transform: 'translateY(0px)',
-    },
-    '&:focus': {
-        outline: `2px solid ${theme.palette.primary.main}`,
-        outlineOffset: '2px',
-    },
+const UnifiedButton: React.FC<UnifiedButtonProps> = ({
+    variant = 'primary',
+    size = 'md',
+    loading,
+    disabled,
+    icon,
+    children,
+    onClick,
+    animation = 'none',
+    ripple = true,
+    fullWidth = false
+}) => {
+    return (
+        <StyledUnifiedButton
+            customVariant={variant}
+            customSize={size}
+            customAnimation={animation}
+            customRipple={ripple}
+            disabled={disabled || loading}
+            onClick={onClick}
+            fullWidth={fullWidth}
+        >
+            {icon && <Box component="span" sx={{ mr: 1, display: 'inline-flex' }}>{icon}</Box>}
+            {children}
+            {loading && <CircularProgress size={16} sx={{ ml: 1 }} />}
+        </StyledUnifiedButton>
+    );
+};
+
+interface StyledUnifiedButtonProps {
+    customVariant: string;
+    customSize: string;
+    customAnimation: string;
+    customRipple: boolean;
+}
+
+const pulseAnimation = keyframes`
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+`;
+
+const floatAnimation = keyframes`
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+`;
+
+const StyledUnifiedButton = styled(Button)<StyledUnifiedButtonProps>(({ theme, customVariant, customSize, customAnimation, customRipple }) => {
+    const getVariantStyles = () => {
+        switch (customVariant) {
+            case 'primary':
+                return {
+                    background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
+                    color: theme.palette.primary.contrastText,
+                    boxShadow: `0 4px 15px ${alpha(theme.palette.primary.main, 0.3)}`,
+                    '&:hover': {
+                        background: `linear-gradient(135deg, ${theme.palette.primary.dark} 0%, ${theme.palette.primary.main} 100%)`,
+                        boxShadow: `0 6px 20px ${alpha(theme.palette.primary.main, 0.4)}`,
+                        transform: 'translateY(-2px)',
+                    },
+                };
+            case 'secondary':
+                return {
+                    background: `linear-gradient(135deg, ${theme.palette.secondary.main} 0%, ${theme.palette.secondary.dark} 100%)`,
+                    color: theme.palette.secondary.contrastText,
+                    boxShadow: `0 4px 15px ${alpha(theme.palette.secondary.main, 0.3)}`,
+                    '&:hover': {
+                        background: `linear-gradient(135deg, ${theme.palette.secondary.dark} 0%, ${theme.palette.secondary.main} 100%)`,
+                        boxShadow: `0 6px 20px ${alpha(theme.palette.secondary.main, 0.4)}`,
+                        transform: 'translateY(-2px)',
+                    },
+                };
+            case 'outline':
+                return {
+                    border: `2px solid ${theme.palette.primary.main}`,
+                    color: theme.palette.primary.main,
+                    background: 'transparent',
+                    '&:hover': {
+                        background: theme.palette.primary.main,
+                        color: theme.palette.primary.contrastText,
+                        transform: 'translateY(-2px)',
+                    },
+                };
+            case 'ghost':
+                return {
+                    background: 'transparent',
+                    color: theme.palette.text.primary,
+                    '&:hover': {
+                        background: alpha(theme.palette.primary.main, 0.1),
+                        transform: 'translateY(-2px)',
+                    },
+                };
+            case 'danger':
+                return {
+                    background: `linear-gradient(135deg, ${theme.palette.error.main} 0%, ${theme.palette.error.dark} 100%)`,
+                    color: theme.palette.error.contrastText,
+                    boxShadow: `0 4px 15px ${alpha(theme.palette.error.main, 0.3)}`,
+                    '&:hover': {
+                        background: `linear-gradient(135deg, ${theme.palette.error.dark} 0%, ${theme.palette.error.main} 100%)`,
+                        boxShadow: `0 6px 20px ${alpha(theme.palette.error.main, 0.4)}`,
+                        transform: 'translateY(-2px)',
+                    },
+                };
+            case 'gradient':
+                return {
+                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                    color: '#ffffff',
+                    boxShadow: '0 4px 15px rgba(102, 126, 234, 0.4)',
+                    '&:hover': {
+                        background: 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)',
+                        boxShadow: '0 6px 20px rgba(102, 126, 234, 0.6)',
+                        transform: 'translateY(-2px)',
+                    },
+                };
+            default:
+                return {};
+        }
+    };
+
+    const getSizeStyles = () => {
+        switch (customSize) {
+            case 'xs':
+                return { padding: '4px 8px', fontSize: '0.75rem', minHeight: '24px' };
+            case 'sm':
+                return { padding: '6px 12px', fontSize: '0.875rem', minHeight: '32px' };
+            case 'md':
+                return { padding: '8px 16px', fontSize: '1rem', minHeight: '40px' };
+            case 'lg':
+                return { padding: '12px 24px', fontSize: '1.125rem', minHeight: '48px' };
+            case 'xl':
+                return { padding: '16px 32px', fontSize: '1.25rem', minHeight: '56px' };
+            default:
+                return {};
+        }
+    };
+
+    const getAnimationStyles = () => {
+        switch (customAnimation) {
+            case 'pulse':
+                return { animation: `${pulseAnimation} 2s infinite` };
+            case 'float':
+                return { animation: `${floatAnimation} 3s ease-in-out infinite` };
+            default:
+                return {};
+        }
+    };
+
+    return {
+        borderRadius: '12px',
+        fontWeight: 600,
+        textTransform: 'none',
+        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+        position: 'relative',
+        overflow: 'hidden',
+        ...getVariantStyles(),
+        ...getSizeStyles(),
+        ...getAnimationStyles(),
+        '&:active': {
+            transform: 'translateY(0px)',
+        },
+        '&:focus': {
+            outline: `2px solid ${theme.palette.primary.main}`,
+            outlineOffset: '2px',
+        },
+        ...(customRipple && {
+            '&::before': {
+                content: '""',
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                width: '0',
+                height: '0',
+                borderRadius: '50%',
+                background: alpha(theme.palette.common.white, 0.3),
+                transform: 'translate(-50%, -50%)',
+                transition: 'width 0.6s, height 0.6s',
+            },
+            '&:active::before': {
+                width: '300px',
+                height: '300px',
+            },
+        }),
+    };
+});
+
+// ============================================================================
+// 인터랙티브 액션 버튼 (Enhanced에서 추가)
+// ============================================================================
+
+interface ActionButtonProps {
+    icon: React.ReactNode;
+    count?: number;
+    active?: boolean;
+    onClick?: () => void;
+    tooltip?: string;
+    color?: 'primary' | 'secondary' | 'error' | 'success';
+}
+
+const ActionButton: React.FC<ActionButtonProps> = ({
+    icon,
+    count = 0,
+    active = false,
+    onClick,
+    tooltip,
+    color = 'primary'
+}) => {
+    const [isAnimating, setIsAnimating] = useState(false);
+
+    const handleClick = useCallback(() => {
+        setIsAnimating(true);
+        setTimeout(() => setIsAnimating(false), 300);
+        onClick?.();
+    }, [onClick]);
+
+    return (
+        <Tooltip title={tooltip} arrow>
+            <IconButton
+                onClick={handleClick}
+                sx={{
+                    position: 'relative',
+                    transition: 'all 0.2s ease',
+                    transform: isAnimating ? 'scale(1.2)' : 'scale(1)',
+                    color: active ? `${color}.main` : 'text.secondary',
+                    '&:hover': {
+                        backgroundColor: `${color}.light`,
+                        color: `${color}.main`,
+                        transform: 'scale(1.1)',
+                    },
+                }}
+            >
+                <Badge badgeContent={count} color={color as any} max={99}>
+                    {icon}
+                </Badge>
+            </IconButton>
+        </Tooltip>
+    );
+};
+
+// ============================================================================
+// 커스텀 로딩 스켈레톤 (Enhanced에서 추가)
+// ============================================================================
+
+const CustomLoadingSkeleton = styled(Skeleton)(({ theme }) => ({
+    borderRadius: '8px',
+    background: `linear-gradient(90deg, ${alpha(theme.palette.grey[300], 0.2)} 25%, ${alpha(theme.palette.grey[300], 0.4)} 50%, ${alpha(theme.palette.grey[300], 0.2)} 75%)`,
+    backgroundSize: '200% 100%',
+    animation: `${shimmerEffect} 1.5s infinite`,
 }));
 
 // ============================================================================
@@ -225,6 +468,8 @@ declare module '@mui/material/Card' {
     interface CardPropsVariantOverrides {
         glass: true;
         neon: true;
+        default: true;
+        elevated: true;
     }
 }
 
@@ -550,42 +795,45 @@ const UIUXV2DesignSystem: React.FC = () => {
                     </Box>
                 </AdaptiveCard>
 
-                {/* 동적 버튼 섹션 */}
+                {/* 통합 버튼 섹션 */}
                 <Box sx={{ mb: 6 }}>
                     <Typography variant="h3" gutterBottom sx={{ mb: 3 }}>
-                        ✨ Dynamic Buttons
+                        ✨ Unified Buttons (Enhanced + UIUX v2)
                     </Typography>
                     <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
                         <Box sx={{ flex: '1 1 400px', minWidth: 400 }}>
                             <Stack spacing={2}>
-                                <DynamicButton variant="contained" size="large" onClick={() => { }}>
-                                    Morphing Button
-                                </DynamicButton>
-                                <DynamicButton variant="contained" size="medium" onClick={() => { }}>
-                                    Gradient Floating
-                                </DynamicButton>
-                                <DynamicButton variant="contained" size="small" onClick={() => { }}>
-                                    Pulse Glow
-                                </DynamicButton>
-                                <DynamicButton variant="outlined" size="small" onClick={() => { }}>
-                                    Outline Button
-                                </DynamicButton>
-                                <DynamicButton variant="contained" disabled={loading} onClick={simulateLoading}>
-                                    {loading ? 'Loading...' : 'Loading Demo'}
-                                </DynamicButton>
+                                <UnifiedButton variant="primary" size="lg" animation="pulse">
+                                    Primary Pulse
+                                </UnifiedButton>
+                                <UnifiedButton variant="secondary" size="md" animation="float">
+                                    Secondary Float
+                                </UnifiedButton>
+                                <UnifiedButton variant="outline" size="sm" ripple>
+                                    Outline Ripple
+                                </UnifiedButton>
+                                <UnifiedButton variant="ghost" size="xs">
+                                    Ghost Button
+                                </UnifiedButton>
+                                <UnifiedButton variant="danger" loading={loading} onClick={simulateLoading}>
+                                    {loading ? 'Loading...' : 'Danger Button'}
+                                </UnifiedButton>
                             </Stack>
                         </Box>
                         <Box sx={{ flex: '1 1 400px', minWidth: 400 }}>
                             <Stack spacing={2}>
-                                <DynamicButton variant="contained" startIcon={<SearchIcon />} onClick={() => { }}>
+                                <UnifiedButton variant="primary" icon={<SearchIcon />}>
                                     With Icon
-                                </DynamicButton>
-                                <DynamicButton variant="contained" disabled onClick={() => { }}>
+                                </UnifiedButton>
+                                <UnifiedButton variant="gradient" size="md">
+                                    Gradient Button
+                                </UnifiedButton>
+                                <UnifiedButton variant="secondary" disabled>
                                     Disabled Button
-                                </DynamicButton>
-                                <DynamicButton variant="contained" size="large" onClick={() => { }}>
-                                    Extra Large Gradient
-                                </DynamicButton>
+                                </UnifiedButton>
+                                <UnifiedButton variant="outline" size="xl">
+                                    Extra Large
+                                </UnifiedButton>
                             </Stack>
                         </Box>
                     </Box>
@@ -668,78 +916,94 @@ const UIUXV2DesignSystem: React.FC = () => {
                     </Box>
                 </Box>
 
-                {/* 인터랙티브 액션 섹션 */}
+                {/* 인터랙티브 액션 섹션 (Enhanced ActionButton 사용) */}
                 <Box sx={{ mb: 6 }}>
                     <Typography variant="h3" gutterBottom sx={{ mb: 3 }}>
-                        🎯 Interactive Actions
+                        🎯 Interactive Actions (Enhanced)
                     </Typography>
                     <AdaptiveCard variant="outlined" padding="lg">
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
                             <Avatar sx={{ bgcolor: 'primary.main' }}>U</Avatar>
                             <Box>
                                 <Typography variant="h6" fontWeight="bold">
-                                    Interactive Post
+                                    Interactive Post with Enhanced ActionButtons
                                 </Typography>
                                 <Typography variant="body2" color="text.secondary">
-                                    Try the interactive buttons below!
+                                    Click the buttons below - they have Badge, Tooltip, and Active states!
                                 </Typography>
                             </Box>
                         </Box>
 
                         <Stack direction="row" spacing={2} alignItems="center">
-                            <IconButton
+                            <ActionButton
+                                icon={<FavoriteIcon />}
+                                count={likes}
+                                active={likes > 42}
                                 onClick={handleLike}
-                                sx={{
-                                    color: 'error.main',
-                                    '&:hover': { transform: 'scale(1.1)' },
-                                    transition: 'all 0.2s ease',
-                                }}
-                            >
-                                <Badge badgeContent={likes} color="error">
-                                    <FavoriteIcon />
-                                </Badge>
-                            </IconButton>
-
-                            <IconButton
+                                tooltip="Like this post"
+                                color="error"
+                            />
+                            <ActionButton
+                                icon={<ShareIcon />}
+                                count={shares}
                                 onClick={handleShare}
-                                sx={{
-                                    color: 'primary.main',
-                                    '&:hover': { transform: 'scale(1.1)' },
-                                    transition: 'all 0.2s ease',
-                                }}
-                            >
-                                <Badge badgeContent={shares} color="primary">
-                                    <ShareIcon />
-                                </Badge>
-                            </IconButton>
-
-                            <IconButton
+                                tooltip="Share this post"
+                                color="primary"
+                            />
+                            <ActionButton
+                                icon={<CommentIcon />}
+                                count={comments}
                                 onClick={handleComment}
-                                sx={{
-                                    color: 'secondary.main',
-                                    '&:hover': { transform: 'scale(1.1)' },
-                                    transition: 'all 0.2s ease',
-                                }}
-                            >
-                                <Badge badgeContent={comments} color="secondary">
-                                    <CommentIcon />
-                                </Badge>
-                            </IconButton>
-
-                            <IconButton
+                                tooltip="Comment on this post"
+                                color="secondary"
+                            />
+                            <ActionButton
+                                icon={<BookmarkIcon />}
+                                count={bookmarks}
+                                active={bookmarks > 3}
                                 onClick={handleBookmark}
-                                sx={{
-                                    color: 'success.main',
-                                    '&:hover': { transform: 'scale(1.1)' },
-                                    transition: 'all 0.2s ease',
-                                }}
-                            >
-                                <Badge badgeContent={bookmarks} color="success">
-                                    <BookmarkIcon />
-                                </Badge>
-                            </IconButton>
+                                tooltip="Bookmark this post"
+                                color="success"
+                            />
                         </Stack>
                     </AdaptiveCard>
+                </Box>
+
+                {/* 커스텀 로딩 스켈레톤 섹션 (Enhanced에서 추가) */}
+                <Box sx={{ mb: 6 }}>
+                    <Typography variant="h3" gutterBottom sx={{ mb: 3 }}>
+                        ⏳ Custom Loading Skeletons
+                    </Typography>
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
+                        <Box sx={{ flex: '1 1 400px', minWidth: 400 }}>
+                            <AdaptiveCard variant="outlined" padding="md">
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
+                                    <CustomLoadingSkeleton variant="circular" width={40} height={40} />
+                                    <Box sx={{ flex: 1 }}>
+                                        <CustomLoadingSkeleton variant="text" width="60%" height={20} />
+                                        <CustomLoadingSkeleton variant="text" width="40%" height={16} />
+                                    </Box>
+                                </Box>
+                                <CustomLoadingSkeleton variant="rectangular" height={200} sx={{ mb: 2 }} />
+                                <CustomLoadingSkeleton variant="text" width="100%" height={16} />
+                                <CustomLoadingSkeleton variant="text" width="80%" height={16} />
+                            </AdaptiveCard>
+                        </Box>
+                        <Box sx={{ flex: '1 1 400px', minWidth: 400 }}>
+                            <AdaptiveCard variant="outlined" padding="md">
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
+                                    <CustomLoadingSkeleton variant="circular" width={40} height={40} />
+                                    <Box sx={{ flex: 1 }}>
+                                        <CustomLoadingSkeleton variant="text" width="60%" height={20} />
+                                        <CustomLoadingSkeleton variant="text" width="40%" height={16} />
+                                    </Box>
+                                </Box>
+                                <CustomLoadingSkeleton variant="rectangular" height={200} sx={{ mb: 2 }} />
+                                <CustomLoadingSkeleton variant="text" width="100%" height={16} />
+                                <CustomLoadingSkeleton variant="text" width="80%" height={16} />
+                            </AdaptiveCard>
+                        </Box>
+                    </Box>
                 </Box>
 
                 {/* 기능 데모 섹션 */}

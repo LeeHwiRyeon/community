@@ -1,217 +1,291 @@
-const express = require('express');
-const { body, validationResult } = require('express-validator');
-const { query } = require('../db.js');
-const auth = require('../middleware/auth.js');
+/**
+ * Notification Routes
+ * 알림 관련 API 엔드포인트 (업데이트: WebSocket 통합)
+ * 
+ * @author AUTOAGENTS
+ * @date 2025-11-09
+ */
+
+import express from 'express';
+import { body, validationResult } from 'express-validator';
+import notificationService from '../services/notification-service.js';
+import notificationSocket from '../sockets/notification-socket.js';
+import { authenticateToken } from '../auth/jwt.js';
+import logger from '../logger.js';
 
 const router = express.Router();
 
-// Get all notifications for a user
-router.get('/', auth, async (req, res) => {
+/**
+ * GET /api/notifications
+ * 알림 목록 조회
+ */
+router.get('/', authenticateToken, async (req, res) => {
     try {
-        const userId = req.user.id;
-        const { page = 1, limit = 20, unread_only = false } = req.query;
+        const userId = req.user.userId;
+        const { page = 1, limit = 20, unreadOnly = false } = req.query;
 
-        let whereClause = 'WHERE user_id = ?';
-        let params = [userId];
-
-        if (unread_only === 'true') {
-            whereClause += ' AND is_read = 0';
-        }
-
-        const offset = (parseInt(page) - 1) * parseInt(limit);
-
-        // Get notifications
-        const notifications = await query(`
-            SELECT 
-                n.*,
-                u.name as from_user_name,
-                u.avatar as from_user_avatar
-            FROM notifications n
-            LEFT JOIN users u ON n.from_user_id = u.id
-            ${whereClause}
-            ORDER BY n.created_at DESC
-            LIMIT ? OFFSET ?
-        `, [...params, parseInt(limit), offset]);
-
-        // Get total count
-        const countResult = await query(`
-            SELECT COUNT(*) as total
-            FROM notifications
-            ${whereClause}
-        `, params);
-
-        const total = countResult[0].total;
+        const notifications = await notificationService.getNotifications(userId, {
+            page: parseInt(page),
+            limit: parseInt(limit),
+            unreadOnly: unreadOnly === 'true'
+        });
 
         res.json({
             success: true,
             data: notifications,
             pagination: {
                 page: parseInt(page),
-                limit: parseInt(limit),
-                total,
-                pages: Math.ceil(total / parseInt(limit))
+                limit: parseInt(limit)
             }
         });
     } catch (error) {
-        console.error('Get notifications error:', error);
-        res.status(500).json({ error: 'Failed to fetch notifications' });
+        logger.error('Error fetching notifications:', error);
+        res.status(500).json({
+            success: false,
+            message: '알림 조회 중 오류가 발생했습니다.'
+        });
     }
 });
 
-// Mark notification as read
-router.patch('/:id/read', auth, async (req, res) => {
+/**
+ * GET /api/notifications/count
+ * 읽지 않은 알림 개수 조회
+ */
+router.get('/count', authenticateToken, async (req, res) => {
     try {
-        const notificationId = req.params.id;
-        const userId = req.user.id;
-
-        const result = await query(`
-            UPDATE notifications 
-            SET is_read = 1, read_at = NOW()
-            WHERE id = ? AND user_id = ?
-        `, [notificationId, userId]);
-
-        if (result.affectedRows === 0) {
-            return res.status(404).json({ error: 'Notification not found' });
-        }
-
-        res.json({ success: true, message: 'Notification marked as read' });
-    } catch (error) {
-        console.error('Mark notification read error:', error);
-        res.status(500).json({ error: 'Failed to mark notification as read' });
-    }
-});
-
-// Mark all notifications as read
-router.patch('/read-all', auth, async (req, res) => {
-    try {
-        const userId = req.user.id;
-
-        const result = await query(`
-            UPDATE notifications 
-            SET is_read = 1, read_at = NOW()
-            WHERE user_id = ? AND is_read = 0
-        `, [userId]);
+        const userId = req.user.userId;
+        const count = await notificationService.getUnreadCount(userId);
 
         res.json({
             success: true,
-            message: 'All notifications marked as read',
-            updated_count: result.affectedRows
+            count
         });
     } catch (error) {
-        console.error('Mark all notifications read error:', error);
-        res.status(500).json({ error: 'Failed to mark all notifications as read' });
+        logger.error('Error fetching unread count:', error);
+        res.status(500).json({
+            success: false,
+            message: '알림 개수 조회 중 오류가 발생했습니다.'
+        });
     }
 });
 
-// Delete notification
-router.delete('/:id', auth, async (req, res) => {
+/**
+ * GET /api/notifications/:id
+ * 특정 알림 조회
+ */
+router.get('/:id', authenticateToken, async (req, res) => {
     try {
         const notificationId = req.params.id;
-        const userId = req.user.id;
+        const userId = req.user.userId;
 
-        const result = await query(`
-            DELETE FROM notifications 
-            WHERE id = ? AND user_id = ?
-        `, [notificationId, userId]);
+        const notification = await notificationService.getNotificationById(notificationId);
 
-        if (result.affectedRows === 0) {
-            return res.status(404).json({ error: 'Notification not found' });
-        }
-
-        res.json({ success: true, message: 'Notification deleted' });
-    } catch (error) {
-        console.error('Delete notification error:', error);
-        res.status(500).json({ error: 'Failed to delete notification' });
-    }
-});
-
-// Create notification (internal use)
-router.post('/', auth, [
-    body('user_id').isInt().withMessage('User ID is required'),
-    body('type').isIn(['todo_assigned', 'todo_completed', 'todo_updated', 'comment_added', 'mention']).withMessage('Invalid notification type'),
-    body('title').notEmpty().withMessage('Title is required'),
-    body('message').notEmpty().withMessage('Message is required'),
-    body('related_id').optional().isInt(),
-    body('from_user_id').optional().isInt()
-], async (req, res) => {
-    try {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() });
-        }
-
-        const {
-            user_id,
-            type,
-            title,
-            message,
-            related_id,
-            from_user_id
-        } = req.body;
-
-        const result = await query(`
-            INSERT INTO notifications (
-                user_id, type, title, message, related_id, from_user_id, created_at
-            ) VALUES (?, ?, ?, ?, ?, ?, NOW())
-        `, [user_id, type, title, message, related_id, from_user_id]);
-
-        // Send real-time notification if WebSocket is available
-        if (req.app.locals.sendNotification) {
-            req.app.locals.sendNotification(user_id, {
-                type: 'notification',
-                data: {
-                    id: result.insertId,
-                    type,
-                    title,
-                    message,
-                    created_at: new Date().toISOString()
-                }
+        if (!notification) {
+            return res.status(404).json({
+                success: false,
+                message: '알림을 찾을 수 없습니다.'
             });
         }
 
-        res.status(201).json({
-            success: true,
-            data: {
-                id: result.insertId,
-                user_id,
-                type,
-                title,
-                message,
-                related_id,
-                from_user_id,
-                is_read: 0,
-                created_at: new Date().toISOString()
-            }
-        });
-    } catch (error) {
-        console.error('Create notification error:', error);
-        res.status(500).json({ error: 'Failed to create notification' });
-    }
-});
-
-// Get notification statistics
-router.get('/stats', auth, async (req, res) => {
-    try {
-        const userId = req.user.id;
-
-        const stats = await query(`
-            SELECT 
-                COUNT(*) as total,
-                SUM(CASE WHEN is_read = 0 THEN 1 ELSE 0 END) as unread,
-                SUM(CASE WHEN is_read = 1 THEN 1 ELSE 0 END) as read,
-                SUM(CASE WHEN created_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR) THEN 1 ELSE 0 END) as last_24h
-            FROM notifications
-            WHERE user_id = ?
-        `, [userId]);
+        // 권한 확인
+        if (notification.user_id !== userId) {
+            return res.status(403).json({
+                success: false,
+                message: '알림에 접근할 권한이 없습니다.'
+            });
+        }
 
         res.json({
             success: true,
-            data: stats[0]
+            data: notification
         });
     } catch (error) {
-        console.error('Get notification stats error:', error);
-        res.status(500).json({ error: 'Failed to fetch notification statistics' });
+        logger.error('Error fetching notification:', error);
+        res.status(500).json({
+            success: false,
+            message: '알림 조회 중 오류가 발생했습니다.'
+        });
     }
 });
 
-module.exports = router;
+/**
+ * PUT /api/notifications/:id/read
+ * 알림 읽음 처리
+ */
+router.put('/:id/read', authenticateToken, async (req, res) => {
+    try {
+        const notificationId = req.params.id;
+        const userId = req.user.userId;
+
+        const success = await notificationService.markAsRead(notificationId, userId);
+
+        if (!success) {
+            return res.status(404).json({
+                success: false,
+                message: '알림을 찾을 수 없습니다.'
+            });
+        }
+
+        // 읽지 않은 알림 개수 업데이트
+        const unreadCount = await notificationService.getUnreadCount(userId);
+        notificationSocket.updateUnreadCount(userId, unreadCount);
+
+        res.json({
+            success: true,
+            message: '알림을 읽음 처리했습니다.'
+        });
+    } catch (error) {
+        logger.error('Error marking notification as read:', error);
+        res.status(500).json({
+            success: false,
+            message: '알림 읽음 처리 중 오류가 발생했습니다.'
+        });
+    }
+});
+
+/**
+ * PUT /api/notifications/read-all
+ * 모든 알림 읽음 처리
+ */
+router.put('/read-all', authenticateToken, async (req, res) => {
+    try {
+        const userId = req.user.userId;
+        const count = await notificationService.markAllAsRead(userId);
+
+        // 읽지 않은 알림 개수 업데이트
+        notificationSocket.updateUnreadCount(userId, 0);
+
+        res.json({
+            success: true,
+            message: `${count}개의 알림을 읽음 처리했습니다.`,
+            count
+        });
+    } catch (error) {
+        logger.error('Error marking all notifications as read:', error);
+        res.status(500).json({
+            success: false,
+            message: '알림 읽음 처리 중 오류가 발생했습니다.'
+        });
+    }
+});
+
+/**
+ * DELETE /api/notifications/:id
+ * 알림 삭제
+ */
+router.delete('/:id', authenticateToken, async (req, res) => {
+    try {
+        const notificationId = req.params.id;
+        const userId = req.user.userId;
+
+        const success = await notificationService.deleteNotification(notificationId, userId);
+
+        if (!success) {
+            return res.status(404).json({
+                success: false,
+                message: '알림을 찾을 수 없습니다.'
+            });
+        }
+
+        res.json({
+            success: true,
+            message: '알림을 삭제했습니다.'
+        });
+    } catch (error) {
+        logger.error('Error deleting notification:', error);
+        res.status(500).json({
+            success: false,
+            message: '알림 삭제 중 오류가 발생했습니다.'
+        });
+    }
+});
+
+/**
+ * GET /api/notifications/settings
+ * 알림 설정 조회
+ */
+router.get('/settings/me', authenticateToken, async (req, res) => {
+    try {
+        const userId = req.user.userId;
+        const settings = await notificationService.getNotificationSettings(userId);
+
+        res.json({
+            success: true,
+            data: settings
+        });
+    } catch (error) {
+        logger.error('Error fetching notification settings:', error);
+        res.status(500).json({
+            success: false,
+            message: '알림 설정 조회 중 오류가 발생했습니다.'
+        });
+    }
+});
+
+/**
+ * PUT /api/notifications/settings
+ * 알림 설정 업데이트
+ */
+router.put('/settings/me', authenticateToken, async (req, res) => {
+    try {
+        const userId = req.user.userId;
+        const settings = req.body;
+
+        const updatedSettings = await notificationService.updateNotificationSettings(
+            userId,
+            settings
+        );
+
+        res.json({
+            success: true,
+            message: '알림 설정을 업데이트했습니다.',
+            data: updatedSettings
+        });
+    } catch (error) {
+        logger.error('Error updating notification settings:', error);
+        res.status(500).json({
+            success: false,
+            message: '알림 설정 업데이트 중 오류가 발생했습니다.'
+        });
+    }
+});
+
+/**
+ * POST /api/notifications/test
+ * 테스트 알림 전송 (개발용)
+ */
+if (process.env.NODE_ENV === 'development') {
+    router.post('/test', authenticateToken, async (req, res) => {
+        try {
+            const userId = req.user.userId;
+            const { type = 'system', title, message } = req.body;
+
+            const notification = await notificationService.createNotification({
+                userId,
+                type,
+                title: title || '테스트 알림',
+                message: message || '이것은 테스트 알림입니다.',
+                link: null
+            });
+
+            // WebSocket으로 실시간 전송
+            if (notification) {
+                notificationSocket.sendNotificationToUser(userId, notification);
+            }
+
+            res.json({
+                success: true,
+                message: '테스트 알림을 전송했습니다.',
+                data: notification
+            });
+        } catch (error) {
+            logger.error('Error sending test notification:', error);
+            res.status(500).json({
+                success: false,
+                message: '테스트 알림 전송 중 오류가 발생했습니다.'
+            });
+        }
+    });
+}
+
+export default router;

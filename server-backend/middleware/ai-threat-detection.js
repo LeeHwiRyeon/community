@@ -1,5 +1,5 @@
 // AI-Based Threat Detection System (2025년 10월 기준)
-const EventEmitter = require('events');
+import { EventEmitter } from 'events';
 
 // AI 기반 위협 감지 설정
 const aiThreatConfig = {
@@ -502,7 +502,7 @@ function aiThreatDetectionMiddleware(req, res, next) {
         path: req.path,
         method: req.method,
         headers: req.headers,
-        payloadLength: JSON.stringify(req.body).length,
+        payloadLength: req.body ? JSON.stringify(req.body).length : 0,
         timestamp: Date.now()
     };
 
@@ -519,7 +519,7 @@ function aiThreatDetectionMiddleware(req, res, next) {
     next();
 }
 
-module.exports = {
+export {
     AIThreatDetector,
     aiThreatDetector,
     aiThreatDetectionMiddleware,

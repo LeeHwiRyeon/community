@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const logger = require('../../utils/logger');
+const logger = require('../utils/logger');
 const machineLearningService = require('../services/machineLearningService');
 
 // 모델 목록 조회

@@ -4,11 +4,12 @@ import jwt from 'jsonwebtoken';
 import { createPublicKey } from 'crypto';
 import { getEnabledProviders, buildMockAuthRedirect } from './providers.js';
 import { query } from '../db.js';
-import { issueTokens, verifyToken, rotateRefresh } from './jwt.js';
+import { issueTokens, verifyToken, rotateRefresh, getAccessTTL, getRefreshTTL } from './jwt.js';
 import { OAuth2Client } from 'google-auth-library';
 import { incMetric } from '../metrics-state.js';
 import { generateCodeVerifier, codeChallengeS256, generateState, storeOAuthState, consumeOAuthState } from './pkce.js';
 import { kvSet, kvGet, kvDel, isRedisEnabled } from '../redis.js';
+import { blacklistAccessToken, blacklistRefreshToken } from '../services/token-blacklist.js';
 
 // Redis-backed session management
 const SESSION_PREFIX = 'session:';
@@ -128,48 +129,48 @@ router.post('/google', express.json(), async (req, res) => {
     try {
         const { idToken } = req.body || {};
         if (!idToken) return res.status(400).json({ error: 'idToken_required' });
-router.post('/apple', express.json(), async (req, res) => {
-    try {
-        const { idToken } = req.body || {};
-        if (!idToken) return res.status(400).json({ error: 'idToken_required' });
-        const allowTestMode = (process.env.NODE_ENV !== 'production') || process.env.ENABLE_TEST_APPLE === '1';
-        let sub = null; let email = null; let name = null;
-        if (allowTestMode && typeof idToken === 'string' && idToken.startsWith('test-apple:')) {
-            const parts = idToken.split(':');
-            sub = parts[1] || 'test_sub';
-            email = parts[2] || (sub + '@test.local');
-            name = 'apple_' + sub.slice(0, 8);
-        } else {
-            const payload = await verifyAppleIdToken(idToken);
-            sub = payload.sub;
-            email = payload.email || null;
-            name = payload.name || (payload.email ? payload.email.split('@')[0] : null);
-        }
-        if (!sub) return res.status(401).json({ error: 'invalid_token' });
-        let rows = await query('SELECT u.id,u.role,u.display_name FROM user_social_identities si JOIN users u ON u.id=si.user_id WHERE si.provider=? AND si.provider_user_id=? LIMIT 1', ['apple', sub]);
-        let userId;
-        if (!rows.length) {
-            const countRows = await query('SELECT COUNT(*) as c FROM users');
-            const isFirst = (countRows[0]?.c || 0) === 0;
-            const displayName = name || ('apple_' + sub.slice(0, 10));
-            await query('INSERT INTO users(display_name, role, email) VALUES(?,?,?)', [displayName, isFirst ? 'admin' : 'user', email || null]);
-            const newRow = await query('SELECT id,role FROM users WHERE display_name=? ORDER BY id DESC LIMIT 1', [displayName]);
-            userId = newRow[0].id;
-            await query('INSERT INTO user_social_identities(user_id,provider,provider_user_id,email_at_provider) VALUES(?,?,?,?)', [userId, 'apple', sub, email || null]);
-        } else {
-            userId = rows[0].id;
-        }
-        await query('UPDATE users SET last_login_at=NOW(), primary_provider=?, primary_provider_user_id=? WHERE id=?', ['google', sub, userId]);
-        const [u] = await query('SELECT id, role, display_name, email FROM users WHERE id=?', [userId]);
-        const jwtPair = await issueTokens({ id: u.id, role: u.role });
-        const identities = await query('SELECT provider, provider_user_id, email_at_provider FROM user_social_identities WHERE user_id=?', [userId]);
-        incMetric('authAppleLogin');
-        res.json({ provider: 'apple', userId: u.id, display_name: u.display_name, email: u.email || email || null, identities, ...jwtPair });
-    } catch (e) {
-        console.error('[auth.apple.error]', e.message);
-        res.status(500).json({ error: 'apple_auth_failed' });
-    }
-});
+        router.post('/apple', express.json(), async (req, res) => {
+            try {
+                const { idToken } = req.body || {};
+                if (!idToken) return res.status(400).json({ error: 'idToken_required' });
+                const allowTestMode = (process.env.NODE_ENV !== 'production') || process.env.ENABLE_TEST_APPLE === '1';
+                let sub = null; let email = null; let name = null;
+                if (allowTestMode && typeof idToken === 'string' && idToken.startsWith('test-apple:')) {
+                    const parts = idToken.split(':');
+                    sub = parts[1] || 'test_sub';
+                    email = parts[2] || (sub + '@test.local');
+                    name = 'apple_' + sub.slice(0, 8);
+                } else {
+                    const payload = await verifyAppleIdToken(idToken);
+                    sub = payload.sub;
+                    email = payload.email || null;
+                    name = payload.name || (payload.email ? payload.email.split('@')[0] : null);
+                }
+                if (!sub) return res.status(401).json({ error: 'invalid_token' });
+                let rows = await query('SELECT u.id,u.role,u.display_name FROM user_social_identities si JOIN users u ON u.id=si.user_id WHERE si.provider=? AND si.provider_user_id=? LIMIT 1', ['apple', sub]);
+                let userId;
+                if (!rows.length) {
+                    const countRows = await query('SELECT COUNT(*) as c FROM users');
+                    const isFirst = (countRows[0]?.c || 0) === 0;
+                    const displayName = name || ('apple_' + sub.slice(0, 10));
+                    await query('INSERT INTO users(display_name, role, email) VALUES(?,?,?)', [displayName, isFirst ? 'admin' : 'user', email || null]);
+                    const newRow = await query('SELECT id,role FROM users WHERE display_name=? ORDER BY id DESC LIMIT 1', [displayName]);
+                    userId = newRow[0].id;
+                    await query('INSERT INTO user_social_identities(user_id,provider,provider_user_id,email_at_provider) VALUES(?,?,?,?)', [userId, 'apple', sub, email || null]);
+                } else {
+                    userId = rows[0].id;
+                }
+                await query('UPDATE users SET last_login_at=NOW(), primary_provider=?, primary_provider_user_id=? WHERE id=?', ['google', sub, userId]);
+                const [u] = await query('SELECT id, role, display_name, email FROM users WHERE id=?', [userId]);
+                const jwtPair = await issueTokens({ id: u.id, role: u.role });
+                const identities = await query('SELECT provider, provider_user_id, email_at_provider FROM user_social_identities WHERE user_id=?', [userId]);
+                incMetric('authAppleLogin');
+                res.json({ provider: 'apple', userId: u.id, display_name: u.display_name, email: u.email || email || null, identities, ...jwtPair });
+            } catch (e) {
+                console.error('[auth.apple.error]', e.message);
+                res.status(500).json({ error: 'apple_auth_failed' });
+            }
+        });
 
         let sub = null; let email = null; let name = null; let testMode = false;
         const allowTestMode = (process.env.NODE_ENV !== 'production') || process.env.ENABLE_TEST_GOOGLE === '1';
@@ -498,6 +499,88 @@ router.post('/refresh-cookie', async (req, res) => {
     incMetric('authRefresh');
     logAuthEvent('refresh_cookie_success', { userId: rotated.userId, req });
     res.json(rotated);
+});
+
+/**
+ * Logout endpoint - Blacklists both access and refresh tokens
+ * 
+ * Request:
+ * POST /api/auth/logout
+ * Headers:
+ *   Authorization: Bearer <access_token>
+ * Body:
+ *   { "refresh": "<refresh_token>" }
+ * 
+ * Response:
+ *   { "success": true, "message": "Logged out successfully" }
+ */
+router.post('/logout', express.json(), async (req, res) => {
+    try {
+        const authHeader = req.headers.authorization || '';
+        const accessMatch = authHeader.match(/^Bearer (.+)$/);
+        const accessToken = accessMatch ? accessMatch[1] : null;
+        const refreshToken = req.body?.refresh || null;
+
+        let accessBlacklisted = false;
+        let refreshBlacklisted = false;
+
+        // Blacklist access token if provided
+        if (accessToken) {
+            const accessPayload = verifyToken(accessToken, 'access');
+            if (accessPayload && accessPayload.jti) {
+                await blacklistAccessToken(
+                    accessPayload.jti,
+                    accessPayload.sub,
+                    'user_logout',
+                    getAccessTTL()
+                );
+                accessBlacklisted = true;
+                console.log(`✅ User ${accessPayload.sub} logged out - Access token blacklisted`);
+            }
+        }
+
+        // Blacklist refresh token if provided
+        if (refreshToken) {
+            const refreshPayload = verifyToken(refreshToken, 'refresh');
+            if (refreshPayload && refreshPayload.jti) {
+                await blacklistRefreshToken(
+                    refreshPayload.jti,
+                    refreshPayload.sub,
+                    'user_logout',
+                    getRefreshTTL()
+                );
+                refreshBlacklisted = true;
+            }
+        }
+
+        // Clear refresh token cookie if present
+        if (process.env.REFRESH_COOKIE === '1') {
+            res.clearCookie('refresh_token', {
+                httpOnly: true,
+                secure: process.env.COOKIE_SECURE === '1',
+                sameSite: 'Lax',
+                path: '/api/auth'
+            });
+        }
+
+        incMetric('authLogout');
+
+        res.json({
+            success: true,
+            message: 'Logged out successfully',
+            details: {
+                accessTokenBlacklisted: accessBlacklisted,
+                refreshTokenBlacklisted: refreshBlacklisted
+            }
+        });
+
+    } catch (error) {
+        console.error('❌ Logout error:', error);
+        res.status(500).json({
+            error: 'logout_failed',
+            message: 'Failed to logout'
+        });
+    }
 });
 
 export default router;

@@ -10,11 +10,9 @@ import { VitePWA } from 'vite-plugin-pwa';
 export default defineConfig({
     plugins: [
         react({
-            // React Fast Refresh 최적화
-            fastRefresh: true,
-            // JSX 런타임 최적화
+            // JSX 런타임 최적화 (automatic이 기본값)
             jsxRuntime: 'automatic',
-            // Babel 설정 완전 제거 (중복 방지)
+            // Babel 플러그인 (필요시에만 추가)
             babel: {
                 plugins: []
             }
@@ -23,14 +21,22 @@ export default defineConfig({
         // PWA 지원
         VitePWA({
             registerType: 'autoUpdate',
+            includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'images/*.png'],
             workbox: {
                 globPatterns: ['**/*.{js,css,html,ico,png,jpg,jpeg,webp,svg,woff2}'],
+
+                // 오프라인 폴백 설정
+                navigateFallback: '/index.html',
+                navigateFallbackDenylist: [/^\/api\//],
+
+                // 런타임 캐싱 전략
                 runtimeCaching: [
                     {
                         urlPattern: /^https:\/\/api\./,
                         handler: 'NetworkFirst',
                         options: {
                             cacheName: 'api-cache',
+                            networkTimeoutSeconds: 10,
                             expiration: {
                                 maxEntries: 100,
                                 maxAgeSeconds: 60 * 5 // 5분
@@ -50,6 +56,17 @@ export default defineConfig({
                                 maxAgeSeconds: 60 * 60 * 24 * 7 // 7일
                             }
                         }
+                    },
+                    {
+                        urlPattern: /\.(?:woff|woff2|ttf|otf)$/,
+                        handler: 'CacheFirst',
+                        options: {
+                            cacheName: 'fonts-cache',
+                            expiration: {
+                                maxEntries: 30,
+                                maxAgeSeconds: 60 * 60 * 24 * 365 // 1년
+                            }
+                        }
                     }
                 ]
             },
@@ -63,16 +80,41 @@ export default defineConfig({
                 orientation: 'portrait',
                 scope: '/',
                 start_url: '/',
+                categories: ['social', 'news', 'community'],
+                lang: 'ko',
+                dir: 'ltr',
                 icons: [
                     {
                         src: '/images/icon-192.png',
                         sizes: '192x192',
-                        type: 'image/png'
+                        type: 'image/png',
+                        purpose: 'any'
                     },
                     {
                         src: '/images/icon-512.png',
                         sizes: '512x512',
-                        type: 'image/png'
+                        type: 'image/png',
+                        purpose: 'any'
+                    },
+                    {
+                        src: '/images/icon-maskable.png',
+                        sizes: '512x512',
+                        type: 'image/png',
+                        purpose: 'maskable'
+                    }
+                ],
+                screenshots: [
+                    {
+                        src: '/images/screenshot-wide.png',
+                        sizes: '1280x720',
+                        type: 'image/png',
+                        form_factor: 'wide'
+                    },
+                    {
+                        src: '/images/screenshot-narrow.png',
+                        sizes: '750x1334',
+                        type: 'image/png',
+                        form_factor: 'narrow'
                     }
                 ]
             }
@@ -95,9 +137,7 @@ export default defineConfig({
         hmr: {
             overlay: true
         },
-        // HTTP 설정 (개발용)
-        https: false,
-        // 프록시 설정 (백엔드 API)
+        // 프록시 설정 (백엔드 API) - 3001 포트로 수정
         proxy: {
             '/api': {
                 target: 'http://localhost:3001',
@@ -126,31 +166,32 @@ export default defineConfig({
 
             output: {
                 // 청크 분할 최적화
-                manualChunks: {
-                    // React 관련 라이브러리
-                    'react-vendor': ['react', 'react-dom'],
-
-                    // Material-UI 관련
-                    'mui-vendor': [
-                        '@mui/material',
-                        '@mui/icons-material',
-                        '@mui/system',
-                        '@emotion/react',
-                        '@emotion/styled'
-                    ],
-
-                    // 차트 라이브러리
-                    'chart-vendor': ['recharts'],
-
-                    // 가상화 라이브러리
-                    'virtualization-vendor': [
-                        'react-window',
-                        'react-window-infinite-loader',
-                        'react-virtualized-auto-sizer'
-                    ],
-
-                    // 유틸리티 라이브러리
-                    'utils-vendor': ['lodash', 'date-fns']
+                manualChunks: (id) => {
+                    // node_modules 의존성 분리
+                    if (id.includes('node_modules')) {
+                        // React 코어
+                        if (id.includes('react') || id.includes('react-dom')) {
+                            return 'react-vendor';
+                        }
+                        // Material-UI
+                        if (id.includes('@mui') || id.includes('@emotion')) {
+                            return 'mui-vendor';
+                        }
+                        // 차트 라이브러리
+                        if (id.includes('recharts')) {
+                            return 'chart-vendor';
+                        }
+                        // 가상화
+                        if (id.includes('react-window') || id.includes('react-virtualized')) {
+                            return 'virtualization-vendor';
+                        }
+                        // 유틸리티
+                        if (id.includes('lodash') || id.includes('date-fns')) {
+                            return 'utils-vendor';
+                        }
+                        // 기타 vendor
+                        return 'vendor';
+                    }
                 },
 
                 // 파일명 패턴
@@ -200,8 +241,7 @@ export default defineConfig({
             '@mui/material',
             '@mui/icons-material',
             'recharts',
-            'react-window',
-            'react-window-infinite-loader'
+            'react-window'
         ],
 
         // 제외할 의존성
@@ -252,17 +292,15 @@ export default defineConfig({
     define: {
         __APP_VERSION__: JSON.stringify(process.env.npm_package_version || '1.0.0'),
         __BUILD_TIME__: JSON.stringify(new Date().toISOString()),
-        __DEV__: JSON.stringify(process.env.NODE_ENV === 'development')
+        __DEV__: JSON.stringify(process.env.NODE_ENV === 'development'),
+        'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
+        'process.env.REACT_APP_API_URL': JSON.stringify(process.env.REACT_APP_API_URL || 'http://localhost:3001')
     },
 
     // ESBuild 설정
     esbuild: {
         // 프로덕션에서 console.log 제거
-        drop: process.env.NODE_ENV === 'production' ? ['console', 'debugger'] : [],
-
-        // JSX 최적화
-        jsxFactory: 'React.createElement',
-        jsxFragment: 'React.Fragment'
+        drop: process.env.NODE_ENV === 'production' ? ['console', 'debugger'] : []
     },
 
     // 미리보기 서버 설정
@@ -270,17 +308,5 @@ export default defineConfig({
         port: 3000,
         host: true,
         strictPort: true
-    },
-
-    // 실험적 기능
-    experimental: {
-        // 빌드 최적화
-        renderBuiltUrl(filename, { hostType }) {
-            if (hostType === 'js') {
-                return { js: `/${filename}` };
-            } else {
-                return { relative: true };
-            }
-        }
     }
 });

@@ -3,9 +3,15 @@ const jwt = require('jsonwebtoken');
 const { User } = require('../models');
 const logger = require('../utils/logger');
 
+// Validate JWT_SECRET
+if (!process.env.JWT_SECRET) {
+    console.error('❌ FATAL: JWT_SECRET not set in environment variables');
+    process.exit(1);
+}
+
 // JWT 토큰 생성
 const generateToken = (userId) => {
-    return jwt.sign({ userId }, process.env.JWT_SECRET || 'fallback_secret', {
+    return jwt.sign({ userId }, process.env.JWT_SECRET, {
         expiresIn: process.env.JWT_EXPIRE || '7d'
     });
 };

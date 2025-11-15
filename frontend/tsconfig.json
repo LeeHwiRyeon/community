@@ -20,7 +20,13 @@
         "noFallthroughCasesInSwitch": true
     },
     "include": [
-        "src"
+        "src",
+        "src/vite-env.d.ts"
+    ],
+    "exclude": [
+        "src/pages/EditProfilePage.tsx",
+        "src/pages/ProfilePage.tsx",
+        "node_modules"
     ],
     "references": [
         {

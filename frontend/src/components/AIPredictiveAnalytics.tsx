@@ -36,6 +36,7 @@ import {
   Tooltip,
   Badge
 } from '@mui/material';
+
 import {
   TrendingUp,
   Analytics,
@@ -346,9 +347,9 @@ const AIPredictiveAnalytics: React.FC = () => {
           <CircularProgress />
         </Box>
       ) : (
-        <Grid container spacing={3}>
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
           {filteredPredictions.map((prediction) => (
-            <Grid item xs={12} md={6} key={prediction.id}>
+            <Box sx={{ flex: { xs: '1 1 100%', md: '1 1 calc(50% - 12px)' } }} key={prediction.id}>
               <Card>
                 <CardContent>
                   <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
@@ -426,9 +427,9 @@ const AIPredictiveAnalytics: React.FC = () => {
                   ))}
                 </CardContent>
               </Card>
-            </Grid>
+            </Box>
           ))}
-        </Grid>
+        </Box>
       )}
     </Box>
   );

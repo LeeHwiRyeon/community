@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const logger = require('../../utils/logger');
+const logger = require('../utils/logger');
 const advancedSearchService = require('../services/advancedSearchService');
 
 // 통합 검색 API

@@ -11,8 +11,7 @@
 import React, { useState, useEffect } from 'react';
 import {
     Box,
-    Grid,
-    Card,
+        Card,
     CardContent,
     Typography,
     Button,
@@ -53,6 +52,7 @@ import {
     Rating,
     Avatar
 } from '@mui/material';
+
 import {
     Language,
     Translate,

@@ -128,25 +128,32 @@ const LoginForm: React.FC = () => {
 
                 {/* 에러 메시지 */}
                 {error && (
-                    <div style={{
-                        background: 'rgba(239, 68, 68, 0.2)',
-                        border: '1px solid rgba(239, 68, 68, 0.5)',
-                        borderRadius: '0.5rem',
-                        padding: '1rem',
-                        marginBottom: '1.5rem',
-                        color: '#fca5a5'
-                    }}>
+                    <div
+                        style={{
+                            background: 'rgba(239, 68, 68, 0.2)',
+                            border: '1px solid rgba(239, 68, 68, 0.5)',
+                            borderRadius: '0.5rem',
+                            padding: '1rem',
+                            marginBottom: '1.5rem',
+                            color: '#fca5a5'
+                        }}
+                        data-testid="error-message"
+                        role="alert"
+                    >
                         ❌ {error}
                     </div>
                 )}
 
                 {/* 로그인 버튼들 */}
-                <div style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '1rem',
-                    marginBottom: '2rem'
-                }}>
+                <div
+                    style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '1rem',
+                        marginBottom: '2rem'
+                    }}
+                    data-testid="login-buttons-container"
+                >
                     {/* 익명 로그인 */}
                     <ModernButton
                         variant="primary"
@@ -158,6 +165,7 @@ const LoginForm: React.FC = () => {
                             width: '100%',
                             background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)'
                         }}
+                        data-testid="anonymous-login-button"
                     >
                         👤 익명으로 시작하기
                     </ModernButton>
@@ -175,6 +183,7 @@ const LoginForm: React.FC = () => {
                             color: 'white',
                             border: 'none'
                         }}
+                        data-testid="google-login-button"
                     >
                         🔍 Google로 로그인
                     </ModernButton>
@@ -192,6 +201,7 @@ const LoginForm: React.FC = () => {
                                 color: 'white',
                                 border: '2px solid rgba(255, 255, 255, 0.3)'
                             }}
+                            data-testid="link-account-button"
                         >
                             🔄 Google 계정으로 연결
                         </ModernButton>

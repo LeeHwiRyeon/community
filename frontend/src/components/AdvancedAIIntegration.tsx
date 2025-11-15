@@ -4,8 +4,7 @@ import {
     Typography,
     Card,
     CardContent,
-    Grid,
-    Button,
+        Button,
     Chip,
     LinearProgress,
     Alert,
@@ -25,6 +24,7 @@ import {
     FormControlLabel,
     Slider
 } from '@mui/material';
+
 import {
     SmartToy,
     Psychology,

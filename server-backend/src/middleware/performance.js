@@ -1,8 +1,8 @@
-const compression = require('compression');
-const rateLimit = require('express-rate-limit');
-const slowDown = require('express-slow-down');
-const helmet = require('helmet');
-const Redis = require('redis');
+import compression from 'compression';
+import rateLimit from 'express-rate-limit';
+import slowDown from 'express-slow-down';
+import helmet from 'helmet';
+import Redis from 'redis';
 
 // Redis client for caching
 let redisClient;
@@ -290,7 +290,7 @@ const healthCheck = (req, res) => {
     });
 };
 
-module.exports = {
+export {
     initRedis,
     cacheMiddleware,
     queryOptimization,

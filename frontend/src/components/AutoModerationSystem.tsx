@@ -18,7 +18,6 @@ import {
     List,
     ListItem,
     ListItemText,
-    Grid,
     ListItemSecondaryAction,
     IconButton,
     Dialog,
@@ -34,7 +33,8 @@ import {
     Divider,
     Paper,
     Tooltip,
-    Badge
+    Badge,
+    Grid
 } from '@mui/material';
 import {
     SmartToy,
@@ -590,16 +590,16 @@ const AutoModerationSystem: React.FC = () => {
                     {editingRule ? '규칙 수정' : '새 규칙 추가'}
                 </DialogTitle>
                 <DialogContent>
-                    <Grid container spacing={2} sx={{ mt: 1 }}>
-                        <Grid item xs={12} md={6}>
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mt: 1 }}>
+                        <Box sx={{ flex: { xs: '1 1 100%', md: '1 1 calc(50% - 8px)' } }}>
                             <TextField
                                 fullWidth
                                 label="규칙 이름"
                                 defaultValue={editingRule?.name || ''}
                                 variant="outlined"
                             />
-                        </Grid>
-                        <Grid item xs={12} md={6}>
+                        </Box>
+                        <Box sx={{ flex: { xs: '1 1 100%', md: '1 1 calc(50% - 8px)' } }}>
                             <FormControl fullWidth>
                                 <InputLabel>타입</InputLabel>
                                 <Select
@@ -613,8 +613,8 @@ const AutoModerationSystem: React.FC = () => {
                                     <MenuItem value="violence">폭력적 콘텐츠</MenuItem>
                                 </Select>
                             </FormControl>
-                        </Grid>
-                        <Grid item xs={12} md={6}>
+                        </Box>
+                        <Box sx={{ flex: { xs: '1 1 100%', md: '1 1 calc(50% - 8px)' } }}>
                             <FormControl fullWidth>
                                 <InputLabel>심각도</InputLabel>
                                 <Select
@@ -627,8 +627,8 @@ const AutoModerationSystem: React.FC = () => {
                                     <MenuItem value="critical">치명적</MenuItem>
                                 </Select>
                             </FormControl>
-                        </Grid>
-                        <Grid item xs={12} md={6}>
+                        </Box>
+                        <Box sx={{ flex: { xs: '1 1 100%', md: '1 1 calc(50% - 8px)' } }}>
                             <FormControl fullWidth>
                                 <InputLabel>조치</InputLabel>
                                 <Select
@@ -640,8 +640,8 @@ const AutoModerationSystem: React.FC = () => {
                                     <MenuItem value="flag_for_review">검토 요청</MenuItem>
                                 </Select>
                             </FormControl>
-                        </Grid>
-                        <Grid item xs={12}>
+                        </Box>
+                        <Box sx={{ width: '100%' }}>
                             <Typography gutterBottom>
                                 임계값: {editingRule?.threshold || 0.8}
                             </Typography>
@@ -656,8 +656,8 @@ const AutoModerationSystem: React.FC = () => {
                                     { value: 1, label: '1' }
                                 ]}
                             />
-                        </Grid>
-                    </Grid>
+                        </Box>
+                    </Box>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={() => {

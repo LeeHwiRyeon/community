@@ -3,7 +3,7 @@ const { asyncHandler } = require('../middleware/errorHandler');
 const { sequelize } = require('../config/database');
 const { DataTypes } = require('sequelize');
 const { logger } = require('../utils/logger');
-const { protect, authorize } = require('../middleware/authMiddleware');
+const { authenticateToken, requireRole } = require('../middleware/authMiddleware');
 
 const router = express.Router();
 
@@ -112,7 +112,7 @@ const Comment = sequelize.define('Comment', {
 });
 
 // 전체 통계 조회
-router.get('/overview', protect, authorize('admin', 'moderator'), asyncHandler(async (req, res) => {
+router.get('/overview', authenticateToken, requireRole('admin', 'moderator'), asyncHandler(async (req, res) => {
     try {
         const { period = '30d' } = req.query;
 
@@ -216,7 +216,7 @@ router.get('/overview', protect, authorize('admin', 'moderator'), asyncHandler(a
 }));
 
 // 사용자 활동 분석
-router.get('/user-activity', protect, authorize('admin', 'moderator'), asyncHandler(async (req, res) => {
+router.get('/user-activity', authenticateToken, requireRole('admin', 'moderator'), asyncHandler(async (req, res) => {
     try {
         const { period = '30d' } = req.query;
 
@@ -333,7 +333,7 @@ router.get('/user-activity', protect, authorize('admin', 'moderator'), asyncHand
 }));
 
 // 콘텐츠 분석
-router.get('/content-analysis', protect, authorize('admin', 'moderator'), asyncHandler(async (req, res) => {
+router.get('/content-analysis', authenticateToken, requireRole('admin', 'moderator'), asyncHandler(async (req, res) => {
     try {
         const { period = '30d' } = req.query;
 
@@ -458,7 +458,7 @@ router.get('/content-analysis', protect, authorize('admin', 'moderator'), asyncH
 }));
 
 // 성장 지표 분석
-router.get('/growth-metrics', protect, authorize('admin', 'moderator'), asyncHandler(async (req, res) => {
+router.get('/growth-metrics', authenticateToken, requireRole('admin', 'moderator'), asyncHandler(async (req, res) => {
     try {
         const { period = '30d' } = req.query;
 
@@ -625,7 +625,7 @@ router.get('/growth-metrics', protect, authorize('admin', 'moderator'), asyncHan
 }));
 
 // 실시간 통계
-router.get('/realtime', protect, authorize('admin', 'moderator'), asyncHandler(async (req, res) => {
+router.get('/realtime', authenticateToken, requireRole('admin', 'moderator'), asyncHandler(async (req, res) => {
     try {
         const now = new Date();
         const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);

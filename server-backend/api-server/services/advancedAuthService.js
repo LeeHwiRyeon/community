@@ -3,7 +3,13 @@ const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 const speakeasy = require('speakeasy');
 const QRCode = require('qrcode');
-const logger = require('../../utils/logger');
+const logger = require('../utils/logger');
+
+// Validate JWT secrets
+if (!process.env.JWT_SECRET) {
+    console.error('❌ FATAL: JWT_SECRET not set in environment variables');
+    process.exit(1);
+}
 
 class AdvancedAuthService {
     constructor() {
@@ -478,7 +484,7 @@ class AdvancedAuthService {
                 permissions: role.permissions,
                 type: 'access'
             },
-            process.env.JWT_SECRET || 'fallback-secret',
+            process.env.JWT_SECRET,
             { expiresIn: '15m' }
         );
     }
@@ -487,7 +493,7 @@ class AdvancedAuthService {
     generateRefreshToken(sessionId) {
         return jwt.sign(
             { sessionId, type: 'refresh' },
-            process.env.JWT_REFRESH_SECRET || 'fallback-refresh-secret',
+            process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET,
             { expiresIn: '7d' }
         );
     }
@@ -496,8 +502,8 @@ class AdvancedAuthService {
     verifyToken(token, type = 'access') {
         try {
             const secret = type === 'access'
-                ? process.env.JWT_SECRET || 'fallback-secret'
-                : process.env.JWT_REFRESH_SECRET || 'fallback-refresh-secret';
+                ? process.env.JWT_SECRET
+                : (process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET);
 
             const decoded = jwt.verify(token, secret);
 

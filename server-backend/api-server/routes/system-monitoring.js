@@ -1,7 +1,7 @@
 const express = require('express');
 const { asyncHandler } = require('../middleware/errorHandler');
 const { logger } = require('../utils/logger');
-const { protect, authorize } = require('../middleware/authMiddleware');
+const { authenticateToken, requireRole } = require('../middleware/authMiddleware');
 const os = require('os');
 const fs = require('fs').promises;
 const { exec } = require('child_process');
@@ -11,7 +11,7 @@ const execAsync = promisify(exec);
 const router = express.Router();
 
 // 시스템 상태 조회
-router.get('/status', protect, authorize('admin'), asyncHandler(async (req, res) => {
+router.get('/status', authenticateToken, requireRole('admin'), asyncHandler(async (req, res) => {
     try {
         const uptime = process.uptime();
         const memoryUsage = process.memoryUsage();
@@ -94,7 +94,7 @@ router.get('/status', protect, authorize('admin'), asyncHandler(async (req, res)
 }));
 
 // 데이터베이스 상태 조회
-router.get('/database', protect, authorize('admin'), asyncHandler(async (req, res) => {
+router.get('/database', authenticateToken, requireRole('admin'), asyncHandler(async (req, res) => {
     try {
         const { sequelize } = require('../config/database');
 
@@ -155,7 +155,7 @@ router.get('/database', protect, authorize('admin'), asyncHandler(async (req, re
 }));
 
 // Redis 상태 조회
-router.get('/redis', protect, authorize('admin'), asyncHandler(async (req, res) => {
+router.get('/redis', authenticateToken, requireRole('admin'), asyncHandler(async (req, res) => {
     try {
         const { redis } = require('../config/redis');
 
@@ -202,7 +202,7 @@ router.get('/redis', protect, authorize('admin'), asyncHandler(async (req, res) 
 }));
 
 // 로그 파일 조회
-router.get('/logs', protect, authorize('admin'), asyncHandler(async (req, res) => {
+router.get('/logs', authenticateToken, requireRole('admin'), asyncHandler(async (req, res) => {
     try {
         const { lines = 100, level = 'all' } = req.query;
         const logPath = process.env.LOG_PATH || './logs/app.log';
@@ -253,7 +253,7 @@ router.get('/logs', protect, authorize('admin'), asyncHandler(async (req, res) =
 }));
 
 // 서버 성능 메트릭
-router.get('/performance', protect, authorize('admin'), asyncHandler(async (req, res) => {
+router.get('/performance', authenticateToken, requireRole('admin'), asyncHandler(async (req, res) => {
     try {
         const { period = '1h' } = req.query;
 
@@ -325,7 +325,7 @@ router.get('/performance', protect, authorize('admin'), asyncHandler(async (req,
 }));
 
 // 디스크 사용량 조회
-router.get('/disk', protect, authorize('admin'), asyncHandler(async (req, res) => {
+router.get('/disk', authenticateToken, requireRole('admin'), asyncHandler(async (req, res) => {
     try {
         const { stdout } = await execAsync('df -h');
         const lines = stdout.trim().split('\n');
@@ -359,7 +359,7 @@ router.get('/disk', protect, authorize('admin'), asyncHandler(async (req, res) =
 }));
 
 // 네트워크 연결 상태
-router.get('/network', protect, authorize('admin'), asyncHandler(async (req, res) => {
+router.get('/network', authenticateToken, requireRole('admin'), asyncHandler(async (req, res) => {
     try {
         const { stdout } = await execAsync('netstat -an');
         const lines = stdout.trim().split('\n');
@@ -399,7 +399,7 @@ router.get('/network', protect, authorize('admin'), asyncHandler(async (req, res
 }));
 
 // 시스템 알림 설정
-router.post('/alerts', protect, authorize('admin'), asyncHandler(async (req, res) => {
+router.post('/alerts', authenticateToken, requireRole('admin'), asyncHandler(async (req, res) => {
     try {
         const { type, threshold, enabled, message } = req.body;
 

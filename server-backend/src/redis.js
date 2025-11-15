@@ -214,3 +214,14 @@ export function subscribe(channel, callback) {
         };
     }
 }
+
+/**
+ * Redis 클라이언트 인스턴스를 반환합니다.
+ * connect-redis 등 다른 모듈에서 사용할 수 있습니다.
+ * @returns {RedisClientType | null} Redis 클라이언트 또는 null
+ * Note: Already exported as a one-liner at line 86
+ */
+// export function getRedisClient() {
+//     return redisClient;
+// }
+

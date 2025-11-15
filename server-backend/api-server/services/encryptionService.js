@@ -1,6 +1,6 @@
 const crypto = require('crypto');
 const bcrypt = require('bcryptjs');
-const logger = require('../../utils/logger');
+const logger = require('../utils/logger');
 
 class EncryptionService {
     constructor() {

@@ -9,7 +9,6 @@ import {
     Typography,
     Card,
     CardContent,
-    Grid,
     Button,
     TextField,
     Rating,
@@ -42,8 +41,10 @@ import {
     TableHead,
     TableRow,
     Tooltip,
-    Badge
+    Badge,
+    Grid
 } from '@mui/material';
+
 import {
     Feedback,
     Star,
@@ -420,8 +421,8 @@ const BetaTestManagement: React.FC = () => {
                         📊 실시간 성능 메트릭
                     </Typography>
 
-                    <Grid container spacing={3}>
-                        <Grid item xs={12} md={6}>
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
+                        <Box sx={{ flex: { xs: '1 1 100%', md: '1 1 calc(50% - 12px)' } }}>
                             <Typography variant="subtitle2" gutterBottom>
                                 페이지 로딩 시간
                             </Typography>
@@ -433,9 +434,9 @@ const BetaTestManagement: React.FC = () => {
                             <Typography variant="body2" color="text.secondary">
                                 {performanceMetrics[0]?.pageLoadTime || 0}초
                             </Typography>
-                        </Grid>
+                        </Box>
 
-                        <Grid item xs={12} md={6}>
+                        <Box sx={{ flex: { xs: '1 1 100%', md: '1 1 calc(50% - 12px)' } }}>
                             <Typography variant="subtitle2" gutterBottom>
                                 API 응답 시간
                             </Typography>
@@ -447,9 +448,9 @@ const BetaTestManagement: React.FC = () => {
                             <Typography variant="body2" color="text.secondary">
                                 {performanceMetrics[0]?.apiResponseTime || 0}초
                             </Typography>
-                        </Grid>
+                        </Box>
 
-                        <Grid item xs={12} md={6}>
+                        <Box sx={{ flex: { xs: '1 1 100%', md: '1 1 calc(50% - 12px)' } }}>
                             <Typography variant="subtitle2" gutterBottom>
                                 메모리 사용량
                             </Typography>
@@ -461,9 +462,9 @@ const BetaTestManagement: React.FC = () => {
                             <Typography variant="body2" color="text.secondary">
                                 {performanceMetrics[0]?.memoryUsage || 0}MB
                             </Typography>
-                        </Grid>
+                        </Box>
 
-                        <Grid item xs={12} md={6}>
+                        <Box sx={{ flex: { xs: '1 1 100%', md: '1 1 calc(50% - 12px)' } }}>
                             <Typography variant="subtitle2" gutterBottom>
                                 사용자 만족도
                             </Typography>
@@ -477,8 +478,8 @@ const BetaTestManagement: React.FC = () => {
                                     {performanceMetrics[0]?.userSatisfaction || 0}/5
                                 </Typography>
                             </Box>
-                        </Grid>
-                    </Grid>
+                        </Box>
+                    </Box>
                 </CardContent>
             </Card>
 
@@ -489,8 +490,8 @@ const BetaTestManagement: React.FC = () => {
                         🔍 피드백 필터
                     </Typography>
 
-                    <Grid container spacing={2}>
-                        <Grid item xs={12} md={6}>
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
+                        <Box sx={{ flex: { xs: '1 1 100%', md: '1 1 calc(50% - 8px)' } }}>
                             <FormControl fullWidth>
                                 <InputLabel>타입</InputLabel>
                                 <Select
@@ -505,9 +506,9 @@ const BetaTestManagement: React.FC = () => {
                                     <MenuItem value="performance_issue">성능 이슈</MenuItem>
                                 </Select>
                             </FormControl>
-                        </Grid>
+                        </Box>
 
-                        <Grid item xs={12} md={6}>
+                        <Box sx={{ flex: { xs: '1 1 100%', md: '1 1 calc(50% - 8px)' } }}>
                             <FormControl fullWidth>
                                 <InputLabel>상태</InputLabel>
                                 <Select
@@ -522,8 +523,8 @@ const BetaTestManagement: React.FC = () => {
                                     <MenuItem value="closed">종료됨</MenuItem>
                                 </Select>
                             </FormControl>
-                        </Grid>
-                    </Grid>
+                        </Box>
+                    </Box>
                 </CardContent>
             </Card>
 
@@ -645,40 +646,40 @@ const BetaTestManagement: React.FC = () => {
                             </Box>
                         </DialogTitle>
                         <DialogContent>
-                            <Grid container spacing={2}>
-                                <Grid item xs={12} md={6}>
+                            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
+                                <Box sx={{ flex: { xs: '1 1 100%', md: '1 1 calc(50% - 8px)' } }}>
                                     <Typography variant="subtitle2">작성자</Typography>
                                     <Typography variant="body2">{selectedFeedback.userName}</Typography>
-                                </Grid>
-                                <Grid item xs={12} md={6}>
+                                </Box>
+                                <Box sx={{ flex: { xs: '1 1 100%', md: '1 1 calc(50% - 8px)' } }}>
                                     <Typography variant="subtitle2">카테고리</Typography>
                                     <Typography variant="body2">{selectedFeedback.category}</Typography>
-                                </Grid>
-                                <Grid item xs={12} md={6}>
+                                </Box>
+                                <Box sx={{ flex: { xs: '1 1 100%', md: '1 1 calc(50% - 8px)' } }}>
                                     <Typography variant="subtitle2">우선순위</Typography>
                                     <Chip
                                         label={selectedFeedback.priority}
                                         color={getPriorityColor(selectedFeedback.priority)}
                                         size="small"
                                     />
-                                </Grid>
-                                <Grid item xs={12} md={6}>
+                                </Box>
+                                <Box sx={{ flex: { xs: '1 1 100%', md: '1 1 calc(50% - 8px)' } }}>
                                     <Typography variant="subtitle2">상태</Typography>
                                     <Chip
                                         label={selectedFeedback.status}
                                         color={getStatusColor(selectedFeedback.status)}
                                         size="small"
                                     />
-                                </Grid>
-                                <Grid item xs={12}>
+                                </Box>
+                                <Box sx={{ width: '100%' }}>
                                     <Typography variant="subtitle2">설명</Typography>
                                     <Typography variant="body2">{selectedFeedback.description}</Typography>
-                                </Grid>
-                                <Grid item xs={12}>
+                                </Box>
+                                <Box sx={{ width: '100%' }}>
                                     <Typography variant="subtitle2">평점</Typography>
                                     <Rating value={selectedFeedback.rating} readOnly />
-                                </Grid>
-                                <Grid item xs={12}>
+                                </Box>
+                                <Box sx={{ width: '100%' }}>
                                     <Typography variant="subtitle2">태그</Typography>
                                     <Box sx={{ mt: 1 }}>
                                         {selectedFeedback.tags.map((tag, index) => (
@@ -691,8 +692,8 @@ const BetaTestManagement: React.FC = () => {
                                             />
                                         ))}
                                     </Box>
-                                </Grid>
-                            </Grid>
+                                </Box>
+                            </Box>
                         </DialogContent>
                         <DialogActions>
                             <Button onClick={() => setSelectedFeedback(null)}>

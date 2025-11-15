@@ -1,5 +1,5 @@
 // DDoS Protection Middleware
-const rateLimit = require('express-rate-limit');
+import rateLimit from 'express-rate-limit';
 
 // IP별 요청 추적
 const ipRequestTracker = new Map();
@@ -301,7 +301,7 @@ function getDDoSStats(req, res) {
     res.json(stats);
 }
 
-module.exports = {
+export {
     ddosProtectionMiddleware,
     createDynamicRateLimit,
     getDDoSStats,

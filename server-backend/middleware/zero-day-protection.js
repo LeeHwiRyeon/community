@@ -1,6 +1,9 @@
 // Zero-Day Vulnerability Protection System (2025년 10월 기준)
-const https = require('https');
-const crypto = require('crypto');
+import https from 'https';
+import crypto from 'crypto';
+import { createRequire } from 'module';
+
+const require = createRequire(import.meta.url);
 
 // 제로데이 보호 설정
 const zeroDayConfig = {
@@ -519,7 +522,7 @@ function extractPackageInfo(req) {
     return null;
 }
 
-module.exports = {
+export {
     ZeroDayProtection,
     zeroDayProtection,
     zeroDayProtectionMiddleware,

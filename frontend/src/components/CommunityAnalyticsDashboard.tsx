@@ -11,7 +11,6 @@
 import React, { useState, useEffect } from 'react';
 import {
     Box,
-    Grid,
     Card,
     CardContent,
     Typography,
@@ -34,7 +33,8 @@ import {
     Switch,
     FormControlLabel,
     Alert,
-    CircularProgress
+    CircularProgress,
+    Grid
 } from '@mui/material';
 import {
     TrendingUp,
@@ -53,7 +53,7 @@ import {
     BarChart,
     PieChart
 } from '@mui/icons-material';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, BarChart as RechartsBarChart, Bar, PieChart as RechartsPieChart, Cell } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, BarChart as RechartsBarChart, Bar, PieChart as RechartsPieChart, Pie as RechartsPie, Cell } from 'recharts';
 
 // 타입 정의
 interface AnalyticsData {
@@ -434,9 +434,9 @@ const CommunityAnalyticsDashboard: React.FC = () => {
             </Box>
 
             {/* 차트 섹션 */}
-            <Grid container spacing={3} sx={{ mb: 3 }}>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3, mb: 3 }}>
                 {/* 사용자 활동 트렌드 */}
-                <Grid item xs={12} md={8}>
+                <Box sx={{ flex: { xs: '1 1 100%', md: '1 1 calc(66.666% - 16px)' } }}>
                     <Card>
                         <CardContent>
                             <Typography variant="h6" gutterBottom>
@@ -455,10 +455,10 @@ const CommunityAnalyticsDashboard: React.FC = () => {
                             </ResponsiveContainer>
                         </CardContent>
                     </Card>
-                </Grid>
+                </Box>
 
                 {/* 인구통계 */}
-                <Grid item xs={12} md={4}>
+                <Box sx={{ flex: { xs: '1 1 100%', md: '1 1 calc(33.333% - 16px)' } }}>
                     <Card>
                         <CardContent>
                             <Typography variant="h6" gutterBottom>
@@ -483,13 +483,13 @@ const CommunityAnalyticsDashboard: React.FC = () => {
                             </ResponsiveContainer>
                         </CardContent>
                     </Card>
-                </Grid>
-            </Grid>
+                </Box>
+            </Box>
 
             {/* 상세 분석 테이블 */}
-            <Grid container spacing={3}>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
                 {/* 인기 콘텐츠 */}
-                <Grid item xs={12} md={6}>
+                <Box sx={{ flex: { xs: '1 1 100%', md: '1 1 calc(50% - 12px)' } }}>
                     <Card>
                         <CardContent>
                             <Typography variant="h6" gutterBottom>
@@ -535,10 +535,10 @@ const CommunityAnalyticsDashboard: React.FC = () => {
                             </TableContainer>
                         </CardContent>
                     </Card>
-                </Grid>
+                </Box>
 
                 {/* 성과 지표 */}
-                <Grid item xs={12} md={6}>
+                <Box sx={{ flex: { xs: '1 1 100%', md: '1 1 calc(50% - 12px)' } }}>
                     <Card>
                         <CardContent>
                             <Typography variant="h6" gutterBottom>
@@ -629,8 +629,8 @@ const CommunityAnalyticsDashboard: React.FC = () => {
                             </Box>
                         </CardContent>
                     </Card>
-                </Grid>
-            </Grid>
+                </Box>
+            </Box>
         </Box>
     );
 };

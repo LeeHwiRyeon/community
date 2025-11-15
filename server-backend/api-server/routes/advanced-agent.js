@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const logger = require('../../utils/logger');
+const logger = require('../utils/logger');
 const advancedAgentService = require('../services/advancedAgentService');
 
 // 에이전트 상태 조회

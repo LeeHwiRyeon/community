@@ -1,7 +1,10 @@
 // Supply Chain Security System (2025년 10월 기준)
-const crypto = require('crypto');
-const fs = require('fs').promises;
-const path = require('path');
+import crypto from 'crypto';
+import fs from 'fs/promises';
+import path from 'path';
+import { createRequire } from 'module';
+
+const require = createRequire(import.meta.url);
 
 // 공급망 보안 설정
 const supplyChainConfig = {
@@ -685,7 +688,7 @@ function extractPackageFromRequest(req) {
     return null;
 }
 
-module.exports = {
+export {
     SupplyChainSecurity,
     supplyChainSecurity,
     supplyChainSecurityMiddleware,

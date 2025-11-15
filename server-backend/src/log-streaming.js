@@ -1,5 +1,6 @@
 import WebSocket, { WebSocketServer } from 'ws';
 import { enhancedLogger } from './enhanced-logger.js';
+import jwt from 'jsonwebtoken';
 
 export function setupLogStreaming(server) {
     // WebSocket 서버 생성
@@ -16,9 +17,9 @@ export function setupLogStreaming(server) {
             clientCount: wss.clients.size
         });
 
-        // 인증 체크 (옵션 - 개발 환경에서는 스킵 가능)
+        // 인증 체크
         if (process.env.NODE_ENV === 'production') {
-            // TODO: 실제 환경에서는 인증 토큰 검증 필요
+            // 프로덕션 환경에서는 인증 토큰 검증 필수
             const authToken = new URL(request.url, 'http://localhost').searchParams.get('token');
             if (!authToken || !isValidLogToken(authToken)) {
                 ws.close(1008, 'Unauthorized');
@@ -101,10 +102,15 @@ function handleLogStreamMessage(ws, message) {
 }
 
 function isValidLogToken(token) {
-    // 개발 환경용 간단한 토큰 검증
-    // 실제 환경에서는 JWT 또는 다른 인증 방식 사용
-    const validTokens = process.env.LOG_STREAM_TOKENS?.split(',') || ['dev-log-token'];
-    return validTokens.includes(token);
+    // JWT 토큰 검증
+    try {
+        jwt.verify(token, process.env.JWT_SECRET);
+        return true;
+    } catch (error) {
+        // JWT 실패 시 환경 변수 토큰으로 폴백
+        const validTokens = process.env.LOG_STREAM_TOKENS?.split(',') || [];
+        return validTokens.includes(token);
+    }
 }
 
 // HTTP 엔드포인트로도 로그 조회 가능

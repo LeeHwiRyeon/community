@@ -35,9 +35,10 @@ import {
     LinearProgress,
     Card,
     CardContent,
-    Grid,
-    Divider
+    Divider,
+    Grid
 } from '@mui/material';
+
 import {
     FilterList as FilterIcon,
     Sort as SortIcon,
@@ -370,11 +371,10 @@ const IntelligentContentFeed: React.FC = () => {
                 low: 0
             };
 
-            if (filters.engagement !== 'all') {
-                filtered = filtered.filter(post =>
-                    post.content_analysis.engagement_potential >= engagementThresholds[filters.engagement as keyof typeof engagementThresholds]
-                );
-            }
+            filtered = filtered.filter(post =>
+                typeof post.content_analysis.engagement_potential === 'number' &&
+                post.content_analysis.engagement_potential >= engagementThresholds[filters.engagement as 'high' | 'medium' | 'low']
+            );
         }
 
         // 품질 점수 필터

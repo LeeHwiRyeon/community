@@ -8,14 +8,14 @@ require('dotenv').config();
 
 const { logger } = require('./utils/logger');
 const { errorHandler } = require('./middleware/errorHandler');
-const { performanceMonitor } = require('../../utils/performance-monitor');
-const { cacheService } = require('../../utils/cache-service');
+// const { performanceMonitor } = require('../../utils/performance-monitor');
+// const { cacheService } = require('../../utils/cache-service');
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/users');
 const roleRoutes = require('./routes/roles');
 const dashboardRoutes = require('./routes/dashboard');
 const notificationRoutes = require('./routes/notifications');
-const performanceRoutes = require('../../routes/performance');
+const performanceRoutes = require('./routes/performance');
 const monitoringRoutes = require('./routes/monitoring');
 const backupRoutes = require('./routes/backup');
 const boardRoutes = require('./routes/boards');
@@ -81,7 +81,7 @@ const autoAgentsManagementV1Routes = require('./routes/autoagents-management-v1'
 const bugManagementEnhancedRoutes = require('./routes/bug-management-enhanced'); // Added for BUG_LOOP_PREVENTION
 const cosplayerStreamerIntegrationRoutes = require('./routes/cosplayer-streamer-integration'); // Added for COMMUNITY_INTEGRATION
 // const userFeedbackRoutes = require('../../routes/user-feedback'); // Added for RELEASE_PREP_008 - 중복 제거
-const monitoringDashboardRoutes = require('../../routes/monitoring-dashboard'); // Added for RELEASE_PREP_009
+// const monitoringDashboardRoutes = require('../../routes/monitoring-dashboard'); // Added for RELEASE_PREP_009 - 잘못된 경로
 const { metricsMiddleware } = require('./middleware/metricsMiddleware');
 const performanceMonitoringService = require('./services/performanceMonitoringService');
 const {
@@ -176,10 +176,10 @@ app.use('/api/', limiter);
 
 // 성능 모니터링 미들웨어
 app.use(metricsMiddleware);
-app.use(performanceMonitor.startRequest.bind(performanceMonitor));
+// app.use(performanceMonitor.startRequest.bind(performanceMonitor));
 
 // 캐시 미들웨어 (GET 요청만)
-app.use('/api', cacheService.cacheMiddleware(600));
+// app.use('/api', cacheService.cacheMiddleware(600));
 
 // Body parsing 미들웨어
 app.use(express.json({ limit: '10mb' }));
@@ -266,7 +266,7 @@ app.use('/api/autoagents-management/v1', autoAgentsManagementV1Routes); // Added
 app.use('/api/bug-management', bugManagementEnhancedRoutes); // Added for BUG_LOOP_PREVENTION
 app.use('/api/community-integration', cosplayerStreamerIntegrationRoutes); // Added for COMMUNITY_INTEGRATION
 // app.use('/api/user-feedback', userFeedbackRoutes); // Added for RELEASE_PREP_008 - 중복 제거
-app.use('/api/monitoring', monitoringDashboardRoutes); // Added for RELEASE_PREP_009
+// app.use('/api/monitoring', monitoringDashboardRoutes); // Added for RELEASE_PREP_009 - 잘못된 경로
 
 // Health check 엔드포인트 (간단한 버전)
 app.get('/api/health', (req, res) => {

@@ -15,7 +15,7 @@ export default {
     testMatch: [
         '<rootDir>/src/**/__tests__/**/*.test.js',
         '<rootDir>/src/**/*.test.js',
-        '<rootDir>/tests/unit/**/*.test.js'
+        '<rootDir>/tests/**/*.test.js'
     ],
     collectCoverageFrom: [
         'src/**/*.js',

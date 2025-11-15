@@ -3,7 +3,7 @@ import { Box, Typography, Container, Card, CardContent } from '@mui/material';
 
 const Dashboard: React.FC = () => {
     return (
-        <Container maxWidth="lg">
+        <Container maxWidth="lg" data-testid="dashboard">
             <Box sx={{ py: 4 }}>
                 <Typography variant="h3" component="h1" gutterBottom>📊 Dashboard</Typography>
 

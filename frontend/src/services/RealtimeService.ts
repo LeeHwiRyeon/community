@@ -251,22 +251,35 @@ export const realtimeService = RealtimeService.getInstance({
 // 실시간 기능별 서비스들
 export class ChatService {
     private realtime: RealtimeService;
+    private encryptionEnabled: boolean = false;
 
     constructor(realtime: RealtimeService) {
         this.realtime = realtime;
     }
 
+    // 🔐 암호화 활성화/비활성화
+    setEncryption(enabled: boolean): void {
+        this.encryptionEnabled = enabled;
+        console.log(`🔐 Chat encryption ${enabled ? 'enabled' : 'disabled'}`);
+    }
+
+    isEncryptionEnabled(): boolean {
+        return this.encryptionEnabled;
+    }
+
     // 💬 채팅 메시지 전송
-    sendMessage(message: string, roomId: string, userId: string): boolean {
+    sendMessage(message: string, roomId: string, userId: string, encrypted?: any): boolean {
         return this.realtime.send('chat_message', {
             message,
             userId,
-            roomId
+            roomId,
+            encrypted: encrypted || null,
+            isEncrypted: !!encrypted
         }, roomId);
     }
 
     // 💬 채팅 메시지 수신
-    onMessage(callback: (data: { message: string; userId: string; timestamp: number }) => void): void {
+    onMessage(callback: (data: { message: string; userId: string; timestamp: number; encrypted?: any; isEncrypted?: boolean }) => void): void {
         this.realtime.on('chat_message', callback);
     }
 

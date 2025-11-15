@@ -1,15 +1,15 @@
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs');
-const rateLimit = require('express-rate-limit');
-const helmet = require('helmet');
-const validator = require('validator');
-const xss = require('xss');
-const mongoSanitize = require('express-mongo-sanitize');
-const { body, validationResult } = require('express-validator');
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcryptjs';
+import rateLimit from 'express-rate-limit';
+import helmet from 'helmet';
+import validator from 'validator';
+import xss from 'xss';
+import mongoSanitize from 'express-mongo-sanitize';
+import { body, validationResult } from 'express-validator';
 
 // Security configuration
 const SECURITY_CONFIG = {
-    JWT_SECRET: process.env.JWT_SECRET || 'your-secret-key',
+    JWT_SECRET: process.env.JWT_SECRET, // No fallback - must be set in .env
     JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN || '24h',
     REFRESH_TOKEN_EXPIRES_IN: process.env.REFRESH_TOKEN_EXPIRES_IN || '7d',
     BCRYPT_ROUNDS: parseInt(process.env.BCRYPT_ROUNDS) || 12,
@@ -18,6 +18,12 @@ const SECURITY_CONFIG = {
     PASSWORD_MIN_LENGTH: parseInt(process.env.PASSWORD_MIN_LENGTH) || 8,
     SESSION_TIMEOUT: parseInt(process.env.SESSION_TIMEOUT) || 30 * 60 * 1000 // 30 minutes
 };
+
+// Validate JWT_SECRET is set
+if (!SECURITY_CONFIG.JWT_SECRET) {
+    console.error('❌ FATAL: JWT_SECRET not set in environment variables');
+    process.exit(1);
+}
 
 // Rate limiting for different endpoints
 const createRateLimit = (windowMs, max, message) => {
@@ -443,7 +449,7 @@ const validatePasswordStrength = (password) => {
     };
 };
 
-module.exports = {
+export {
     SECURITY_CONFIG,
     securityRateLimits,
     inputValidation,

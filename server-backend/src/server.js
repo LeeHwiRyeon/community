@@ -3,16 +3,40 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import session from 'express-session';
+import { RedisStore } from 'connect-redis';
+import cookieParser from 'cookie-parser';
 import router from './routes.js';
 import logger from './logger.js';
 import { initSchema, ensureDatabase, query, getPool } from './db.js';
+import { seedInitialData } from './config/seed-data.js';
 import { runtimeMetrics, recordKeepaliveFailure, recordKeepaliveSuccess } from './metrics-state.js';
 import fs from 'fs';
 import authRouter from './auth/routes.js';
+import encryptionRouter from './routes/encryption.js';
+import searchRouter from './routes/search.js';
+import simpleSearchRouter from './routes/simple-search.js';
+import profileRouter from './routes/profile.js';
+import recommendationsRouter from './routes/recommendations.js';
+import socialRouter from './routes/social.js';
+import dmRouter from './routes/dm.js';
+import groupChatRouter from './routes/group-chat.js';
+import onlineStatusRouter from './routes/online-status.js';
+import moderatorRouter from './routes/moderator.js';
+import followRouter from './routes/follow.js';
+import bookmarksRouter from './routes/bookmarks.js';
+import draftsRouter from './routes/drafts.js';
+import draftAttachmentsRouter from './routes/draft-attachments.js';
+import postMetadataRouter from './routes/post-metadata.js';
+import commentsRouter from './routes/comments.js';
+import notificationsSimpleRouter from './routes/notifications-simple.js';
+import searchSimpleRouter from './routes/search-simple.js';
+import profileSimpleRouter from './routes/profile-simple.js';
+import adminSimpleRouter from './routes/admin-simple.js';
 import { getEnabledProviders, SUPPORTED_PROVIDERS } from './auth/providers.js';
 import { buildAuthMiddleware } from './auth/jwt.js';
 import helmet from 'helmet';
-import { initRedis, zIncrBy, isRedisEnabled } from './redis.js';
+import { initRedis, zIncrBy, isRedisEnabled, getRedisClient } from './redis.js';
 import WebSocket, { WebSocketServer } from 'ws';
 import promClient from 'prom-client';
 import responseTime from 'response-time';
@@ -24,14 +48,20 @@ import {
     preventXSS,
     requestSizeLimiter,
     securityHeaders
-} from './middleware/security.js';
-import { wafMiddleware, getWAFStats } from './middleware/waf.js';
-import { ddosProtectionMiddleware, createDynamicRateLimit, getDDoSStats } from './middleware/ddos-protection.js';
-import { securityMonitor, SecurityEventTypes, SecuritySeverity, securityEventMiddleware } from './middleware/security-monitoring.js';
-import { aiThreatDetector, aiThreatDetectionMiddleware } from './middleware/ai-threat-detection.js';
-import { zeroDayProtection, zeroDayProtectionMiddleware } from './middleware/zero-day-protection.js';
-import { supplyChainSecurity, supplyChainSecurityMiddleware } from './middleware/supply-chain-security.js';
-import { quantumResistantCrypto, quantumResistantCryptoMiddleware } from './middleware/quantum-resistant-crypto.js';
+} from '../middleware/security.js';
+import { csrfProtection } from './middleware/csrf.js';
+import { wafMiddleware, getWAFStats } from '../middleware/waf.js';
+import { ddosProtectionMiddleware, createDynamicRateLimit, getDDoSStats } from '../middleware/ddos-protection.js';
+import { securityMonitor, SecurityEventTypes, SecuritySeverity, securityEventMiddleware } from '../middleware/security-monitoring.js';
+import { runStartupChecks } from './startup-checks.js';
+import { aiThreatDetector, aiThreatDetectionMiddleware } from '../middleware/ai-threat-detection.js';
+import { zeroDayProtection, zeroDayProtectionMiddleware } from '../middleware/zero-day-protection.js';
+import { supplyChainSecurity, supplyChainSecurityMiddleware } from '../middleware/supply-chain-security.js';
+import { quantumResistantCrypto, quantumResistantCryptoMiddleware } from '../middleware/quantum-resistant-crypto.js';
+import { createRequire } from 'module';
+
+// CommonJS 모듈 import를 위한 require
+const require = createRequire(import.meta.url);
 
 // Ensure .env is loaded even when CWD is project root
 const __filename = fileURLToPath(import.meta.url);
@@ -91,10 +121,48 @@ export function createApp() {
         credentials: true, // 荑좏궎 ?덉슜
         optionsSuccessStatus: 200,
         methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-        allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+        allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'X-CSRF-Token']
     };
 
     app.use(cors(corsOptions));
+
+    // Cookie 파서 (CSRF에 필요)
+    app.use(cookieParser());
+
+    // Express 세션 설정 (Redis 저장소 사용)
+    // SESSION_SECRET 필수화
+    const sessionSecret = process.env.SESSION_SECRET || process.env.JWT_SECRET;
+    if (!sessionSecret) {
+        console.error('❌ FATAL: SESSION_SECRET or JWT_SECRET environment variable must be set!');
+        process.exit(1);
+    }
+
+    const sessionConfig = {
+        secret: sessionSecret,
+        resave: false,
+        saveUninitialized: false,
+        cookie: {
+            secure: process.env.NODE_ENV === 'production', // HTTPS에서만
+            httpOnly: true,
+            maxAge: 60 * 60 * 1000, // 1시간
+            sameSite: 'strict'
+        }
+    };
+
+    // Redis가 활성화되어 있으면 Redis 저장소 사용
+    const redisClient = getRedisClient();
+    if (redisClient) {
+        sessionConfig.store = new RedisStore({
+            client: redisClient,
+            prefix: 'sess:',
+            ttl: 60 * 60 // 1시간 (초 단위)
+        });
+        logger.info('✅ Redis 세션 저장소 활성화');
+    } else {
+        logger.warn('⚠️  Redis 미연결 - 메모리 세션 저장소 사용 (개발 환경 전용)');
+    }
+
+    app.use(session(sessionConfig));
 
     // 2025년 고급 보안 미들웨어 체인
     // 1. 보안 모니터링 미들웨어 (최우선)
@@ -112,9 +180,9 @@ export function createApp() {
     // 5. 양자 내성 암호화
     app.use(quantumResistantCryptoMiddleware);
 
-    // 6. DDoS 보호 (WAF보다 먼저)
+    // 6. DDoS 보호 (기본 미들웨어만 사용, 동적 rate limit은 제외)
     app.use(ddosProtectionMiddleware);
-    app.use(createDynamicRateLimit());
+    // app.use(createDynamicRateLimit()); // 동적 생성은 express-rate-limit 최신 버전에서 지원 안됨
 
     // 7. WAF (Web Application Firewall)
     app.use(wafMiddleware);
@@ -129,6 +197,19 @@ export function createApp() {
     app.use(sanitizeInput);
     app.use(preventSQLInjection);
     app.use(preventXSS);
+
+    // 11. CSRF 보호 (상태 변경 요청에 적용)
+    app.use(csrfProtection({
+        autoRefresh: true,
+        refreshThreshold: 0.8,
+        onValidationFailed: (req, error) => {
+            logger.warn(`[CSRF] Validation failed: ${error}`, {
+                method: req.method,
+                path: req.path,
+                ip: req.ip
+            });
+        }
+    }));
 
     // UTF-8 ?몄퐫???ㅼ젙
     app.use(express.json({
@@ -235,6 +316,14 @@ export function createApp() {
         res.setHeader('Access-Control-Expose-Headers', merged);
         next();
     });
+
+    // Upload files static serving
+    const uploadsDir = path.join(__dirname, '../uploads');
+    if (!fs.existsSync(uploadsDir)) {
+        fs.mkdirSync(uploadsDir, { recursive: true });
+    }
+    app.use('/uploads', express.static(uploadsDir));
+
     // (Removed) Legacy static front-end serving ?쒓굅.
     // ?댁쑀: ?꾨줈?앺듃瑜??쒖닔 API 諛깆뿏?쒕줈 ?꾪솚. ?꾩슂 ??ENABLE_STATIC=1 + STATIC_ROOT 濡??щ룄??媛??
     if (process.env.ENABLE_STATIC === '1') {
@@ -264,21 +353,22 @@ export function createApp() {
         }
     });
 
-    app.get('/api/security/waf-stats', (req, res) => {
-        try {
-            const stats = getWAFStats(req, res);
-        } catch (error) {
-            res.status(500).json({ error: 'Failed to get WAF stats' });
-        }
-    });
+    // TODO: Convert CommonJS middleware to ES Module
+    // app.get('/api/security/waf-stats', (req, res) => {
+    //     try {
+    //         const stats = getWAFStats(req, res);
+    //     } catch (error) {
+    //         res.status(500).json({ error: 'Failed to get WAF stats' });
+    //     }
+    // });
 
-    app.get('/api/security/ddos-stats', (req, res) => {
-        try {
-            const stats = getDDoSStats(req, res);
-        } catch (error) {
-            res.status(500).json({ error: 'Failed to get DDoS stats' });
-        }
-    });
+    // app.get('/api/security/ddos-stats', (req, res) => {
+    //     try {
+    //         const stats = getDDoSStats(req, res);
+    //     } catch (error) {
+    //         res.status(500).json({ error: 'Failed to get DDoS stats' });
+    //     }
+    // });
 
     // 2025년 고급 보안 API 엔드포인트
     app.get('/api/security/ai-threat-stats', (req, res) => {
@@ -565,6 +655,9 @@ export function createApp() {
         next();
     });
     app.use('/api', router);
+    app.use('/api/search', searchRouter); // 검색 API 라우터 (Elasticsearch)
+    app.use('/api/simple-search', simpleSearchRouter); // 간단한 검색 API 라우터 (MySQL Full-Text)
+    app.use('/api/users', profileRouter); // 프로필 API 라우터 추가
     logger.info('routes.mounted');
 
     // Translation middleware - English output to Korean display
@@ -641,6 +734,60 @@ export function createApp() {
         }
     } catch { /* ignore logging failures */ }
     app.use('/api/auth', authRouter);
+    app.use('/api/encryption', encryptionRouter);
+    app.use('/api/recommendations', recommendationsRouter); // 추천 API 라우터 추가
+    app.use('/api/social', socialRouter); // 소셜 기능 API 라우터 추가
+    app.use('/api/dm', dmRouter); // DM 시스템 API 라우터 추가
+    app.use('/api/group-chat', groupChatRouter); // 그룹 채팅 API 라우터 추가
+    app.use('/api/online-status', onlineStatusRouter); // 온라인 상태 API 라우터 추가
+    app.use('/api/moderator', moderatorRouter); // 모더레이터 도구 API 라우터 추가
+    app.use('/api/follow', followRouter); // 팔로우 시스템 API 라우터 추가
+    app.use('/api/bookmarks', bookmarksRouter); // 북마크 시스템 API 라우터 추가
+    app.use('/api/posts/drafts', draftsRouter); // 초안 저장 시스템 API 라우터 추가
+    app.use('/api/posts/drafts', draftAttachmentsRouter); // 초안 첨부파일 API 라우터 추가
+    app.use('/api/posts', postMetadataRouter); // 게시글 메타데이터 API 라우터 추가
+    app.use('/api', commentsRouter); // 댓글 시스템 API 라우터 추가
+    app.use('/api/notifications-simple', notificationsSimpleRouter); // 간단한 알림 시스템 API 라우터 추가
+    app.use('/api/search-simple', searchSimpleRouter); // 간단한 검색 시스템 API 라우터 추가
+    app.use('/api/profile-simple', profileSimpleRouter); // 간단한 프로필 시스템 API 라우터 추가
+    app.use('/api/admin-simple', adminSimpleRouter); // 관리자 대시보드 API 라우터 추가
+
+    // 대시보드 라우트 import 및 등록 (dynamic import)
+    import('./routes/dashboard.js')
+        .then(({ default: dashboardRouter }) => {
+            app.use('/api/dashboard', dashboardRouter);
+            logger.info('dashboard.routes.registered');
+        })
+        .catch(err => {
+            logger.error('dashboard.routes.registration.failed', { error: err.message });
+        });
+
+    // 알림 라우트 import 및 등록 (dynamic import)
+    import('./routes/notifications.js')
+        .then(({ default: notificationsRouter }) => {
+            app.use('/api/notifications', notificationsRouter);
+            logger.info('notifications.routes.registered');
+        })
+        .catch(error => {
+            logger.error('notifications.routes.failed', { error: error.message });
+        });
+
+    // Root route - API status endpoint
+    app.get('/', (req, res) => {
+        res.json({
+            status: 'ok',
+            service: 'Community Platform API',
+            version: '1.0.0',
+            timestamp: new Date().toISOString(),
+            endpoints: {
+                health: '/api/health',
+                auth: '/api/auth',
+                posts: '/api/posts',
+                users: '/api/users',
+                notifications: '/api/notifications'
+            }
+        });
+    });
 
     // API 404 handler - must be after all API routes
     app.use('/api/*', (req, res) => {
@@ -724,9 +871,15 @@ export async function bootstrap(options = {}) {
             break;
         } catch { /* not used (kept for any future pre-bind) */ }
     }
+
+    // Run startup security checks FIRST
+    runStartupChecks();
+
     ['DB_HOST', 'DB_USER', 'DB_PASS', 'DB_NAME'].forEach(k => { if (!process.env[k]) console.warn('[warn] missing env', k); });
     await ensureDatabase();
-    await initSchema();
+    // SQLite schema is auto-initialized, no need to call initSchema()
+    // Seed initial data (boards, chat rooms, etc.)
+    seedInitialData();
 
     // Initialize Redis connection
     const redisInfo = await initRedis();
@@ -767,6 +920,8 @@ export async function bootstrap(options = {}) {
             if (mod && mod.default) await mod.default();
         }
         // Seed sample streaming events if no published events exist yet
+        // Temporarily disabled - events table not needed for basic testing
+        /*
         try {
             const eventRows = await query("SELECT COUNT(*) as c FROM events WHERE status='published'");
             // 紐⑥쓽 紐⑤뱶?먯꽌??鍮?諛곗뿴??諛섑솚?섎?濡?湲곕낯媛?泥섎━
@@ -800,6 +955,7 @@ export async function bootstrap(options = {}) {
                 console.log('[init] seeded sample streaming events:', samples.length);
             }
         } catch (e) { console.warn('[init] seed events failed', e.message); }
+        */
     } catch (e) { console.warn('[init] import check failed', e.message); }
 
     const app = createApp();
@@ -835,43 +991,42 @@ export async function bootstrap(options = {}) {
     const serverRef = server;
     const srvApp = app;
 
-    // WebSocket server for real-time notifications
-    const wss = new WebSocketServer({ server });
-    const userConnections = new Map(); // userId -> Set of WebSocket connections
+    // Socket.IO 서버 초기화 (실시간 알림)
+    try {
+        const { default: notificationSocket } = await import('./sockets/notification-socket.js');
+        await notificationSocket.initialize(server);
+        logger.info('notification-socket.initialized');
 
-    wss.on('connection', (ws, req) => {
-        // Extract userId from query params or auth
-        const url = new URL(req.url, 'http://localhost');
-        const userId = url.searchParams.get('userId');
-        if (userId) {
-            if (!userConnections.has(userId)) {
-                userConnections.set(userId, new Set());
-            }
-            userConnections.get(userId).add(ws);
-            ws.on('close', () => {
-                userConnections.get(userId)?.delete(ws);
-                if (userConnections.get(userId)?.size === 0) {
-                    userConnections.delete(userId);
-                }
-            });
-        }
-    });
+        // Export for use in routes
+        srvApp.locals.notificationSocket = notificationSocket;
 
-    // Function to send notification to user
-    function sendNotification(userId, notification) {
-        const connections = userConnections.get(userId);
-        if (connections) {
-            connections.forEach(ws => {
-                if (ws.readyState === WebSocket.OPEN) {
-                    ws.send(JSON.stringify(notification));
-                }
-            });
+        // DM Socket 핸들러 초기화
+        const { initDMSocketHandlers } = await import('./sockets/dm-socket.js');
+        const io = notificationSocket.getIO(); // 기존 Socket.IO 인스턴스 사용
+        if (io) {
+            initDMSocketHandlers(io);
+            srvApp.set('io', io); // Express app에 io 인스턴스 저장
+            logger.info('dm-socket.initialized');
         }
+
+        // 그룹 채팅 Socket 핸들러 초기화
+        const { initGroupChatSocketHandlers } = await import('./sockets/group-chat-socket.js');
+        if (io) {
+            initGroupChatSocketHandlers(io);
+            logger.info('group-chat-socket.initialized');
+        }
+
+        // 온라인 상태 Socket 핸들러 초기화
+        const { initOnlineStatusSocket } = await import('./sockets/online-status-socket.js');
+        if (io) {
+            initOnlineStatusSocket(io);
+            logger.info('online-status-socket.initialized');
+        }
+    } catch (error) {
+        logger.error('notification-socket.init.failed', { error: error.message });
+        // Socket.IO 실패해도 서버는 계속 실행
     }
 
-    // Export for use in routes
-    srvApp.locals.wss = wss;
-    srvApp.locals.sendNotification = sendNotification;
     // Wrap original post-listen logic in immediate async block
     (async () => {
         logger.event('server.listen', { port: PORT });

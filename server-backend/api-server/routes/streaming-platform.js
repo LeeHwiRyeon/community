@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const logger = require('../../utils/logger');
+const logger = require('../utils/logger');
 
 // 스트리밍 플랫폼 관련 데이터 (실제로는 데이터베이스에서 가져옴)
 let streamers = [];

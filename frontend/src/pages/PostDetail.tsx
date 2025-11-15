@@ -35,9 +35,18 @@ import {
     MoreVert as MoreIcon,
     Edit as EditIcon,
     Delete as DeleteIcon,
-    Report as ReportIcon
+    Report as ReportIcon,
+    ChatBubbleOutline as ChatBubbleOutlineIcon
 } from '@mui/icons-material';
+import OnlineStatusDot from '../components/OnlineStatusDot';
 import VotingSystem from '../components/VotingSystem';
+import { SimilarPosts } from '../components/recommendations/SimilarPosts';
+import PostDetailSkeleton from '../components/UI/PostDetailSkeleton';
+import CommentSkeleton from '../components/UI/CommentSkeleton';
+import EmptyState from '../components/UI/EmptyState';
+import { useSnackbar } from '../contexts/SnackbarContext';
+import { FadeIn, SlideUp, AnimatedList, AnimatedListItem } from '../components/UI/AnimatedComponents';
+import BookmarkButton from '../components/BookmarkButton';
 
 // 게시글 및 댓글 데이터 타입 정의
 interface Post {
@@ -68,13 +77,43 @@ interface Comment {
     replies?: Comment[];
 }
 
+// 백엔드 응답을 프론트엔드 형식으로 변환
+const mapPostFromBackend = (backendPost: any): Post => ({
+    id: backendPost.id,
+    boardId: backendPost.board_id || backendPost.board,
+    boardName: backendPost.board_name || backendPost.boardName || '',
+    title: backendPost.title,
+    content: backendPost.content || '',
+    author: backendPost.author || 'Anonymous',
+    authorId: backendPost.author_id || backendPost.authorId || '',
+    views: backendPost.views || 0,
+    commentsCount: backendPost.comment_count || backendPost.commentsCount || 0,
+    createdAt: backendPost.created_at || backendPost.createdAt || new Date().toISOString(),
+    updatedAt: backendPost.updated_at || backendPost.updatedAt || new Date().toISOString(),
+    category: backendPost.category || '',
+    thumb: backendPost.thumb || backendPost.hero_media || ''
+});
+
+const mapCommentFromBackend = (backendComment: any): Comment => ({
+    id: backendComment.id?.toString() || '',
+    postId: backendComment.post_id || backendComment.postId || '',
+    content: backendComment.content || '',
+    author: backendComment.author || 'Anonymous',
+    authorId: backendComment.user_id?.toString() || backendComment.authorId || '',
+    parentId: backendComment.parent_id?.toString() || backendComment.parentId || undefined,
+    createdAt: backendComment.created_at || backendComment.createdAt || new Date().toISOString(),
+    updatedAt: backendComment.updated_at || backendComment.updatedAt || new Date().toISOString()
+});
+
 const PostDetail: React.FC = () => {
     const { postId } = useParams<{ postId: string }>();
     const navigate = useNavigate();
+    const { showSuccess, showError } = useSnackbar();
 
     const [post, setPost] = useState<Post | null>(null);
     const [comments, setComments] = useState<Comment[]>([]);
     const [loading, setLoading] = useState(true);
+    const [commentsLoading, setCommentsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [commentDialogOpen, setCommentDialogOpen] = useState(false);
     const [replyingTo, setReplyingTo] = useState<string | null>(null);
@@ -95,7 +134,8 @@ const PostDetail: React.FC = () => {
             const response = await fetch(`/api/posts/${postId}`);
             if (response.ok) {
                 const data = await response.json();
-                setPost(data.data);
+                // 백엔드는 객체를 직접 반환함 ({data: {}} 형식 아님)
+                setPost(mapPostFromBackend(data));
             } else {
                 // 모의 게시글 데이터
                 const mockPost: Post = {
@@ -147,10 +187,13 @@ const PostDetail: React.FC = () => {
     // 댓글 로딩
     const loadComments = async () => {
         try {
+            setCommentsLoading(true);
             const response = await fetch(`/api/posts/${postId}/comments`);
             if (response.ok) {
                 const data = await response.json();
-                setComments(data.data || []);
+                // 백엔드는 배열을 직접 반환함 ({data: []} 형식 아님)
+                const mappedComments = (Array.isArray(data) ? data : []).map(mapCommentFromBackend);
+                setComments(mappedComments);
             } else {
                 // 모의 댓글 데이터
                 const mockComments: Comment[] = [
@@ -198,12 +241,17 @@ const PostDetail: React.FC = () => {
             }
         } catch (err) {
             console.error('댓글 로딩 오류:', err);
+        } finally {
+            setCommentsLoading(false);
         }
     };
 
     // 댓글 작성
     const createComment = async () => {
-        if (!newComment.trim()) return;
+        if (!newComment.trim()) {
+            showError('댓글 내용을 입력해주세요.');
+            return;
+        }
 
         try {
             const commentData = {
@@ -221,12 +269,16 @@ const PostDetail: React.FC = () => {
 
             if (response.ok) {
                 await loadComments();
-                setNewComment('');
                 setCommentDialogOpen(false);
                 setReplyingTo(null);
+                setNewComment('');
+                showSuccess('댓글이 성공적으로 작성되었습니다!');
+            } else {
+                showError('댓글 작성에 실패했습니다.');
             }
         } catch (err) {
             console.error('댓글 작성 오류:', err);
+            showError('댓글 작성 중 오류가 발생했습니다.');
         }
     };
 
@@ -235,7 +287,16 @@ const PostDetail: React.FC = () => {
         <Box key={comment.id} sx={{ ml: isReply ? 4 : 0 }}>
             <ListItem alignItems="flex-start">
                 <ListItemAvatar>
-                    <Avatar>{comment.author.charAt(0)}</Avatar>
+                    <Box sx={{ position: 'relative' }}>
+                        <Avatar>{comment.author.charAt(0)}</Avatar>
+                        {comment.authorId && (
+                            <OnlineStatusDot
+                                userId={parseInt(comment.authorId)}
+                                size="sm"
+                                position="bottom-right"
+                            />
+                        )}
+                    </Box>
                 </ListItemAvatar>
                 <ListItemText
                     primary={
@@ -283,8 +344,8 @@ const PostDetail: React.FC = () => {
     if (loading) {
         return (
             <Container maxWidth="lg">
-                <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '50vh' }}>
-                    <CircularProgress size={60} />
+                <Box sx={{ py: 4 }}>
+                    <PostDetailSkeleton />
                 </Box>
             </Container>
         );
@@ -294,7 +355,16 @@ const PostDetail: React.FC = () => {
         return (
             <Container maxWidth="lg">
                 <Box sx={{ py: 4 }}>
-                    <Alert severity="error">{error}</Alert>
+                    <Alert
+                        severity="error"
+                        action={
+                            <Button color="inherit" size="small" onClick={() => window.location.reload()}>
+                                재시도
+                            </Button>
+                        }
+                    >
+                        {error}
+                    </Alert>
                 </Box>
             </Container>
         );
@@ -323,90 +393,115 @@ const PostDetail: React.FC = () => {
                 </Button>
 
                 {/* 게시글 내용 */}
-                <Card sx={{ mb: 3 }}>
-                    <CardContent>
-                        {/* 게시글 헤더 */}
-                        <Box sx={{ mb: 3 }}>
-                            <Typography variant="h4" component="h1" gutterBottom>
-                                {post.title}
+                <FadeIn delay={0.1}>
+                    <Card sx={{ mb: 3 }}>
+                        <CardContent>
+                            {/* 게시글 헤더 */}
+                            <Box sx={{ mb: 3 }}>
+                                <Typography variant="h4" component="h1" gutterBottom>
+                                    {post.title}
+                                </Typography>
+
+                                <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', flexWrap: 'wrap', mb: 2 }}>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                                        <PersonIcon sx={{ fontSize: 16 }} />
+                                        <Typography variant="body2">{post.author}</Typography>
+                                    </Box>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                                        <ScheduleIcon sx={{ fontSize: 16 }} />
+                                        <Typography variant="body2">
+                                            {new Date(post.createdAt).toLocaleString('ko-KR')}
+                                        </Typography>
+                                    </Box>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                                        <ViewIcon sx={{ fontSize: 16 }} />
+                                        <Typography variant="body2">{post.views}</Typography>
+                                    </Box>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                                        <CommentIcon sx={{ fontSize: 16 }} />
+                                        <Typography variant="body2">{post.commentsCount}</Typography>
+                                    </Box>
+                                    {post.category && (
+                                        <Chip label={post.category} size="small" variant="outlined" />
+                                    )}
+                                </Box>
+
+                                {/* 투표 시스템 */}
+                                <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', mb: 2 }}>
+                                    <VotingSystem postId={post.id} type="simple" />
+                                    <BookmarkButton
+                                        postId={parseInt(post.id, 10)}
+                                        postTitle={post.title}
+                                        size="md"
+                                        showFolderMenu={true}
+                                    />
+                                </Box>
+                            </Box>
+
+                            <Divider sx={{ mb: 3 }} />
+
+                            {/* 게시글 본문 */}
+                            <Typography
+                                variant="body1"
+                                sx={{
+                                    whiteSpace: 'pre-wrap',
+                                    lineHeight: 1.8,
+                                    '& h2': { fontSize: '1.5rem', fontWeight: 'bold', mt: 3, mb: 2 },
+                                    '& h3': { fontSize: '1.25rem', fontWeight: 'bold', mt: 2, mb: 1 }
+                                }}
+                            >
+                                {post.content}
                             </Typography>
-
-                            <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', flexWrap: 'wrap', mb: 2 }}>
-                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                                    <PersonIcon sx={{ fontSize: 16 }} />
-                                    <Typography variant="body2">{post.author}</Typography>
-                                </Box>
-                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                                    <ScheduleIcon sx={{ fontSize: 16 }} />
-                                    <Typography variant="body2">
-                                        {new Date(post.createdAt).toLocaleString('ko-KR')}
-                                    </Typography>
-                                </Box>
-                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                                    <ViewIcon sx={{ fontSize: 16 }} />
-                                    <Typography variant="body2">{post.views}</Typography>
-                                </Box>
-                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                                    <CommentIcon sx={{ fontSize: 16 }} />
-                                    <Typography variant="body2">{post.commentsCount}</Typography>
-                                </Box>
-                                {post.category && (
-                                    <Chip label={post.category} size="small" variant="outlined" />
-                                )}
-                            </Box>
-
-                            {/* 투표 시스템 */}
-                            <Box sx={{ mb: 2 }}>
-                                <VotingSystem postId={post.id} type="simple" />
-                            </Box>
-                        </Box>
-
-                        <Divider sx={{ mb: 3 }} />
-
-                        {/* 게시글 본문 */}
-                        <Typography
-                            variant="body1"
-                            sx={{
-                                whiteSpace: 'pre-wrap',
-                                lineHeight: 1.8,
-                                '& h2': { fontSize: '1.5rem', fontWeight: 'bold', mt: 3, mb: 2 },
-                                '& h3': { fontSize: '1.25rem', fontWeight: 'bold', mt: 2, mb: 1 }
-                            }}
-                        >
-                            {post.content}
-                        </Typography>
-                    </CardContent>
-                </Card>
+                        </CardContent>
+                    </Card>
+                </FadeIn>
 
                 {/* 댓글 섹션 */}
-                <Card>
-                    <CardContent>
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                            <Typography variant="h5" sx={{ display: 'flex', alignItems: 'center' }}>
-                                <CommentIcon sx={{ mr: 1 }} />
-                                댓글 ({comments.length})
-                            </Typography>
-                            <Button
-                                variant="contained"
-                                onClick={() => setCommentDialogOpen(true)}
-                            >
-                                댓글 작성
-                            </Button>
-                        </Box>
-
-                        {comments.length === 0 ? (
-                            <Box sx={{ textAlign: 'center', py: 4 }}>
-                                <Typography variant="body1" color="text.secondary">
-                                    아직 댓글이 없습니다. 첫 번째 댓글을 작성해보세요!
+                <SlideUp delay={0.2}>
+                    <Card>
+                        <CardContent>
+                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                                <Typography variant="h5" sx={{ display: 'flex', alignItems: 'center' }}>
+                                    <CommentIcon sx={{ mr: 1 }} />
+                                    댓글 ({comments.length})
                                 </Typography>
+                                <Button
+                                    variant="contained"
+                                    onClick={() => setCommentDialogOpen(true)}
+                                >
+                                    댓글 작성
+                                </Button>
                             </Box>
-                        ) : (
-                            <List>
-                                {comments.map(comment => renderComment(comment))}
-                            </List>
-                        )}
-                    </CardContent>
-                </Card>
+
+                            <Divider sx={{ my: 2 }} />
+
+                            {commentsLoading ? (
+                                <CommentSkeleton count={3} />
+                            ) : comments.length === 0 ? (
+                                <EmptyState
+                                    icon={<ChatBubbleOutlineIcon />}
+                                    title="아직 댓글이 없습니다"
+                                    description="첫 번째 댓글을 작성해보세요!"
+                                    action={{
+                                        label: '댓글 작성하기',
+                                        onClick: () => setCommentDialogOpen(true)
+                                    }}
+                                    height={300}
+                                />
+                            ) : (
+                                <AnimatedList>
+                                    <List>
+                                        {comments.map(comment => (
+                                            <AnimatedListItem key={comment.id}>
+                                                {renderComment(comment)}
+                                            </AnimatedListItem>
+                                        ))}
+                                    </List>
+                                </AnimatedList>
+                            )}
+                        </CardContent>
+                    </Card>
+                </SlideUp>
 
                 {/* 댓글 작성 다이얼로그 */}
                 <Dialog open={commentDialogOpen} onClose={() => setCommentDialogOpen(false)} maxWidth="md" fullWidth>
@@ -461,6 +556,13 @@ const PostDetail: React.FC = () => {
                         신고
                     </MenuItem>
                 </Menu>
+
+                {/* 유사 게시물 추천 섹션 */}
+                {post && (
+                    <Box sx={{ mt: 4 }}>
+                        <SimilarPosts postId={parseInt(post.id)} limit={5} />
+                    </Box>
+                )}
 
                 {/* 푸터 */}
                 <Box sx={{ mt: 4, p: 2, bgcolor: 'grey.50', borderRadius: 2, textAlign: 'center' }}>

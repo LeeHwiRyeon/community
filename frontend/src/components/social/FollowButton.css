@@ -1,0 +1,61 @@
+/* FollowButton.css */
+
+.follow-button {
+    transition: all 0.2s ease-in-out;
+    font-weight: 500;
+    text-transform: none;
+}
+
+.follow-button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.follow-button.not-following {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.follow-button.not-following:hover {
+    background: linear-gradient(135deg, #5568d3 0%, #673896 100%);
+}
+
+.follow-button.following {
+    border-color: #667eea;
+    color: #667eea;
+}
+
+.follow-button.following:hover {
+    border-color: #dc3545;
+    color: #dc3545;
+    background-color: rgba(220, 53, 69, 0.04);
+}
+
+/* 다크 모드 */
+@media (prefers-color-scheme: dark) {
+    .follow-button.not-following {
+        background: linear-gradient(135deg, #7c91f0 0%, #9066b8 100%);
+    }
+
+    .follow-button.not-following:hover {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .follow-button.following {
+        border-color: #7c91f0;
+        color: #7c91f0;
+    }
+
+    .follow-button.following:hover {
+        border-color: #e85563;
+        color: #e85563;
+        background-color: rgba(232, 85, 99, 0.08);
+    }
+}
+
+/* 반응형 */
+@media (max-width: 600px) {
+    .follow-button {
+        min-width: 80px;
+    }
+}

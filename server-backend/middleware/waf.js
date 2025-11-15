@@ -1,5 +1,5 @@
 // Web Application Firewall (WAF) Middleware
-const rateLimit = require('express-rate-limit');
+import rateLimit from 'express-rate-limit';
 
 // 공격 패턴 데이터베이스
 const attackPatterns = {
@@ -277,7 +277,7 @@ function getWAFStats(req, res) {
     });
 }
 
-module.exports = {
+export {
     wafMiddleware,
     getWAFStats,
     attackPatterns,

@@ -1,6 +1,6 @@
-const express = require('express');
-const { body, validationResult } = require('express-validator');
-const { TranslationService } = require('../middleware/translation.js');
+import express from 'express';
+import { body, validationResult } from 'express-validator';
+import { TranslationService } from '../middleware/translation.js';
 
 const router = express.Router();
 const translationService = new TranslationService();
@@ -181,4 +181,4 @@ router.get('/stats', async (req, res) => {
     }
 });
 
-module.exports = router;
+export default router;

@@ -3,7 +3,7 @@ const { asyncHandler } = require('../middleware/errorHandler');
 const { sequelize } = require('../config/database');
 const { DataTypes } = require('sequelize');
 const { logger } = require('../utils/logger');
-const { protect, authorize } = require('../middleware/authMiddleware');
+const { authenticateToken, requireRole } = require('../middleware/authMiddleware');
 
 const router = express.Router();
 
@@ -156,7 +156,7 @@ const ChatRoomMember = sequelize.define('ChatRoomMember', {
 });
 
 // 채팅방 목록 조회
-router.get('/rooms', protect, asyncHandler(async (req, res) => {
+router.get('/rooms', authenticateToken, asyncHandler(async (req, res) => {
     try {
         const { type = 'all', page = 1, limit = 20 } = req.query;
         const userId = req.user.id;
@@ -202,7 +202,7 @@ router.get('/rooms', protect, asyncHandler(async (req, res) => {
 }));
 
 // 채팅방 생성
-router.post('/rooms', protect, asyncHandler(async (req, res) => {
+router.post('/rooms', authenticateToken, asyncHandler(async (req, res) => {
     try {
         const { name, description, type = 'public', color, avatar_url, max_members = 0 } = req.body;
         const userId = req.user.id;
@@ -246,7 +246,7 @@ router.post('/rooms', protect, asyncHandler(async (req, res) => {
 }));
 
 // 특정 채팅방 조회
-router.get('/rooms/:roomId', protect, asyncHandler(async (req, res) => {
+router.get('/rooms/:roomId', authenticateToken, asyncHandler(async (req, res) => {
     try {
         const { roomId } = req.params;
         const userId = req.user.id;
@@ -281,7 +281,7 @@ router.get('/rooms/:roomId', protect, asyncHandler(async (req, res) => {
 }));
 
 // 채팅방 수정
-router.put('/rooms/:roomId', protect, asyncHandler(async (req, res) => {
+router.put('/rooms/:roomId', authenticateToken, asyncHandler(async (req, res) => {
     try {
         const { roomId } = req.params;
         const { name, description, color, avatar_url, max_members } = req.body;
@@ -334,7 +334,7 @@ router.put('/rooms/:roomId', protect, asyncHandler(async (req, res) => {
 }));
 
 // 채팅방 삭제
-router.delete('/rooms/:roomId', protect, asyncHandler(async (req, res) => {
+router.delete('/rooms/:roomId', authenticateToken, asyncHandler(async (req, res) => {
     try {
         const { roomId } = req.params;
         const userId = req.user.id;
@@ -380,7 +380,7 @@ router.delete('/rooms/:roomId', protect, asyncHandler(async (req, res) => {
 }));
 
 // 채팅방 참여
-router.post('/rooms/:roomId/join', protect, asyncHandler(async (req, res) => {
+router.post('/rooms/:roomId/join', authenticateToken, asyncHandler(async (req, res) => {
     try {
         const { roomId } = req.params;
         const userId = req.user.id;
@@ -451,7 +451,7 @@ router.post('/rooms/:roomId/join', protect, asyncHandler(async (req, res) => {
 }));
 
 // 채팅방 나가기
-router.post('/rooms/:roomId/leave', protect, asyncHandler(async (req, res) => {
+router.post('/rooms/:roomId/leave', authenticateToken, asyncHandler(async (req, res) => {
     try {
         const { roomId } = req.params;
         const userId = req.user.id;
@@ -491,7 +491,7 @@ router.post('/rooms/:roomId/leave', protect, asyncHandler(async (req, res) => {
 }));
 
 // 채팅방 멤버 목록 조회
-router.get('/rooms/:roomId/members', protect, asyncHandler(async (req, res) => {
+router.get('/rooms/:roomId/members', authenticateToken, asyncHandler(async (req, res) => {
     try {
         const { roomId } = req.params;
         const userId = req.user.id;
@@ -527,7 +527,7 @@ router.get('/rooms/:roomId/members', protect, asyncHandler(async (req, res) => {
 }));
 
 // 메시지 목록 조회
-router.get('/rooms/:roomId/messages', protect, asyncHandler(async (req, res) => {
+router.get('/rooms/:roomId/messages', authenticateToken, asyncHandler(async (req, res) => {
     try {
         const { roomId } = req.params;
         const { page = 1, limit = 50, before } = req.query;
@@ -587,7 +587,7 @@ router.get('/rooms/:roomId/messages', protect, asyncHandler(async (req, res) => 
 }));
 
 // 메시지 전송
-router.post('/rooms/:roomId/messages', protect, asyncHandler(async (req, res) => {
+router.post('/rooms/:roomId/messages', authenticateToken, asyncHandler(async (req, res) => {
     try {
         const { roomId } = req.params;
         const { content, message_type = 'text', file_url, file_name, file_size, mime_type, reply_to_id } = req.body;
@@ -638,7 +638,7 @@ router.post('/rooms/:roomId/messages', protect, asyncHandler(async (req, res) =>
 }));
 
 // 메시지 수정
-router.put('/messages/:messageId', protect, asyncHandler(async (req, res) => {
+router.put('/messages/:messageId', authenticateToken, asyncHandler(async (req, res) => {
     try {
         const { messageId } = req.params;
         const { content } = req.body;
@@ -681,7 +681,7 @@ router.put('/messages/:messageId', protect, asyncHandler(async (req, res) => {
 }));
 
 // 메시지 삭제
-router.delete('/messages/:messageId', protect, asyncHandler(async (req, res) => {
+router.delete('/messages/:messageId', authenticateToken, asyncHandler(async (req, res) => {
     try {
         const { messageId } = req.params;
         const userId = req.user.id;
@@ -713,7 +713,7 @@ router.delete('/messages/:messageId', protect, asyncHandler(async (req, res) => 
 }));
 
 // 메시지 읽음 처리
-router.post('/rooms/:roomId/read', protect, asyncHandler(async (req, res) => {
+router.post('/rooms/:roomId/read', authenticateToken, asyncHandler(async (req, res) => {
     try {
         const { roomId } = req.params;
         const userId = req.user.id;

@@ -1,7 +1,7 @@
-const express = require('express');
-const Todo = require('../models/Todo');
-const auth = require('../middleware/auth');
-const { body, validationResult, query } = require('express-validator');
+import express from 'express';
+import Todo from '../models/Todo.js';
+import auth from '../middleware/auth.js';
+import { body, validationResult, query } from 'express-validator';
 
 const router = express.Router();
 
@@ -390,4 +390,4 @@ router.get('/stats/overview', auth, async (req, res) => {
     }
 });
 
-module.exports = router;
+export default router;

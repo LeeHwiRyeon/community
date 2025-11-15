@@ -1,6 +1,6 @@
 // Advanced Encryption and Key Management
-const crypto = require('crypto');
-const bcrypt = require('bcryptjs');
+import crypto from 'crypto';
+import bcrypt from 'bcryptjs';
 
 // 암호화 설정
 const encryptionConfig = {
@@ -68,7 +68,7 @@ function encrypt(text, keyId = null) {
         getCurrentKey();
 
     const iv = crypto.randomBytes(encryptionConfig.ivLength);
-    const cipher = crypto.createCipher(encryptionConfig.algorithm, key);
+    const cipher = crypto.createCipheriv(encryptionConfig.algorithm, key, iv);
     cipher.setAAD(Buffer.from(keyId || currentKeyId, 'utf8'));
 
     let encrypted = cipher.update(text, 'utf8', 'hex');
@@ -94,7 +94,7 @@ function decrypt(encryptedData) {
     }
 
     const key = keyStore.get(keyId).key;
-    const decipher = crypto.createDecipher(algorithm, key);
+    const decipher = crypto.createDecipheriv(algorithm, key, Buffer.from(iv, 'hex'));
     decipher.setAAD(Buffer.from(keyId, 'utf8'));
     decipher.setAuthTag(Buffer.from(tag, 'hex'));
 
@@ -141,7 +141,7 @@ function encryptFile(fileBuffer, keyId = null) {
         getCurrentKey();
 
     const iv = crypto.randomBytes(encryptionConfig.ivLength);
-    const cipher = crypto.createCipher(encryptionConfig.algorithm, key);
+    const cipher = crypto.createCipheriv(encryptionConfig.algorithm, key, iv);
     cipher.setAAD(Buffer.from(keyId || currentKeyId, 'utf8'));
 
     const encrypted = Buffer.concat([
@@ -169,7 +169,7 @@ function decryptFile(encryptedFileData) {
     }
 
     const key = keyStore.get(keyId).key;
-    const decipher = crypto.createDecipher(algorithm, key);
+    const decipher = crypto.createDecipheriv(algorithm, key, Buffer.from(iv, 'hex'));
     decipher.setAAD(Buffer.from(keyId, 'utf8'));
     decipher.setAuthTag(Buffer.from(tag, 'hex'));
 
@@ -267,7 +267,7 @@ if (keyStore.size === 0) {
     currentKeyId = keyId;
 }
 
-module.exports = {
+export {
     // 암호화/복호화
     encrypt,
     decrypt,

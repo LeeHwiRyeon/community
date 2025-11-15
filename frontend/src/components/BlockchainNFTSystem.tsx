@@ -39,7 +39,7 @@ import {
   TableHead,
   TableRow
 } from '@mui/material';
-import Grid from '@mui/material/Grid';
+import Grid2 from '@mui/material/Grid';
 import {
   AccountBalanceWallet,
   Add,
@@ -204,9 +204,9 @@ const BlockchainNFTSystem: React.FC = () => {
           <CircularProgress />
         </Box>
       ) : (
-        <Grid container spacing={3}>
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
           {filteredNFTs.map((nft) => (
-            <Grid item xs={12} sm={6} md={4} lg={3} key={nft.id}>
+            <Box sx={{ flex: { xs: '1 1 100%', sm: '1 1 calc(50% - 12px)', md: '1 1 calc(33.333% - 16px)', lg: '1 1 calc(25% - 18px)' } }} key={nft.id}>
               <Card
                 sx={{
                   height: '100%',
@@ -279,9 +279,9 @@ const BlockchainNFTSystem: React.FC = () => {
                   </Box>
                 </CardContent>
               </Card>
-            </Grid>
+            </Box>
           ))}
-        </Grid>
+        </Box>
       )}
 
       {/* NFT 생성 다이얼로그 */}

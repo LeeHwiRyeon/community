@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const collaborationService = require('../services/collaborationService');
-const logger = require('../../utils/logger');
+const logger = require('../utils/logger');
 
 // Get room statistics
 router.get('/rooms/:roomId/stats', (req, res) => {

@@ -1,7 +1,7 @@
 import React from 'react';
 import { DesignSystem } from '../../styles/design-system';
 
-interface ModernButtonProps {
+interface ModernButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     children: React.ReactNode;
     variant?: 'primary' | 'secondary' | 'ghost' | 'success' | 'warning' | 'error';
     size?: 'sm' | 'md' | 'lg';
@@ -27,6 +27,7 @@ const ModernButton: React.FC<ModernButtonProps> = ({
     className = '',
     type = 'button',
     style = {},
+    ...rest
 }) => {
     const getVariantStyles = () => {
         switch (variant) {
@@ -141,6 +142,7 @@ const ModernButton: React.FC<ModernButtonProps> = ({
             style={buttonStyles}
             onClick={disabled || loading ? undefined : onClick}
             disabled={disabled || loading}
+            {...rest}
         >
             <div
                 style={{

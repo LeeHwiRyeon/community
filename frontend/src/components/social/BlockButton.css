@@ -1,0 +1,54 @@
+/**
+ * BlockButton Styles
+ */
+
+.block-button {
+    transition: all 0.2s ease-in-out;
+}
+
+.block-button.not-blocked {
+    border-color: var(--error-color, #d32f2f);
+}
+
+.block-button.not-blocked:hover {
+    background-color: var(--error-color, #d32f2f);
+    border-color: var(--error-color, #d32f2f);
+    color: white;
+}
+
+.block-button.blocked {
+    background-color: var(--gray-200, #e0e0e0);
+    color: var(--text-secondary, #666);
+}
+
+.block-button.blocked:hover {
+    background-color: var(--gray-300, #bdbdbd);
+}
+
+.block-icon-button.not-blocked {
+    color: var(--error-color, #d32f2f);
+}
+
+.block-icon-button.blocked {
+    color: var(--text-secondary, #666);
+}
+
+.block-icon-button:hover {
+    background-color: rgba(211, 47, 47, 0.08);
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    .block-button.blocked {
+        background-color: var(--gray-800, #424242);
+        color: var(--text-secondary-dark, #aaa);
+    }
+
+    .block-button.blocked:hover {
+        background-color: var(--gray-700, #616161);
+    }
+
+    .block-icon-button.blocked {
+        color: var(--text-secondary-dark, #aaa);
+    }
+}

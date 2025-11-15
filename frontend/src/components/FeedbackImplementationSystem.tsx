@@ -9,7 +9,6 @@ import {
     Typography,
     Card,
     CardContent,
-    Grid,
     Button,
     LinearProgress,
     CircularProgress,
@@ -39,6 +38,7 @@ import {
     Slider,
     Tabs,
     Tab,
+    Grid,
     Accordion,
     AccordionSummary,
     AccordionDetails,
@@ -56,6 +56,7 @@ import {
     Radio,
     FormControlLabel as MuiFormControlLabel
 } from '@mui/material';
+
 import {
     Timeline,
     TimelineItem,
@@ -150,7 +151,7 @@ import {
     ZoomOut,
     GetApp,
     Publish,
-    Deploy,
+    Rocket as Deploy,
     Launch,
     PlayArrow,
     Pause,
@@ -769,8 +770,8 @@ const FeedbackImplementationSystem: React.FC = () => {
             )}
 
             {/* 통계 카드 */}
-            <Grid container spacing={3} sx={{ mb: 3 }}>
-                <Grid item xs={12} sm={6} md={3}>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mb: 3 }}>
+                <Box sx={{ flex: { xs: '1 1 100%', sm: '1 1 calc(50% - 12px)', md: '1 1 calc(25% - 18px)' } }}>
                     <Card>
                         <CardContent>
                             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -786,9 +787,9 @@ const FeedbackImplementationSystem: React.FC = () => {
                             </Box>
                         </CardContent>
                     </Card>
-                </Grid>
+                </Box>
 
-                <Grid item xs={12} sm={6} md={3}>
+                <Box sx={{ flex: { xs: '1 1 100%', sm: '1 1 calc(50% - 12px)', md: '1 1 calc(25% - 18px)' } }}>
                     <Card>
                         <CardContent>
                             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -804,9 +805,9 @@ const FeedbackImplementationSystem: React.FC = () => {
                             </Box>
                         </CardContent>
                     </Card>
-                </Grid>
+                </Box>
 
-                <Grid item xs={12} sm={6} md={3}>
+                <Box sx={{ flex: { xs: '1 1 100%', sm: '1 1 calc(50% - 12px)', md: '1 1 calc(25% - 18px)' } }}>
                     <Card>
                         <CardContent>
                             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -822,9 +823,9 @@ const FeedbackImplementationSystem: React.FC = () => {
                             </Box>
                         </CardContent>
                     </Card>
-                </Grid>
+                </Box>
 
-                <Grid item xs={12} sm={6} md={3}>
+                <Box sx={{ flex: { xs: '1 1 100%', sm: '1 1 calc(50% - 12px)', md: '1 1 calc(25% - 18px)' } }}>
                     <Card>
                         <CardContent>
                             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -840,8 +841,8 @@ const FeedbackImplementationSystem: React.FC = () => {
                             </Box>
                         </CardContent>
                     </Card>
-                </Grid>
-            </Grid>
+                </Box>
+            </Box>
 
             {/* 탭 네비게이션 */}
             <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>

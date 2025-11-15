@@ -1,0 +1,70 @@
+{
+  "timestamp": "2025-11-09T00:58:44.753Z",
+  "nodeVersion": "v24.9.0",
+  "platform": "win32",
+  "arch": "x64",
+  "iterations": 1000,
+  "results": [
+    {
+      "testCase": "작은 메시지 (100 bytes)",
+      "size": 100,
+      "encrypt": {
+        "totalMs": 19,
+        "avgMs": 0.019,
+        "opsPerSec": 52632
+      },
+      "decrypt": {
+        "totalMs": 9,
+        "avgMs": 0.009,
+        "opsPerSec": 111111
+      }
+    },
+    {
+      "testCase": "중간 메시지 (1 KB)",
+      "size": 1024,
+      "encrypt": {
+        "totalMs": 15,
+        "avgMs": 0.015,
+        "opsPerSec": 66667
+      },
+      "decrypt": {
+        "totalMs": 8,
+        "avgMs": 0.008,
+        "opsPerSec": 125000
+      }
+    },
+    {
+      "testCase": "큰 메시지 (10 KB)",
+      "size": 10240,
+      "encrypt": {
+        "totalMs": 36,
+        "avgMs": 0.036,
+        "opsPerSec": 27778
+      },
+      "decrypt": {
+        "totalMs": 19,
+        "avgMs": 0.019,
+        "opsPerSec": 52632
+      }
+    },
+    {
+      "testCase": "매우 큰 메시지 (100 KB)",
+      "size": 102400,
+      "encrypt": {
+        "totalMs": 278,
+        "avgMs": 0.278,
+        "opsPerSec": 3597
+      },
+      "decrypt": {
+        "totalMs": 123,
+        "avgMs": 0.123,
+        "opsPerSec": 8130
+      }
+    }
+  ],
+  "keyGeneration": {
+    "totalMs": 2,
+    "avgMs": 0.002,
+    "keysPerSec": 500000
+  }
+}

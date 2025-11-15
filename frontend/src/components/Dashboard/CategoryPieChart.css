@@ -1,0 +1,166 @@
+/* Category Pie Chart */
+.category-pie-chart {
+    width: 100%;
+}
+
+.category-pie-chart h3 {
+    margin: 0 0 20px 0;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+/* Chart Container */
+.chart-skeleton {
+    height: 350px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.skeleton-pie {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s infinite;
+}
+
+.chart-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 350px;
+    color: #999;
+}
+
+/* Custom Tooltip */
+.custom-tooltip {
+    background-color: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.tooltip-label {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 6px;
+}
+
+.tooltip-value,
+.tooltip-percentage {
+    font-size: 13px;
+    color: #666;
+    margin: 2px 0;
+}
+
+/* Category Stats List */
+.category-stats-list {
+    margin-top: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.category-stat-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background-color: #f8f9fa;
+    border-radius: 6px;
+}
+
+.category-color {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.category-info {
+    flex: 1;
+}
+
+.category-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #212529;
+    margin-bottom: 4px;
+}
+
+.category-metrics {
+    font-size: 12px;
+    color: #6c757d;
+}
+
+.category-percentage {
+    font-size: 16px;
+    font-weight: 700;
+    color: #007bff;
+}
+
+@keyframes skeleton-loading {
+    0% {
+        background-position: 200% 0;
+    }
+
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .category-stats-list {
+        margin-top: 16px;
+    }
+
+    .category-stat-item {
+        padding: 10px;
+    }
+
+    .category-name {
+        font-size: 13px;
+    }
+
+    .category-metrics {
+        font-size: 11px;
+    }
+}
+
+/* Dark Mode */
+@media (prefers-color-scheme: dark) {
+    .custom-tooltip {
+        background-color: #2a2a2a;
+        border-color: #444;
+    }
+
+    .tooltip-label {
+        color: #e0e0e0;
+    }
+
+    .tooltip-value,
+    .tooltip-percentage {
+        color: #999;
+    }
+
+    .category-stat-item {
+        background-color: #333;
+    }
+
+    .category-name {
+        color: #e0e0e0;
+    }
+
+    .category-metrics {
+        color: #999;
+    }
+
+    .skeleton-pie {
+        background: linear-gradient(90deg, #333 25%, #444 50%, #333 75%);
+        background-size: 200% 100%;
+    }
+}

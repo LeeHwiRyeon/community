@@ -1,5 +1,5 @@
 // Security Monitoring and Alerting System
-const EventEmitter = require('events');
+import { EventEmitter } from 'events';
 
 // 보안 이벤트 타입
 const SecurityEventTypes = {
@@ -429,7 +429,7 @@ function securityEventMiddleware(req, res, next) {
     next();
 }
 
-module.exports = {
+export {
     SecurityMonitor,
     securityMonitor,
     SecurityEventTypes,

@@ -1,0 +1,157 @@
+/* Activity Chart Container */
+.activity-chart {
+    width: 100%;
+}
+
+.activity-chart h3 {
+    margin: 0 0 20px 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-color, #333);
+}
+
+/* Empty State */
+.chart-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 350px;
+    color: #999;
+}
+
+.chart-empty p {
+    font-size: 16px;
+}
+
+/* Skeleton Loading */
+.chart-skeleton {
+    height: 350px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.skeleton-chart {
+    width: 100%;
+    height: 300px;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s infinite;
+    border-radius: 8px;
+}
+
+@keyframes skeleton-loading {
+    0% {
+        background-position: 200% 0;
+    }
+
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+/* Recharts Custom Styling */
+.recharts-wrapper {
+    margin: 0 auto;
+}
+
+.recharts-cartesian-grid-horizontal line,
+.recharts-cartesian-grid-vertical line {
+    stroke: var(--grid-color, #e0e0e0);
+}
+
+.recharts-text {
+    fill: var(--text-color, #666);
+    font-size: 12px;
+}
+
+.recharts-legend-wrapper {
+    padding-top: 20px !important;
+}
+
+.recharts-legend-item {
+    margin-right: 20px !important;
+}
+
+.recharts-legend-item-text {
+    color: var(--text-color, #666) !important;
+    font-size: 13px !important;
+}
+
+.recharts-tooltip-wrapper {
+    outline: none;
+}
+
+.recharts-default-tooltip {
+    background-color: white !important;
+    border: 1px solid #e0e0e0 !important;
+    border-radius: 8px !important;
+    padding: 12px !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+}
+
+.recharts-tooltip-label {
+    font-weight: 600 !important;
+    color: #333 !important;
+    margin-bottom: 8px !important;
+}
+
+.recharts-tooltip-item {
+    color: #666 !important;
+    padding: 2px 0 !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .activity-chart {
+        overflow-x: auto;
+    }
+
+    .recharts-legend-wrapper {
+        padding-top: 10px !important;
+    }
+
+    .recharts-legend-item {
+        margin-right: 10px !important;
+        font-size: 11px !important;
+    }
+}
+
+/* Dark Mode */
+@media (prefers-color-scheme: dark) {
+    .activity-chart {
+        --text-color: #e0e0e0;
+        --grid-color: #444;
+    }
+
+    .chart-empty {
+        color: #666;
+    }
+
+    .skeleton-chart {
+        background: linear-gradient(90deg, #333 25%, #444 50%, #333 75%);
+        background-size: 200% 100%;
+    }
+
+    .recharts-cartesian-grid-horizontal line,
+    .recharts-cartesian-grid-vertical line {
+        stroke: #444;
+    }
+
+    .recharts-text {
+        fill: #999 !important;
+    }
+
+    .recharts-default-tooltip {
+        background-color: #2a2a2a !important;
+        border-color: #444 !important;
+    }
+
+    .recharts-tooltip-label {
+        color: #e0e0e0 !important;
+    }
+
+    .recharts-tooltip-item {
+        color: #999 !important;
+    }
+}

@@ -200,7 +200,7 @@ jobs:
   slack-notification:
     name: Slack 알림
     runs-on: ubuntu-latest
-    needs: [security-audit, build-test, integration-test, performance-test, security-scan]
+    needs: [security-audit, code-quality, test, build, docker-security]
     if: always()
     
     steps:
@@ -208,10 +208,15 @@ jobs:
         uses: actions/checkout@v4
         
       - name: 📢 Slack CI Success Notification
-        if: needs.security-audit.result == 'success' && needs.build-test.result == 'success' && needs.integration-test.result == 'success' && needs.performance-test.result == 'success' && needs.security-scan.result == 'success'
+        if: needs.security-audit.result == 'success' && needs.code-quality.result == 'success' && needs.test.result == 'success' && needs.build.result == 'success' && needs.docker-security.result == 'success'
+        continue-on-error: true
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         run: |
+          if [ -z "$SLACK_WEBHOOK_URL" ]; then
+            echo "⚠️ SLACK_WEBHOOK_URL not configured, skipping notification"
+            exit 0
+          fi
           echo "📢 Sending Slack CI success notification..."
           node slack-notifications.js task "CI Pipeline 완료" \
             --build=success \
@@ -219,10 +224,15 @@ jobs:
             --files=0
 
       - name: 📢 Slack CI Failure Notification
-        if: needs.security-audit.result == 'failure' || needs.build-test.result == 'failure' || needs.integration-test.result == 'failure' || needs.performance-test.result == 'failure' || needs.security-scan.result == 'failure'
+        if: needs.security-audit.result == 'failure' || needs.code-quality.result == 'failure' || needs.test.result == 'failure' || needs.build.result == 'failure' || needs.docker-security.result == 'failure'
+        continue-on-error: true
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         run: |
+          if [ -z "$SLACK_WEBHOOK_URL" ]; then
+            echo "⚠️ SLACK_WEBHOOK_URL not configured, skipping notification"
+            exit 0
+          fi
           echo "📢 Sending Slack CI failure notification..."
           node slack-notifications.js error "CI Pipeline 실패" \
             --file=ci.yml \

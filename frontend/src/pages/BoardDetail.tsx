@@ -26,8 +26,7 @@ import {
     ListItemSecondaryAction,
     IconButton,
     Avatar,
-    Divider,
-    Pagination
+    Divider
 } from '@mui/material';
 import {
     Forum as ForumIcon,
@@ -39,9 +38,15 @@ import {
     ThumbUp as ThumbUpIcon,
     Schedule as ScheduleIcon,
     Person as PersonIcon,
-    ArrowBack as ArrowBackIcon
+    ArrowBack as ArrowBackIcon,
+    PostAdd as PostAddIcon
 } from '@mui/icons-material';
 import VotingSystem from '../components/VotingSystem';
+import PostListSkeleton from '../components/UI/PostListSkeleton';
+import EmptyState from '../components/UI/EmptyState';
+import { useSnackbar } from '../contexts/SnackbarContext';
+import { AnimatedList, AnimatedListItem, FadeIn } from '../components/UI/AnimatedComponents';
+import { useInfiniteScroll } from '../hooks/useInfiniteScroll';
 
 // 게시글 데이터 타입 정의
 interface Post {
@@ -71,16 +76,34 @@ interface Board {
     createdAt: string;
 }
 
+// 백엔드 응답을 프론트엔드 형식으로 변환
+const mapPostFromBackend = (backendPost: any): Post => ({
+    id: backendPost.id,
+    boardId: backendPost.board_id || backendPost.board,
+    title: backendPost.title,
+    content: backendPost.content || '',
+    author: backendPost.author || 'Anonymous',
+    authorId: backendPost.author_id || backendPost.authorId || '',
+    views: backendPost.views || 0,
+    commentsCount: backendPost.comment_count || backendPost.commentsCount || 0,
+    createdAt: backendPost.created_at || backendPost.createdAt || new Date().toISOString(),
+    updatedAt: backendPost.updated_at || backendPost.updatedAt || new Date().toISOString(),
+    category: backendPost.category || '',
+    thumb: backendPost.thumb || backendPost.hero_media || '',
+    isPublished: backendPost.status === 'published' || !backendPost.deleted
+});
+
 const BoardDetail: React.FC = () => {
     const { boardId } = useParams<{ boardId: string }>();
     const navigate = useNavigate();
+    const { showSuccess, showError } = useSnackbar();
 
     const [board, setBoard] = useState<Board | null>(null);
     const [posts, setPosts] = useState<Post[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [page, setPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(1);
+    const [hasMore, setHasMore] = useState(true);
     const [createPostOpen, setCreatePostOpen] = useState(false);
 
     // 새 게시글 폼
@@ -93,17 +116,32 @@ const BoardDetail: React.FC = () => {
     useEffect(() => {
         if (boardId) {
             loadBoard();
-            loadPosts();
+            loadPosts(1); // 초기 로드
         }
-    }, [boardId, page]);
+    }, [boardId]);
 
     // 게시판 정보 로딩
     const loadBoard = async () => {
         try {
-            const response = await fetch(`/api/boards/${boardId}`);
+            // 백엔드에는 개별 게시판 조회 API가 없으므로 전체 목록에서 찾기
+            const response = await fetch(`/api/boards`);
             if (response.ok) {
-                const data = await response.json();
-                setBoard(data.data);
+                const boards = await response.json();
+                const foundBoard = boards.find((b: any) => b.id === boardId);
+                if (foundBoard) {
+                    setBoard({
+                        id: foundBoard.id,
+                        name: foundBoard.title || foundBoard.name,
+                        description: foundBoard.summary || foundBoard.description || '',
+                        category: foundBoard.category || 'general',
+                        isActive: !foundBoard.deleted,
+                        postCount: 0, // 백엔드에서 제공하지 않음
+                        sortOrder: foundBoard.ordering || 0,
+                        createdAt: foundBoard.created_at || new Date().toISOString()
+                    });
+                } else {
+                    throw new Error('게시판을 찾을 수 없습니다');
+                }
             } else {
                 // 모의 게시판 데이터
                 setBoard({
@@ -123,28 +161,59 @@ const BoardDetail: React.FC = () => {
         }
     };
 
-    // 게시글 목록 로딩
-    const loadPosts = async () => {
+    // 게시글 목록 로딩 - 무한 스크롤용으로 수정
+    const loadPosts = async (pageNum: number = page) => {
+        if (!hasMore && pageNum > 1) return;
+
         try {
             setLoading(true);
-            const response = await fetch(`/api/posts?boardId=${boardId}&page=${page}&limit=20`);
+            // 백엔드 Mock API 엔드포인트 호출
+            const apiUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001';
+            const response = await fetch(`${apiUrl}/api/mock/boards/${boardId}/posts`);
+
             if (response.ok) {
                 const data = await response.json();
-                setPosts(data.data || []);
-                setTotalPages(Math.ceil(data.total / 20) || 1);
+                if (data.success && data.data) {
+                    // Mock API 응답 형식: {success: true, data: [...]}
+                    const mappedPosts = data.data.map(mapPostFromBackend);
+
+                    // 첫 페이지면 교체, 아니면 추가 (페이징은 클라이언트에서 시뮬레이션)
+                    const startIdx = (pageNum - 1) * 10;
+                    const endIdx = pageNum * 10;
+                    const pagedPosts = mappedPosts.slice(startIdx, endIdx);
+
+                    setPosts(prev => pageNum === 1 ? pagedPosts : [...prev, ...pagedPosts]);
+                    setHasMore(endIdx < mappedPosts.length);
+                    setPage(pageNum + 1);
+                } else {
+                    throw new Error('Invalid response format');
+                }
             } else {
-                // 모의 게시글 데이터
-                const mockPosts: Post[] = generateMockPosts(boardId!);
-                setPosts(mockPosts);
-                setTotalPages(8); // 156개 게시글 / 20개 = 8페이지
+                // Fallback: 모의 게시글 데이터
+                const mockPosts: Post[] = generateMockPosts(boardId!, pageNum);
+
+                setPosts(prev => pageNum === 1 ? mockPosts : [...prev, ...mockPosts]);
+                setHasMore(pageNum < 8); // 8페이지까지 있다고 가정
+                setPage(pageNum + 1);
             }
         } catch (err) {
-            setError('게시글을 불러오는 중 오류가 발생했습니다.');
             console.error('게시글 로딩 오류:', err);
+            // 에러 시에도 Mock 데이터로 fallback
+            const mockPosts: Post[] = generateMockPosts(boardId!, pageNum);
+            setPosts(prev => pageNum === 1 ? mockPosts : [...prev, ...mockPosts]);
+            setHasMore(pageNum < 8);
+            setPage(pageNum + 1);
         } finally {
             setLoading(false);
         }
     };
+
+    // 무한 스크롤 훅 사용
+    const { observerRef } = useInfiniteScroll({
+        loadMore: () => loadPosts(page),
+        hasMore,
+        isLoading: loading
+    });
 
     // 게시판 이름 가져오기
     const getBoardName = (boardId: string): string => {
@@ -177,7 +246,7 @@ const BoardDetail: React.FC = () => {
     };
 
     // 모의 게시글 생성
-    const generateMockPosts = (boardId: string): Post[] => {
+    const generateMockPosts = (boardId: string, pageNum: number): Post[] => {
         const titles = [
             '안녕하세요! 새로 가입했습니다.',
             '이 기능 어떻게 사용하나요?',
@@ -204,7 +273,7 @@ const BoardDetail: React.FC = () => {
         const authors = ['김철수', '이영희', '박민수', '최지영', '정현우', '한소영', '윤대성', '임수진'];
 
         return Array.from({ length: 20 }, (_, index) => ({
-            id: `post_${boardId}_${(page - 1) * 20 + index + 1}`,
+            id: `post_${boardId}_${(pageNum - 1) * 20 + index + 1}`,
             boardId: boardId,
             title: titles[index % titles.length],
             content: `${titles[index % titles.length]}에 대한 상세한 내용입니다. 이 게시글은 ${getBoardName(boardId)}에 작성된 게시글입니다.`,
@@ -223,14 +292,14 @@ const BoardDetail: React.FC = () => {
     const createPost = async () => {
         try {
             const postData = {
-                boardId: boardId,
                 title: newPost.title,
                 content: newPost.content,
-                userId: 'current_user_id', // 실제로는 인증에서 가져옴
+                author_id: 'current_user_id', // 실제로는 인증에서 가져옴
                 category: newPost.category || boardId
             };
 
-            const response = await fetch('/api/posts', {
+            // 백엔드 실제 엔드포인트로 수정: /api/boards/:id/posts
+            const response = await fetch(`/api/boards/${boardId}/posts`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(postData)
@@ -240,9 +309,13 @@ const BoardDetail: React.FC = () => {
                 await loadPosts();
                 setCreatePostOpen(false);
                 setNewPost({ title: '', content: '', category: '' });
+                showSuccess('게시글이 성공적으로 작성되었습니다!');
+            } else {
+                showError('게시글 작성에 실패했습니다.');
             }
         } catch (err) {
             console.error('게시글 작성 오류:', err);
+            showError('게시글 작성 중 오류가 발생했습니다.');
         }
     };
 
@@ -254,8 +327,8 @@ const BoardDetail: React.FC = () => {
     if (loading && !posts.length) {
         return (
             <Container maxWidth="lg">
-                <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '50vh' }}>
-                    <CircularProgress size={60} />
+                <Box sx={{ py: 4 }}>
+                    <PostListSkeleton count={10} />
                 </Box>
             </Container>
         );
@@ -265,7 +338,16 @@ const BoardDetail: React.FC = () => {
         return (
             <Container maxWidth="lg">
                 <Box sx={{ py: 4 }}>
-                    <Alert severity="error">{error}</Alert>
+                    <Alert
+                        severity="error"
+                        action={
+                            <Button color="inherit" size="small" onClick={() => window.location.reload()}>
+                                재시도
+                            </Button>
+                        }
+                    >
+                        {error}
+                    </Alert>
                 </Box>
             </Container>
         );
@@ -318,101 +400,121 @@ const BoardDetail: React.FC = () => {
                 </Box>
 
                 {/* 게시글 목록 */}
-                <Card>
-                    <CardContent>
-                        <Typography variant="h5" gutterBottom sx={{ display: 'flex', alignItems: 'center' }}>
-                            <ForumIcon sx={{ mr: 1 }} />
-                            게시글 목록
-                        </Typography>
+                <FadeIn delay={0.2}>
+                    <Card>
+                        <CardContent>
+                            <Typography variant="h5" gutterBottom sx={{ display: 'flex', alignItems: 'center' }}>
+                                <ForumIcon sx={{ mr: 1 }} />
+                                게시글 목록
+                            </Typography>
 
-                        {posts.length === 0 ? (
-                            <Box sx={{ textAlign: 'center', py: 8 }}>
-                                <Typography variant="h6" color="text.secondary">
-                                    아직 게시글이 없습니다.
-                                </Typography>
-                                <Button
-                                    variant="contained"
-                                    startIcon={<AddIcon />}
-                                    onClick={() => setCreatePostOpen(true)}
-                                    sx={{ mt: 2 }}
-                                >
-                                    첫 번째 글 작성하기
-                                </Button>
-                            </Box>
-                        ) : (
-                            <List>
-                                {posts.map((post, index) => (
-                                    <React.Fragment key={post.id}>
-                                        <ListItem
-                                            sx={{ cursor: 'pointer', '&:hover': { bgcolor: 'grey.50' } }}
-                                            onClick={() => handlePostClick(post.id)}
-                                        >
-                                            <ListItemText
-                                                primary={
-                                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-                                                        <Typography variant="h6" sx={{ flexGrow: 1 }}>
-                                                            {post.title}
-                                                        </Typography>
-                                                        {post.commentsCount > 0 && (
-                                                            <Chip
-                                                                icon={<CommentIcon />}
-                                                                label={post.commentsCount}
-                                                                size="small"
-                                                                color="primary"
-                                                            />
-                                                        )}
-                                                    </Box>
-                                                }
-                                                secondary={
-                                                    <Box>
-                                                        <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                                                            {post.content.substring(0, 100)}...
-                                                        </Typography>
-
-                                                        {/* 투표 시스템 통합 */}
-                                                        <Box sx={{ mb: 1 }}>
-                                                            <VotingSystem postId={post.id} type="simple" />
-                                                        </Box>
-
-                                                        <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', flexWrap: 'wrap' }}>
-                                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                                                                <PersonIcon sx={{ fontSize: 16 }} />
-                                                                <Typography variant="caption">{post.author}</Typography>
-                                                            </Box>
-                                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                                                                <ViewIcon sx={{ fontSize: 16 }} />
-                                                                <Typography variant="caption">{post.views}</Typography>
-                                                            </Box>
-                                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                                                                <ScheduleIcon sx={{ fontSize: 16 }} />
-                                                                <Typography variant="caption">
-                                                                    {new Date(post.createdAt).toLocaleDateString('ko-KR')}
-                                                                </Typography>
-                                                            </Box>
-                                                        </Box>
-                                                    </Box>
-                                                }
-                                            />
-                                        </ListItem>
-                                        {index < posts.length - 1 && <Divider />}
-                                    </React.Fragment>
-                                ))}
-                            </List>
-                        )}
-
-                        {/* 페이지네이션 */}
-                        {totalPages > 1 && (
-                            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
-                                <Pagination
-                                    count={totalPages}
-                                    page={page}
-                                    onChange={(_, newPage) => setPage(newPage)}
-                                    color="primary"
+                            {posts.length === 0 ? (
+                                <EmptyState
+                                    icon={<PostAddIcon />}
+                                    title="아직 게시글이 없습니다"
+                                    description="첫 번째 게시글을 작성해보세요!"
+                                    action={{
+                                        label: '첫 번째 글 작성하기',
+                                        onClick: () => setCreatePostOpen(true)
+                                    }}
                                 />
-                            </Box>
-                        )}
-                    </CardContent>
-                </Card>
+                            ) : (
+                                <AnimatedList>
+                                    <List>
+                                        {posts.map((post, index) => (
+                                            <AnimatedListItem key={post.id}>
+                                                <React.Fragment>
+                                                    <ListItem
+                                                        sx={{ cursor: 'pointer', '&:hover': { bgcolor: 'grey.50' } }}
+                                                        onClick={() => handlePostClick(post.id)}
+                                                    >
+                                                        <ListItemText
+                                                            primary={
+                                                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                                                                    <Typography variant="h6" sx={{ flexGrow: 1 }}>
+                                                                        {post.title}
+                                                                    </Typography>
+                                                                    {post.commentsCount > 0 && (
+                                                                        <Chip
+                                                                            icon={<CommentIcon />}
+                                                                            label={post.commentsCount}
+                                                                            size="small"
+                                                                            color="primary"
+                                                                        />
+                                                                    )}
+                                                                </Box>
+                                                            }
+                                                            secondary={
+                                                                <Box>
+                                                                    <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                                                                        {post.content.substring(0, 100)}...
+                                                                    </Typography>
+
+                                                                    {/* 투표 시스템 통합 */}
+                                                                    <Box sx={{ mb: 1 }}>
+                                                                        <VotingSystem postId={post.id} type="simple" />
+                                                                    </Box>
+
+                                                                    <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', flexWrap: 'wrap' }}>
+                                                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                                                                            <PersonIcon sx={{ fontSize: 16 }} />
+                                                                            <Typography variant="caption">{post.author}</Typography>
+                                                                        </Box>
+                                                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                                                                            <ViewIcon sx={{ fontSize: 16 }} />
+                                                                            <Typography variant="caption">{post.views}</Typography>
+                                                                        </Box>
+                                                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                                                                            <ScheduleIcon sx={{ fontSize: 16 }} />
+                                                                            <Typography variant="caption">
+                                                                                {new Date(post.createdAt).toLocaleDateString('ko-KR')}
+                                                                            </Typography>
+                                                                        </Box>
+                                                                    </Box>
+                                                                </Box>
+                                                            }
+                                                        />
+                                                    </ListItem>
+                                                    {index < posts.length - 1 && <Divider />}
+                                                </React.Fragment>
+                                            </AnimatedListItem>
+                                        ))}
+                                    </List>
+                                </AnimatedList>
+                            )}
+
+                            {/* 무한 스크롤 로더 */}
+                            {hasMore && !loading && (
+                                <Box
+                                    ref={observerRef}
+                                    sx={{
+                                        display: 'flex',
+                                        justifyContent: 'center',
+                                        py: 3
+                                    }}
+                                >
+                                    <CircularProgress size={32} />
+                                </Box>
+                            )}
+
+                            {/* 추가 로딩 중 표시 */}
+                            {loading && posts.length > 0 && (
+                                <Box sx={{ display: 'flex', justifyContent: 'center', py: 3 }}>
+                                    <CircularProgress size={32} />
+                                </Box>
+                            )}
+
+                            {/* 모든 게시글 로드 완료 */}
+                            {!hasMore && posts.length > 0 && (
+                                <Box sx={{ textAlign: 'center', py: 3 }}>
+                                    <Typography variant="body2" color="text.secondary">
+                                        모든 게시글을 불러왔습니다.
+                                    </Typography>
+                                </Box>
+                            )}
+                        </CardContent>
+                    </Card>
+                </FadeIn>
 
                 {/* 글쓰기 FAB */}
                 <Fab

@@ -197,7 +197,7 @@ export const FileSharing: React.FC<FileSharingProps> = ({
             // 오류 상태 업데이트
             setUploadProgress(prev => prev.map(p =>
                 p.fileId === fileId
-                    ? { ...p, status: 'error', error: error.message }
+                    ? { ...p, status: 'error', error: error instanceof Error ? error.message : 'Upload failed' }
                     : p
             ));
         }

@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const logger = require('../../utils/logger');
+const logger = require('../utils/logger');
 
 // 코스프레 상점 관련 데이터 (실제로는 데이터베이스에서 가져옴)
 let products = [];

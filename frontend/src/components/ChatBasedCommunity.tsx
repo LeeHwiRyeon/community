@@ -77,7 +77,7 @@ interface CommunitySuggestion {
     category: string;
     memberCount: number;
     isNew: boolean;
-    vipLevel: VIPLevel;
+    vipLevel: VIPLevel['level'];
     isSecret: boolean;
 }
 

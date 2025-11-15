@@ -1,0 +1,1111 @@
+{
+    "info": {
+        "name": "Community Platform - Phase 2 APIs",
+        "_postman_id": "phase2-apis",
+        "description": "Complete API collection for Phase 2 features: Online Status, Moderator Tools, Follow System, and Bookmark System",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "auth": {
+        "type": "bearer",
+        "bearer": [
+            {
+                "key": "token",
+                "value": "{{token}}",
+                "type": "string"
+            }
+        ]
+    },
+    "variable": [
+        {
+            "key": "baseUrl",
+            "value": "http://localhost:50000",
+            "type": "string"
+        },
+        {
+            "key": "token",
+            "value": "",
+            "type": "string"
+        }
+    ],
+    "item": [
+        {
+            "name": "Authentication",
+            "item": [
+                {
+                    "name": "Login",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"password123\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/auth/login",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "auth",
+                                "login"
+                            ]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Online Status",
+            "description": "User online status management endpoints",
+            "item": [
+                {
+                    "name": "Get Online Users",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/online-status/users",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "online-status",
+                                "users"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Update Heartbeat",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"status\": \"online\",\n  \"deviceType\": \"web\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/online-status/heartbeat",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "online-status",
+                                "heartbeat"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get User Status",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/online-status/user/:userId",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "online-status",
+                                "user",
+                                ":userId"
+                            ],
+                            "variable": [
+                                {
+                                    "key": "userId",
+                                    "value": "1"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Bulk User Status",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"userIds\": [1, 2, 3, 4, 5]\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/online-status/bulk",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "online-status",
+                                "bulk"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Online Statistics",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/online-status/statistics",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "online-status",
+                                "statistics"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Moderator Tools",
+            "description": "Content moderation and user management endpoints",
+            "item": [
+                {
+                    "name": "Assign Moderator Role",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"userId\": 2,\n  \"role\": \"moderator\",\n  \"permissions\": {\n    \"delete_posts\": true,\n    \"ban_users\": true,\n    \"manage_reports\": true\n  }\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/moderator/roles",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "moderator",
+                                "roles"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Issue Warning",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"userId\": 3,\n  \"reason\": \"Spam posting\",\n  \"severity\": \"medium\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/moderator/warnings",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "moderator",
+                                "warnings"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Ban User",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"userId\": 3,\n  \"reason\": \"Repeated violations\",\n  \"banType\": \"temporary\",\n  \"duration\": 7\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/moderator/bans-v2",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "moderator",
+                                "bans-v2"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Unban User",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/moderator/bans-v2/:banId",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "moderator",
+                                "bans-v2",
+                                ":banId"
+                            ],
+                            "variable": [
+                                {
+                                    "key": "banId",
+                                    "value": "1"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Report Content",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"contentType\": \"post\",\n  \"contentId\": 10,\n  \"reason\": \"Inappropriate content\",\n  \"description\": \"This post contains offensive language\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/moderator/reports-v2",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "moderator",
+                                "reports-v2"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Reports",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/moderator/reports-v2?status=pending",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "moderator",
+                                "reports-v2"
+                            ],
+                            "query": [
+                                {
+                                    "key": "status",
+                                    "value": "pending"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Resolve Report",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"action\": \"approved\",\n  \"notes\": \"Removed inappropriate content\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/moderator/reports-v2/:reportId",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "moderator",
+                                "reports-v2",
+                                ":reportId"
+                            ],
+                            "variable": [
+                                {
+                                    "key": "reportId",
+                                    "value": "1"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Moderator Statistics",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/moderator/statistics",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "moderator",
+                                "statistics"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Follow System",
+            "description": "User and board following endpoints",
+            "item": [
+                {
+                    "name": "User Following",
+                    "item": [
+                        {
+                            "name": "Follow User",
+                            "request": {
+                                "method": "POST",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/follow/user/:userId",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "follow",
+                                        "user",
+                                        ":userId"
+                                    ],
+                                    "variable": [
+                                        {
+                                            "key": "userId",
+                                            "value": "2"
+                                        }
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "name": "Unfollow User",
+                            "request": {
+                                "method": "DELETE",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/follow/user/:userId",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "follow",
+                                        "user",
+                                        ":userId"
+                                    ],
+                                    "variable": [
+                                        {
+                                            "key": "userId",
+                                            "value": "2"
+                                        }
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "name": "Get User Followers",
+                            "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/follow/user/:userId/followers?page=1&limit=20",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "follow",
+                                        "user",
+                                        ":userId",
+                                        "followers"
+                                    ],
+                                    "query": [
+                                        {
+                                            "key": "page",
+                                            "value": "1"
+                                        },
+                                        {
+                                            "key": "limit",
+                                            "value": "20"
+                                        }
+                                    ],
+                                    "variable": [
+                                        {
+                                            "key": "userId",
+                                            "value": "1"
+                                        }
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "name": "Get User Following",
+                            "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/follow/user/:userId/following?page=1&limit=20",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "follow",
+                                        "user",
+                                        ":userId",
+                                        "following"
+                                    ],
+                                    "query": [
+                                        {
+                                            "key": "page",
+                                            "value": "1"
+                                        },
+                                        {
+                                            "key": "limit",
+                                            "value": "20"
+                                        }
+                                    ],
+                                    "variable": [
+                                        {
+                                            "key": "userId",
+                                            "value": "1"
+                                        }
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "name": "Check If Following User",
+                            "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/follow/user/:userId/check",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "follow",
+                                        "user",
+                                        ":userId",
+                                        "check"
+                                    ],
+                                    "variable": [
+                                        {
+                                            "key": "userId",
+                                            "value": "2"
+                                        }
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "name": "Get User Follow Stats",
+                            "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/follow/user/:userId/stats",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "follow",
+                                        "user",
+                                        ":userId",
+                                        "stats"
+                                    ],
+                                    "variable": [
+                                        {
+                                            "key": "userId",
+                                            "value": "1"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Board Following",
+                    "item": [
+                        {
+                            "name": "Follow Board",
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"notificationEnabled\": true\n}"
+                                },
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/follow/board/:boardId",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "follow",
+                                        "board",
+                                        ":boardId"
+                                    ],
+                                    "variable": [
+                                        {
+                                            "key": "boardId",
+                                            "value": "1"
+                                        }
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "name": "Unfollow Board",
+                            "request": {
+                                "method": "DELETE",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/follow/board/:boardId",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "follow",
+                                        "board",
+                                        ":boardId"
+                                    ],
+                                    "variable": [
+                                        {
+                                            "key": "boardId",
+                                            "value": "1"
+                                        }
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "name": "Get Followed Boards",
+                            "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/follow/boards",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "follow",
+                                        "boards"
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "name": "Check If Following Board",
+                            "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/follow/board/:boardId/check",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "follow",
+                                        "board",
+                                        ":boardId",
+                                        "check"
+                                    ],
+                                    "variable": [
+                                        {
+                                            "key": "boardId",
+                                            "value": "1"
+                                        }
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "name": "Update Board Notification",
+                            "request": {
+                                "method": "PUT",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"enabled\": false\n}"
+                                },
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/follow/board/:boardId/notification",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "follow",
+                                        "board",
+                                        ":boardId",
+                                        "notification"
+                                    ],
+                                    "variable": [
+                                        {
+                                            "key": "boardId",
+                                            "value": "1"
+                                        }
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "name": "Get Popular Boards",
+                            "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/follow/boards/popular?limit=10",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "follow",
+                                        "boards",
+                                        "popular"
+                                    ],
+                                    "query": [
+                                        {
+                                            "key": "limit",
+                                            "value": "10"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Feeds",
+                    "item": [
+                        {
+                            "name": "Get User Follow Feed",
+                            "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/follow/feed/users?page=1&limit=20",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "follow",
+                                        "feed",
+                                        "users"
+                                    ],
+                                    "query": [
+                                        {
+                                            "key": "page",
+                                            "value": "1"
+                                        },
+                                        {
+                                            "key": "limit",
+                                            "value": "20"
+                                        }
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "name": "Get Board Follow Feed",
+                            "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/follow/feed/boards?page=1&limit=20",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "follow",
+                                        "feed",
+                                        "boards"
+                                    ],
+                                    "query": [
+                                        {
+                                            "key": "page",
+                                            "value": "1"
+                                        },
+                                        {
+                                            "key": "limit",
+                                            "value": "20"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Bookmark System",
+            "description": "Post bookmarking and folder management endpoints",
+            "item": [
+                {
+                    "name": "Folders",
+                    "item": [
+                        {
+                            "name": "Get Bookmark Folders",
+                            "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/bookmarks/folders",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "bookmarks",
+                                        "folders"
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "name": "Create Bookmark Folder",
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"name\": \"Tech Articles\",\n  \"description\": \"Technology and programming articles\",\n  \"color\": \"#3182CE\",\n  \"is_private\": false\n}"
+                                },
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/bookmarks/folders",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "bookmarks",
+                                        "folders"
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "name": "Update Bookmark Folder",
+                            "request": {
+                                "method": "PUT",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"name\": \"Tech & Programming\",\n  \"color\": \"#38A169\"\n}"
+                                },
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/bookmarks/folders/:folderId",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "bookmarks",
+                                        "folders",
+                                        ":folderId"
+                                    ],
+                                    "variable": [
+                                        {
+                                            "key": "folderId",
+                                            "value": "1"
+                                        }
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "name": "Delete Bookmark Folder",
+                            "request": {
+                                "method": "DELETE",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/bookmarks/folders/:folderId",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "bookmarks",
+                                        "folders",
+                                        ":folderId"
+                                    ],
+                                    "variable": [
+                                        {
+                                            "key": "folderId",
+                                            "value": "1"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Bookmarks",
+                    "item": [
+                        {
+                            "name": "Add Bookmark",
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"postId\": 10,\n  \"folder\": \"Tech Articles\",\n  \"notes\": \"Great article about React hooks\"\n}"
+                                },
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/bookmarks",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "bookmarks"
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "name": "Get Bookmarks",
+                            "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/bookmarks?page=1&limit=20&folder=Tech Articles",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "bookmarks"
+                                    ],
+                                    "query": [
+                                        {
+                                            "key": "page",
+                                            "value": "1"
+                                        },
+                                        {
+                                            "key": "limit",
+                                            "value": "20"
+                                        },
+                                        {
+                                            "key": "folder",
+                                            "value": "Tech Articles"
+                                        }
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "name": "Check Bookmark Status",
+                            "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/bookmarks/check/:postId",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "bookmarks",
+                                        "check",
+                                        ":postId"
+                                    ],
+                                    "variable": [
+                                        {
+                                            "key": "postId",
+                                            "value": "10"
+                                        }
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "name": "Update Bookmark Notes",
+                            "request": {
+                                "method": "PUT",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"notes\": \"Updated notes: Excellent explanation of useEffect\"\n}"
+                                },
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/bookmarks/:bookmarkId/notes",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "bookmarks",
+                                        ":bookmarkId",
+                                        "notes"
+                                    ],
+                                    "variable": [
+                                        {
+                                            "key": "bookmarkId",
+                                            "value": "1"
+                                        }
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "name": "Move Bookmark to Folder",
+                            "request": {
+                                "method": "PUT",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"folder\": \"React Resources\"\n}"
+                                },
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/bookmarks/:bookmarkId/move",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "bookmarks",
+                                        ":bookmarkId",
+                                        "move"
+                                    ],
+                                    "variable": [
+                                        {
+                                            "key": "bookmarkId",
+                                            "value": "1"
+                                        }
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "name": "Delete Bookmark",
+                            "request": {
+                                "method": "DELETE",
+                                "header": [],
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/bookmarks/:postId",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "bookmarks",
+                                        ":postId"
+                                    ],
+                                    "variable": [
+                                        {
+                                            "key": "postId",
+                                            "value": "10"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

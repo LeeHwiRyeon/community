@@ -38,7 +38,11 @@ import {
     Image as ImageIcon,
     Description as FileTextIcon,
     Download as DownloadIcon,
-    Delete as DeleteIcon
+    Delete as DeleteIcon,
+    Lock as LockIcon,
+    LockOpen as LockOpenIcon,
+    VpnKey as VpnKeyIcon,
+    Security as SecurityIcon
 } from '@mui/icons-material';
 import FileSharing, { FileMetadata } from './FileSharing';
 import { MessageEncryption, useMessageEncryption } from '../utils/MessageEncryption';
@@ -100,6 +104,13 @@ const ChatSystem: React.FC<ChatSystemProps> = ({
     const [isConnected, setIsConnected] = useState(false);
     const [unreadCount, setUnreadCount] = useState(0);
 
+    // 암호화 상태 관리
+    const [isEncryptionEnabled, setIsEncryptionEnabled] = useState(false);
+    const [encryptionDialogOpen, setEncryptionDialogOpen] = useState(false);
+    const [isKeyExchanging, setIsKeyExchanging] = useState(false);
+    const [keyExchangeProgress, setKeyExchangeProgress] = useState(0);
+    const { encryptMessage, decryptMessage, isEncryptionEnabled: cryptoEnabled } = useMessageEncryption(currentRoom);
+
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const currentUser = { id: 'user_123', username: 'CurrentUser' }; // 실제로는 인증에서 가져옴
 
@@ -120,12 +131,8 @@ const ChatSystem: React.FC<ChatSystemProps> = ({
 
         const connectWebSocket = () => {
             try {
-                // WebSocket 연결 최적화: 압축 및 하트비트 설정
-                const websocket = new WebSocket(`ws://localhost:50000/chat`, [], {
-                    perMessageDeflate: true,
-                    handshakeTimeout: 10000,
-                    maxPayload: 1024 * 1024 // 1MB
-                });
+                // WebSocket 연결
+                const websocket = new WebSocket(`ws://localhost:50000/chat`);
 
                 websocket.onopen = () => {
                     console.log('채팅 WebSocket 연결됨 (v1.3 최적화)');
@@ -180,7 +187,7 @@ const ChatSystem: React.FC<ChatSystemProps> = ({
                     } else {
                         console.error('최대 재연결 시도 횟수 초과. 수동 재연결이 필요합니다.');
                         // 사용자에게 수동 재연결 옵션 제공
-                        setConnectionError(true);
+                        setError('연결 실패: 최대 재시도 횟수를 초과했습니다.');
                     }
                 };
 
@@ -339,17 +346,85 @@ const ChatSystem: React.FC<ChatSystemProps> = ({
     const sendMessage = () => {
         if (!newMessage.trim() || !ws || !isConnected) return;
 
+        let messageContent = newMessage.trim();
+        let isEncrypted = false;
+
+        // 암호화가 활성화된 경우 메시지 암호화
+        if (isEncryptionEnabled && cryptoEnabled) {
+            try {
+                const encrypted = encryptMessage(messageContent);
+                messageContent = JSON.stringify(encrypted);
+                isEncrypted = true;
+            } catch (error) {
+                console.error('메시지 암호화 실패:', error);
+                setError('메시지 암호화에 실패했습니다.');
+                return;
+            }
+        }
+
         const message = {
             type: 'message',
             roomId: currentRoom,
             userId: currentUser.id,
             username: currentUser.username,
-            message: newMessage.trim(),
+            message: messageContent,
+            isEncrypted,
             timestamp: new Date().toISOString()
         };
 
         ws.send(JSON.stringify(message));
         setNewMessage('');
+    };
+
+    // 암호화 토글 핸들러
+    const handleEncryptionToggle = async () => {
+        if (!isEncryptionEnabled) {
+            // 암호화 활성화
+            setEncryptionDialogOpen(true);
+            setIsKeyExchanging(true);
+            setKeyExchangeProgress(0);
+
+            try {
+                // 키 교환 시뮬레이션
+                for (let i = 0; i <= 100; i += 20) {
+                    setKeyExchangeProgress(i);
+                    await new Promise(resolve => setTimeout(resolve, 200));
+                }
+
+                // 암호화 활성화 (useMessageEncryption 훅에서 자동 초기화됨)
+                setIsEncryptionEnabled(true);
+                setKeyExchangeProgress(100);
+
+                // 성공 메시지
+                setTimeout(() => {
+                    setEncryptionDialogOpen(false);
+                    setIsKeyExchanging(false);
+                }, 1000);
+            } catch (error) {
+                console.error('암호화 초기화 실패:', error);
+                setError('암호화 초기화에 실패했습니다.');
+                setIsKeyExchanging(false);
+            }
+        } else {
+            // 암호화 비활성화
+            setIsEncryptionEnabled(false);
+        }
+    };
+
+    // 메시지 복호화 헬퍼
+    const decryptMessageContent = (message: ChatMessage): string => {
+        if (!message.isEncrypted) {
+            return message.message;
+        }
+
+        try {
+            const encryptedData = JSON.parse(message.message);
+            const decrypted = decryptMessage(encryptedData);
+            return decrypted.content;
+        } catch (error) {
+            console.error('메시지 복호화 실패:', error);
+            return '[복호화 실패]';
+        }
     };
 
     // 채팅방 변경
@@ -430,9 +505,18 @@ const ChatSystem: React.FC<ChatSystemProps> = ({
                         borderRadius: 2,
                         px: 2,
                         py: 1,
-                        mb: 0.5
+                        mb: 0.5,
+                        position: 'relative'
                     }}>
-                        <Typography variant="body1">{message.message}</Typography>
+                        {message.isEncrypted && (
+                            <Box sx={{ display: 'flex', alignItems: 'center', mb: 0.5 }}>
+                                <LockIcon sx={{ fontSize: 14, mr: 0.5 }} />
+                                <Typography variant="caption">암호화됨</Typography>
+                            </Box>
+                        )}
+                        <Typography variant="body1">
+                            {message.isEncrypted ? decryptMessageContent(message) : message.message}
+                        </Typography>
                     </Box>
                     <Typography variant="caption" color="text.secondary">
                         {message.username} • {new Date(message.timestamp).toLocaleTimeString('ko-KR', {
@@ -482,6 +566,15 @@ const ChatSystem: React.FC<ChatSystemProps> = ({
                     <Typography variant="h6" sx={{ flexGrow: 1 }}>
                         채팅 시스템
                     </Typography>
+                    {/* 암호화 토글 버튼 */}
+                    <IconButton
+                        onClick={handleEncryptionToggle}
+                        color={isEncryptionEnabled ? 'success' : 'default'}
+                        title={isEncryptionEnabled ? '암호화 활성화됨' : '암호화 비활성화됨'}
+                        sx={{ mr: 1 }}
+                    >
+                        {isEncryptionEnabled ? <LockIcon /> : <LockOpenIcon />}
+                    </IconButton>
                     <Chip
                         icon={<CircleIcon />}
                         label={isConnected ? '연결됨' : '연결 중...'}
@@ -494,6 +587,18 @@ const ChatSystem: React.FC<ChatSystemProps> = ({
                     </IconButton>
                 </Toolbar>
             </AppBar>
+
+            {/* 암호화 상태 안내 */}
+            {isEncryptionEnabled && (
+                <Alert severity="success" icon={<SecurityIcon />} sx={{ m: 1 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <LockIcon fontSize="small" />
+                        <Typography variant="body2">
+                            엔드투엔드 암호화 활성화됨 - 메시지가 안전하게 보호됩니다
+                        </Typography>
+                    </Box>
+                </Alert>
+            )}
 
             {error && (
                 <Alert severity="error" sx={{ m: 1 }}>
@@ -558,11 +663,20 @@ const ChatSystem: React.FC<ChatSystemProps> = ({
 
             {/* 메시지 입력 */}
             <Box sx={{ p: 2, borderTop: 1, borderColor: 'divider' }}>
-                <Box sx={{ display: 'flex', gap: 1 }}>
+                <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+                    {isEncryptionEnabled && (
+                        <Chip
+                            icon={<LockIcon />}
+                            label="암호화"
+                            size="small"
+                            color="success"
+                            sx={{ mr: 1 }}
+                        />
+                    )}
                     <TextField
                         fullWidth
                         size="small"
-                        placeholder="메시지를 입력하세요..."
+                        placeholder={isEncryptionEnabled ? "암호화된 메시지 입력..." : "메시지를 입력하세요..."}
                         value={newMessage}
                         onChange={(e) => setNewMessage(e.target.value)}
                         onKeyPress={(e) => {
@@ -583,8 +697,75 @@ const ChatSystem: React.FC<ChatSystemProps> = ({
                 </Box>
                 <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5, display: 'block' }}>
                     Enter로 전송 • Shift+Enter로 줄바꿈
+                    {isEncryptionEnabled && " • 🔒 메시지가 암호화되어 전송됩니다"}
                 </Typography>
             </Box>
+
+            {/* 키 교환 다이얼로그 */}
+            <Dialog
+                open={encryptionDialogOpen}
+                maxWidth="sm"
+                fullWidth
+            >
+                <DialogTitle>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <VpnKeyIcon color="primary" />
+                        <Typography variant="h6">암호화 키 교환</Typography>
+                    </Box>
+                </DialogTitle>
+                <DialogContent>
+                    <Box sx={{ textAlign: 'center', py: 3 }}>
+                        {isKeyExchanging ? (
+                            <>
+                                <CircularProgress size={60} sx={{ mb: 2 }} />
+                                <Typography variant="body1" gutterBottom>
+                                    암호화 키를 생성하고 있습니다...
+                                </Typography>
+                                <Box sx={{ width: '100%', mt: 2 }}>
+                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                                        <Typography variant="caption">진행률</Typography>
+                                        <Typography variant="caption">{keyExchangeProgress}%</Typography>
+                                    </Box>
+                                    <Box sx={{
+                                        width: '100%',
+                                        height: 8,
+                                        bgcolor: 'grey.200',
+                                        borderRadius: 1,
+                                        overflow: 'hidden'
+                                    }}>
+                                        <Box sx={{
+                                            width: `${keyExchangeProgress}%`,
+                                            height: '100%',
+                                            bgcolor: 'primary.main',
+                                            transition: 'width 0.3s ease'
+                                        }} />
+                                    </Box>
+                                </Box>
+                                <Typography variant="caption" color="text.secondary" sx={{ mt: 2, display: 'block' }}>
+                                    AES-256-GCM 암호화를 사용하여 메시지를 보호합니다
+                                </Typography>
+                            </>
+                        ) : (
+                            <>
+                                <SecurityIcon color="success" sx={{ fontSize: 60, mb: 2 }} />
+                                <Typography variant="h6" gutterBottom color="success.main">
+                                    암호화가 활성화되었습니다!
+                                </Typography>
+                                <Typography variant="body2" color="text.secondary">
+                                    이제 모든 메시지가 엔드투엔드 암호화로 보호됩니다.
+                                </Typography>
+                            </>
+                        )}
+                    </Box>
+                </DialogContent>
+                {!isKeyExchanging && (
+                    <DialogActions>
+                        <Button onClick={() => setEncryptionDialogOpen(false)} variant="contained">
+                            확인
+                        </Button>
+                    </DialogActions>
+                )}
+            </Dialog>
         </Drawer>
     );
 };

@@ -1,0 +1,84 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e6] [cursor=pointer]: 📰 TheNewsPaper Community
+      - generic [ref=e7]:
+        - button "Home" [ref=e8] [cursor=pointer]:
+          - img [ref=e10]
+          - text: Home
+        - button "Community Hub" [ref=e12] [cursor=pointer]:
+          - img [ref=e14]
+          - text: Community Hub
+        - button "Communities" [ref=e16] [cursor=pointer]:
+          - img [ref=e18]
+          - text: Communities
+        - button "Chat Community" [ref=e20] [cursor=pointer]:
+          - img [ref=e22]
+          - text: Chat Community
+        - button "Search" [ref=e24] [cursor=pointer]:
+          - img [ref=e26]
+          - text: Search
+        - button "Bookmarks" [ref=e28] [cursor=pointer]:
+          - img [ref=e30]
+          - text: Bookmarks
+        - button "Follow" [ref=e32] [cursor=pointer]:
+          - img [ref=e34]
+          - text: Follow
+        - button "Management" [ref=e36] [cursor=pointer]:
+          - img [ref=e38]
+          - text: Management
+        - button "Language" [ref=e41] [cursor=pointer]:
+          - img [ref=e42]
+        - button "toggle theme" [ref=e44] [cursor=pointer]:
+          - img [ref=e45]
+        - button "navbar.search" [ref=e47] [cursor=pointer]:
+          - img [ref=e48]
+        - button "Login" [ref=e50] [cursor=pointer]:
+          - img [ref=e52]
+          - text: Login
+  - generic [ref=e54]:
+    - navigation "breadcrumb navigation" [ref=e55]:
+      - list [ref=e56]:
+        - listitem [ref=e57]:
+          - generic [ref=e58]:
+            - button "홈페이지" [ref=e59] [cursor=pointer]:
+              - img [ref=e60]
+            - button "홈페이지" [ref=e62] [cursor=pointer]
+        - listitem [ref=e63]:
+          - img [ref=e64]
+        - listitem [ref=e66]:
+          - generic [ref=e67]:
+            - button "커뮤니티 허브" [ref=e68] [cursor=pointer]:
+              - img [ref=e69]
+            - paragraph [ref=e71]: 커뮤니티 허브
+    - generic [ref=e72]: "현재 위치: /login"
+  - main [ref=e73]:
+    - generic [ref=e77]:
+      - heading "🔐 로그인" [level=1] [ref=e78]
+      - paragraph [ref=e79]: Community Platform v3.0에 오신 것을 환영합니다!
+      - generic [ref=e80]:
+        - button "👤 익명으로 시작하기" [ref=e81] [cursor=pointer]:
+          - generic [ref=e82]: 👤 익명으로 시작하기
+        - button "🔍 Google로 로그인" [ref=e83] [cursor=pointer]:
+          - generic [ref=e84]: 🔍 Google로 로그인
+      - generic [ref=e85]:
+        - paragraph [ref=e86]:
+          - text: 💡
+          - strong [ref=e87]: 익명 로그인
+          - text: ": 빠르게 시작하고 나중에 계정을 연결할 수 있습니다."
+        - paragraph [ref=e88]:
+          - text: 🔍
+          - strong [ref=e89]: Google 로그인
+          - text: ": Google 계정으로 안전하게 로그인합니다."
+  - contentinfo [ref=e90]:
+    - generic [ref=e91]:
+      - paragraph [ref=e92]: © 2025 TheNewsPaper Community. All rights reserved.
+      - paragraph [ref=e93]: Built with ❤️ by AUTOAGENTS
+  - button "0" [ref=e94] [cursor=pointer]:
+    - generic [ref=e95]:
+      - img [ref=e96]
+      - generic: "0"
+```

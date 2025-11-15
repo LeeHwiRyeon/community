@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { protect, authorize } = require('../middleware/authMiddleware');
+const { authenticateToken, requireRole } = require('../middleware/authMiddleware');
 
 // AutoAgent 통계 조회
 router.get('/stats', async (req, res) => {
@@ -227,7 +227,7 @@ router.get('/logs', async (req, res) => {
 });
 
 // AutoAgent 설정 조회
-router.get('/config', protect, authorize(['admin']), async (req, res) => {
+router.get('/config', authenticateToken, requireRole(['admin']), async (req, res) => {
     try {
         const config = {
             news_collection: {
@@ -283,7 +283,7 @@ router.get('/config', protect, authorize(['admin']), async (req, res) => {
 });
 
 // AutoAgent 설정 업데이트
-router.put('/config', protect, authorize(['admin']), async (req, res) => {
+router.put('/config', authenticateToken, requireRole(['admin']), async (req, res) => {
     try {
         const { config } = req.body;
 

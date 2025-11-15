@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const { protect, authorize } = require('../middleware/authMiddleware');
+const { authenticateToken, requireRole } = require('../middleware/authMiddleware');
 const { logger } = require('../utils/logger');
 
 // 알림 전송
-router.post('/send', protect, async (req, res) => {
+router.post('/send', authenticateToken, async (req, res) => {
     try {
         const { type, priority, title, message, channels, recipients, data } = req.body;
 
@@ -170,7 +170,7 @@ router.post('/analytics-alerts', async (req, res) => {
 });
 
 // 예약된 알림 조회
-router.get('/scheduled', protect, authorize(['admin', 'moderator']), async (req, res) => {
+router.get('/scheduled', authenticateToken, requireRole(['admin', 'moderator']), async (req, res) => {
     try {
         const { limit = 50, offset = 0 } = req.query;
 
@@ -260,7 +260,7 @@ router.post('/process-scheduled', async (req, res) => {
 });
 
 // 알림 설정 조회
-router.get('/settings', protect, async (req, res) => {
+router.get('/settings', authenticateToken, async (req, res) => {
     try {
         const userId = req.user.id;
 
@@ -309,7 +309,7 @@ router.get('/settings', protect, async (req, res) => {
 });
 
 // 알림 설정 업데이트
-router.put('/settings', protect, async (req, res) => {
+router.put('/settings', authenticateToken, async (req, res) => {
     try {
         const userId = req.user.id;
         const { email, webpush, slack, discord, frequency } = req.body;
@@ -343,7 +343,7 @@ router.put('/settings', protect, async (req, res) => {
 });
 
 // 알림 이력 조회
-router.get('/history', protect, authorize(['admin', 'moderator']), async (req, res) => {
+router.get('/history', authenticateToken, requireRole(['admin', 'moderator']), async (req, res) => {
     try {
         const { type, limit = 50, offset = 0, startDate, endDate } = req.query;
 
@@ -402,7 +402,7 @@ router.get('/history', protect, authorize(['admin', 'moderator']), async (req, r
 });
 
 // 알림 템플릿 조회
-router.get('/templates', protect, authorize(['admin', 'moderator']), async (req, res) => {
+router.get('/templates', authenticateToken, requireRole(['admin', 'moderator']), async (req, res) => {
     try {
         const templates = [
             {
@@ -446,7 +446,7 @@ router.get('/templates', protect, authorize(['admin', 'moderator']), async (req,
 });
 
 // 알림 통계
-router.get('/stats', protect, authorize(['admin', 'moderator']), async (req, res) => {
+router.get('/stats', authenticateToken, requireRole(['admin', 'moderator']), async (req, res) => {
     try {
         const { period = '7d' } = req.query;
 

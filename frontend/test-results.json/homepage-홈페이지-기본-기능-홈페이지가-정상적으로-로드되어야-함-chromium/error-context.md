@@ -1,0 +1,163 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e6] [cursor=pointer]: 📰 TheNewsPaper Community
+      - generic [ref=e7]:
+        - button "Home" [ref=e8] [cursor=pointer]:
+          - img [ref=e10]
+          - text: Home
+        - button "Community Hub" [ref=e12] [cursor=pointer]:
+          - img [ref=e14]
+          - text: Community Hub
+        - button "Communities" [ref=e16] [cursor=pointer]:
+          - img [ref=e18]
+          - text: Communities
+        - button "Chat Community" [ref=e20] [cursor=pointer]:
+          - img [ref=e22]
+          - text: Chat Community
+        - button "Search" [ref=e24] [cursor=pointer]:
+          - img [ref=e26]
+          - text: Search
+        - button "Bookmarks" [ref=e28] [cursor=pointer]:
+          - img [ref=e30]
+          - text: Bookmarks
+        - button "Follow" [ref=e32] [cursor=pointer]:
+          - img [ref=e34]
+          - text: Follow
+        - button "Management" [ref=e36] [cursor=pointer]:
+          - img [ref=e38]
+          - text: Management
+        - button "Language" [ref=e41] [cursor=pointer]:
+          - img [ref=e42]
+        - button "toggle theme" [ref=e44] [cursor=pointer]:
+          - img [ref=e45]
+        - button "navbar.search" [ref=e47] [cursor=pointer]:
+          - img [ref=e48]
+        - button "Login" [ref=e50] [cursor=pointer]:
+          - img [ref=e52]
+          - text: Login
+  - main [ref=e54]:
+    - generic [ref=e56]:
+      - generic [ref=e58]:
+        - generic [ref=e60]: Community v1.3
+        - separator [ref=e61]
+        - list [ref=e62]:
+          - listitem [ref=e63]:
+            - button "개요" [ref=e64] [cursor=pointer]:
+              - img [ref=e66]
+              - generic [ref=e69]: 개요
+          - listitem [ref=e70]:
+            - button "핵심 모듈" [ref=e71] [cursor=pointer]:
+              - img [ref=e73]
+              - generic [ref=e76]: 핵심 모듈
+          - listitem [ref=e77]:
+            - button "관리 시스템" [ref=e78] [cursor=pointer]:
+              - img [ref=e80]
+              - generic [ref=e83]: 관리 시스템
+          - listitem [ref=e84]:
+            - button "분석" [ref=e85] [cursor=pointer]:
+              - img [ref=e87]
+              - generic [ref=e90]: 분석
+          - listitem [ref=e91]:
+            - button "설정" [ref=e92] [cursor=pointer]:
+              - img [ref=e94]
+              - generic [ref=e97]: 설정
+      - main [ref=e98]:
+        - generic [ref=e100]:
+          - button "menu" [ref=e101] [cursor=pointer]:
+            - img [ref=e102]
+          - generic [ref=e104]: 개요
+          - button "4" [ref=e105] [cursor=pointer]:
+            - generic [ref=e106]:
+              - img [ref=e107]
+              - generic [ref=e109]: "4"
+          - button [ref=e110] [cursor=pointer]:
+            - img [ref=e111]
+        - generic [ref=e113]:
+          - heading "📊 시스템 개요" [level=5] [ref=e114]
+          - generic [ref=e115]:
+            - generic [ref=e118]:
+              - generic [ref=e119]:
+                - img [ref=e120]
+                - heading "총 사용자" [level=6] [ref=e122]
+              - heading "4,880" [level=4] [ref=e123]
+              - paragraph [ref=e124]: 등록된 사용자
+            - generic [ref=e127]:
+              - generic [ref=e128]:
+                - img [ref=e129]
+                - heading "활성 모듈" [level=6] [ref=e131]
+              - heading "4/4" [level=4] [ref=e132]
+              - paragraph [ref=e133]: 핵심 모듈
+            - generic [ref=e136]:
+              - generic [ref=e137]:
+                - img [ref=e138]
+                - heading "총 수익" [level=6] [ref=e140]
+              - heading "₩250,000" [level=4] [ref=e141]
+              - paragraph [ref=e142]: 이번 달 수익
+            - generic [ref=e145]:
+              - generic [ref=e146]:
+                - img [ref=e147]
+                - heading "시스템 건강도" [level=6] [ref=e149]
+              - heading "98.5%" [level=4] [ref=e150]
+              - paragraph [ref=e151]: 전체 성능
+          - generic [ref=e152]:
+            - generic [ref=e155]:
+              - generic [ref=e156]:
+                - heading "최근 활동" [level=6] [ref=e157]
+                - button [ref=e158] [cursor=pointer]:
+                  - img [ref=e159]
+              - list [ref=e161]:
+                - listitem [ref=e162]:
+                  - img [ref=e164]
+                  - generic [ref=e166]:
+                    - generic [ref=e167]: 새로운 VIP 사용자가 가입했습니다
+                    - paragraph [ref=e168]: 11/14/2025, 6:26:35 AM
+                  - generic [ref=e170]: user
+                - separator [ref=e171]
+                - listitem [ref=e172]:
+                  - img [ref=e174]
+                  - generic [ref=e176]:
+                    - generic [ref=e177]: 뉴스 모듈에서 15개의 새 콘텐츠가 생성되었습니다
+                    - paragraph [ref=e178]: 11/14/2025, 6:21:35 AM
+                  - generic [ref=e180]: content
+                - separator [ref=e181]
+                - listitem [ref=e182]:
+                  - img [ref=e184]
+                  - generic [ref=e186]:
+                    - generic [ref=e187]: 시스템 성능이 최적화되었습니다
+                    - paragraph [ref=e188]: 11/14/2025, 6:16:35 AM
+                  - generic [ref=e190]: system
+                - separator [ref=e191]
+                - listitem [ref=e192]:
+                  - img [ref=e194]
+                  - generic [ref=e196]:
+                    - generic [ref=e197]: 보안 스캔이 완료되었습니다
+                    - paragraph [ref=e198]: 11/14/2025, 6:11:35 AM
+                  - generic [ref=e200]: security
+            - generic [ref=e203]:
+              - heading "빠른 액션" [level=6] [ref=e204]
+              - list [ref=e205]:
+                - button "모듈 관리" [ref=e206] [cursor=pointer]:
+                  - img [ref=e208]
+                  - generic [ref=e211]: 모듈 관리
+                - button "사용자 관리" [ref=e212] [cursor=pointer]:
+                  - img [ref=e214]
+                  - generic [ref=e217]: 사용자 관리
+                - button "분석 보기" [ref=e218] [cursor=pointer]:
+                  - img [ref=e220]
+                  - generic [ref=e223]: 분석 보기
+                - button "설정" [ref=e224] [cursor=pointer]:
+                  - img [ref=e226]
+                  - generic [ref=e229]: 설정
+  - contentinfo [ref=e230]:
+    - generic [ref=e231]:
+      - paragraph [ref=e232]: © 2025 TheNewsPaper Community. All rights reserved.
+      - paragraph [ref=e233]: Built with ❤️ by AUTOAGENTS
+  - button "0" [ref=e234] [cursor=pointer]:
+    - generic [ref=e235]:
+      - img [ref=e236]
+      - generic: "0"
+```

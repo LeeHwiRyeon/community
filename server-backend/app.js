@@ -3,13 +3,44 @@ const cors = require('cors');
 const helmet = require('helmet');
 const compression = require('compression');
 const rateLimit = require('express-rate-limit');
+const { createProxyMiddleware } = require('http-proxy-middleware');
 const mysql = require('mysql2/promise');
-const redis = require('redis');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const http = require('http');
+const { initializeSocketServer } = require('./socketServer');
+const notificationService = require('./services/notificationService');
+
+// Phase 3: Redis 캐싱 시스템
+let redisClient, redisService;
+(async () => {
+    try {
+        const redisClientModule = await import('./config/redisClient.js');
+        const redisServiceModule = await import('./services/redisService.js');
+        redisClient = redisClientModule.default;
+        redisService = redisServiceModule.default;
+        console.log('✅ Redis modules loaded');
+    } catch (error) {
+        console.error('⚠️ Redis modules not available:', error.message);
+    }
+})();
+
+// Phase 3: Elasticsearch 검색 시스템
+let elasticsearchClient, elasticsearchService;
+(async () => {
+    try {
+        const elasticsearchClientModule = await import('./config/elasticsearchClient.js');
+        const elasticsearchServiceModule = await import('./services/elasticsearchService.js');
+        elasticsearchClient = elasticsearchClientModule.default;
+        elasticsearchService = elasticsearchServiceModule.default;
+        console.log('✅ Elasticsearch modules loaded');
+    } catch (error) {
+        console.error('⚠️ Elasticsearch modules not available:', error.message);
+    }
+})();
 
 /**
  * 커뮤니티 백엔드 API 서버
@@ -18,9 +49,12 @@ const fs = require('fs');
 class CommunityBackendServer {
     constructor() {
         this.app = express();
+        this.httpServer = http.createServer(this.app);
+        this.io = null;
         this.port = process.env.PORT || 5000;
         this.db = null;
         this.redis = null;
+        this.elasticsearch = null;
 
         this.setupMiddleware();
         this.setupDatabase();
@@ -96,22 +130,31 @@ class CommunityBackendServer {
 
             console.log('✅ MySQL 데이터베이스 연결 성공');
 
-            // Redis 연결
-            this.redis = redis.createClient({
-                host: process.env.REDIS_HOST || 'localhost',
-                port: process.env.REDIS_PORT || 6379,
-                password: process.env.REDIS_PASSWORD || undefined
-            });
+            // Phase 3: Redis 연결 (새로운 클라이언트 사용)
+            try {
+                if (redisClient) {
+                    this.redis = await redisClient.connect();
+                    console.log('✅ Redis 캐싱 시스템 활성화');
+                } else {
+                    console.log('⚠️ Redis client not initialized, caching disabled');
+                }
+            } catch (redisError) {
+                console.error('❌ Redis 연결 실패 (캐싱 비활성화):', redisError.message);
+                this.redis = null;
+            }
 
-            this.redis.on('error', (err) => {
-                console.error('❌ Redis 연결 오류:', err);
-            });
-
-            this.redis.on('connect', () => {
-                console.log('✅ Redis 연결 성공');
-            });
-
-            await this.redis.connect();
+            // Phase 3: Elasticsearch 연결
+            try {
+                if (elasticsearchClient) {
+                    this.elasticsearch = await elasticsearchClient.connect();
+                    console.log('✅ Elasticsearch 검색 시스템 활성화');
+                } else {
+                    console.log('⚠️ Elasticsearch client not initialized, search disabled');
+                }
+            } catch (esError) {
+                console.error('❌ Elasticsearch 연결 실패 (검색 비활성화):', esError.message);
+                this.elasticsearch = null;
+            }
 
             // 데이터베이스 테이블 초기화
             await this.initializeTables();
@@ -287,7 +330,8 @@ class CommunityBackendServer {
                 timestamp: new Date().toISOString(),
                 uptime: process.uptime(),
                 database: this.db ? 'connected' : 'disconnected',
-                redis: this.redis ? 'connected' : 'disconnected'
+                redis: this.redis ? 'connected' : 'disconnected',
+                elasticsearch: this.elasticsearch ? 'connected' : 'disconnected'
             });
         });
 
@@ -296,7 +340,74 @@ class CommunityBackendServer {
         this.app.use('/api/boards', require('./routes/boards')(this.db, this.redis));
         this.app.use('/api/posts', require('./routes/posts')(this.db, this.redis));
         this.app.use('/api/comments', require('./routes/comments')(this.db, this.redis));
-        this.app.use('/api/upload', require('./routes/upload')(this.db, this.redis));
+        this.app.use('/api/upload', require('./routes/upload')); // Phase 3: 파일 업로드 시스템
+        this.app.use('/api/chat', require('./routes/chat')(this.db)); // Phase 3: 실시간 채팅 시스템
+        this.app.use('/api/recommendations', require('./routes/recommendations'));
+        this.app.use('/api/notifications', require('./routes/notifications')); // Phase 3: 실시간 알림
+        this.app.use('/api/profile', require('./routes/profile')(this.db)); // Phase 3: 사용자 프로필 시스템
+
+        // Phase 3: Redis 캐시 관리 API
+        if (this.redis) {
+            (async () => {
+                try {
+                    const redisRoutes = await import('./routes/redis.js');
+                    this.app.use('/api/redis', redisRoutes.default);
+                    console.log('✅ Redis management API registered');
+                } catch (error) {
+                    console.error('⚠️ Redis routes not available:', error.message);
+                }
+            })();
+        }
+
+        // Phase 3: Elasticsearch 검색 API
+        if (this.elasticsearch) {
+            (async () => {
+                try {
+                    const searchRoutes = await import('./routes/search.js');
+                    this.app.use('/api/search', searchRoutes.default);
+                    console.log('✅ Elasticsearch search API registered');
+                } catch (error) {
+                    console.error('⚠️ Search routes not available:', error.message);
+                }
+            })();
+        }
+
+        // Static files - 업로드된 파일 제공
+        this.app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+        // ML 서비스 프록시 설정
+        this.app.use('/api/ml', createProxyMiddleware({
+            target: process.env.ML_SERVICE_URL || 'http://localhost:8000',
+            changeOrigin: true,
+            pathRewrite: {
+                '^/api/ml': '' // /api/ml/recommend/posts → /recommend/posts
+            },
+            onProxyReq: (proxyReq, req, res) => {
+                // ML API 키 추가
+                const mlApiKey = process.env.ML_API_KEY || 'ml_dev_secret_key_2024';
+                proxyReq.setHeader('X-API-Key', mlApiKey);
+
+                console.log(`[ML Proxy] ${req.method} ${req.path} → ${process.env.ML_SERVICE_URL || 'http://localhost:8000'}${req.path.replace('/api/ml', '')}`);
+            },
+            onProxyRes: (proxyRes, req, res) => {
+                console.log(`[ML Proxy] Response ${proxyRes.statusCode} for ${req.path}`);
+            },
+            onError: (err, req, res) => {
+                console.error('[ML Proxy] Error:', err.message);
+                res.status(500).json({
+                    error: 'ML service unavailable',
+                    message: 'The recommendation service is temporarily unavailable. Please try again later.',
+                    details: process.env.NODE_ENV === 'development' ? err.message : undefined
+                });
+            }
+        }));
+
+        console.log('✅ ML Service proxy configured: /api/ml → ' + (process.env.ML_SERVICE_URL || 'http://localhost:8000'));
+
+        // 테스트 라우트 (개발 환경에서만)
+        if (process.env.NODE_ENV !== 'production') {
+            this.app.use('/api/test', require('./routes/test'));
+        }
 
         // 기본 라우트
         this.app.get('/', (req, res) => {
@@ -347,12 +458,24 @@ class CommunityBackendServer {
     /**
      * 서버 시작
      */
-    start() {
-        this.app.listen(this.port, () => {
+    async start() {
+        // Recommendation Service Redis 초기화
+        const recommendationService = require('./services/recommendation-service');
+        await recommendationService.initializeRedis();
+
+        // Socket.io 초기화
+        this.io = initializeSocketServer(this.httpServer);
+        notificationService.setSocketIO(this.io);
+        console.log('✅ Socket.io 서버 초기화 완료');
+
+        this.httpServer.listen(this.port, () => {
             console.log(`🚀 커뮤니티 백엔드 서버 시작됨: 포트 ${this.port}`);
             console.log(`🌐 API 엔드포인트: http://localhost:${this.port}/api`);
             console.log(`📊 헬스 체크: http://localhost:${this.port}/health`);
             console.log(`✅ CORS 활성화: ${process.env.FRONTEND_URL || 'http://localhost:3000'}`);
+            console.log(`🤖 추천 시스템 API: http://localhost:${this.port}/api/recommendations`);
+            console.log(`🔔 실시간 알림: Socket.io on port ${this.port}`);
+            console.log(`📬 알림 API: http://localhost:${this.port}/api/notifications`);
         });
     }
 
