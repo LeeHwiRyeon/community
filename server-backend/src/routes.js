@@ -14,10 +14,13 @@ import { getAttachmentConfig, isAttachmentSigningEnabled, validateAttachmentRequ
 import { createAttachmentRecord, getAttachmentById, enqueueAttachmentProcessing } from './services/attachments/attachments-service.js';
 import { SAMPLE_TITLES, SAMPLE_SNIPPETS, SAMPLE_AUTHORS, SAMPLE_CATEGORIES, SAMPLE_THUMBS, mockRandInt as randInt, mockPick as pick, mockRandomId as randomId } from './mock-samples.js';
 import translationRouter from './routes/translation.js';
-import notificationsRouter from './routes/notifications.js';
-import translateRouter from './routes/translate.js';
-import todosRouter from './routes/todos.js';
 import uploadRouter from './routes/upload.js';
+import mockDataRouter from './routes/mockData.js';
+import dmRouter from './routes/dm.js';
+// import notificationsRouter from './routes/notifications.js'; // TODO: Convert to ES Module
+// import translateRouter from './routes/translate.js'; // TODO: Convert to ES Module
+// import todosRouter from './routes/todos.js'; // TODO: Convert to ES Module
+import { blacklistAllUserTokens } from './services/token-blacklist.js';
 const router = express.Router();
 const useMockDb = isMockDatabaseEnabled();
 
@@ -714,6 +717,51 @@ router.post('/users/:id/role', requireAdmin, async (req, res, next) => {
         const [row] = await query('SELECT id, display_name, role FROM users WHERE id=?', [req.params.id]);
         res.json({ ok: true, user: row });
     } catch (e) { next(e); }
+});
+
+/**
+ * Admin force logout - Blacklist all tokens for a specific user
+ * 
+ * POST /api/admin/users/:id/force-logout
+ * 
+ * Requires admin role
+ * 
+ * Response:
+ *   { "success": true, "userId": "123", "reason": "admin_force_logout" }
+ */
+router.post('/admin/users/:id/force-logout', requireAdmin, async (req, res, next) => {
+    try {
+        const userId = req.params.id;
+        const reason = req.body?.reason || 'admin_force_logout';
+
+        // Verify user exists
+        const [user] = await query('SELECT id, display_name, role FROM users WHERE id=?', [userId]);
+        if (!user) {
+            return res.status(404).json({ error: 'user_not_found' });
+        }
+
+        // Prevent admin from force-logging out themselves
+        if (req.user && String(req.user.id) === String(userId)) {
+            return res.status(400).json({ error: 'cannot_force_logout_self' });
+        }
+
+        // Blacklist all tokens for this user
+        const result = await blacklistAllUserTokens(userId, reason);
+
+        console.log(`🔒 Admin ${req.user?.display_name || req.user?.id} force-logged out user ${user.display_name} (${userId})`);
+
+        res.json({
+            success: true,
+            userId: userId,
+            userName: user.display_name,
+            reason: reason,
+            note: result.note
+        });
+
+    } catch (e) {
+        console.error('❌ Force logout error:', e);
+        next(e);
+    }
 });
 router.post('/boards', async (req, res, next) => {
     try {
@@ -1974,7 +2022,7 @@ router.delete('/chat/:roomId/clear', async (req, res, next) => {
 router.get('/posts/:pid/comments', async (req, res, next) => {
     try {
         const comments = await query(`
-            SELECT c.*, u.username as author
+            SELECT c.*, u.display_name as author
             FROM comments c
             LEFT JOIN users u ON c.user_id = u.id
             WHERE c.post_id=? AND c.deleted=0
@@ -2407,20 +2455,22 @@ router.post('/api/themes/save', (req, res) => {
 // Translation routes
 router.use('/translate', translationRouter);
 
+// DM (Direct Message) routes
+router.use('/dm', dmRouter);
+
 // Notifications routes
-router.use('/notifications', notificationsRouter);
+// router.use('/notifications', notificationsRouter); // TODO: Convert to ES Module
 
 // Translate API routes
-router.use('/translate', translateRouter);
+// router.use('/translate', translateRouter); // TODO: Convert to ES Module
 
 // Todos routes
-router.use('/todos', todosRouter);
+// router.use('/todos', todosRouter); // TODO: Convert to ES Module
 
 // Upload routes
 router.use('/upload', uploadRouter);
 
 // Mock data routes
-import mockDataRouter from './routes/mockData.js';
 router.use('/mock', mockDataRouter);
 
 export default router;
