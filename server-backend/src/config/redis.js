@@ -6,18 +6,14 @@
  * @created 2025-11-14
  */
 
-const { createClient } = require('redis');
+import { createClient } from 'redis';
 
 // Redis 클라이언트 설정
 const redisClient = createClient({
     socket: {
         host: process.env.REDIS_HOST || 'localhost',
-        port: parseInt(process.env.REDIS_PORT || '6379', 10)
-    },
-    password: process.env.REDIS_PASSWORD || undefined,
-    database: parseInt(process.env.REDIS_DB || '0', 10),
-    // 재연결 전략
-    socket: {
+        port: parseInt(process.env.REDIS_PORT || '6379', 10),
+        // 재연결 전략
         reconnectStrategy: (retries) => {
             if (retries > 10) {
                 console.error('❌ Redis 재연결 시도 초과');
@@ -26,7 +22,9 @@ const redisClient = createClient({
             console.log(`🔄 Redis 재연결 시도 ${retries}/10`);
             return retries * 100; // 재연결 대기 시간 (ms)
         }
-    }
+    },
+    password: process.env.REDIS_PASSWORD || undefined,
+    database: parseInt(process.env.REDIS_DB || '0', 10)
 });
 
 // Redis 이벤트 핸들러
@@ -78,8 +76,5 @@ async function disconnectRedis() {
     }
 }
 
-module.exports = {
-    redisClient,
-    connectRedis,
-    disconnectRedis
-};
+export { redisClient, connectRedis, disconnectRedis };
+export default redisClient;
