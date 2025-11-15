@@ -1,0 +1,194 @@
+/* ImageGallery.css */
+
+.image-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    padding: 16px;
+}
+
+.gallery-card {
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.gallery-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+.gallery-image-wrapper {
+    position: relative;
+    padding-top: 75%;
+    /* 4:3 aspect ratio */
+    overflow: hidden;
+    background-color: #f0f0f0;
+}
+
+.gallery-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.gallery-card:hover .gallery-image {
+    transform: scale(1.05);
+}
+
+/* 오버레이 */
+.gallery-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.gallery-card:hover .gallery-overlay {
+    opacity: 1;
+}
+
+.overlay-button {
+    background: white !important;
+    color: #333 !important;
+    transition: transform 0.2s ease;
+}
+
+.overlay-button:hover {
+    transform: scale(1.1);
+}
+
+/* 로딩 상태 */
+.image-loading {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f0f0f0;
+}
+
+/* 메타데이터 */
+.gallery-metadata {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.gallery-title {
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.gallery-description {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    line-clamp: 2;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.4;
+    min-height: 2.8em;
+}
+
+.gallery-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: auto;
+}
+
+.likes-chip {
+    background-color: #ffebee !important;
+}
+
+/* 태그 */
+.gallery-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 4px;
+}
+
+.tag-chip {
+    font-size: 0.7rem !important;
+    height: 20px !important;
+}
+
+/* 빈 상태 */
+.gallery-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
+    text-align: center;
+}
+
+/* 반응형 */
+@media (max-width: 600px) {
+    .image-gallery {
+        padding: 8px;
+    }
+
+    .gallery-card {
+        margin-bottom: 8px;
+    }
+
+    .gallery-overlay {
+        opacity: 1;
+        /* 모바일에서는 항상 표시 */
+        background: rgba(0, 0, 0, 0.3);
+    }
+
+    .overlay-button {
+        width: 32px !important;
+        height: 32px !important;
+    }
+}
+
+/* 접근성 */
+.gallery-card:focus {
+    outline: 2px solid #1976d2;
+    outline-offset: 2px;
+}
+
+.gallery-card:focus:not(:focus-visible) {
+    outline: none;
+}
+
+/* 애니메이션 */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.gallery-card {
+    animation: fadeIn 0.3s ease;
+}

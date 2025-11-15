@@ -33,6 +33,7 @@ import notificationsSimpleRouter from './routes/notifications-simple.js';
 import searchSimpleRouter from './routes/search-simple.js';
 import profileSimpleRouter from './routes/profile-simple.js';
 import adminSimpleRouter from './routes/admin-simple.js';
+import thumbnailsRouter from '../routes/thumbnails.js';
 import { getEnabledProviders, SUPPORTED_PROVIDERS } from './auth/providers.js';
 import { buildAuthMiddleware } from './auth/jwt.js';
 import helmet from 'helmet';
@@ -751,6 +752,7 @@ export function createApp() {
     app.use('/api/search-simple', searchSimpleRouter); // 간단한 검색 시스템 API 라우터 추가
     app.use('/api/profile-simple', profileSimpleRouter); // 간단한 프로필 시스템 API 라우터 추가
     app.use('/api/admin-simple', adminSimpleRouter); // 관리자 대시보드 API 라우터 추가
+    app.use('/api/thumbnails', thumbnailsRouter); // 썸네일 생성 API 라우터 추가
 
     // 대시보드 라우트 import 및 등록 (dynamic import)
     import('./routes/dashboard.js')

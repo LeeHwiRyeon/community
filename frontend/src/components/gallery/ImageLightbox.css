@@ -1,0 +1,313 @@
+/* ImageLightbox.css */
+
+.image-lightbox {
+    background-color: rgba(0, 0, 0, 0.95);
+}
+
+/* 헤더 */
+.lightbox-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 64px;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.8), transparent);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    z-index: 1301;
+}
+
+.lightbox-title {
+    flex: 1;
+    color: white;
+}
+
+.lightbox-title h6 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.lightbox-title .MuiTypography-caption {
+    display: block;
+    margin-top: 4px;
+    opacity: 0.7;
+}
+
+.lightbox-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.lightbox-actions button {
+    color: white;
+}
+
+/* 컨텐츠 */
+.lightbox-content {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.lightbox-image-container {
+    position: relative;
+    max-width: 90%;
+    max-height: 90vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.lightbox-image {
+    max-width: 100%;
+    max-height: 85vh;
+    object-fit: contain;
+    transition: transform 0.3s ease;
+    cursor: grab;
+    user-select: none;
+}
+
+.lightbox-image:active {
+    cursor: grabbing;
+}
+
+/* 로딩 */
+.lightbox-loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+}
+
+/* 에러 */
+.lightbox-error {
+    color: white;
+    text-align: center;
+    padding: 40px;
+}
+
+/* 네비게이션 */
+.lightbox-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.2) !important;
+    color: white !important;
+    width: 56px !important;
+    height: 56px !important;
+    backdrop-filter: blur(10px);
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.lightbox-nav:hover {
+    background: rgba(255, 255, 255, 0.3) !important;
+    transform: translateY(-50%) scale(1.1);
+}
+
+.lightbox-nav:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.lightbox-nav-prev {
+    left: 16px;
+}
+
+.lightbox-nav-next {
+    right: 16px;
+}
+
+.lightbox-nav svg {
+    font-size: 2rem;
+}
+
+/* 줌 컨트롤 */
+.lightbox-zoom-controls {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 8px 16px;
+    border-radius: 24px;
+    backdrop-filter: blur(10px);
+    z-index: 1301;
+}
+
+.lightbox-zoom-controls button {
+    color: white;
+}
+
+.zoom-level {
+    color: white;
+    min-width: 50px;
+    text-align: center;
+    font-weight: 600;
+}
+
+.zoom-reset {
+    color: white;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: background 0.2s ease;
+}
+
+.zoom-reset:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* 정보 패널 */
+.lightbox-info-panel {
+    position: fixed;
+    right: 0;
+    top: 64px;
+    bottom: 0;
+    width: 320px;
+    background: rgba(0, 0, 0, 0.85);
+    color: white;
+    padding: 24px;
+    overflow-y: auto;
+    z-index: 1301;
+    backdrop-filter: blur(10px);
+    animation: slideInRight 0.3s ease;
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+    }
+
+    to {
+        transform: translateX(0);
+    }
+}
+
+.lightbox-info-panel h6 {
+    margin: 0 0 12px;
+    font-size: 1.2rem;
+}
+
+.lightbox-info-panel>* {
+    margin-bottom: 12px;
+}
+
+.info-likes {
+    background-color: rgba(244, 67, 54, 0.2) !important;
+    color: white !important;
+}
+
+.info-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+}
+
+.info-tags .MuiChip-root {
+    color: white;
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* 반응형 */
+@media (max-width: 960px) {
+    .lightbox-info-panel {
+        width: 280px;
+    }
+
+    .lightbox-nav {
+        width: 48px !important;
+        height: 48px !important;
+    }
+
+    .lightbox-nav svg {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 600px) {
+    .lightbox-header {
+        height: 56px;
+    }
+
+    .lightbox-title h6 {
+        font-size: 0.95rem;
+    }
+
+    .lightbox-actions button {
+        padding: 8px;
+    }
+
+    .lightbox-nav {
+        width: 40px !important;
+        height: 40px !important;
+    }
+
+    .lightbox-nav-prev {
+        left: 8px;
+    }
+
+    .lightbox-nav-next {
+        right: 8px;
+    }
+
+    .lightbox-zoom-controls {
+        bottom: 10px;
+        padding: 6px 12px;
+        gap: 8px;
+    }
+
+    .lightbox-info-panel {
+        width: 100%;
+        top: auto;
+        bottom: 0;
+        max-height: 50vh;
+    }
+}
+
+/* 접근성 */
+.lightbox-nav:focus,
+.lightbox-zoom-controls button:focus,
+.lightbox-actions button:focus {
+    outline: 2px solid white;
+    outline-offset: 2px;
+}
+
+.lightbox-nav:focus:not(:focus-visible),
+.lightbox-zoom-controls button:focus:not(:focus-visible),
+.lightbox-actions button:focus:not(:focus-visible) {
+    outline: none;
+}
+
+/* 다크 모드 */
+@media (prefers-color-scheme: dark) {
+    .image-lightbox {
+        background-color: rgba(0, 0, 0, 0.98);
+    }
+}
+
+/* 프린트 */
+@media print {
+
+    .lightbox-header,
+    .lightbox-nav,
+    .lightbox-zoom-controls,
+    .lightbox-info-panel {
+        display: none !important;
+    }
+
+    .lightbox-image {
+        max-width: 100%;
+        max-height: none;
+    }
+}
