@@ -1,0 +1,206 @@
+/* LanguageSwitcher.css */
+
+.language-switcher {
+    display: inline-flex;
+    align-items: center;
+}
+
+/* 아이콘 버튼 */
+.language-switcher-button {
+    transition: transform 0.2s ease;
+}
+
+.language-switcher-button:hover {
+    transform: scale(1.1);
+}
+
+/* 텍스트 버튼 */
+.language-switcher-text-button,
+.language-switcher-both-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background: transparent;
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.language-switcher-text-button:hover,
+.language-switcher-both-button:hover {
+    background: rgba(0, 0, 0, 0.04);
+    border-color: #1976d2;
+}
+
+.language-switcher-both-button {
+    min-width: 120px;
+    justify-content: center;
+}
+
+/* 플래그 */
+.language-flag {
+    font-size: 1.5rem;
+    line-height: 1;
+}
+
+.language-flag-large {
+    font-size: 1.8rem;
+    line-height: 1;
+}
+
+/* 메뉴 */
+.language-menu {
+    min-width: 250px;
+}
+
+.language-menu-header {
+    padding: 12px 16px 8px;
+}
+
+.language-menu-title {
+    font-weight: 600;
+    color: #333;
+}
+
+.language-menu-item {
+    padding: 12px 16px;
+    transition: background 0.2s ease;
+}
+
+.language-menu-item:hover {
+    background: rgba(25, 118, 210, 0.08);
+}
+
+.language-menu-item.Mui-selected {
+    background: rgba(25, 118, 210, 0.12);
+}
+
+.language-menu-item.Mui-selected:hover {
+    background: rgba(25, 118, 210, 0.16);
+}
+
+.language-menu-flag {
+    min-width: 40px !important;
+}
+
+.language-menu-text {
+    flex: 1;
+}
+
+.language-check-icon {
+    color: #1976d2;
+    margin-left: 8px;
+}
+
+.language-menu-footer {
+    padding: 8px 16px 12px;
+    text-align: center;
+}
+
+/* 다크 모드 */
+@media (prefers-color-scheme: dark) {
+    .language-switcher-text-button,
+    .language-switcher-both-button {
+        border-color: rgba(255, 255, 255, 0.23);
+    }
+
+    .language-switcher-text-button:hover,
+    .language-switcher-both-button:hover {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: #90caf9;
+    }
+
+    .language-menu-title {
+        color: #fff;
+    }
+
+    .language-menu-item:hover {
+        background: rgba(144, 202, 249, 0.08);
+    }
+
+    .language-menu-item.Mui-selected {
+        background: rgba(144, 202, 249, 0.16);
+    }
+
+    .language-menu-item.Mui-selected:hover {
+        background: rgba(144, 202, 249, 0.24);
+    }
+
+    .language-check-icon {
+        color: #90caf9;
+    }
+}
+
+/* 반응형 */
+@media (max-width: 600px) {
+    .language-switcher-both-button {
+        min-width: 100px;
+        padding: 6px 12px;
+        font-size: 0.875rem;
+    }
+
+    .language-flag {
+        font-size: 1.3rem;
+    }
+
+    .language-flag-large {
+        font-size: 1.5rem;
+    }
+
+    .language-menu {
+        min-width: 200px;
+    }
+
+    .language-menu-item {
+        padding: 10px 12px;
+    }
+}
+
+/* 애니메이션 */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.language-menu .MuiPaper-root {
+    animation: fadeIn 0.2s ease;
+}
+
+/* RTL 지원 */
+[dir="rtl"] .language-menu-flag {
+    margin-left: 8px;
+    margin-right: 0;
+}
+
+[dir="rtl"] .language-check-icon {
+    margin-left: 0;
+    margin-right: 8px;
+}
+
+[dir="rtl"] .language-switcher-text-button,
+[dir="rtl"] .language-switcher-both-button {
+    flex-direction: row-reverse;
+}
+
+/* 접근성 */
+.language-switcher-button:focus-visible,
+.language-switcher-text-button:focus-visible,
+.language-switcher-both-button:focus-visible {
+    outline: 2px solid #1976d2;
+    outline-offset: 2px;
+}
+
+.language-menu-item:focus-visible {
+    outline: 2px solid #1976d2;
+    outline-offset: -2px;
+}

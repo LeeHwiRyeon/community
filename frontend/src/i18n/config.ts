@@ -4,6 +4,8 @@ import LanguageDetector from 'i18next-browser-languagedetector';
 
 import translationKO from './locales/ko.json';
 import translationEN from './locales/en.json';
+import translationJA from './locales/ja.json';
+import translationZH from './locales/zh.json';
 
 // 번역 리소스
 const resources = {
@@ -12,6 +14,12 @@ const resources = {
     },
     en: {
         translation: translationEN
+    },
+    ja: {
+        translation: translationJA
+    },
+    zh: {
+        translation: translationZH
     }
 };
 
@@ -51,9 +59,41 @@ i18n
         saveMissing: false,
         missingKeyHandler: (lng, ns, key, fallbackValue) => {
             if (process.env.NODE_ENV === 'development') {
-                console.warn(`Missing translation key: ${key} for language: ${lng}`);
+                console.warn(`Missing translation: ${lng}.${ns}.${key}`);
             }
         },
     });
 
 export default i18n;
+
+/**
+ * 지원 언어 목록
+ */
+export const supportedLanguages = [
+    { code: 'ko', name: '한국어', flag: '🇰🇷', nativeName: '한국어' },
+    { code: 'en', name: 'English', flag: '🇺🇸', nativeName: 'English' },
+    { code: 'ja', name: '日本語', flag: '🇯🇵', nativeName: '日本語' },
+    { code: 'zh', name: '中文', flag: '🇨🇳', nativeName: '简体中文' }
+];
+
+/**
+ * RTL 언어 체크
+ */
+export const isRTL = (language: string): boolean => {
+    const rtlLanguages = ['ar', 'he', 'fa', 'ur'];
+    return rtlLanguages.includes(language);
+};
+
+/**
+ * 언어 변경
+ */
+export const changeLanguage = async (language: string): Promise<void> => {
+    await i18n.changeLanguage(language);
+    
+    // HTML dir 속성 설정
+    document.documentElement.dir = isRTL(language) ? 'rtl' : 'ltr';
+    document.documentElement.lang = language;
+    
+    // localStorage에 저장
+    localStorage.setItem('i18nextLng', language);
+};

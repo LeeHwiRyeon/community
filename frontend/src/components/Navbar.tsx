@@ -41,7 +41,7 @@ import NotificationBell from './NotificationBell';
 import SimpleNotificationBell from './SimpleNotificationBell';
 import DMNotification from './DM/DMNotification';
 import ThemeToggleButton from './ThemeToggleButton';
-import LanguageSwitcher from './LanguageSwitcher';
+import LanguageSwitcher from './i18n/LanguageSwitcher';
 
 const Navbar: React.FC = () => {
     const navigate = useNavigate();
