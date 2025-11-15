@@ -9,9 +9,9 @@
  * - 집단 지능 시스템
  */
 
-const { logger } = require('../utils/logger');
-const { performanceMonitor } = require('../utils/performance-monitor');
-const EventEmitter = require('events');
+import { logger } from '../utils/logger.js';
+import { performanceMonitor } from '../utils/performance-monitor.js';
+import { EventEmitter } from 'events';
 
 class AgentCollaborationFramework extends EventEmitter {
     constructor() {
@@ -973,4 +973,4 @@ class CollectiveIntelligence {
     }
 }
 
-module.exports = AgentCollaborationFramework;
+export default AgentCollaborationFramework;
